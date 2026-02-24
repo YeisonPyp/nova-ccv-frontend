@@ -1,0 +1,80 @@
+<!-- src/app/shared/components/tree-menu/tree-menu.component.html -->
+<ul class="tree-menu" [class.nested]="level > 0">
+  @for (node of menu; track trackByLabel($index, node)) {
+    <li [class.expanded]="node.expanded" [class.has-children]="hasChildren(node)">
+      
+      <!-- Nodo con hijos (carpeta) -->
+      @if (hasChildren(node)) {
+        <button 
+          type="button"
+          class="menu-item folder"
+          (click)="toggle(node)"
+          [attr.aria-expanded]="node.expanded">
+          
+          @if (node.icon) {
+            <span class="icon">{{ node.icon }}</span>
+          }
+          
+          <span class="label">{{ node.label }}</span>
+          
+          <span class="arrow" [class.rotated]="node.expanded">
+            ▶
+          </span>
+        </button>
+
+        @if (node.expanded && node.children) {
+          <div class="children">
+            <app-tree-menu [menu]="node.children" [level]="level + 1" />
+          </div>
+        }
+      }
+
+      <!-- Link externo -->
+      @else if (isExternalLink(node)) {
+        <a 
+          class="menu-item link external"
+          [href]="node.route"
+          [target]="node.target || '_blank'"
+          rel="noopener noreferrer">
+          
+          @if (node.icon) {
+            <span class="icon">{{ node.icon }}</span>
+          }
+          
+          <span class="label">{{ node.label }}</span>
+          
+          <span class="external-icon" title="Abre en nueva ventana">
+            ↗
+          </span>
+        </a>
+      }
+
+      <!-- Link interno (Angular Router) -->
+      @else if (isInternalLink(node)) {
+        <a 
+          class="menu-item link internal"
+          [routerLink]="node.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+          
+          @if (node.icon) {
+            <span class="icon">{{ node.icon }}</span>
+          }
+          
+          <span class="label">{{ node.label }}</span>
+        </a>
+      }
+
+      <!-- Nodo sin ruta ni hijos -->
+      @else {
+        <div class="menu-item text-only">
+          @if (node.icon) {
+            <span class="icon">{{ node.icon }}</span>
+          }
+          <span class="label">{{ node.label }}</span>
+        </div>
+      }
+
+    </li>
+  }
+</ul>

@@ -1,0 +1,23 @@
+<div class="progress-container">
+  <div class="progress-header">
+    @if (label) {
+      <span class="progress-label">{{ label }}</span>
+    }
+    <span class="progress-value" [style.color]="progressColor()">
+      {{ percentage }}%
+    </span>
+  </div>
+  <div class="progress-track">
+    <div
+      class="progress-fill"
+      [style.width.%]="Math.min(percentage, 100)"
+      [style.background-color]="progressColor()"
+    ></div>
+  </div>
+  @if (showDetails && executed !== undefined && planned !== undefined) {
+    <div class="progress-details">
+      <span>Ejecutado: {{ executed | number }}</span>
+      <span>Planeado: {{ planned | number }}</span>
+    </div>
+  }
+</div>

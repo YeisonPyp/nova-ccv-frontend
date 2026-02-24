@@ -1,0 +1,159 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Registrar Ejecución</h2>
+      <button class="close-btn" (click)="onCancel()">✕</button>
+    </div>
+
+    @if (program.estado === "CERRADO") {
+      <div class="alert alert-error">
+        <strong>Programa Cerrado:</strong> No se pueden registrar ejecuciones en
+        un programa cerrado.
+      </div>
+    } @else if (program.estado === "BORRADOR") {
+      <div class="alert alert-warning">
+        <strong>Programa en Borrador:</strong> El programa debe estar aprobado o
+        en ejecución para registrar avances.
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-info">
+          <div class="info-item">
+            <span class="info-label">Actividad:</span>
+            <span class="info-value">{{ activity.nombre }}</span>
+          </div>
+          <div class="info-row">
+            <div class="info-item">
+              <span class="info-label">Meta Total:</span>
+              <span class="info-value"
+                >{{ activity.metaTotal }} {{ activity.unidadMedida }}</span
+              >
+            </div>
+            <div class="info-item">
+              <span class="info-label">Meta Ejecutada:</span>
+              <span class="info-value"
+                >{{ activity.metaEjecutada }} ({{
+                  activity.porcentajeAvance
+                }}%)</span
+              >
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Meta Disponible:</span>
+            <span class="info-value highlight"
+              >{{ metaDisponible }} {{ activity.unidadMedida }}</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="mes">Mes *</label>
+          <select id="mes" formControlName="mes" class="form-control">
+            <option value="">Seleccione un mes</option>
+            @for (month of months; track month.value) {
+              <option [value]="month.value">{{ month.label }}</option>
+            }
+          </select>
+          @if (
+            form.get("mes")?.touched && form.get("mes")?.hasError("required")
+          ) {
+            <span class="error">El mes es requerido</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="metaEjecutada"
+            >Meta Ejecutada * ({{ activity.unidadMedida }})</label
+          >
+          <input
+            type="number"
+            id="metaEjecutada"
+            formControlName="metaEjecutada"
+            class="form-control"
+            [max]="metaDisponible"
+            min="0"
+            placeholder="Ingrese la meta ejecutada"
+          />
+          @if (form.get("metaEjecutada")?.touched) {
+            @if (form.get("metaEjecutada")?.hasError("required")) {
+              <span class="error">La meta ejecutada es requerida</span>
+            }
+            @if (form.get("metaEjecutada")?.hasError("min")) {
+              <span class="error">El valor debe ser mayor o igual a 0</span>
+            }
+            @if (form.get("metaEjecutada")?.hasError("max")) {
+              <span class="error"
+                >No puede superar la meta disponible ({{
+                  metaDisponible
+                }})</span
+              >
+            }
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="valorEjecutado">Valor Ejecutado * (COP)</label>
+          <input
+            type="number"
+            id="valorEjecutado"
+            formControlName="valorEjecutado"
+            class="form-control"
+            min="0"
+            placeholder="Ingrese el valor ejecutado"
+          />
+          @if (
+            form.get("valorEjecutado")?.touched &&
+            form.get("valorEjecutado")?.hasError("required")
+          ) {
+            <span class="error">El valor ejecutado es requerido</span>
+          }
+          @if (form.get("valorEjecutado")?.value) {
+            <span class="hint">{{
+              form.get("valorEjecutado")?.value | currencyCop
+            }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="observaciones">Observaciones</label>
+          <textarea
+            id="observaciones"
+            formControlName="observaciones"
+            class="form-control"
+            rows="3"
+            placeholder="Ingrese observaciones (opcional)"
+          >
+          </textarea>
+        </div>
+
+        @if (validationErrors.length > 0) {
+          <div class="alert alert-error">
+            <strong>Errores de validación:</strong>
+            <ul>
+              @for (error of validationErrors; track error) {
+                <li>{{ error }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!form.valid || isSubmitting"
+          >
+            @if (isSubmitting) {
+              <span class="spinner"></span> Guardando...
+            } @else {
+              Registrar Ejecución
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

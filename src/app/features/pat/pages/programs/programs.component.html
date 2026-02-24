@@ -1,0 +1,167 @@
+<div class="programs-container">
+  <header class="page-header">
+    <div class="header-content">
+      <h1>📋 Programas PAT 2025</h1>
+      <p>Gestión y seguimiento de programas del Plan Anual de Trabajo</p>
+    </div>
+    <a routerLink="/pat/dashboard" class="btn-back">← Volver al Dashboard</a>
+  </header>
+
+  <!-- Filters -->
+  <section class="filters-section">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Buscar por nombre, código o área..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+      />
+    </div>
+    <div class="filter-chips">
+      <button
+        class="chip"
+        [class.active]="statusFilter() === null"
+        (click)="filterByStatus(null)"
+      >
+        Todos ({{ programs().length }})
+      </button>
+      @for (status of statusOptions; track status.value) {
+        <button
+          class="chip"
+          [class.active]="statusFilter() === status.value"
+          [class]="status.value.toLowerCase()"
+          (click)="filterByStatus(status.value)"
+        >
+          {{ status.label }} ({{ countByStatus(status.value) }})
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando programas...</p>
+    </div>
+  } @else {
+    <!-- Summary Stats -->
+    <section class="summary-stats">
+      <div class="stat">
+        <span class="stat-value">{{ filteredPrograms().length }}</span>
+        <span class="stat-label">Programas</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{
+          totalBudget() | currency: "COP" : "symbol-narrow" : "1.0-0"
+        }}</span>
+        <span class="stat-label">Presupuesto Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ averageMetaProgress() }}%</span>
+        <span class="stat-label">Avance Promedio</span>
+      </div>
+    </section>
+
+    <!-- Programs Table -->
+    <section class="table-section">
+      <div class="table-container">
+        <table class="programs-table">
+          <thead>
+            <tr>
+              <th class="col-code">Código</th>
+              <th class="col-name">Programa</th>
+              <th class="col-area">Área</th>
+              <th class="col-responsible">Responsable</th>
+              <th class="col-meta">% Meta</th>
+              <th class="col-budget">% Presupuesto</th>
+              <th class="col-status">Estado</th>
+              <th class="col-action">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (program of filteredPrograms(); track program.id) {
+              <tr [class]="'row-' + program.estado.toLowerCase()">
+                <td class="col-code">
+                  <span class="code-badge">{{ program.codigo }}</span>
+                </td>
+                <td class="col-name">
+                  <div class="name-cell">
+                    <span class="program-name">{{ program.nombre }}</span>
+                    <span class="program-budget">
+                      {{
+                        program.totalPlaneado
+                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                      }}
+                    </span>
+                  </div>
+                </td>
+                <td class="col-area">{{ program.area }}</td>
+                <td class="col-responsible">{{ program.responsable }}</td>
+                <td class="col-meta">
+                  <div class="progress-cell">
+                    <div class="mini-progress">
+                      <div
+                        class="mini-bar meta"
+                        [style.width.%]="program.metaEjecutadaPct"
+                        [class.low]="program.metaEjecutadaPct < 40"
+                        [class.medium]="
+                          program.metaEjecutadaPct >= 40 &&
+                          program.metaEjecutadaPct < 70
+                        "
+                        [class.high]="program.metaEjecutadaPct >= 70"
+                      ></div>
+                    </div>
+                    <span class="progress-value"
+                      >{{ program.metaEjecutadaPct }}%</span
+                    >
+                  </div>
+                </td>
+                <td class="col-budget">
+                  <div class="progress-cell">
+                    <div class="mini-progress">
+                      <div
+                        class="mini-bar budget"
+                        [style.width.%]="program.presupuestoEjecutadoPct"
+                      ></div>
+                    </div>
+                    <span class="progress-value"
+                      >{{ program.presupuestoEjecutadoPct }}%</span
+                    >
+                  </div>
+                </td>
+                <td class="col-status">
+                  <span
+                    class="status-badge"
+                    [class]="program.estado.toLowerCase()"
+                  >
+                    {{ getStatusLabel(program.estado) }}
+                  </span>
+                </td>
+                <td class="col-action">
+                  <a
+                    [routerLink]="['/pat/programs', program.id]"
+                    class="btn-detail"
+                  >
+                    Ver detalle
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="empty-state">
+                  <div class="empty-content">
+                    <span class="empty-icon">📭</span>
+                    <p>No se encontraron programas con los filtros aplicados</p>
+                    <button class="btn-clear" (click)="clearFilters()">
+                      Limpiar filtros
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

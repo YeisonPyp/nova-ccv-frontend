@@ -1,0 +1,176 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>📊 Dashboard PAT 2025</h1>
+    <p class="subtitle">Plan Anual de Trabajo - Cámara de Comercio</p>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando información del PAT...</p>
+    </div>
+  } @else {
+    <!-- KPIs Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card primary">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-content">
+          <span class="kpi-value">{{ stats()?.totalProgramas }}</span>
+          <span class="kpi-label">Total Programas</span>
+        </div>
+      </div>
+
+      <div class="kpi-card success">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-content">
+          <span class="kpi-value">{{ stats()?.programasActivos }}</span>
+          <span class="kpi-label">Programas Activos</span>
+        </div>
+      </div>
+
+      <div class="kpi-card danger">
+        <div class="kpi-icon">⚠️</div>
+        <div class="kpi-content">
+          <span class="kpi-value">{{ stats()?.programasEnRiesgo }}</span>
+          <span class="kpi-label">En Riesgo</span>
+        </div>
+      </div>
+
+      <div class="kpi-card info">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-content">
+          <span class="kpi-value">{{ stats()?.avanceMetaGlobal }}%</span>
+          <span class="kpi-label">Avance Metas</span>
+        </div>
+        <div class="kpi-progress">
+          <div
+            class="progress-bar"
+            [style.width.%]="stats()?.avanceMetaGlobal"
+            [class.low]="(stats()?.avanceMetaGlobal ?? 0) < 40"
+            [class.medium]="
+              (stats()?.avanceMetaGlobal ?? 0) >= 40 &&
+              (stats()?.avanceMetaGlobal ?? 0) < 70
+            "
+            [class.high]="(stats()?.avanceMetaGlobal ?? 0) >= 70"
+          ></div>
+        </div>
+      </div>
+
+      <div class="kpi-card warning">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-content">
+          <span class="kpi-value"
+            >{{ stats()?.ejecucionPresupuestalGlobal }}%</span
+          >
+          <span class="kpi-label">Ejecución Presupuestal</span>
+        </div>
+        <div class="kpi-progress">
+          <div
+            class="progress-bar budget"
+            [style.width.%]="stats()?.ejecucionPresupuestalGlobal"
+          ></div>
+        </div>
+      </div>
+
+      <div class="kpi-card budget-total">
+        <div class="kpi-icon">🏦</div>
+        <div class="kpi-content">
+          <span class="kpi-value">{{
+            stats()?.presupuestoEjecutado
+              | currency: "COP" : "symbol-narrow" : "1.0-0"
+          }}</span>
+          <span class="kpi-label"
+            >de
+            {{
+              stats()?.presupuestoTotal
+                | currency: "COP" : "symbol-narrow" : "1.0-0"
+            }}
+            Planeado</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Programas Overview -->
+    <section class="programs-overview">
+      <div class="section-header">
+        <h2>📌 Estado de Programas</h2>
+        <a routerLink="/pat/programs" class="btn-link">Ver todos →</a>
+      </div>
+
+      <div class="programs-grid">
+        @for (program of topPrograms(); track program.id) {
+          <div
+            class="program-card"
+            [class]="'status-' + program.estado.toLowerCase()"
+          >
+            <div class="program-header">
+              <span class="program-code">{{ program.codigo }}</span>
+              <span
+                class="program-status"
+                [class]="program.estado.toLowerCase()"
+              >
+                {{ getStatusLabel(program.estado) }}
+              </span>
+            </div>
+            <h3 class="program-name">{{ program.nombre }}</h3>
+            <div class="program-meta">
+              <span>📍 {{ program.area }}</span>
+              <span>👤 {{ program.responsable }}</span>
+            </div>
+            <div class="program-metrics">
+              <div class="metric">
+                <span class="metric-label">Meta</span>
+                <div class="metric-bar">
+                  <div
+                    class="metric-fill meta"
+                    [style.width.%]="program.metaEjecutadaPct"
+                  ></div>
+                </div>
+                <span class="metric-value"
+                  >{{ program.metaEjecutadaPct }}%</span
+                >
+              </div>
+              <div class="metric">
+                <span class="metric-label">Presupuesto</span>
+                <div class="metric-bar">
+                  <div
+                    class="metric-fill budget"
+                    [style.width.%]="program.presupuestoEjecutadoPct"
+                  ></div>
+                </div>
+                <span class="metric-value"
+                  >{{ program.presupuestoEjecutadoPct }}%</span
+                >
+              </div>
+            </div>
+            <a
+              [routerLink]="['/pat/programs', program.id]"
+              class="program-link"
+            >
+              Ver detalle →
+            </a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Quick Stats by Status -->
+    <section class="status-summary">
+      <h2>📈 Resumen por Estado</h2>
+      <div class="status-cards">
+        @for (status of statusSummary(); track status.estado) {
+          <div class="status-card" [class]="status.estado.toLowerCase()">
+            <span class="status-count">{{ status.count }}</span>
+            <span class="status-name">{{ status.label }}</span>
+            <div class="status-budget">
+              {{
+                status.presupuesto | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

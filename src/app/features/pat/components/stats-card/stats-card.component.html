@@ -1,0 +1,16 @@
+<div class="stats-card" [style.border-left-color]="color">
+  <div
+    class="stats-icon"
+    [style.background-color]="color + '20'"
+    [style.color]="color"
+  >
+    <span class="material-icon">{{ icon }}</span>
+  </div>
+  <div class="stats-content">
+    <span class="stats-label">{{ label }}</span>
+    <span class="stats-value">{{ value }}</span>
+    @if (subtitle) {
+      <span class="stats-subtitle">{{ subtitle }}</span>
+    }
+  </div>
+</div>

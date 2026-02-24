@@ -1,0 +1,546 @@
+<div class="detail-container">
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando programa...</p>
+    </div>
+  } @else if (program()) {
+    <!-- Header -->
+    <header class="program-header">
+      <div class="header-top">
+        <a routerLink="/pat/programs" class="btn-back">← Volver a programas</a>
+        <span class="status-badge" [class]="program()!.estado.toLowerCase()">
+          {{ getStatusLabel(program()!.estado) }}
+        </span>
+      </div>
+      <div class="header-main">
+        <span class="program-code">{{ program()!.codigo }}</span>
+        <h1>{{ program()!.nombre }}</h1>
+      </div>
+      <div class="header-meta">
+        <span>📍 {{ program()!.area }}</span>
+        <span>👤 {{ program()!.responsable }}</span>
+      </div>
+
+      <!-- Progress Summary -->
+      <div class="progress-summary">
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Avance de Metas</span>
+            <span class="progress-value" [class.success]="metaProgress() >= 70">
+              {{ metaProgress() }}%
+            </span>
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar meta"
+              [style.width.%]="metaProgress()"
+              [class.low]="metaProgress() < 40"
+              [class.medium]="metaProgress() >= 40 && metaProgress() < 70"
+              [class.high]="metaProgress() >= 70"
+            ></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">Ejecución Presupuestal</span>
+            <span class="progress-value">{{ budgetProgress() }}%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar budget"
+              [style.width.%]="budgetProgress()"
+            ></div>
+          </div>
+          <div class="budget-detail">
+            {{
+              totalBudgetExecuted()
+                | currency: "COP" : "symbol-narrow" : "1.0-0"
+            }}
+            de
+            {{
+              totalBudgetPlanned() | currency: "COP" : "symbol-narrow" : "1.0-0"
+            }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <nav class="tabs-nav">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'info'"
+        (click)="setTab('info')"
+      >
+        ℹ️ Información
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'activities'"
+        (click)="setTab('activities')"
+      >
+        📋 Actividades ({{ activities().length }})
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'budget'"
+        (click)="setTab('budget')"
+      >
+        💰 Presupuesto
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'schedule'"
+        (click)="setTab('schedule')"
+      >
+        📅 Cronograma
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'execution'"
+        (click)="setTab('execution')"
+        [disabled]="
+          program()!.estado === 'CERRADO' || program()!.estado === 'BORRADOR'
+        "
+      >
+        ✏️ Registrar Ejecución
+      </button>
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Info Tab -->
+      @if (activeTab() === "info") {
+        <div class="tab-panel info-panel">
+          <div class="info-grid">
+            <div class="info-card">
+              <h3>🎯 Objetivo Estratégico</h3>
+              <p>{{ program()!.objetivoEstrategico || "No definido" }}</p>
+            </div>
+            <div class="info-card">
+              <h3>🏛️ Pilar Estratégico</h3>
+              <p>{{ program()!.pilar || "No definido" }}</p>
+            </div>
+            <div class="info-card">
+              <h3>👥 Beneficiarios</h3>
+              <p>{{ program()!.beneficiarios || "No definido" }}</p>
+            </div>
+            <div class="info-card">
+              <h3>📊 Resumen</h3>
+              <ul class="summary-list">
+                <li><strong>Actividades:</strong> {{ activities().length }}</li>
+                <li><strong>Meta Total:</strong> {{ totalMeta() }} unidades</li>
+                <li>
+                  <strong>Meta Ejecutada:</strong>
+                  {{ totalMetaEjecutada() }} unidades
+                </li>
+                <li>
+                  <strong>Presupuesto Planeado:</strong>
+                  {{
+                    totalBudgetPlanned()
+                      | currency: "COP" : "symbol-narrow" : "1.0-0"
+                  }}
+                </li>
+                <li>
+                  <strong>Presupuesto Ejecutado:</strong>
+                  {{
+                    totalBudgetExecuted()
+                      | currency: "COP" : "symbol-narrow" : "1.0-0"
+                  }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Activities Tab -->
+      @if (activeTab() === "activities") {
+        <div class="tab-panel activities-panel">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Actividad</th>
+                  <th>Unidad de Medida</th>
+                  <th>Meta Total</th>
+                  <th>Meta Ejecutada</th>
+                  <th>% Avance</th>
+                  <th>Presupuesto</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (activity of activities(); track activity.id) {
+                  <tr>
+                    <td class="activity-name">{{ activity.nombre }}</td>
+                    <td>{{ activity.unidadMedida }}</td>
+                    <td class="text-center">{{ activity.metaTotal }}</td>
+                    <td class="text-center">{{ activity.metaEjecutada }}</td>
+                    <td>
+                      <div class="inline-progress">
+                        <div class="mini-bar-container">
+                          <div
+                            class="mini-bar"
+                            [style.width.%]="activity.avancePct"
+                            [class.low]="activity.avancePct < 40"
+                            [class.medium]="
+                              activity.avancePct >= 40 &&
+                              activity.avancePct < 70
+                            "
+                            [class.high]="activity.avancePct >= 70"
+                          ></div>
+                        </div>
+                        <span class="pct-value">{{ activity.avancePct }}%</span>
+                      </div>
+                    </td>
+                    <td class="budget-cell">
+                      <div class="budget-info">
+                        <span class="executed">{{
+                          activity.presupuestoEjecutado
+                            | currency: "COP" : "symbol-narrow" : "1.0-0"
+                        }}</span>
+                        <span class="planned"
+                          >de
+                          {{
+                            activity.presupuestoPlaneado
+                              | currency: "COP" : "symbol-narrow" : "1.0-0"
+                          }}</span
+                        >
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="empty-row">
+                      No hay actividades registradas
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Budget Tab -->
+      @if (activeTab() === "budget") {
+        <div class="tab-panel budget-panel">
+          <div class="budget-summary">
+            <div class="budget-card total">
+              <span class="budget-label">Presupuesto Total Planeado</span>
+              <span class="budget-value">{{
+                totalBudgetPlanned()
+                  | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}</span>
+            </div>
+            <div class="budget-card executed">
+              <span class="budget-label">Total Ejecutado</span>
+              <span class="budget-value">{{
+                totalBudgetExecuted()
+                  | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}</span>
+            </div>
+            <div class="budget-card available">
+              <span class="budget-label">Disponible</span>
+              <span class="budget-value">{{
+                budgetAvailable() | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}</span>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Rubro</th>
+                  <th class="text-right">Planeado</th>
+                  <th class="text-right">Ejecutado</th>
+                  <th class="text-right">Diferencia</th>
+                  <th>% Ejecución</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of budgetItems(); track item.id) {
+                  <tr>
+                    <td>{{ item.rubro }}</td>
+                    <td class="text-right">
+                      {{
+                        item.planeado
+                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                      }}
+                    </td>
+                    <td class="text-right">
+                      {{
+                        item.ejecutado
+                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                      }}
+                    </td>
+                    <td
+                      class="text-right"
+                      [class.negative]="item.planeado - item.ejecutado < 0"
+                    >
+                      {{
+                        item.planeado - item.ejecutado
+                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                      }}
+                    </td>
+                    <td>
+                      <div class="inline-progress">
+                        <div class="mini-bar-container">
+                          <div
+                            class="mini-bar budget"
+                            [style.width.%]="getBudgetPct(item)"
+                          ></div>
+                        </div>
+                        <span class="pct-value">{{ getBudgetPct(item) }}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="empty-row">
+                      No hay rubros presupuestales
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="totals-row">
+                  <td><strong>TOTAL</strong></td>
+                  <td class="text-right">
+                    <strong>{{
+                      totalBudgetPlanned()
+                        | currency: "COP" : "symbol-narrow" : "1.0-0"
+                    }}</strong>
+                  </td>
+                  <td class="text-right">
+                    <strong>{{
+                      totalBudgetExecuted()
+                        | currency: "COP" : "symbol-narrow" : "1.0-0"
+                    }}</strong>
+                  </td>
+                  <td class="text-right">
+                    <strong>{{
+                      budgetAvailable()
+                        | currency: "COP" : "symbol-narrow" : "1.0-0"
+                    }}</strong>
+                  </td>
+                  <td>
+                    <strong>{{ budgetProgress() }}%</strong>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Schedule Tab -->
+      @if (activeTab() === "schedule") {
+        <div class="tab-panel schedule-panel">
+          <div class="table-container">
+            <table class="data-table schedule-table">
+              <thead>
+                <tr>
+                  <th>Mes</th>
+                  <th class="text-center">Meta Planeada</th>
+                  <th class="text-center">Meta Ejecutada</th>
+                  <th class="text-right">Valor Planeado</th>
+                  <th class="text-right">Valor Ejecutado</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of schedule(); track row.mes) {
+                  <tr [class.current-month]="row.mes === currentMonth">
+                    <td class="month-cell">
+                      <span class="month-name">{{ row.nombreMes }}</span>
+                      @if (row.mes === currentMonth) {
+                        <span class="current-badge">Actual</span>
+                      }
+                    </td>
+                    <td class="text-center">{{ row.metaPlaneada }}</td>
+                    <td class="text-center">{{ row.metaEjecutada }}</td>
+                    <td class="text-right">
+                      {{
+                        row.valorPlaneado
+                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                      }}
+                    </td>
+                    <td class="text-right">
+                      {{
+                        row.valorEjecutado
+                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                      }}
+                    </td>
+                    <td>
+                      @if (row.mes < currentMonth) {
+                        <span
+                          class="schedule-status"
+                          [class]="getMonthStatus(row)"
+                        >
+                          {{ getMonthStatusLabel(row) }}
+                        </span>
+                      } @else if (row.mes === currentMonth) {
+                        <span class="schedule-status in-progress"
+                          >En curso</span
+                        >
+                      } @else {
+                        <span class="schedule-status pending">Pendiente</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Execution Tab -->
+      @if (activeTab() === "execution") {
+        <div class="tab-panel execution-panel">
+          @if (program()!.estado === "CERRADO") {
+            <div class="alert warning">
+              ⚠️ Este programa está cerrado. No se pueden registrar más
+              ejecuciones.
+            </div>
+          } @else {
+            <div class="execution-form-container">
+              <h3>📝 Registrar Ejecución Mensual</h3>
+
+              <form [formGroup]="executionForm" (ngSubmit)="submitExecution()">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="activityId">Actividad *</label>
+                    <select id="activityId" formControlName="activityId">
+                      <option value="">Seleccione una actividad</option>
+                      @for (activity of activities(); track activity.id) {
+                        <option [value]="activity.id">
+                          {{ activity.nombre }} (Meta:
+                          {{
+                            activity.metaTotal - activity.metaEjecutada
+                          }}
+                          disponible)
+                        </option>
+                      }
+                    </select>
+                    @if (
+                      executionForm.get("activityId")?.touched &&
+                      executionForm.get("activityId")?.invalid
+                    ) {
+                      <span class="error-msg">Seleccione una actividad</span>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label for="mes">Mes *</label>
+                    <select id="mes" formControlName="mes">
+                      <option value="">Seleccione el mes</option>
+                      @for (month of availableMonths; track month.value) {
+                        <option [value]="month.value">{{ month.label }}</option>
+                      }
+                    </select>
+                    @if (
+                      executionForm.get("mes")?.touched &&
+                      executionForm.get("mes")?.invalid
+                    ) {
+                      <span class="error-msg">Seleccione un mes</span>
+                    }
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="metaEjecutada">Meta Ejecutada *</label>
+                    <input
+                      type="number"
+                      id="metaEjecutada"
+                      formControlName="metaEjecutada"
+                      min="0"
+                      placeholder="Ej: 5"
+                    />
+                    @if (
+                      executionForm.get("metaEjecutada")?.touched &&
+                      executionForm.get("metaEjecutada")?.invalid
+                    ) {
+                      <span class="error-msg"
+                        >Ingrese un valor válido mayor a 0</span
+                      >
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label for="valorEjecutado">Valor Ejecutado (COP) *</label>
+                    <input
+                      type="number"
+                      id="valorEjecutado"
+                      formControlName="valorEjecutado"
+                      min="0"
+                      placeholder="Ej: 5000000"
+                    />
+                    @if (
+                      executionForm.get("valorEjecutado")?.touched &&
+                      executionForm.get("valorEjecutado")?.invalid
+                    ) {
+                      <span class="error-msg"
+                        >Ingrese un valor válido mayor a 0</span
+                      >
+                    }
+                  </div>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="observaciones">Observaciones</label>
+                  <textarea
+                    id="observaciones"
+                    formControlName="observaciones"
+                    rows="3"
+                    placeholder="Describa los avances, logros o dificultades..."
+                  ></textarea>
+                </div>
+
+                @if (submitError()) {
+                  <div class="alert error">❌ {{ submitError() }}</div>
+                }
+
+                @if (submitSuccess()) {
+                  <div class="alert success">
+                    ✅ Ejecución registrada exitosamente
+                  </div>
+                }
+
+                <div class="form-actions">
+                  <button
+                    type="submit"
+                    class="btn-submit"
+                    [disabled]="executionForm.invalid || submitting()"
+                  >
+                    @if (submitting()) {
+                      <span class="btn-spinner"></span> Guardando...
+                    } @else {
+                      💾 Registrar Ejecución
+                    }
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-cancel"
+                    (click)="resetForm()"
+                  >
+                    Limpiar
+                  </button>
+                </div>
+              </form>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="error-state">
+      <h2>Programa no encontrado</h2>
+      <a routerLink="/pat/programs">Volver a programas</a>
+    </div>
+  }
+</div>

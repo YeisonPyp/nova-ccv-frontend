@@ -1,0 +1,26 @@
+<!-- src/app/app.component.html -->
+<div class="app-container">
+  <nav class="main-nav">
+    <div class="nav-brand">🏛️ <span>Cámara de Comercio</span></div>
+    <div class="nav-title">Sistema PAT 2025</div>
+  </nav>
+  
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        📋 Menú Principal
+      </div>
+      <div class="sidebar-menu">
+        <app-tree-menu [menu]="menuData" [level]="0" />
+      </div>
+    </aside>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+  
+  <footer class="main-footer">
+    <p>© 2026 Cámara de Comercio - Sistema de Gestión PAT v1.0</p>
+  </footer>
+</div>
