@@ -1,21 +1,19 @@
-// src/app/shared/components/tree-menu/tree-menu.component.ts
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MenuNode } from '../../../features/pat/models/pat.models';
+import { MenuNode } from '../../../core/services/menu.service';
 
 @Component({
   selector: 'app-tree-menu',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './tree-menu.component.html',
-  styleUrls: ['./tree-menu.component.scss']
+  styleUrl: './tree-menu.component.scss'
 })
 export class TreeMenuComponent {
   @Input() menu: MenuNode[] = [];
   @Input() level: number = 0;
 
-  // Toggle simple - permite múltiples abiertos
   toggle(node: MenuNode): void {
     node.expanded = !node.expanded;
   }

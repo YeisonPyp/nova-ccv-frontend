@@ -1,0 +1,78 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <!-- Logo Section -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+        </svg>
+      </div>
+      @if (!collapsed) {
+        <div class="logo-text">
+          <span class="logo-title">CCV</span>
+          <span class="logo-subtitle">Sistema de Gestión</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    @if (isLoading()) {
+      <div class="loading-menu">
+        <div class="spinner"></div>
+        @if (!collapsed) {
+          <span>Cargando menú...</span>
+        }
+      </div>
+    } @else {
+      <!-- Quick Links -->
+      <div class="nav-section">
+        @if (!collapsed) {
+          <span class="nav-section-title">Principal</span>
+        }
+        <a 
+          routerLink="/dashboard" 
+          routerLinkActive="active"
+          class="nav-item"
+          [title]="collapsed ? 'Dashboard' : ''">
+          <span class="nav-icon">🏠</span>
+          @if (!collapsed) {
+            <span class="nav-label">Dashboard</span>
+          }
+        </a>
+      </div>
+
+      <!-- Dynamic Menu -->
+      @if (menuNodes().length > 0) {
+        <div class="nav-section">
+          @if (!collapsed) {
+            <span class="nav-section-title">Módulos</span>
+          }
+          @if (!collapsed) {
+            <app-tree-menu [menu]="menuNodes()" [level]="0" />
+          } @else {
+            <!-- Collapsed view - show only icons -->
+            @for (node of menuNodes(); track node.label) {
+              <div 
+                class="nav-item collapsed-item"
+                [title]="node.label">
+                <span class="nav-icon">{{ node.icon || '📁' }}</span>
+              </div>
+            }
+          }
+        </div>
+      }
+    }
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    @if (!collapsed) {
+      <div class="footer-info">
+        <span class="version">v1.0.0</span>
+        <span class="copyright">© 2025 CCV</span>
+      </div>
+    }
+  </div>
+</aside>

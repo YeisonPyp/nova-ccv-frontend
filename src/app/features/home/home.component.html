@@ -1,0 +1,85 @@
+<div class="dashboard">
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <h1>{{ greeting }}, {{ getUserName() }}! 👋</h1>
+      <p>Aquí tienes un resumen de la actividad reciente del sistema.</p>
+    </div>
+    <div class="welcome-date">
+      <span class="date">{{ currentDate | date:'EEEE, d MMMM yyyy' }}</span>
+    </div>
+  </section>
+
+  <!-- Stats Grid -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      @for (stat of stats; track stat.title) {
+        <div class="stat-card">
+          <div class="stat-icon">{{ stat.icon }}</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-title">{{ stat.title }}</span>
+            <span 
+              class="stat-change"
+              [class.up]="stat.trend === 'up'"
+              [class.down]="stat.trend === 'down'">
+              @if (stat.trend === 'up') { ↑ }
+              @else if (stat.trend === 'down') { ↓ }
+              {{ stat.change }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Quick Links -->
+  <section class="quick-links-section">
+    <h2>Accesos Rápidos</h2>
+    <div class="quick-links-grid">
+      @for (link of quickLinks; track link.title) {
+        <a [routerLink]="link.route" class="quick-link-card">
+          <div class="link-icon" [style.background]="link.color">
+            {{ link.icon }}
+          </div>
+          <div class="link-content">
+            <h3>{{ link.title }}</h3>
+            <p>{{ link.description }}</p>
+          </div>
+          <div class="link-arrow">→</div>
+        </a>
+      }
+    </div>
+  </section>
+
+  <!-- Recent Activity -->
+  <section class="activity-section">
+    <div class="section-header">
+      <h2>Actividad Reciente</h2>
+      <a href="#" class="view-all">Ver todo →</a>
+    </div>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-icon" style="background: #e3f2fd; color: #1976d2;">📝</div>
+        <div class="activity-content">
+          <p><strong>Nuevo programa creado</strong> - PRG-2025-007</p>
+          <span class="activity-time">Hace 2 horas</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon" style="background: #e8f5e9; color: #388e3c;">✅</div>
+        <div class="activity-content">
+          <p><strong>Ejecución registrada</strong> - Actividad: Capacitaciones</p>
+          <span class="activity-time">Hace 5 horas</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon" style="background: #fff3e0; color: #f57c00;">📊</div>
+        <div class="activity-content">
+          <p><strong>Reporte generado</strong> - Avance mensual Enero</p>
+          <span class="activity-time">Ayer</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

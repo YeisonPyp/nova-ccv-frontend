@@ -1,4 +1,3 @@
-<!-- src/app/shared/components/tree-menu/tree-menu.component.html -->
 <ul class="tree-menu" [class.nested]="level > 0">
   @for (node of menu; track trackByLabel($index, node)) {
     <li [class.expanded]="node.expanded" [class.has-children]="hasChildren(node)">
@@ -17,9 +16,7 @@
           
           <span class="label">{{ node.label }}</span>
           
-          <span class="arrow" [class.rotated]="node.expanded">
-            ▶
-          </span>
+          <span class="arrow" [class.rotated]="node.expanded">▶</span>
         </button>
 
         @if (node.expanded && node.children) {
@@ -42,20 +39,17 @@
           }
           
           <span class="label">{{ node.label }}</span>
-          
-          <span class="external-icon" title="Abre en nueva ventana">
-            ↗
-          </span>
+          <span class="external-icon">↗</span>
         </a>
       }
 
-      <!-- Link interno (Angular Router) -->
+      <!-- Link interno -->
       @else if (isInternalLink(node)) {
         <a 
           class="menu-item link internal"
           [routerLink]="node.route"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }">
+          [routerLinkActiveOptions]="{ exact: false }">
           
           @if (node.icon) {
             <span class="icon">{{ node.icon }}</span>
@@ -65,7 +59,7 @@
         </a>
       }
 
-      <!-- Nodo sin ruta ni hijos -->
+      <!-- Nodo sin ruta -->
       @else {
         <div class="menu-item text-only">
           @if (node.icon) {
@@ -74,7 +68,6 @@
           <span class="label">{{ node.label }}</span>
         </div>
       }
-
     </li>
   }
 </ul>

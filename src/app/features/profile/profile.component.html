@@ -1,0 +1,13 @@
+<div class="profile-page">
+    <h1>Mi Perfil</h1>
+    @if (authService.currentUser(); as user) {
+    <div class="profile-card">
+        <div class="avatar">{{ user.username.charAt(0).toUpperCase() }}</div>
+        <div class="info">
+        <p><strong>Usuario:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Roles:</strong> {{ user.roles.join(', ') }}</p>
+        </div>
+    </div>
+    }
+</div>

@@ -1,5 +1,3 @@
-// src/app/core/mock/pat-mock-data.ts
-
 import { 
   Program, 
   Activity, 

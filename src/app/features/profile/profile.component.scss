@@ -1,0 +1,33 @@
+.profile-page {
+    max-width: 600px;
+    margin: 0 auto;
+}
+h1 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+.profile-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+.avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+.info p {
+    margin: 0.5rem 0;
+    color: #4a5568;
+}
