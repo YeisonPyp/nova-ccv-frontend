@@ -1,0 +1,42 @@
+.dashboard-container {
+  padding: 24px;
+}
+
+.btn {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background-color: #003380;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background-color: #002255;
+  }
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border-color: #d9d9d9;
+  color: #333333;
+
+  &:hover:not(:disabled) {
+    color: #003380;
+    border-color: #003380;
+    background-color: #f5f8ff;
+  }
+}

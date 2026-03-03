@@ -1,0 +1,18 @@
+<div class="card-container" (click)="selectPeriod()">
+  <h3 class="card-title">{{ title() }}</h3>
+
+  <div class="status-badge">
+    {{ status() }}
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-label">Progreso</span>
+      <span class="progress-value">{{ progress() }}%</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="progress()"></div>
+    </div>
+  </div>
+</div>

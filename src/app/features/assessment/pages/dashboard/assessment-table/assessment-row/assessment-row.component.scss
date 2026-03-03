@@ -1,0 +1,35 @@
+.desempeno-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.status-completed {
+  background-color: #003380;
+  color: #ffffff;
+}
+
+.status-pending {
+  background-color: #ff4d4f;
+  color: #ffffff;
+}
+
+.status-progress {
+  background-color: #e6f0ff;
+  color: #003380;
+}
+
+.mini-progress-track {
+  width: 60px;
+  height: 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background-color: #003380;
+  border-radius: 3px;
+}

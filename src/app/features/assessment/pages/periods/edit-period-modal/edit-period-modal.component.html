@@ -1,0 +1,93 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Edit Period</h2>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onClose()"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <form [formGroup]="periodForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="period-name"
+              >Name <span class="text-muted">(Optional)</span></label
+            >
+            <input
+              type="text"
+              id="period-name"
+              formControlName="name"
+              class="form-control"
+              placeholder="e.g., Q1 2026 Evaluation"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label for="startDate"
+                >Start Date <span class="required">*</span></label
+              >
+              <input
+                type="date"
+                id="startDate"
+                formControlName="startDate"
+                class="form-control"
+                [class.is-invalid]="
+                  periodForm.get('startDate')?.invalid &&
+                  periodForm.get('startDate')?.touched
+                "
+              />
+              @if (
+                periodForm.get("startDate")?.invalid &&
+                periodForm.get("startDate")?.touched
+              ) {
+                <div class="invalid-feedback">Start Date is required</div>
+              }
+            </div>
+
+            <div class="form-group half-width">
+              <label for="endDate"
+                >End Date <span class="required">*</span></label
+              >
+              <input
+                type="date"
+                id="endDate"
+                formControlName="endDate"
+                class="form-control"
+                [class.is-invalid]="
+                  periodForm.get('endDate')?.invalid &&
+                  periodForm.get('endDate')?.touched
+                "
+              />
+              @if (
+                periodForm.get("endDate")?.invalid &&
+                periodForm.get("endDate")?.touched
+              ) {
+                <div class="invalid-feedback">End Date is required</div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="periodForm.invalid"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

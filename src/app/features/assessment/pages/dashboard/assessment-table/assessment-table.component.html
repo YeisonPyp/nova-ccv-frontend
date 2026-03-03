@@ -1,0 +1,19 @@
+<div class="table-container">
+  <table class="base-table">
+    <thead>
+      <tr class="table-row">
+        <th class="table-header-cell">Empleado</th>
+        <th class="table-header-cell">Área</th>
+        <th class="table-header-cell">Evaluador</th>
+        <th class="table-header-cell">Estado</th>
+        <th class="table-header-cell">Desempeño</th>
+        <th class="table-header-cell">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of assessments(); track item.id) {
+        <app-assessment-row [assessment]="item"></app-assessment-row>
+      }
+    </tbody>
+  </table>
+</div>

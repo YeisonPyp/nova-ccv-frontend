@@ -1,0 +1,20 @@
+<div class="dashboard-container">
+  <h1>Evaluación de Desempeño</h1>
+
+  <app-current-periods-carousel (onSelectPeriod)="selectedPeriod.set($event)" />
+
+  <div class="table-card shadow-sm">
+    <div class="table-header">
+      <h2>Evaluaciones en Progreso</h2>
+      <p>Matriz de evaluadores y evaluados</p>
+    </div>
+
+    @if (selectedPeriod(); as period) {
+      <app-assessment-table
+        [periodId]="period.id"
+        [size]="size()"
+        [page]="page()"
+      />
+    }
+  </div>
+</div>

@@ -1,0 +1,28 @@
+.carousel-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.carousel-grid {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+
+  @media (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.loading-text {
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}

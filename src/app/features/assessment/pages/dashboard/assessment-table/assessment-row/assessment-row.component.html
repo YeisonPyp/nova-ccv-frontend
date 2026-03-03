@@ -1,0 +1,39 @@
+<tr class="table-row">
+  <td class="table-cell">
+    {{
+      (assessment().evaluatee?.name ?? "") +
+        (assessment().evaluatee?.lastName ?? "")
+    }}
+  </td>
+  <!--<td class="table-cell">{{ assessment().area?.name }}</td>-->
+  <td class="table-cell">
+    {{
+      (assessment().evaluator?.name ?? "") +
+        (assessment().evaluator?.lastName ?? "")
+    }}
+  </td>
+  <td class="table-cell">
+    <span class="badge" [ngClass]="getStatusClass(assessment().status)">
+      {{ assessment().status }}
+    </span>
+  </td>
+  <td class="table-cell">
+    <div class="desempeno-cell">
+      {{ assessment().score }}%
+      <div class="mini-progress-track">
+        <div
+          class="mini-progress-fill"
+          [style.width.%]="assessment().score"
+        ></div>
+      </div>
+    </div>
+  </td>
+  <td class="actions-cell">
+    @if (canEdit()) {
+      <span class="icon-btn">👁</span>
+    }
+    @if (canView()) {
+      <span class="icon-btn">✏️</span>
+    }
+  </td>
+</tr>
