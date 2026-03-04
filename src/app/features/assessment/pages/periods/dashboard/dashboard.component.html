@@ -8,46 +8,39 @@
     </button>
   </div>
 
-  <div class="table-container">
-    <table class="base-table">
-      <thead class="table-header">
-        <tr class="table-row">
-          <th class="table-header-cell">Periodo</th>
-          <th class="table-header-cell">Fecha de inicio</th>
-          <th class="table-header-cell">Fecha de fin</th>
-          <th class="table-header-cell">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="table-body">
-        @for (period of periods(); track period.id) {
-          <tr class="table-row">
-            <td class="table-cell">{{ period.name || "Sin nombre" }}</td>
-            <td class="table-cell">{{ period.startDate }}</td>
-            <td class="table-cell">{{ period.endDate }}</td>
-            <td class="table-cell actions-cell">
-              <button
-                class="btn btn-secondary"
-                style="padding: 4px 12px; font-size: 0.8rem"
-                (click)="openEditModal(period)"
-              >
-                Editar
-              </button>
-            </td>
-          </tr>
-        } @empty {
-          <tr class="table-row">
-            <td
-              class="table-cell"
-              colspan="4"
-              style="text-align: center; padding: 2rem"
-            >
-              No hay periodos disponibles.
-            </td>
-          </tr>
+  <div class="table-wrapper" style="margin-bottom: 1rem">
+    <app-dynamic-table
+      [data]="periods()"
+      [columns]="columns"
+      emptyMessage="No hay periodos disponibles."
+    >
+      <ng-template #customCell let-item let-col="column">
+        @if (col.key === "name") {
+          {{ item.name || "Sin nombre" }}
+        } @else {
+          {{ col.key === "startDate" ? item.startDate : item.endDate }}
         }
-      </tbody>
-    </table>
+      </ng-template>
+
+      <ng-template #actions let-period>
+        <button
+          class="btn btn-secondary"
+          style="padding: 4px 12px; font-size: 0.8rem"
+          (click)="openEditModal(period)"
+        >
+          Editar
+        </button>
+      </ng-template>
+    </app-dynamic-table>
   </div>
+
+  <app-paginator
+    [pageSize]="size()"
+    [currentPage]="page()"
+    [totalPages]="totalPages()"
+    (pageSizeChange)="onSizeChange($event)"
+    (onSelectPage)="onPageChange($event)"
+  ></app-paginator>
 </div>
 
 <app-edit-period-modal

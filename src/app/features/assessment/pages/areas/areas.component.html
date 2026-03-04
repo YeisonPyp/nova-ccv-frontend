@@ -1,0 +1,43 @@
+<div class="dashboard-container" style="padding: 24px">
+  <div
+    class="header-actions"
+    style="
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    "
+  >
+    <div>
+      <h1 style="margin: 0; font-size: 1.5rem; color: #1a1a1b">Áreas</h1>
+      <p style="margin: 4px 0 0 0; color: #8c8c8c; font-size: 0.9rem">
+        Gestión de áreas de la empresa
+      </p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreateModal()">
+      + Crear Área
+    </button>
+  </div>
+
+  <div class="table-wrapper" style="margin-bottom: 1rem">
+    <app-dynamic-table
+      [data]="areas()"
+      [columns]="columns"
+      emptyMessage="No hay áreas disponibles."
+    ></app-dynamic-table>
+  </div>
+
+  <app-paginator
+    [pageSize]="size()"
+    [currentPage]="page()"
+    [totalPages]="totalPages()"
+    (pageSizeChange)="onSizeChange($event)"
+    (onSelectPage)="onPageChange($event)"
+  ></app-paginator>
+</div>
+
+<app-create-area-modal
+  [isOpen]="isCreateModalOpen()"
+  (closeModal)="closeModal()"
+  (saveArea)="onSaveArea($event)"
+></app-create-area-modal>

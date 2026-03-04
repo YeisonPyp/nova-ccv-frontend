@@ -1,1 +1,72 @@
-<p>dashboard works!</p>
+<div class="dashboard-container" style="padding: 24px">
+  <div
+    class="header-actions"
+    style="
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    "
+  >
+    <div>
+      <h1 style="margin: 0; font-size: 1.5rem; color: #1a1a1b">Competencias</h1>
+      <p style="margin: 4px 0 0 0; color: #8c8c8c; font-size: 0.9rem">
+        Catálogo de competencias y habilidades
+      </p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreateModal()">
+      + Crear Competencia
+    </button>
+  </div>
+
+  <div class="table-wrapper" style="margin-bottom: 1rem">
+    <app-dynamic-table
+      [data]="competencies()"
+      [columns]="columns"
+      emptyMessage="No hay competencias disponibles."
+    >
+      <ng-template #customCell let-item let-col="column">
+        @if (col.key === "type") {
+          <span
+            class="badge"
+            style="
+              display: inline-block;
+              padding: 4px 12px;
+              border-radius: 8px;
+              font-size: 0.75rem;
+              font-weight: 700;
+              text-align: center;
+              background-color: #f0f5ff;
+              color: #003380;
+              border: 1px solid #adc6ff;
+            "
+          >
+            {{
+              item.type === "BEHAVIORAL"
+                ? "Conductual"
+                : item.type === "TECHNICAL"
+                  ? "Técnica"
+                  : "Core / Transversal"
+            }}
+          </span>
+        } @else {
+          {{ item[col.key] }}
+        }
+      </ng-template>
+    </app-dynamic-table>
+  </div>
+
+  <app-paginator
+    [pageSize]="size()"
+    [currentPage]="page()"
+    [totalPages]="totalPages()"
+    (pageSizeChange)="onSizeChange($event)"
+    (onSelectPage)="onPageChange($event)"
+  ></app-paginator>
+</div>
+
+<app-competency-modal
+  [isOpen]="isModalOpen()"
+  (closeModal)="closeModal()"
+  (saveCompetency)="onSaveCompetency($event)"
+></app-competency-modal>

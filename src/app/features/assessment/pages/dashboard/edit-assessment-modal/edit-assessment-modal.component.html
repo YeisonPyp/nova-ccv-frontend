@@ -1,0 +1,71 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Formulario de evaluación de desempeño</h2>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onClose()"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <section class="assessment-info">
+        <div class="assessment-info-item">
+            <strong>Empleado</strong>
+            <span>{{ evaluateeFullName }}</span>
+        </div>
+        <div class="assessment-info-item">
+            <strong>Evaluador</strong>
+            <span>{{ evaluatorFullName }}</span>
+        </div>
+        <div class="assessment-info-item">
+            <strong>Periodo</strong>
+            <span>{{ evaluationPeriodRange }}</span>
+        </div>
+        <div class="assessment-info-item">
+            <strong>Fecha de evaluación</strong>
+            <span>{{ evaluationDate }}</span>
+        </div>
+      </section>
+
+      <p>Evaluación de competencias</p>
+
+      <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+
+            @for (competency of competencies; track competency.id) {
+                <div class="form-group">
+                    <label for="competency-{{ competency.id }}">{{ competency.name }}</label>
+                    <p>{{competency.description}}</p>
+                    <input
+                        type="number"
+                        id="competency-{{ competency.id }}"
+                        formControlName="competencyScores[{{ competency.id }}]"
+                        min="1"
+                        max="5"
+                        class="form-control"
+                    />
+                </div>
+            }
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="assessmentForm.invalid"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

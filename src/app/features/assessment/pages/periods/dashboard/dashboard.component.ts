@@ -6,10 +6,21 @@ import {
   EditPeriodModalComponent,
   EditPeriodDto,
 } from "../edit-period-modal/edit-period-modal.component";
+import { PaginatorComponent } from "../../../../../shared/components/paginator/paginator.component";
+import {
+  DynamicTableComponent,
+  TableColumn,
+} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
+import { PeriodCardComponent } from "../card/card.component";
 
 @Component({
   selector: "app-dashboard",
-  imports: [CommonModule, EditPeriodModalComponent],
+  imports: [
+    CommonModule,
+    EditPeriodModalComponent,
+    PaginatorComponent,
+    DynamicTableComponent,
+  ],
   templateUrl: "./dashboard.component.html",
   styleUrl: "./dashboard.component.scss",
 })
@@ -19,15 +30,25 @@ export class DashboardComponent implements OnInit {
 
   size = signal<number>(10);
   page = signal<number>(1);
+  totalPages = signal<number>(0);
 
   isModalOpen = signal<boolean>(false);
   selectedPeriod = signal<Period | null>(null);
+
+  columns: TableColumn<Period>[] = [
+    { key: "name", label: "Periodo" },
+    { key: "startDate", label: "Fecha de inicio" },
+    { key: "endDate", label: "Fecha de fin" },
+  ];
 
   private fetchPeriods() {
     this.service
       .findCurrentPeriods({ size: this.size(), page: this.page() })
       .subscribe((response) => {
-        this.periods.set(response.data.content);
+        if (response.data && response.data.content) {
+          this.periods.set(response.data.content);
+          this.totalPages.set(response.data.totalPages);
+        }
       });
   }
 
@@ -42,6 +63,7 @@ export class DashboardComponent implements OnInit {
 
   onSizeChange(size: number): void {
     this.size.set(size);
+    this.page.set(1);
     this.fetchPeriods();
   }
 

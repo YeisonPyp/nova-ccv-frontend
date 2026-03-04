@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
-import { AssessmentDashboardComponent } from "./assessment-dashboard.component";
 import { provideHttpClient } from "@angular/common/http";
 
-describe("AssessmentDashboardComponent", () => {
-  let component: AssessmentDashboardComponent;
-  let fixture: ComponentFixture<AssessmentDashboardComponent>;
+import { EmployeesComponent } from "./employees.component";
+
+describe("EmployeesComponent", () => {
+  let component: EmployeesComponent;
+  let fixture: ComponentFixture<EmployeesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AssessmentDashboardComponent],
+      imports: [EmployeesComponent],
       providers: [provideHttpClient()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AssessmentDashboardComponent);
+    fixture = TestBed.createComponent(EmployeesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,9 +1,13 @@
+import { Position } from "./position.model";
+
 export interface Employee {
   id: number;
   name: string;
   lastName: string;
   email: string;
-  position: string;
-  reportsTo: number;
+  positionId: number;
   isActive: boolean;
+
+  position?: Position | undefined;
+  reportsTo?: Employee | null | undefined;
 }

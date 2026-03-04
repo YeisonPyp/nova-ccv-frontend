@@ -1,10 +1,10 @@
 import { Area } from "./area.model";
 import { Employee } from "./employee.model";
 import { Period } from "./period.model";
+import { Position } from "./position.model";
 
 export interface Assessment {
   id: number;
-  period: Period;
   finalScoreCompetencies: number;
   finalScoreResults: number;
   matrixTotalScore: number;
@@ -15,8 +15,10 @@ export interface Assessment {
   agreements: string;
   createdAt: string;
   score: number;
-  area: Area;
 
-  evaluator: Employee | undefined;
-  evaluatee: Employee | undefined;
+  area?: Area;
+  period?: Period | undefined;
+  position?: Position | undefined;
+  evaluator?: Employee | undefined;
+  evaluatee?: Employee | undefined;
 }

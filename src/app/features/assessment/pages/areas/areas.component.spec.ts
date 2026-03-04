@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 
-import { DashboardComponent } from './dashboard.component';
+import { AreasComponent } from './areas.component';
 
-describe('DashboardComponent', () => {
-  let component: DashboardComponent;
-  let fixture: ComponentFixture<DashboardComponent>;
+describe('AreasComponent', () => {
+  let component: AreasComponent;
+  let fixture: ComponentFixture<AreasComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -14,7 +14,7 @@ describe('DashboardComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DashboardComponent);
+    fixture = TestBed.createComponent(AreasComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

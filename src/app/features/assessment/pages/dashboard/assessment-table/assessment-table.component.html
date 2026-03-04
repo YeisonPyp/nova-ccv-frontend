@@ -1,19 +1,69 @@
-<div class="table-container">
-  <table class="base-table">
-    <thead>
-      <tr class="table-row">
-        <th class="table-header-cell">Empleado</th>
-        <th class="table-header-cell">Área</th>
-        <th class="table-header-cell">Evaluador</th>
-        <th class="table-header-cell">Estado</th>
-        <th class="table-header-cell">Desempeño</th>
-        <th class="table-header-cell">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of assessments(); track item.id) {
-        <app-assessment-row [assessment]="item"></app-assessment-row>
+<div class="table-wrapper">
+  <app-dynamic-table
+    [data]="assessments()"
+    [columns]="columns"
+    emptyMessage="No hay evaluaciones disponibles."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @if (col.key === "evaluatee") {
+        {{
+          (item.evaluatee?.name ?? "") + " " + (item.evaluatee?.lastName ?? "")
+        }}
+      } @else if (col.key === "evaluator") {
+        {{
+          (item.evaluator?.name ?? "") + " " + (item.evaluator?.lastName ?? "")
+        }}
+      } @else if (col.key === "status") {
+        <span class="badge" [ngClass]="getStatusClass(item.status)">
+          {{ item.status }}
+        </span>
+      } @else if (col.key === "score") {
+        <div
+          class="desempeno-cell"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+          "
+        >
+          {{ item.score }}%
+          <div
+            class="mini-progress-track"
+            style="
+              width: 60px;
+              height: 6px;
+              background-color: #f0f0f0;
+              border-radius: 3px;
+              overflow: hidden;
+            "
+          >
+            <div
+              class="mini-progress-fill"
+              style="
+                height: 100%;
+                background-color: #003380;
+                border-radius: 3px;
+              "
+              [style.width.%]="item.score"
+            ></div>
+          </div>
+        </div>
+      } @else {
+        {{ item[col.key] }}
       }
-    </tbody>
-  </table>
+    </ng-template>
+
+    <ng-template #actions let-assessment>
+      @if (canEdit()) {
+        <span
+          class="icon-btn"
+          style="cursor: pointer"
+          (click)="onEdit(assessment)"
+          title="Editar"
+          >✏️</span
+        >
+      }
+    </ng-template>
+  </app-dynamic-table>
 </div>

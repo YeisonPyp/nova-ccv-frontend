@@ -9,27 +9,27 @@
     "
   >
     <div>
-      <h1 style="margin: 0; font-size: 1.5rem; color: #1a1a1b">Puestos</h1>
+      <h1 style="margin: 0; font-size: 1.5rem; color: #1a1a1b">Empleados</h1>
       <p style="margin: 4px 0 0 0; color: #8c8c8c; font-size: 0.9rem">
-        Gestión de puestos y roles de la empresa
+        Gestión de empleados de la empresa
       </p>
     </div>
     <button class="btn btn-primary" (click)="openCreateModal()">
-      + Crear Puesto
+      + Crear Empleado
     </button>
   </div>
 
   <div class="table-wrapper" style="margin-bottom: 1rem">
     <app-dynamic-table
-      [data]="positions()"
+      [data]="employees()"
       [columns]="columns"
-      emptyMessage="No hay puestos disponibles."
+      emptyMessage="No hay empleados disponibles."
     >
-      <ng-template #actions let-job>
+      <ng-template #actions let-employee>
         <button
           class="btn btn-secondary"
           style="padding: 4px 12px; font-size: 0.8rem"
-          (click)="openEditModal(job)"
+          (click)="openEditModal(employee)"
         >
           Editar
         </button>
@@ -41,7 +41,7 @@
             color: #e53e3e;
             border-color: #fed7d7;
           "
-          (click)="onDeleteJob(job)"
+          (click)="onDeleteEmployee(employee)"
         >
           Eliminar
         </button>
@@ -53,15 +53,15 @@
     [pageSize]="size()"
     [currentPage]="page()"
     [totalPages]="totalPages()"
-    (pageSizeChange)="onSizeChange($event)"
-    (onSelectPage)="onPageChange($event)"
+    (pageSizeChange)="onSizeChange()"
+    (onSelectPage)="onPageChange()"
   ></app-paginator>
 </div>
 
-<app-job-modal
+<app-employee-modal
   [isOpen]="isModalOpen()"
   [isEdit]="isEdit()"
-  [jobData]="selectedJob()"
+  [employeeData]="selectedEmployee()"
   (closeModal)="closeModal()"
-  (saveJob)="onSaveJob($event)"
-></app-job-modal>
+  (saveEmployee)="onSaveEmployee()"
+></app-employee-modal>

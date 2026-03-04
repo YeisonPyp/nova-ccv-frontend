@@ -1,0 +1,51 @@
+<div class="table-container">
+  <table class="base-table">
+    <thead class="table-header">
+      <tr class="table-row">
+        @for (col of columns(); track col.key) {
+          <th class="table-header-cell">{{ col.label }}</th>
+        }
+        @if (actionsTemplate) {
+          <th class="table-header-cell">Acciones</th>
+        }
+      </tr>
+    </thead>
+    <tbody class="table-body">
+      @for (item of data(); track $index) {
+        <tr class="table-row">
+          @for (col of columns(); track col.key) {
+            <td class="table-cell">
+              @if (customCellTemplate) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    customCellTemplate;
+                    context: { $implicit: item, column: col }
+                  "
+                ></ng-container>
+              } @else {
+                {{ getNestedValue(item, col.key) }}
+              }
+            </td>
+          }
+          @if (actionsTemplate) {
+            <td class="table-cell actions-cell">
+              <ng-container
+                *ngTemplateOutlet="actionsTemplate; context: { $implicit: item }"
+              ></ng-container>
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr class="table-row">
+          <td
+            class="table-cell"
+            [attr.colspan]="columns().length + (actionsTemplate ? 1 : 0)"
+            style="text-align: center; padding: 2rem"
+          >
+            {{ emptyMessage() }}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

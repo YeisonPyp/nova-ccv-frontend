@@ -1,0 +1,262 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div
+      class="modal-container"
+      (click)="$event.stopPropagation(); closeDropdowns()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">Crear evaluación de desempeño</h2>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onClose()"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="evaluation-period"
+              >Periodo de Evaluación <span class="required">*</span></label
+            >
+            <select
+              id="evaluation-period"
+              formControlName="periodId"
+              class="form-control"
+              [class.is-invalid]="
+                assessmentForm.get('periodId')?.invalid &&
+                assessmentForm.get('periodId')?.touched
+              "
+            >
+              <option [ngValue]="null" disabled selected>
+                Seleccione un periodo
+              </option>
+              @for (period of periods(); track period.id) {
+                <option [ngValue]="period.id">
+                  {{
+                    period.name
+                      ? period.name
+                      : period.startDate + " a " + period.endDate
+                  }}
+                </option>
+              }
+            </select>
+            @if (
+              assessmentForm.get("periodId")?.invalid &&
+              assessmentForm.get("periodId")?.touched
+            ) {
+              <div class="invalid-feedback">
+                El periodo de evaluación es requerido.
+              </div>
+            }
+          </div>
+
+          <div
+            class="form-group"
+            style="margin-top: 1.5rem; position: relative"
+          >
+            <label for="evaluatee-search"
+              >Evaluado (Empleado) <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="evaluatee-search"
+              class="form-control"
+              placeholder="Buscar por nombre o apellido..."
+              [value]="evaluateeSearchTerm()"
+              (input)="onSearchEvaluatee($event)"
+              (click)="
+                $event.stopPropagation();
+                isEvaluateeDropdownOpen.set(true);
+                isEvaluatorDropdownOpen.set(false)
+              "
+              [class.is-invalid]="
+                assessmentForm.get('evaluateeId')?.invalid &&
+                assessmentForm.get('evaluateeId')?.touched
+              "
+              autocomplete="off"
+            />
+
+            @if (isEvaluateeDropdownOpen()) {
+              <ul
+                class="dropdown-list"
+                style="
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  right: 0;
+                  background: white;
+                  border: 1px solid #d9d9d9;
+                  border-radius: 6px;
+                  max-height: 200px;
+                  overflow-y: auto;
+                  z-index: 10;
+                  padding: 0;
+                  margin: 4px 0 0 0;
+                  list-style: none;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                "
+              >
+                @if (employees().length > 0) {
+                  @for (employee of employees(); track employee.id) {
+                    <li
+                      class="dropdown-item"
+                      style="
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-bottom: 1px solid #eee;
+                        transition: background 0.2s;
+                      "
+                      onmouseover="this.style.background = '#f5f8ff'"
+                      onmouseout="this.style.background = 'transparent'"
+                      (click)="
+                        $event.stopPropagation(); selectEvaluatee(employee)
+                      "
+                    >
+                      <div
+                        class="employee-name"
+                        style="font-weight: 500; color: #1a1a2e"
+                      >
+                        {{ employee.name }} {{ employee.lastName }}
+                      </div>
+                      <div
+                        class="employee-details text-muted"
+                        style="font-size: 0.8rem; color: #8c8c8c"
+                      >
+                        {{ employee.position }} | {{ employee.email }}
+                      </div>
+                    </li>
+                  }
+                } @else {
+                  <li
+                    class="dropdown-item text-muted"
+                    style="padding: 8px 12px; cursor: default; color: #8c8c8c"
+                  >
+                    No se encontraron empleados.
+                  </li>
+                }
+              </ul>
+            }
+
+            @if (
+              assessmentForm.get("evaluateeId")?.invalid &&
+              assessmentForm.get("evaluateeId")?.touched
+            ) {
+              <div class="invalid-feedback">Debe seleccionar un empleado.</div>
+            }
+          </div>
+
+          <div
+            class="form-group"
+            style="margin-top: 1.5rem; position: relative"
+          >
+            <label for="evaluator-search"
+              >Evaluador
+              <span
+                class="text-muted"
+                style="
+                  color: #8c8c8c;
+                  font-size: 0.85rem;
+                  font-weight: 400;
+                  margin-left: 4px;
+                "
+                >(Opcional)</span
+              ></label
+            >
+            <input
+              type="text"
+              id="evaluator-search"
+              class="form-control"
+              placeholder="Buscar por nombre o apellido..."
+              [value]="evaluatorSearchTerm()"
+              (input)="onSearchEvaluator($event)"
+              (click)="
+                $event.stopPropagation();
+                isEvaluatorDropdownOpen.set(true);
+                isEvaluateeDropdownOpen.set(false)
+              "
+              autocomplete="off"
+            />
+
+            @if (isEvaluatorDropdownOpen()) {
+              <ul
+                class="dropdown-list"
+                style="
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  right: 0;
+                  background: white;
+                  border: 1px solid #d9d9d9;
+                  border-radius: 6px;
+                  max-height: 200px;
+                  overflow-y: auto;
+                  z-index: 10;
+                  padding: 0;
+                  margin: 4px 0 0 0;
+                  list-style: none;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                "
+              >
+                @if (employees().length > 0) {
+                  @for (employee of employees(); track employee.id) {
+                    <li
+                      class="dropdown-item"
+                      style="
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        border-bottom: 1px solid #eee;
+                        transition: background 0.2s;
+                      "
+                      onmouseover="this.style.background = '#f5f8ff'"
+                      onmouseout="this.style.background = 'transparent'"
+                      (click)="
+                        $event.stopPropagation(); selectEvaluator(employee)
+                      "
+                    >
+                      <div
+                        class="employee-name"
+                        style="font-weight: 500; color: #1a1a2e"
+                      >
+                        {{ employee.name }} {{ employee.lastName }}
+                      </div>
+                      <div
+                        class="employee-details text-muted"
+                        style="font-size: 0.8rem; color: #8c8c8c"
+                      >
+                        {{ employee.position }} | {{ employee.email }}
+                      </div>
+                    </li>
+                  }
+                } @else {
+                  <li
+                    class="dropdown-item text-muted"
+                    style="padding: 8px 12px; cursor: default; color: #8c8c8c"
+                  >
+                    No se encontraron empleados.
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 1.5rem">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="assessmentForm.invalid"
+          >
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
