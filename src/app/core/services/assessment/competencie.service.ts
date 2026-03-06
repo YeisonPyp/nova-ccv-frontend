@@ -35,17 +35,17 @@ export interface CreateCompetencyDto {
 })
 export class CompetencieService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/area`;
+  private readonly API_URL = `${environment.apiUrl}/competencie`;
 
   getCompetencies(
     q: CompetenciePaginatedQuery,
   ): Observable<ApiResponse<APIPage<Competencie>>> {
-    const params = new PageableQueryParams(q).getParams();
-    if (q.name) params.append("name", q.name);
-
+    if (!q.name) {
+      delete q.name;
+    }
     return this.http.get<ApiResponse<APIPage<Competencie>>>(
-      `${this.API_URL}/competencies`,
-      { params },
+      this.API_URL,
+      { params: new PageableQueryParams(q).getParams() },
     );
   }
 
@@ -53,7 +53,7 @@ export class CompetencieService {
     dto: CreateCompetencyDto,
   ): Observable<ApiResponse<Competencie>> {
     return this.http.post<ApiResponse<Competencie>>(
-      `${this.API_URL}/competencies`,
+      this.API_URL,
       dto,
     );
   }

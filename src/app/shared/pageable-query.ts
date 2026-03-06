@@ -10,8 +10,9 @@ export class PageableQueryParams {
   constructor(private p: PageableQuery) {}
   getParams(): HttpParams {
     return Object.entries(this.p).reduce((params, [key, value]) => {
-      if (value) {
-        params.set(key, value.toString());
+      console.log(key, value)
+      if (value != undefined && value != null) {
+        params.set(key, value);
       }
       return params;
     }, new HttpParams());

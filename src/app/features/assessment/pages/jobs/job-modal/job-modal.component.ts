@@ -6,6 +6,7 @@ import { AreaService } from '../../../../../core/services/assessment/area.servic
 import { CompetencieService, CompetencyEnum } from '../../../../../core/services/assessment/competencie.service';
 import { Area } from '../../../../../core/models/assessment/area.model';
 import { Competencie } from '../../../../../core/models/assessment/competencie.model';
+import { Position } from '../../../../../core/models/assessment/position.model';
 
 @Component({
   selector: 'app-job-modal',
@@ -62,7 +63,7 @@ import { Competencie } from '../../../../../core/models/assessment/competencie.m
 export class JobModalComponent implements OnChanges, OnInit {
   @Input() isOpen = false;
   @Input() isEdit = false;
-  @Input() jobData: any = null;
+  @Input() jobData: Position | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() saveJob = new EventEmitter<CreatePositionDto | UpdatePositionDto>();
 
@@ -96,7 +97,7 @@ export class JobModalComponent implements OnChanges, OnInit {
       this.form.patchValue({
         name: this.jobData.name || '',
         description: this.jobData.description || '',
-        areaId: this.jobData.area?.id || null,
+        areaId: this.jobData.areaId || null,
         competencies: this.jobData.competencies || []
       });
     }

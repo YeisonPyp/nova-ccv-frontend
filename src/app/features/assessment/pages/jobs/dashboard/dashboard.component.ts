@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit {
   columns: TableColumn<Position>[] = [
     { key: "name", label: "Nombre del Puesto" },
     { key: "description", label: "Descripción" },
-    { key: "area.name", label: "Área" },
+    { key: "areaName", label: "Área" },
   ];
 
   ngOnInit(): void {
