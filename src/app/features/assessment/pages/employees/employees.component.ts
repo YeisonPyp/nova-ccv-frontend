@@ -41,7 +41,7 @@ export class EmployeesComponent implements OnInit {
     { key: "name", label: "Nombre" },
     { key: "lastName", label: "Apellido" },
     { key: "email", label: "Correo Electrónico" },
-    { key: "position", label: "Puesto" },
+    { key: "position.name", label: "Puesto" },
   ];
 
   ngOnInit(): void {

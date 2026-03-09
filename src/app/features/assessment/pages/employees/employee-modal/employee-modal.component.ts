@@ -17,30 +17,33 @@ import {
   Validators,
 } from "@angular/forms";
 import {
-  EmployeeService,
   CreateEmployeeDto,
   UpdateEmployeeDto,
 } from "../../../../../core/services/assessment/employee.service";
 import { PositionService } from "../../../../../core/services/assessment/position.service";
-import { Position } from "../../../../../core/models/assessment/position.model";
+import { SearchSelectComponent } from "../../../../../shared/components/search-select/search-select.component";
+import { SearchSelectOption } from "../../../../../shared/components/search-select/on-search-select.interface";
+import { Employee } from "../../../../../core/models/assessment/employee.model";
 
 @Component({
   selector: "app-employee-modal",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchSelectComponent],
   templateUrl: "./employee-modal.component.html",
 })
-export class EmployeeModalComponent implements OnChanges, OnInit {
+export class EmployeeModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() isEdit = false;
-  @Input() employeeData: any = null;
+  @Input() employeeData: Employee | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() saveEmployee = new EventEmitter<
     CreateEmployeeDto | UpdateEmployeeDto
   >();
 
   form: FormGroup;
-  positions = signal<Position[]>([]);
+  positions = signal<SearchSelectOption[]>([]);
+
+  selectedPositions = signal<SearchSelectOption[]>([]);
   private positionService = inject(PositionService);
 
   constructor(private fb: FormBuilder) {
@@ -53,17 +56,26 @@ export class EmployeeModalComponent implements OnChanges, OnInit {
     });
   }
 
-  ngOnInit() {
-    this.positionService
-      .findPositions({ size: 100, page: 1 })
-      .subscribe((res) => {
-        if (res.data && res.data.content) this.positions.set(res.data.content);
-      });
+  findPositions(q: string) {
+    this.positionService.findPositions({ page: 1, size: 10, name: q }).subscribe((r) => {
+      if (r.success && r.data) {
+        this.positions.set(r.data.content.map((p) => ({ id: p.id, title: p.name })));
+      }
+    });
   }
 
+  onRemovePosition(o: SearchSelectOption) {
+    this.selectedPositions.set(this.selectedPositions().filter((p) => p.id !== o.id));
+  }
+
+  onSelectPosition(o: SearchSelectOption) {
+    this.selectedPositions.set([o]);
+    this.form.patchValue({ positionId: o.id });
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.form.reset();
+      this.selectedPositions.set([]);
     }
     if (changes["employeeData"] && this.employeeData && this.isOpen) {
       this.form.patchValue({
@@ -73,6 +85,9 @@ export class EmployeeModalComponent implements OnChanges, OnInit {
         positionId: this.employeeData.position?.id || null, // Ensure your employee model returns full position details, but standard requires id
         employeeReportsToId: this.employeeData.reportsTo || null,
       });
+      if (this.employeeData.position) {
+        this.selectedPositions.set([{id: this.employeeData.position.id, title: this.employeeData.position.name }])
+      }
     }
   }
 

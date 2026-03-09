@@ -48,4 +48,11 @@ export const ASSESSMENT_ROUTES: Routes = [
     loadComponent: () =>
       import("./pages/areas/areas.component").then((m) => m.AreasComponent),
   },
+  {
+    path: "employees/dashboard",
+    loadComponent: () =>
+      import("./pages/employees/employees.component").then(
+        (m) => m.EmployeesComponent,
+      ),
+  },
 ];

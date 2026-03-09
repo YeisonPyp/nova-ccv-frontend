@@ -14,6 +14,10 @@ export interface CreateAreaDto {
   name: string;
 }
 
+export interface FindAreasPageableQuery extends PageableQuery {
+  name?: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -21,7 +25,7 @@ export class AreaService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/area`;
 
-  findAreas(query: PageableQuery): Observable<ApiResponse<APIPage<Area>>> {
+  findAreas(query: FindAreasPageableQuery): Observable<ApiResponse<APIPage<Area>>> {
     return this.http.get<ApiResponse<APIPage<Area>>>(this.API_URL, {
       params: new PageableQueryParams(query).getParams(),
     });

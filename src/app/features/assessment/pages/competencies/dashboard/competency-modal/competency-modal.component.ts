@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CompetencieService, CreateCompetencyDto, CompetencyEnum } from '../../../../../../core/services/assessment/competencie.service';
+import { CreateCompetencyDto, CompetencyEnum } from '../../../../../../core/services/assessment/competencie.service';
 import { PositionService } from '../../../../../../core/services/assessment/position.service';
 import { Position } from '../../../../../../core/models/assessment/position.model';
 

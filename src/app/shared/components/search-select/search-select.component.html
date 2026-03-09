@@ -1,0 +1,51 @@
+<div class="form-group">
+  <label [for]="id">
+    {{ label }}
+    @if (required) { <span class="text-danger">*</span> }
+  </label>
+
+  <div 
+    class="input-container form-control" 
+    [class.is-invalid]="isInvalid"
+  >
+    @for (item of selectedItems; track item.id) {
+      <span class="chip">
+        {{ item.title }}
+        <span class="chip-remove" (click)="removeItem(item, $event)">&times;</span>
+      </span>
+    }
+
+    @if (maxElements <= 0 || selectedItems.length < maxElements) {
+      <input
+        #txtInput
+        type="text"
+        [id]="id"
+        class="inner-input"
+        [placeholder]="selectedItems.length > 0 ? '' : placeholder"
+        [value]="searchTerm()"
+        (input)="onInput($event)"
+        (focus)="isOpen.set(true)"
+        autocomplete="off"
+      />
+    }
+    
+  </div>
+
+  @if (isOpen() && items.length > 0) {
+    <ul class="dropdown-list">
+      @for (item of items; track item.id) {
+        <li class="dropdown-item" (click)="selectItem(item, $event)">
+          {{ item.title }}
+        </li>
+      }
+    </ul>
+  } @else if (isOpen() && searchTerm()) {
+    <ul class="dropdown-list">
+       <li class="dropdown-item text-muted">{{ emptyMessage }}</li>
+    </ul>
+  }
+
+  @if (isInvalid && errorMessage) {
+    <div class="invalid-feedback d-block">{{ errorMessage }}</div>
+  }
+</div>

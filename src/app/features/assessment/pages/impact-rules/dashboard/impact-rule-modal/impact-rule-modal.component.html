@@ -1,0 +1,100 @@
+@if (isOpen) {
+    <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container"  (click)="$event.stopPropagation()">
+        <div class="modal-header">
+        <h2 class="modal-title">
+            {{
+            isEdit ? "Editar Regla de Impacto" : "Crear Regla de Impacto"
+            }}
+        </h2>
+        <button
+            type="button"
+            class="close-btn"
+            (click)="onClose()"
+            aria-label="Close modal"
+        >
+            &times;
+        </button>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+            <div class="form-group">
+            <label for="rule-name"
+                >Nombre de la Regla <span class="required">*</span></label
+            >
+            <input
+                type="text"
+                id="rule-name"
+                formControlName="name"
+                class="form-control"
+                placeholder="Ej. Regla de Liderazgo"
+                [class.is-invalid]="
+                form.get('name')?.invalid && form.get('name')?.touched
+                "
+            />
+            @if (form.get("name")?.invalid && form.get("name")?.touched) {
+                <div class="invalid-feedback">El nombre es requerido.</div>
+            }
+            </div>
+            <div class="form-group" style="margin-top: 1rem;">
+            <label for="rule-factor"
+                >Factor de Impacto (%) <span class="required">*</span></label
+            >
+            <input
+                type="number"
+                id="rule-factor"
+                formControlName="impactFactor"
+                class="form-control"
+                placeholder="Ej. 25"
+                [class.is-invalid]="
+                form.get('impactFactor')?.invalid &&
+                form.get('impactFactor')?.touched
+                "
+            />
+            @if (
+                form.get("impactFactor")?.invalid &&
+                form.get("impactFactor")?.touched
+            ) {
+                <div class="invalid-feedback">
+                El factor de impacto es requerido.
+                </div>
+            }
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <app-search-select
+                    [label]="'Competencias'"
+                    [required]="true"
+                    [placeholder]="'Buscar competencia...'"
+                    [items]="competencyItems()"
+                    [selectedItems]="selectedCompetencies()"
+                    [maxElements]="-1"
+                    (onSearch)="searchCompetencies($event)"
+                    (onRemove)="onRemoveCompetency($event)"
+                    (onSelect)="onSelectCompetency($event)"
+                ></app-search-select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onClose()"
+            >
+            Cancelar
+            </button>
+            <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="
+                form.invalid || getSelectedCompetencies().length === 0
+            "
+            >
+            Guardar
+            </button>
+        </div>
+        </form>
+    </div>
+    </div>
+
+}

@@ -53,8 +53,8 @@
     [pageSize]="size()"
     [currentPage]="page()"
     [totalPages]="totalPages()"
-    (pageSizeChange)="onSizeChange()"
-    (onSelectPage)="onPageChange()"
+    (pageSizeChange)="onSizeChange($event)"
+    (onSelectPage)="onPageChange($event)"
   ></app-paginator>
 </div>
 
@@ -63,5 +63,5 @@
   [isEdit]="isEdit()"
   [employeeData]="selectedEmployee()"
   (closeModal)="closeModal()"
-  (saveEmployee)="onSaveEmployee()"
+  (saveEmployee)="onSaveEmployee($event)"
 ></app-employee-modal>

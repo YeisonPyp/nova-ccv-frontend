@@ -20,6 +20,8 @@ import { PeriodService } from "../../../../../core/services/assessment/period.se
 import { Period } from "../../../../../core/models/assessment/period.model";
 import { EmployeeService } from "../../../../../core/services/assessment/employee.service";
 import { Employee } from "../../../../../core/models/assessment/employee.model";
+import { SearchSelectComponent } from "../../../../../shared/components/search-select/search-select.component";
+import { SearchSelectOption } from "../../../../../shared/components/search-select/on-search-select.interface";
 
 export interface CreateAssessmentDto {
   evaluateeId: number;
@@ -29,7 +31,7 @@ export interface CreateAssessmentDto {
 
 @Component({
   selector: "app-create-assessment-modal",
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchSelectComponent],
   templateUrl: "./create-assessment-modal.component.html",
   styleUrl: "./create-assessment-modal.component.scss",
 })
@@ -41,11 +43,6 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
   assessmentForm: FormGroup;
   periods = signal<Period[]>([]);
   employees = signal<Employee[]>([]);
-  
-  evaluateeSearchTerm = signal("");
-  evaluatorSearchTerm = signal("");
-  isEvaluateeDropdownOpen = signal(false);
-  isEvaluatorDropdownOpen = signal(false);
 
   private periodService = inject(PeriodService);
   private employeeService = inject(EmployeeService);
@@ -56,6 +53,13 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
       evaluatorId: [null],
       periodId: [null, Validators.required],
     });
+  }
+
+  get searchSelectOptions(): Array<SearchSelectOption> {
+    return this.employees().map((emp) => ({
+      id: emp.id,
+      title: `${emp.name ?? ''} ${emp.lastName ?? ''} (${emp.email ?? ''})`,
+    }));
   }
 
   ngOnInit(): void {
@@ -72,26 +76,16 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.assessmentForm.reset();
-      this.evaluateeSearchTerm.set("");
-      this.evaluatorSearchTerm.set("");
-      this.isEvaluateeDropdownOpen.set(false);
-      this.isEvaluatorDropdownOpen.set(false);
     }
   }
 
-  onSearchEvaluatee(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.evaluateeSearchTerm.set(input.value);
-    this.searchEmployees(input.value);
-    this.isEvaluateeDropdownOpen.set(true);
+  onSearchEvaluatee(s: string): void {
+    this.searchEmployees(s);
     this.assessmentForm.patchValue({ evaluateeId: null });
   }
 
-  onSearchEvaluator(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.evaluatorSearchTerm.set(input.value);
-    this.searchEmployees(input.value);
-    this.isEvaluatorDropdownOpen.set(true);
+  onSearchEvaluator(s: string): void {
+    this.searchEmployees(s);
     this.assessmentForm.patchValue({ evaluatorId: null });
   }
 
@@ -105,21 +99,14 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
       });
   }
 
-  selectEvaluatee(employee: Employee): void {
-    this.assessmentForm.patchValue({ evaluateeId: employee.id });
-    this.evaluateeSearchTerm.set(`${employee.name} ${employee.lastName}`);
-    this.isEvaluateeDropdownOpen.set(false);
+  selectEvaluatee(option: SearchSelectOption): void {
+    this.assessmentForm.patchValue({ evaluateeId: option.id });
+    this.employees.set([]);
   }
 
-  selectEvaluator(employee: Employee): void {
-    this.assessmentForm.patchValue({ evaluatorId: employee.id });
-    this.evaluatorSearchTerm.set(`${employee.name} ${employee.lastName}`);
-    this.isEvaluatorDropdownOpen.set(false);
-  }
-
-  closeDropdowns(): void {
-    this.isEvaluateeDropdownOpen.set(false);
-    this.isEvaluatorDropdownOpen.set(false);
+  selectEvaluator(option: SearchSelectOption): void {
+    this.assessmentForm.patchValue({ evaluatorId: option.id });
+    this.employees.set([]);
   }
 
   onClose() {

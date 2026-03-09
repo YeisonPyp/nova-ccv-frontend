@@ -1,0 +1,101 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ isEdit ? "Editar Puesto" : "Crear Puesto" }}
+        </h2>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onClose()"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto">
+          <div class="form-group">
+            <label for="job-name"
+              >Nombre del Puesto <span class="required">*</span></label
+            >
+            <input
+              type="text"
+              id="job-name"
+              formControlName="name"
+              class="form-control"
+              placeholder="Ej. Desarrollador Senior"
+              [class.is-invalid]="
+                form.get('name')?.invalid && form.get('name')?.touched
+              "
+            />
+            @if (form.get("name")?.invalid && form.get("name")?.touched) {
+              <div class="invalid-feedback">El nombre es requerido.</div>
+            }
+          </div>
+          <div class="form-group" style="margin-top: 1rem">
+            <label for="job-description"
+              >Descripción <span class="required">*</span></label
+            >
+            <textarea
+              id="job-description"
+              formControlName="description"
+              class="form-control"
+              rows="3"
+              placeholder="Breve descripción del puesto..."
+              [class.is-invalid]="
+                form.get('description')?.invalid &&
+                form.get('description')?.touched
+              "
+            ></textarea>
+            @if (
+              form.get("description")?.invalid &&
+              form.get("description")?.touched
+            ) {
+              <div class="invalid-feedback">La descripción es requerida.</div>
+            }
+          </div>
+          <!-- area selector -->
+          <app-search-select
+            (onSearch)="onSearchArea($event)"
+            (onSelect)="onSelectArea($event)"
+            (onRemove)="onRemoveArea($event)"
+            
+            [maxElements]="1"
+            [label]="'Área'"
+            [required]="true"
+            [placeholder]="'Selecciona un área...'"
+            [items]="areaOptions"
+            [selectedItems]="selectedAreas()"
+          ></app-search-select>
+          <!-- competencies selector -->
+          <app-search-select
+            (onSearch)="onSearchCompetencie($event)"
+            (onSelect)="onSelectCompetencie($event)"
+            (onRemove)="onRemoveCompetencie($event)"
+
+            [maxElements]="-1"
+            [label]="'Competencias'"
+            [required]="true"
+            [placeholder]="'Selecciona varias competencias...'"
+            [items]="competencies()"
+            [selectedItems]="selectedCompetencies()"
+          ></app-search-select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid"
+          >
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

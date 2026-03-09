@@ -14,14 +14,18 @@ export interface CreatePositionDto {
   name: string;
   description: string;
   areaId: number;
-  competencies: Set<number>;
+  competencies: Array<number>;
 }
 
 export interface UpdatePositionDto {
   name?: string;
   description?: string;
   areaId?: number;
-  competencies?: Set<number>;
+  competencies?: Array<number>;
+}
+
+export interface PositionPageableQuery extends PageableQuery {
+  name?: string;
 }
 
 @Injectable({
@@ -32,7 +36,7 @@ export class PositionService {
   private readonly API_URL = `${environment.apiUrl}/position`;
 
   findPositions(
-    query: PageableQuery,
+    query: PositionPageableQuery,
   ): Observable<ApiResponse<APIPage<Position>>> {
     return this.http.get<ApiResponse<APIPage<Position>>>(this.API_URL, {
       params: new PageableQueryParams(query).getParams(),
