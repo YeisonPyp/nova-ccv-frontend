@@ -11,7 +11,7 @@ import {
 } from "../../../shared/pageable-query";
 
 export interface EmployeeQuery extends PageableQuery {
-  search?: string;
+  nameOrEmail?: string;
 }
 
 export interface CreateEmployeeDto {
@@ -40,10 +40,7 @@ export class EmployeeService {
   findEmployees(
     query: EmployeeQuery,
   ): Observable<ApiResponse<APIPage<Employee>>> {
-    let params = new PageableQueryParams(query).getParams();
-    if (query.search) {
-      params = params.set("search", query.search);
-    }
+    const params = new PageableQueryParams(query).getParams();
 
     return this.http.get<ApiResponse<APIPage<Employee>>>(this.API_URL, {
       params,

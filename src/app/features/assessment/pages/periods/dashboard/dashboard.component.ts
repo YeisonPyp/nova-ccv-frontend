@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit {
   periods = signal<Array<Period>>([]);
 
   size = signal<number>(10);
-  page = signal<number>(1);
+  page = signal<number>(0);
   totalPages = signal<number>(0);
 
   isModalOpen = signal<boolean>(false);

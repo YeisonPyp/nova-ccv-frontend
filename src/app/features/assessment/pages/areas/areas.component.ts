@@ -29,7 +29,7 @@ export class AreasComponent implements OnInit {
 
   areas = signal<Area[]>([]);
   size = signal<number>(10);
-  page = signal<number>(1);
+  page = signal<number>(0);
   totalPages = signal<number>(0);
 
   isCreateModalOpen = signal(false);

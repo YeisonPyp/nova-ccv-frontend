@@ -34,7 +34,7 @@ export class AssessmentDashboardComponent implements OnInit {
   authService = inject(AuthService);
   selectedPeriod = signal<Period | undefined>(undefined);
   size = signal(20);
-  page = signal(1);
+  page = signal(0);
   pages = signal(0);
   isModalOpen = signal<boolean>(false);
   selectedAssessment = signal<Assessment | null>(null);

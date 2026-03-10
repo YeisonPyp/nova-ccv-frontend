@@ -55,8 +55,12 @@
           </div>
 
           <app-search-select
-          [emptyMessage]="'No se encontraron empleados.'"
           (onSearch)="onSearchEvaluatee($event)"
+          (onSelect)="selectEvaluatee($event)"
+          (onRemove)="onRemoveEvaluatee($event)"
+
+          [selectedItems]="selectedEvaluatee()"
+          [emptyMessage]="'No se encontraron empleados.'"
           [errorMessage]="'El empleado es requerido'"
           [required]="true"
           [label]="'Empleado'"
@@ -64,10 +68,14 @@
           ></app-search-select>
 
           <app-search-select
-          [emptyMessage]="'No se encontraron empleados.'"
           (onSearch)="onSearchEvaluator($event)"
+          (onSelect)="selectEvaluator($event)"
+          (onRemove)="onRemoveEvaluator($event)"
+          
+          [selectedItems]="selectedEvaluator()"
+          [emptyMessage]="'No se encontraron empleados.'"
           [required]="false"
-          [label]="'Jefe inmediato'"
+          [label]="'Evaluador (Jefe inmediato)'"
           [items]="searchSelectOptions"
           ></app-search-select>
 

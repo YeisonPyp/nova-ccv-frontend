@@ -8,13 +8,12 @@ export interface PageableQuery {
 
 export class PageableQueryParams {
   constructor(private p: PageableQuery) {}
-  getParams(): HttpParams {
+  getParams(): Record<string, any> {
     return Object.entries(this.p).reduce((params, [key, value]) => {
-      console.log(key, value)
       if (value != undefined && value != null) {
-        params.set(key, value);
+        params[key] = value
       }
       return params;
-    }, new HttpParams());
+    }, {} as Record<string, unknown>);
   }
 }

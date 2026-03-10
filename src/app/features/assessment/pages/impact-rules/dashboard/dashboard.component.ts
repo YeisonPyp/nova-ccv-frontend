@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit {
   ];
 
   size = signal<number>(20);
-  page = signal<number>(1);
+  page = signal<number>(0);
   totalPages = signal<number>(0);
   rules = signal<ImpactRule[]>([]);
 

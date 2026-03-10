@@ -43,6 +43,8 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
   assessmentForm: FormGroup;
   periods = signal<Period[]>([]);
   employees = signal<Employee[]>([]);
+  selectedEvaluatee = signal<Array<SearchSelectOption>>([]);
+  selectedEvaluator = signal<Array<SearchSelectOption>>([]);
 
   private periodService = inject(PeriodService);
   private employeeService = inject(EmployeeService);
@@ -91,7 +93,7 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
 
   private searchEmployees(searchTerm: string = ""): void {
     this.employeeService
-      .findEmployees({ size: 50, search: searchTerm })
+      .findEmployees({ size: 50, nameOrEmail: searchTerm })
       .subscribe((response) => {
         if (response.data && response.data.content) {
           this.employees.set(response.data.content);
@@ -101,12 +103,24 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
 
   selectEvaluatee(option: SearchSelectOption): void {
     this.assessmentForm.patchValue({ evaluateeId: option.id });
+    this.selectedEvaluatee.set([option]);
     this.employees.set([]);
+  }
+
+  onRemoveEvaluatee(option: SearchSelectOption): void {
+    this.assessmentForm.patchValue({ evaluateeId: null });
+    this.selectedEvaluatee.set([]);
   }
 
   selectEvaluator(option: SearchSelectOption): void {
     this.assessmentForm.patchValue({ evaluatorId: option.id });
+    this.selectedEvaluator.set([option]);
     this.employees.set([]);
+  }
+
+  onRemoveEvaluator(option: SearchSelectOption): void {
+    this.assessmentForm.patchValue({ evaluatorId: null });
+    this.selectedEvaluator.set([]);
   }
 
   onClose() {
