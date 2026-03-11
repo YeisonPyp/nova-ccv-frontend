@@ -1,4 +1,5 @@
 import { Area } from "./area.model";
+import { CompetencyScore } from "./competency-score.model";
 import { Employee } from "./employee.model";
 import { Period } from "./period.model";
 import { Position } from "./position.model";
@@ -6,7 +7,6 @@ import { Position } from "./position.model";
 export interface Assessment {
   id: number;
   finalScoreCompetencies: number;
-  finalScoreResults: number;
   matrixTotalScore: number;
   status: string;
   strengths: string;
@@ -17,6 +17,7 @@ export interface Assessment {
   score: number;
 
   area?: Area;
+  competencyScores?: Array<CompetencyScore>;
   period?: Period | undefined;
   position?: Position | undefined;
   evaluator?: Employee | undefined;

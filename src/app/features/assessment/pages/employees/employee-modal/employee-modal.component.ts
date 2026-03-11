@@ -18,6 +18,7 @@ import {
 } from "@angular/forms";
 import {
   CreateEmployeeDto,
+  EmployeeService,
   UpdateEmployeeDto,
 } from "../../../../../core/services/assessment/employee.service";
 import { PositionService } from "../../../../../core/services/assessment/position.service";
@@ -46,6 +47,11 @@ export class EmployeeModalComponent implements OnChanges {
   selectedPositions = signal<SearchSelectOption[]>([]);
   private positionService = inject(PositionService);
 
+  employees = signal<SearchSelectOption[]>([]);
+
+  selectedEmployees = signal<SearchSelectOption[]>([]);
+  private employeeService = inject(EmployeeService);
+
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       name: ["", [Validators.required]],
@@ -57,11 +63,29 @@ export class EmployeeModalComponent implements OnChanges {
   }
 
   findPositions(q: string) {
-    this.positionService.findPositions({ page: 1, size: 10, name: q }).subscribe((r) => {
+    this.positionService.findPositions({ page: 0, size: 10, name: q }).subscribe((r) => {
       if (r.success && r.data) {
         this.positions.set(r.data.content.map((p) => ({ id: p.id, title: p.name })));
       }
     });
+  }
+
+  findEmployees(q: string) {
+    this.employeeService.findEmployees({ nameOrEmail: q }).subscribe((r) => {
+      if (r.data && r.success) {
+        this.employees.set(r.data.content.filter((e) => e.id !== this.employeeData?.id).map((e) => ({ id: e.id, title: `${e.name} ${e.lastName} (${e.email})` })));
+      }
+    })
+  }
+
+  onSelectReportsTo(o: SearchSelectOption) {
+    this.selectedEmployees.set([o]);
+    this.form.patchValue({ employeeReportsToId: o.id });
+  }
+
+  onRemoveReportsTo(o: SearchSelectOption) {
+    this.selectedEmployees.set([]);
+    this.form.patchValue({ employeeReportsToId: null });
   }
 
   onRemovePosition(o: SearchSelectOption) {
@@ -76,6 +100,7 @@ export class EmployeeModalComponent implements OnChanges {
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.form.reset();
       this.selectedPositions.set([]);
+      this.selectedEmployees.set([]);
     }
     if (changes["employeeData"] && this.employeeData && this.isOpen) {
       this.form.patchValue({
@@ -87,6 +112,10 @@ export class EmployeeModalComponent implements OnChanges {
       });
       if (this.employeeData.position) {
         this.selectedPositions.set([{id: this.employeeData.position.id, title: this.employeeData.position.name }])
+      }
+      if (this.employeeData.reportsTo) {
+        const e = this.employeeData.reportsTo;
+        this.selectedEmployees.set([{ id: e.id, title: `${e.name} ${e.lastName} (${e.email})` }])
       }
     }
   }

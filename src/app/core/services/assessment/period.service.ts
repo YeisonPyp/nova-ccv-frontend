@@ -11,6 +11,10 @@ import { Period } from "../../models/assessment/period.model";
 import { EditPeriodDto } from "../../../features/assessment/pages/periods/edit-period-modal/edit-period-modal.component";
 import { HttpClient } from "@angular/common/http";
 
+export interface EvaluationPeriodPageableQuery extends PageableQuery {
+  name?: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -19,7 +23,7 @@ export class PeriodService {
   private readonly API_URL = `${environment.apiUrl}/assessment-period/`;
 
   findCurrentPeriods(
-    query: PageableQuery,
+    query: EvaluationPeriodPageableQuery,
   ): Observable<ApiResponse<APIPage<Period>>> {
     return this.http.get<ApiResponse<APIPage<Period>>>(this.API_URL, {
       params: new PageableQueryParams(query).getParams(),

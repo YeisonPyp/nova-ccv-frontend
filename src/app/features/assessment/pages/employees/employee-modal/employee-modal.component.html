@@ -72,8 +72,7 @@
               <div class="invalid-feedback">Un correo válido es requerido.</div>
             }
           </div>
-          <div class="form-group" style="margin-top: 1rem">
-            <app-search-select
+          <app-search-select
             [label]="'Puesto'"
             [placeholder]="'Selleciona un puesto'"
             [maxElements]="1"
@@ -84,18 +83,19 @@
             (onSearch)="findPositions($event)"
             (onRemove)="onRemovePosition($event)"
             (onSelect)="onSelectPosition($event)"
-            ></app-search-select>
-          </div>
-          <div class="form-group" style="margin-top: 1rem">
-            <label for="employee-reports-to">Reporta A (ID Empleado)</label>
-            <input
-              type="number"
-              id="employee-reports-to"
-              formControlName="employeeReportsToId"
-              class="form-control"
-              placeholder="ID del supervisor"
-            />
-          </div>
+          ></app-search-select>
+          <app-search-select
+            [label]="'Reporta A (Jefe directo)'"
+            [placeholder]="'Selecciona un empleado'"
+            [maxElements]="1"
+            [required]="false"
+            [items]="employees()"
+            [selectedItems]="selectedEmployees()"
+
+            (onSearch)="findEmployees($event)"
+            (onRemove)="onRemoveReportsTo($event)"
+            (onSelect)="onSelectReportsTo($event)"
+          ></app-search-select>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="onClose()">

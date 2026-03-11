@@ -34,14 +34,16 @@
 
 @if (selectedAssessment(); as assessment) {
   <app-edit-assessment-modal
+    (closeModal)="closeModal()"
     [assessment]="assessment"
     [isOpen]="isModalOpen()"
     (saveAssessment)="onEditSubmit($event)"
   ></app-edit-assessment-modal>
+} @else {
+  <app-create-assessment-modal
+    (closeModal)="closeModal()"
+    [currentPeriod]="selectedPeriod()"
+    [isOpen]="isModalOpen()"
+    (saveAssessment)="onCreateSubmit($event)"
+  ></app-create-assessment-modal>
 }
-
-<app-create-assessment-modal
-  (closeModal)="closeModal()"
-  [isOpen]="isModalOpen()"
-  (saveAssessment)="onCreateSubmit($event)"
-></app-create-assessment-modal>

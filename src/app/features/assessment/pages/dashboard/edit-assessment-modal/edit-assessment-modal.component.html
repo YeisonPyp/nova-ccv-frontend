@@ -37,14 +37,14 @@
       <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
 
-            @for (competency of competencies; track competency.id) {
+            @for (competencyScore of competenciesScores; track competencyScore.id) {
                 <div class="form-group">
-                    <label for="competency-{{ competency.id }}">{{ competency.name }}</label>
-                    <p>{{competency.description}}</p>
+                    <label for="competency-{{ competencyScore.competency!.id }}">{{ competencyScore.competency!.name }}</label>
+                    <p>{{competencyScore.competency!.description}}</p>
                     <input
                         type="number"
-                        id="competency-{{ competency.id }}"
-                        formControlName="competencyScores[{{ competency.id }}]"
+                        id="competency-{{ competencyScore.competency!.id }}"
+                        formControlName="competencyScores[{{ competencyScore.competency!.id }}]"
                         min="1"
                         max="5"
                         class="form-control"

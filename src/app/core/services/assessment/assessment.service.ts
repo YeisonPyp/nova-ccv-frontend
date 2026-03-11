@@ -12,6 +12,12 @@ import { CreateAssessmentDto } from "../../../features/assessment/pages/dashboar
 import { EditAssesmentDto } from "../../../features/assessment/pages/dashboard/edit-assessment-modal/edit-assessment-modal.component";
 import { HttpClient } from "@angular/common/http";
 
+export interface AssessmentPageableQuery extends PageableQuery {
+  periodId?: number;
+  evaluateeId?: number;
+  evaluatorId?: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -19,12 +25,11 @@ export class AssessmentService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/assessment`;
 
-  findAssessmentsInPeriod(
-    periodId: number,
-    query: PageableQuery,
+  findAssessments(
+    query: AssessmentPageableQuery,
   ): Observable<ApiResponse<APIPage<Assessment>>> {
     return this.http.get<ApiResponse<APIPage<Assessment>>>(
-      `${this.API_URL}/period/${periodId}`,
+      this.API_URL,
       {
         params: new PageableQueryParams(query).getParams(),
       },

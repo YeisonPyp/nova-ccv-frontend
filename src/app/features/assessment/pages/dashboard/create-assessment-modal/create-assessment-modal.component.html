@@ -18,41 +18,21 @@
 
       <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
-          <div class="form-group">
-            <label for="evaluation-period"
-              >Periodo de Evaluación <span class="required">*</span></label
-            >
-            <select
-              id="evaluation-period"
-              formControlName="periodId"
-              class="form-control"
-              [class.is-invalid]="
-                assessmentForm.get('periodId')?.invalid &&
-                assessmentForm.get('periodId')?.touched
-              "
-            >
-              <option [ngValue]="null" disabled selected>
-                Seleccione un periodo
-              </option>
-              @for (period of periods(); track period.id) {
-                <option [ngValue]="period.id">
-                  {{
-                    period.name
-                      ? period.name
-                      : period.startDate + " a " + period.endDate
-                  }}
-                </option>
-              }
-            </select>
-            @if (
-              assessmentForm.get("periodId")?.invalid &&
-              assessmentForm.get("periodId")?.touched
-            ) {
-              <div class="invalid-feedback">
-                El periodo de evaluación es requerido.
-              </div>
-            }
-          </div>
+          
+
+          <app-search-select
+          (onSearch)="onSearchPeriod($event)"
+          (onSelect)="onSelectPeriod($event)"
+          (onRemove)="onRemovePeriod($event)"
+
+          [selectedItems]="selectedPeriods()"
+          [emptyMessage]="'No se encontraron periodos de evaluación.'"
+          [errorMessage]="'El periodo de evaluación es requerido'"
+          [required]="true"
+          [label]="'Periodo de evaluación'"
+          [items]="periods()"
+          ></app-search-select>
+
 
           <app-search-select
           (onSearch)="onSearchEvaluatee($event)"
@@ -66,20 +46,6 @@
           [label]="'Empleado'"
           [items]="searchSelectOptions"
           ></app-search-select>
-
-          <app-search-select
-          (onSearch)="onSearchEvaluator($event)"
-          (onSelect)="selectEvaluator($event)"
-          (onRemove)="onRemoveEvaluator($event)"
-          
-          [selectedItems]="selectedEvaluator()"
-          [emptyMessage]="'No se encontraron empleados.'"
-          [required]="false"
-          [label]="'Evaluador (Jefe inmediato)'"
-          [items]="searchSelectOptions"
-          ></app-search-select>
-
-          
         </div>
 
         <div class="modal-footer" style="margin-top: 1.5rem">

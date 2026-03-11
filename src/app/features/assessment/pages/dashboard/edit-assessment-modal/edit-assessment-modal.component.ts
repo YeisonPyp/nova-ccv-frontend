@@ -3,6 +3,7 @@ import { Component, EventEmitter, input, Input, OnChanges, OnInit, Output, Simpl
 import { Assessment } from '../../../../../core/models/assessment/assessment.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Competencie } from '../../../../../core/models/assessment/competencie.model';
+import { CompetencyScore } from '../../../../../core/models/assessment/competency-score.model';
 
 export interface CompetencyAssessmentDto {
   [competencyId: number]: number | null; // competencyId: score
@@ -105,7 +106,7 @@ export class EditAssessmentModalComponent implements OnInit, OnChanges{
     return new Date(this.assessment().createdAt).getDate().toLocaleString();
   }
 
-  get competencies(): Array<Competencie>{
-    return this.assessment().position?.competencies ?? [];
+  get competenciesScores(): Array<CompetencyScore>{
+    return this.assessment().competencyScores ?? [];
   }
 }

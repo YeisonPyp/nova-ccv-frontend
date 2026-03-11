@@ -57,14 +57,16 @@ export class AssessmentDashboardComponent implements OnInit {
     this.isModalOpen.set(true);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fetchPage(this.page());
+  }
 
   fetchPage(p: number) {
     this.page.set(p);
     const period = this.selectedPeriod();
-    if (!period) return;
+    // if (!period) return;
     this.assesmentService
-      .findAssessmentsInPeriod(period.id, { page: p, size: this.size() })
+      .findAssessments({ page: p, size: this.size() })
       .subscribe((result) => {
         if (result.success && result.data && result.data.content) {
           this.pages.set(result.data.totalPages);
@@ -83,6 +85,8 @@ export class AssessmentDashboardComponent implements OnInit {
   onCreateSubmit(data: CreateAssessmentDto) {
     this.assesmentService.createAssessment(data).subscribe((result) => {
       if (result.success && result.data) {
+        this.fetchPage(this.page());
+        this.closeModal();
       }
     });
   }

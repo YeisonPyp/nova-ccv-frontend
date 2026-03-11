@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   inject,
+  input,
   Input,
   OnChanges,
   OnInit,
@@ -25,8 +26,7 @@ import { SearchSelectOption } from "../../../../../shared/components/search-sele
 
 export interface CreateAssessmentDto {
   evaluateeId: number;
-  evaluatorId?: number;
-  periodId?: number;
+  periodId: number;
 }
 
 @Component({
@@ -35,16 +35,17 @@ export interface CreateAssessmentDto {
   templateUrl: "./create-assessment-modal.component.html",
   styleUrl: "./create-assessment-modal.component.scss",
 })
-export class CreateAssessmentModalComponent implements OnChanges, OnInit {
+export class CreateAssessmentModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Output() closeModal = new EventEmitter<void>();
   @Output() saveAssessment = new EventEmitter<CreateAssessmentDto>();
+  currentPeriod = input.required<Period | undefined>();
 
   assessmentForm: FormGroup;
-  periods = signal<Period[]>([]);
+  periods = signal<SearchSelectOption[]>([]);
   employees = signal<Employee[]>([]);
+  selectedPeriods = signal<Array<SearchSelectOption>>([]);
   selectedEvaluatee = signal<Array<SearchSelectOption>>([]);
-  selectedEvaluator = signal<Array<SearchSelectOption>>([]);
 
   private periodService = inject(PeriodService);
   private employeeService = inject(EmployeeService);
@@ -52,7 +53,6 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
   constructor(private fb: FormBuilder) {
     this.assessmentForm = this.fb.group({
       evaluateeId: [null, Validators.required],
-      evaluatorId: [null],
       periodId: [null, Validators.required],
     });
   }
@@ -64,26 +64,37 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
     }));
   }
 
-  ngOnInit(): void {
-    this.periodService
-      .findCurrentPeriods({ size: 100 })
-      .subscribe((response) => {
-        if (response.data && response.data.content) {
-          this.periods.set(response.data.content);
-        }
-      });
-    this.searchEmployees();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.assessmentForm.reset();
+      const currentPeriod = this.currentPeriod();
+      if (currentPeriod) {
+        this.selectedPeriods.set([{ id: currentPeriod.id, title: currentPeriod.name }]);
+        this.assessmentForm.patchValue({ periodId: currentPeriod.id });
+      }
     }
   }
 
   onSearchEvaluatee(s: string): void {
     this.searchEmployees(s);
     this.assessmentForm.patchValue({ evaluateeId: null });
+  }
+
+  onSearchPeriod(s: string) {
+    this.periodService.findCurrentPeriods({ name: s }).subscribe((r) => {
+      if (r.data && r.success) {
+        this.periods.set(r.data.content.map((p) => ({ id: p.id, title: p.name })));
+      }
+    })
+  }
+
+  onSelectPeriod(option: SearchSelectOption) {
+    this.selectedPeriods.set([option]);
+    this.assessmentForm.patchValue({ periodId: option.id });
+  }
+
+  onRemovePeriod(optoin: SearchSelectOption) {
+    this.selectedPeriods.set([]);
   }
 
   onSearchEvaluator(s: string): void {
@@ -110,17 +121,6 @@ export class CreateAssessmentModalComponent implements OnChanges, OnInit {
   onRemoveEvaluatee(option: SearchSelectOption): void {
     this.assessmentForm.patchValue({ evaluateeId: null });
     this.selectedEvaluatee.set([]);
-  }
-
-  selectEvaluator(option: SearchSelectOption): void {
-    this.assessmentForm.patchValue({ evaluatorId: option.id });
-    this.selectedEvaluator.set([option]);
-    this.employees.set([]);
-  }
-
-  onRemoveEvaluator(option: SearchSelectOption): void {
-    this.assessmentForm.patchValue({ evaluatorId: null });
-    this.selectedEvaluator.set([]);
   }
 
   onClose() {

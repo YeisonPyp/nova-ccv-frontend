@@ -113,7 +113,7 @@ export class JobModalComponent implements OnChanges {
   }
 
   onSearchCompetencie(q: string) {
-    this.competencieService.getCompetencies({ page: 1, name: q, size: 10 }).subscribe((r) => {
+    this.competencieService.getCompetencies({ name: q, size: 10 }).subscribe((r) => {
       if (r.success && r.data) {
         this.competencies.set(r.data.content.map((e) => ({ id: e.id, title: e.name })));
       }
