@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SearchSelectOption } from "./on-search-select.interface";
-import { debounceTime, interval, Subject } from "rxjs";
+import { debounceTime, Subject } from "rxjs";
 
 @Component({
   selector: "app-search-select",
@@ -21,7 +21,7 @@ export class SearchSelectComponent {
   @Input() maxElements = 1;
   @Input() items: SearchSelectOption[] = [];
   @Input() emptyMessage = "No se encontraron resultados.";
-  @Input() selectedItems : Array<SearchSelectOption> = [];
+  @Input() selectedItems: Array<SearchSelectOption> = [];
 
   @Output() onSearch = new EventEmitter<string>();
   @Output() onSelect = new EventEmitter<SearchSelectOption>();

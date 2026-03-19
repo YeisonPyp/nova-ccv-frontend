@@ -1,8 +1,10 @@
 <div class="form-group">
-  <label [for]="id">
-    {{ label }}
-    @if (required) { <span class="text-danger">*</span> }
-  </label>
+  @if (label) {
+    <label [for]="id">
+      {{ label }}
+      @if (required) { <span class="text-danger">*</span> }
+    </label>
+  }
 
   <div 
     class="input-container form-control" 

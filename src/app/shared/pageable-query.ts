@@ -1,5 +1,3 @@
-import { HttpParams } from "@angular/common/http";
-
 export interface PageableQuery {
   page?: number;
   size?: number;
@@ -7,7 +5,7 @@ export interface PageableQuery {
 }
 
 export class PageableQueryParams {
-  constructor(private p: PageableQuery) {}
+  constructor(private p: PageableQuery) { }
   getParams(): Record<string, any> {
     return Object.entries(this.p).reduce((params, [key, value]) => {
       if (value != undefined && value != null) {

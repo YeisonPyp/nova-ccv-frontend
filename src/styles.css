@@ -1,5 +1,5 @@
+@import "tailwindcss";
 /* You can add global styles to this file, and also import other style files */
-// src/styles.scss
 
 * {
   box-sizing: border-box;
@@ -32,7 +32,6 @@ button {
   font-family: inherit;
 }
 
-// Scrollbar
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

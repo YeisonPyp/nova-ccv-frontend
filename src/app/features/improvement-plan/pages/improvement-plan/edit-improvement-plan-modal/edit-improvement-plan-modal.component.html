@@ -1,0 +1,150 @@
+@if (isOpen()) {
+  <div class="modal-overlay" [formGroup]="form">
+    <div
+      class="modal-container max-w-7xl!"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <input
+          type="text"
+          name="plan-name"
+          class="text-xl font-bold text-gray-800 tracking-tight"
+          id="plan-name"
+          formControlName="name"
+          placeholder="Nombre del plan"
+        />
+        <button
+          class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="grow overflow-y-auto p-6 space-y-8">
+        <section
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-gray-50/50 p-4 rounded-xl border border-gray-100"
+        >
+          @if (planId()) {
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+                >Estado</span
+              >
+              <select
+                formControlName="status"
+                class="bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              >
+                <option value="PENDING">PENDIENTE</option>
+                <option value="RUNNING">EN EJECUCIÓN</option>
+                <option value="COMPLETED">COMPLETADO</option>
+              </select>
+            </div>
+          }
+
+          <div class="flex flex-col gap-1">
+            <span
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+              >Responsable</span
+            >
+            <div class="flex items-center gap-2">
+              <app-search-select
+                [emptyMessage]="
+                  searchSelectEmployeesContext.op?.emptyMessage ?? ''
+                "
+                [items]="searchSelectEmployeesContext.options()"
+                [selectedItems]="
+                  searchSelectEmployeesContext.selectedOptions()
+                "
+                [maxElements]="searchSelectEmployeesContext.op?.maxItems ?? 1"
+                [required]="
+                  searchSelectEmployeesContext.op?.isRequired ?? false
+                "
+                (onRemove)="searchSelectEmployeesContext.remove($event)"
+                (onSearch)="searchSelectEmployeesContext.search($event)"
+                (onSelect)="searchSelectEmployeesContext.select($event)"
+              ></app-search-select>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 lg:col-span-2">
+            <span
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+              >Periodo del Plan</span
+            >
+            <div class="flex items-center gap-2">
+              <input
+                type="date"
+                class="bg-transparent text-sm font-medium text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1"
+                formControlName="startsAt"
+              />
+              <svg
+                class="w-3 h-3 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor font-bold"
+              >
+                <path d="M14 5l7 7-7 7" stroke-width="3" />
+              </svg>
+              <input
+                type="date"
+                class="bg-transparent text-sm font-medium text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1"
+                formControlName="expiresAt"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="prose prose-sm max-w-none">
+          <h4
+            class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"
+          >
+            Descripción General
+          </h4>
+          <textarea
+            class="text-gray-600 leading-relaxed italic border-l-4 border-gray-200 pl-4"
+            formControlName="description"
+          ></textarea>
+        </section>
+        @if (planId()) {
+          <section class="pt-4 border-t border-gray-100">
+            <app-corrective-action-section
+              [parentId]="plan()?.id!"
+              [childActions]="plan()?.correctiveActionsLength ?? 0"
+            ></app-corrective-action-section>
+          </section>
+        }
+      </div>
+
+      @if (!planId()) {
+        <div
+          class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3"
+        >
+          <button
+            class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 transition-colors"
+            (click)="onCancel()"
+          >
+            Cerrar
+          </button>
+          <button
+            class="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg shadow-sm hover:bg-blue-700 transition-all"
+            (click)="onSave()"
+          >
+            Guardar Cambios
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

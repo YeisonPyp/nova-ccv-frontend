@@ -1,0 +1,67 @@
+<div class="w-full">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Planes de Mejora</h2>
+    <button class="btn btn-primary" (click)="openModal()" *ngIf="isAdmin()">
+      <i class="bi bi-plus-lg"></i> Nuevo Plan
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  } @else {
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <app-dynamic-table
+          [data]="plans()"
+          [columns]="columns"
+          emptyMessage="No se encontraron planes de mejora."
+        >
+          <ng-template #actions let-item>
+            <button
+              class="btn btn-sm btn-outline-info me-2"
+              (click)="viewDetails(item)"
+              title="Ver Detalles"
+            >
+              <i class="bi bi-eye"></i>
+            </button>
+            <button
+              *ngIf="isAdmin()"
+              class="btn btn-sm btn-outline-primary me-2"
+              (click)="openModal(item)"
+              title="Editar"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              *ngIf="isAdmin()"
+              class="btn btn-sm btn-outline-danger"
+              (click)="deletePlan(item)"
+              title="Eliminar"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </ng-template>
+        </app-dynamic-table>
+
+        @if (totalPages() > 1) {
+          <app-pagination
+            [currentPage]="currentPage()"
+            [pages]="totalPages()"
+            (pageChange)="onPageChange($event)"
+          />
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<app-edit-improvement-plan-modal
+  [planId]="selectedPlanId()"
+  [isOpen]="isModalOpen()"
+  (close)="closeModal()"
+  (saved)="onPlanSaved()"
+/>

@@ -80,7 +80,13 @@ export class AssessmentDashboardComponent implements OnInit {
     this.fetchPage(1);
   }
 
-  onEditSubmit(data: EditAssesmentDto) {}
+  onEditSubmit(data: EditAssesmentDto) {
+    console.log(data);
+    this.assesmentService.updateAssessment(data).subscribe((result) => {
+      this.fetchPage(this.page());
+      this.closeModal();
+    })
+  }
 
   onCreateSubmit(data: CreateAssessmentDto) {
     this.assesmentService.createAssessment(data).subscribe((result) => {

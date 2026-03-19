@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
 import { Employee } from "../../models/assessment/employee.model";
@@ -9,6 +9,11 @@ import {
   PageableQuery,
   PageableQueryParams,
 } from "../../../shared/pageable-query";
+import {
+  OnSelectCallback,
+  SearchSelectContextFactory,
+  SearchSelectContextFactoryOptions,
+} from "../../../shared/components/search-select/on-search-select.interface";
 
 export interface EmployeeQuery extends PageableQuery {
   nameOrEmail?: string;
@@ -60,5 +65,21 @@ export class EmployeeService {
 
   deleteEmployee(id: number): Observable<ApiResponse<Employee>> {
     return this.http.delete<ApiResponse<Employee>>(`${this.API_URL}/${id}`);
+  }
+
+  newSearchSelectEmployeeContext(
+    onSelectCallback?: OnSelectCallback<Employee>,
+    op?: SearchSelectContextFactoryOptions,
+  ) {
+    return new SearchSelectContextFactory<Employee>(
+      (term) => {
+        return this.findEmployees({ nameOrEmail: term }).pipe(
+          map((res) => res?.data?.content ?? []),
+        );
+      },
+      (e) => ({ id: e.id, title: `${e.name ?? ""} ${e.lastName ?? ""}` }),
+      onSelectCallback,
+      op,
+    );
   }
 }
