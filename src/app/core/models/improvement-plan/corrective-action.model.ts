@@ -18,12 +18,13 @@ export interface CorrectiveActionDto {
 
 export interface CreateCorrectiveActionDto {
   improvementPlanId: number;
+  expiresAt: string;
   name: string;
-  description: string;
+  description?: string;
   parentId?: number;
   employeeId?: number;
   status?: string;
-  followUp: string;
+  followUp?: string;
   progress?: number;
 }
 

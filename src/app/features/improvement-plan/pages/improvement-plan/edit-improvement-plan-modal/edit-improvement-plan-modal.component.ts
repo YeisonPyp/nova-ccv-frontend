@@ -3,8 +3,10 @@ import {
   Component,
   computed,
   effect,
+  EventEmitter,
   inject,
   input,
+  output,
   signal,
 } from "@angular/core";
 import {
@@ -21,6 +23,7 @@ import { catchError, map, of, switchMap } from "rxjs";
 import { EmployeeService } from "../../../../../core/services/assessment/employee.service";
 import { ControlEntityService } from "../../../../../core/services/improvement-plan/control-entity.service";
 import { SearchSelectComponent } from "../../../../../shared/components/search-select/search-select.component";
+import { ImprovementPlan } from "../../../../../core/models/improvement-plan/improvement-plan.model";
 
 @Component({
   selector: "app-edit-improvement-plan-modal",
@@ -42,6 +45,9 @@ export class EditImprovementPlanModalComponent {
   private controlEntityService = inject(ControlEntityService);
   private readonly fb = inject(FormBuilder);
 
+  onClose = output<void>();
+  onSave = output<ImprovementPlan>();
+
   searchSelectEmployeesContext =
     this.employeeService.newSearchSelectEmployeeContext((_) => { }, {
       maxItems: 1,
@@ -59,22 +65,7 @@ export class EditImprovementPlanModalComponent {
     });
 
   planId = input.required<number | null>();
-
-  plan = toSignal(
-    toObservable(this.planId).pipe(
-      switchMap((id) => {
-        if (!id) return of(null);
-        return this.service.findById(id).pipe(
-          map((response) => response.data),
-          catchError((err) => {
-            this.error.set(err);
-            return of(null);
-          }),
-        );
-      }),
-    ),
-    { initialValue: null },
-  );
+  plan = signal<ImprovementPlan | null>(null);
 
   get planStatus(): string {
     if (this.plan() == null) return "";
@@ -100,6 +91,19 @@ export class EditImprovementPlanModalComponent {
   });
 
   constructor() {
+    toObservable(this.planId).pipe(
+      switchMap((id) => {
+        if (!id) return of(null);
+        return this.service.findById(id).pipe(
+          map((response) => response.data),
+          catchError((err) => {
+            this.error.set(err);
+            return of(null);
+          }),
+        );
+      }),
+    ).subscribe((p) => this.plan.set(p));
+
     effect(() => {
       const p = this.plan();
       if (p) {
@@ -119,7 +123,38 @@ export class EditImprovementPlanModalComponent {
     });
   }
 
-  onSave() { }
+  onSavePlan() {
+    const p = this.plan();
+    const controlEntity = this.searchSelectControlEntityContext.selectedOptions()[0];
+    const { description, expiresAt, name } = this.form.value;
+    const controlEntityId = controlEntity?.id as number;
+    const controlEntityName = controlEntity.title;
+    if (p) {
+      this.service.update(p.id, {
+        controlEntityId,
+        controlEntityName,
+        description,
+        expiresAt,
+        name
+      }).subscribe((p) => {
+        this.plan.set(p.data);
+        this.onSave.emit(p.data);
+      });
+    } else {
+      this.service.create({
+        controlEntityId,
+        controlEntityName,
+        description,
+        expiresAt,
+        name
+      }).subscribe((p) => {
+        this.plan.set(p.data);
+        this.onSave.emit(p.data);
+      });
+    }
+  }
 
-  onCancel() { }
+  onCancel() {
+    this.onClose.emit();
+  }
 }

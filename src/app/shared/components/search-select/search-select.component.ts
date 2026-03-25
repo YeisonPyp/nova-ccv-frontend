@@ -3,11 +3,12 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SearchSelectOption } from "./on-search-select.interface";
 import { debounceTime, Subject } from "rxjs";
+import { ChipItemComponent } from "./chip-item/chip-item.component";
 
 @Component({
   selector: "app-search-select",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChipItemComponent],
   templateUrl: "./search-select.component.html",
   styleUrl: "./search-select.component.scss",
 })
@@ -58,8 +59,7 @@ export class SearchSelectComponent {
     this.isOpen.set(false);
   }
 
-  removeItem(item: SearchSelectOption, event: Event) {
-    event.preventDefault();
+  removeItem(item: SearchSelectOption) {
     this.onRemove.emit(item);
     this.isOpen.set(false);
   }

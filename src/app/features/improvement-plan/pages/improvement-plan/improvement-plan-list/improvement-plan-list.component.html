@@ -22,19 +22,12 @@
         >
           <ng-template #actions let-item>
             <button
-              class="btn btn-sm btn-outline-info me-2"
-              (click)="viewDetails(item)"
-              title="Ver Detalles"
-            >
-              <i class="bi bi-eye"></i>
-            </button>
-            <button
               *ngIf="isAdmin()"
               class="btn btn-sm btn-outline-primary me-2"
               (click)="openModal(item)"
               title="Editar"
             >
-              <i class="bi bi-pencil"></i>
+              <i class="bi">✏️</i>
             </button>
             <button
               *ngIf="isAdmin()"
@@ -42,7 +35,7 @@
               (click)="deletePlan(item)"
               title="Eliminar"
             >
-              <i class="bi bi-trash"></i>
+              <i class="bi">🗑️</i>
             </button>
           </ng-template>
         </app-dynamic-table>
@@ -62,6 +55,6 @@
 <app-edit-improvement-plan-modal
   [planId]="selectedPlanId()"
   [isOpen]="isModalOpen()"
-  (close)="closeModal()"
-  (saved)="onPlanSaved()"
+  (onClose)="closeModal()"
+  (onSave)="onPlanSaved($event)"
 />

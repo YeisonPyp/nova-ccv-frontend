@@ -10,16 +10,24 @@ import {
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
 
+export const correctiveActionStatus = {
+  COMPLETED: 'COMPLETED',
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS'
+} as const;
+
+export type CorrectiveActionStatus = keyof (typeof correctiveActionStatus);
+
 @Injectable({
   providedIn: "root",
 })
 export class CorrectiveActionService {
-  private apiUrl = `${environment.apiUrl}/api/corrective-action`;
+  private apiUrl = `${environment.apiUrl}/corrective-action`;
 
   constructor(private http: HttpClient) { }
 
-  findByParentId(parentId: number) {
-    return this.http.get<ApiResponse<Array<CorrectiveActionDto>>>(`${this.apiUrl}/children/${parentId}`);
+  findByParentId(planId: number, parentId?: number) {
+    return this.http.get<ApiResponse<Array<CorrectiveActionDto>>>(`${this.apiUrl}/plan/${planId}/children/${parentId ?? ''}`);
   }
 
   findElements(

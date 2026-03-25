@@ -1,0 +1,73 @@
+<div
+  class="group flex items-center min-h-8 py-2 px-2 mt-2 rounded-md hover:bg-gray-50 transition-all border-b border-transparent hover:border-gray-100"
+>
+  <div class="flex items-center space-x-2">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+    </svg>
+    <app-search-select 
+      [emptyMessage]="searchSelectEmployeeContext.op?.emptyMessage ?? ''"
+      [items]="searchSelectEmployeeContext.options()"
+      [selectedItems]="searchSelectEmployeeContext.selectedOptions()"
+      [maxElements]="searchSelectEmployeeContext.op?.maxItems ?? 1"
+      [required]="searchSelectEmployeeContext.op?.isRequired ?? false"
+      (onRemove)="searchSelectEmployeeContext.remove($event)"
+      (onSearch)="searchSelectEmployeeContext.search($event)"
+      (onSelect)="searchSelectEmployeeContext.select($event)">
+    </app-search-select>
+
+    <div class="relative inline-block">
+      <button 
+        type="button"
+        (click)="datePicker.showPicker()" 
+        class="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+        title="Establecer fecha límite">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      </button>
+
+      <input 
+        #datePicker
+        type="date" 
+        class="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
+        (change)="onDateSelected($event)"
+      />
+    </div>
+    @if (dueDateOption) {
+      <app-chip-item
+        [op]="dueDateOption"
+        (onRemove)="onRemoveDueDate($event)"
+      ></app-chip-item>
+    
+    }
+  </div>
+
+  <input
+    #newItemInput
+    type="text"
+    placeholder="Agregar elemento"
+    class="grow bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:placeholder:text-transparent transition-all ml-2"
+    (keyup.enter)="onEnterPressed($event)"
+  />
+</div>

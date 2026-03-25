@@ -1,9 +1,6 @@
 @if (isOpen()) {
-  <div class="modal-overlay" [formGroup]="form">
-    <div
-      class="modal-container max-w-7xl!"
-      (click)="$event.stopPropagation()"
-    >
+  <div class="modal-overlay flex flex-col max-h-screen" [formGroup]="form">
+    <div class="modal-container max-w-7xl!" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <input
           type="text"
@@ -15,6 +12,7 @@
         />
         <button
           class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+          (click)="onCancel()"
         >
           <svg
             class="w-6 h-6"
@@ -60,20 +58,30 @@
             >
             <div class="flex items-center gap-2">
               <app-search-select
-                [emptyMessage]="
-                  searchSelectEmployeesContext.op?.emptyMessage ?? ''
-                "
+                [emptyMessage]="searchSelectEmployeesContext.op?.emptyMessage??''"
                 [items]="searchSelectEmployeesContext.options()"
-                [selectedItems]="
-                  searchSelectEmployeesContext.selectedOptions()
-                "
-                [maxElements]="searchSelectEmployeesContext.op?.maxItems ?? 1"
-                [required]="
-                  searchSelectEmployeesContext.op?.isRequired ?? false
-                "
+                [selectedItems]="searchSelectEmployeesContext.selectedOptions()"
+                [maxElements]="searchSelectEmployeesContext.op?.maxItems??1"
+                [required]="searchSelectEmployeesContext.op?.isRequired ?? false"
                 (onRemove)="searchSelectEmployeesContext.remove($event)"
                 (onSearch)="searchSelectEmployeesContext.search($event)"
                 (onSelect)="searchSelectEmployeesContext.select($event)"
+              ></app-search-select>
+            </div>
+            <span
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+              >Entidad de control</span
+            >
+            <div class="flex items-center gap-2">
+              <app-search-select
+                [emptyMessage]="searchSelectControlEntityContext.op?.emptyMessage??''"
+                [items]="searchSelectControlEntityContext.options()"
+                [selectedItems]="searchSelectControlEntityContext.selectedOptions()"
+                [maxElements]="searchSelectControlEntityContext.op?.maxItems??1"
+                [required]="searchSelectControlEntityContext.op?.isRequired??false"
+                (onRemove)="searchSelectControlEntityContext.remove($event)"
+                (onSearch)="searchSelectControlEntityContext.search($event)"
+                (onSelect)="searchSelectControlEntityContext.select($event)"
               ></app-search-select>
             </div>
           </div>
@@ -120,7 +128,7 @@
         @if (planId()) {
           <section class="pt-4 border-t border-gray-100">
             <app-corrective-action-section
-              [parentId]="plan()?.id!"
+              [planId]="plan()?.id!"
               [childActions]="plan()?.correctiveActionsLength ?? 0"
             ></app-corrective-action-section>
           </section>
@@ -139,7 +147,7 @@
           </button>
           <button
             class="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg shadow-sm hover:bg-blue-700 transition-all"
-            (click)="onSave()"
+            (click)="onSavePlan()"
           >
             Guardar Cambios
           </button>

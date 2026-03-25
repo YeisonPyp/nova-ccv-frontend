@@ -11,10 +11,10 @@
     [class.is-invalid]="isInvalid"
   >
     @for (item of selectedItems; track item.id) {
-      <span class="chip">
-        {{ item.title }}
-        <span class="chip-remove" (click)="removeItem(item, $event)">&times;</span>
-      </span>
+      <app-chip-item
+        [op]="item"
+        (onRemove)="removeItem($event)"
+      ></app-chip-item>
     }
 
     @if (maxElements <= 0 || selectedItems.length < maxElements) {

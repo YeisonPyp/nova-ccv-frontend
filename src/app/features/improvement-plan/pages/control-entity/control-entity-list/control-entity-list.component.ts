@@ -45,11 +45,11 @@ export class ControlEntityListComponent implements OnInit {
   }
 
   loadEntities(page: number = 1): void {
-    this.controlEntityService.findAll({ page, size: this.pageSize }).subscribe({
+    this.controlEntityService.findAll({ page: page - 1, size: this.pageSize }).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.entities.set(response.data.content);
-          this.currentPage.set(response.data.pageable.pageNumber + 1);
+          this.currentPage.set(response.data.pageable.pageNumber);
           this.totalPages.set(response.data.totalPages);
         }
       },

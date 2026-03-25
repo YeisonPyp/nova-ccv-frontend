@@ -86,7 +86,7 @@ export class ImprovementPlanListComponent implements OnInit {
     this.selectedPlanId.set(null);
   }
 
-  onPlanSaved(): void {
+  onPlanSaved(p: ImprovementPlan): void {
     this.loadPlans(this.currentPage());
   }
 
@@ -106,6 +106,4 @@ export class ImprovementPlanListComponent implements OnInit {
   isAdmin(): boolean {
     return true;
   }
-
-  viewDetails(item: ImprovementPlan) { }
 }

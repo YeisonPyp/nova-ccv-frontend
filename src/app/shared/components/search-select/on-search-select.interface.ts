@@ -60,6 +60,12 @@ export class SearchSelectContextFactory<T extends SearchOptionWithId> implements
       }
     }
   }
+  
+  clear() {
+    this.selectedOptions.set([]);
+    this.results.set([]);
+    this.options.set([]);
+  }
 
   selectResults(r: Array<T>) {
     this.selectedOptions.set(r.map((i) => this.mapper(i)));
