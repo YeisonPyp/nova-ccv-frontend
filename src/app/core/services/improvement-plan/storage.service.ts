@@ -24,11 +24,11 @@ export class StorageService {
     return this.http.request<ApiResponse<any>>(req);
   }
 
-  downloadResource(path: string) {
-    return this.http.get(`${this.apiUrl}`, { params: { path }, responseType: 'blob' },);
+  downloadResource(bucketName: string, name: string) {
+    return this.http.get(`${this.apiUrl}/download/${bucketName}`, { params: { name }, responseType: 'blob' },);
   }
 
-  deleteFile(bucketName: string, objectName: string): Observable<ApiResponse<string>> {
-    return this.http.delete<ApiResponse<string>>(`${this.apiUrl}/delete/${bucketName}/${objectName}`);
+  deleteFile(bucketName: string, name: string): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.apiUrl}/delete/${bucketName}`, { params: { name } });
   }
 }

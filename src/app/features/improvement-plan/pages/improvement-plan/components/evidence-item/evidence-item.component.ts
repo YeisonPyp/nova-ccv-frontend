@@ -42,9 +42,10 @@ export class EvidenceItemComponent {
 
   constructor() {
     toObservable(this.evidence).subscribe((e) => {
-      if (e?.filePath && e.bucketName) {
+      if (e?.objectName && e.bucketName) {
         this.storageService.downloadResource(
-          this.evidence()!.filePath!,
+          e.bucketName,
+          e.objectName,
         ).subscribe((blob) => {
           const url = window.URL.createObjectURL(blob);
           this.resourceUrl.set(url);

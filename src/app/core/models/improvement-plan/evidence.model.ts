@@ -4,7 +4,7 @@ export interface EvidenceDto {
   type: string;
   description?: string;
   url?: string;
-  filePath?: string;
+  objectName?: string;
   bucketName?: string;
   createdAt?: string;
   updatedAt?: string;
