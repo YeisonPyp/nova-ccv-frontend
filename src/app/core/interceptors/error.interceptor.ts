@@ -26,6 +26,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             errorMessage = '❌ No se pudo conectar con el servidor';
             break;
 
+          case 200:
+            return next(req);
           case 401:
             errorMessage = '🔒 No autorizado. Por favor inicia sesión.';
             // Limpiar sesión y redirigir al login

@@ -24,8 +24,8 @@ export class StorageService {
     return this.http.request<ApiResponse<any>>(req);
   }
 
-  getDownloadUrl(bucketName: string, objectName: string): string {
-    return `${this.apiUrl}/download/${bucketName}/${objectName}`;
+  downloadResource(path: string) {
+    return this.http.get(`${this.apiUrl}`, { params: { path }, responseType: 'blob' },);
   }
 
   deleteFile(bucketName: string, objectName: string): Observable<ApiResponse<string>> {

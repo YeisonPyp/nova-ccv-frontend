@@ -1,11 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, forwardRef, inject, input, OnInit, output } from "@angular/core";
+import { Component, forwardRef, inject, input, OnInit, output, signal } from "@angular/core";
 import { EvidenceItemComponent } from "../../../components/evidence-item/evidence-item.component";
 import { CorrectiveActionSectionComponent } from "../corrective-action-section.component";
 import { CorrectiveActionDto } from "../../../../../../../core/models/improvement-plan/corrective-action.model";
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { CorrectiveActionService, correctiveActionStatus } from "../../../../../../../core/services/improvement-plan/corrective-action.service";
 import { debounceTime, distinctUntilChanged, filter, switchMap } from "rxjs";
+import { EvidenceDto } from "../../../../../../../core/models/improvement-plan/evidence.model";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -24,6 +26,8 @@ export class CorrectiveActionDetailsComponent implements OnInit {
     action = input.required<CorrectiveActionDto>();
     planId = input.required<number>();
 
+    evidences = signal<EvidenceDto[]>([]);
+
     onDelete = output<CorrectiveActionDto>();
 
     service = inject(CorrectiveActionService);
@@ -37,10 +41,19 @@ export class CorrectiveActionDetailsComponent implements OnInit {
             progress: [Validators.min(0), Validators.max(100)],
             status: new FormControl(Object.values(correctiveActionStatus)),
         });
+
+        toObservable(this.action).subscribe((a) => {
+            this.evidences.set(a.evidences ?? []);
+            this.formGroup.patchValue({
+                name: a.name,
+                description: a.description,
+                progress: a.progress,
+                status: a.status
+            }, { emitEvent: false });
+        })
     }
 
     ngOnInit(): void {
-        this.formGroup.patchValue(this.action(), { emitEvent: false });
         this.formGroup.valueChanges.pipe(
             debounceTime(800),
             filter(() => this.formGroup.valid),
@@ -61,5 +74,19 @@ export class CorrectiveActionDetailsComponent implements OnInit {
                 this.onDelete.emit(r.data);
             }
         });
+    }
+
+    onSaveEvidence(e: EvidenceDto) {
+        const ev = this.evidences().reduce((prev, curr) => {
+            prev[curr.id] = curr;
+            return prev;
+        }, {} as Record<number, EvidenceDto>);
+        ev[e.id] = e;
+
+        this.evidences.set(Object.values(ev));
+    }
+
+    onRemoveEvidence(ev: EvidenceDto) {
+        this.evidences.set(this.evidences().filter((e) => e.id !== ev.id));
     }
 }

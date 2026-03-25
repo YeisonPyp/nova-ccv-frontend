@@ -1,5 +1,5 @@
 <div class="relative w-48 h-40 group">
-  @if (_isNew() && !isEditing()) {
+  @if (isNew()) {
     <button
       (click)="fileInput.click()"
       [disabled]="loading()"
@@ -38,18 +38,24 @@
         type="file"
         #fileInput
         class="hidden"
-        (change)="onFileSelected($event); enableEdit()"
+        (change)="onFileSelected($event);"
         accept="image/*,.pdf"
       />
     </button>
-  } @else if (!isEditing()) {
+  } @else {
     <div
       class="flex flex-col w-full h-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
     >
       <div
         class="relative grow flex items-center justify-center bg-gray-100 overflow-hidden"
       >
-        @if (_evidence()?.type === "application/pdf") {
+        @if (resourceUrl() && evidence()?.type?.includes('image')) {
+          <img
+            [src]="resourceUrl()"
+            class="w-full h-full object-cover"
+            alt="Preview"
+          />
+        } @else {
           <div class="flex flex-col items-center">
             <svg
               class="w-12 h-12 text-red-500"
@@ -61,15 +67,9 @@
               />
             </svg>
             <span class="text-[10px] font-bold text-red-600 mt-1 uppercase"
-              >PDF</span
+              >{{evidence()?.type ?? 'DOC'}}</span
             >
           </div>
-        } @else {
-          <img
-            [src]="_evidence()?.url"
-            class="w-full h-full object-cover"
-            alt="Preview"
-          />
         }
 
         <div
@@ -127,12 +127,12 @@
       <div class="p-2 border-t border-gray-100">
         <p
           class="text-[11px] font-semibold text-gray-700 truncate"
-          [title]="_evidence()?.description"
+          [title]="evidence()?.description"
         >
-          {{ _evidence()?.description || "Evidencia adjunta" }}
+          {{ evidence()?.description || "Evidencia adjunta" }}
         </p>
         <div class="flex justify-between items-center mt-1">
-          <span class="text-[9px] text-gray-400">Hoy, 10:30 AM</span>
+          <span class="text-[9px] text-gray-400">{{evidence()?.createdAt}}</span>
           <div
             class="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-[8px] text-white font-bold"
           >
@@ -140,14 +140,6 @@
           </div>
         </div>
       </div>
-    </div>
-  } @else {
-    <div
-      class="absolute inset-0 z-10 p-3 bg-white border border-blue-400 rounded-xl shadow-xl"
-    >
-      <p class="text-[10px] font-bold text-blue-600 uppercase mb-2">
-        Editando Evidencia
-      </p>
     </div>
   }
 </div>

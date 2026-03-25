@@ -110,10 +110,20 @@
       <div
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
       >
-        @for (ev of action().evidences; track ev.id) {
-          <app-evidence-item></app-evidence-item>
+        @for (ev of evidences(); track ev.id) {
+          <app-evidence-item
+            [actionId]="action().id"
+            [evidence]="ev"
+            
+            (onSaved)="onSaveEvidence($event)"
+            (onRemoved)="onRemoveEvidence($event)"
+          ></app-evidence-item>
         }
-        <app-evidence-item [isNew]="true"></app-evidence-item>
+        <app-evidence-item
+          [actionId]="action().id"
+
+          (onSaved)="onSaveEvidence($event)"
+        ></app-evidence-item>
       </div>
     </div>
 

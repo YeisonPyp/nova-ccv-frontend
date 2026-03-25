@@ -12,11 +12,8 @@ export interface EvidenceDto {
 
 export interface CreateEvidenceDto {
   correctiveActionId: number;
-  type: string;
+  file: File;
   description?: string;
-  url?: string;
-  filePath?: string;
-  bucketName?: string;
 }
 
 export interface UpdateEvidenceDto {

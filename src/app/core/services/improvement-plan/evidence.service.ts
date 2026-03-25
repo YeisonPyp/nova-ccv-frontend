@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpEvent, HttpRequest } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import {
   EvidenceDto,
   CreateEvidenceDto,
-  UpdateEvidenceDto,
 } from "../../models/improvement-plan/evidence.model";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
@@ -14,9 +13,9 @@ import { APIPage } from "../../models/api-page.model";
   providedIn: "root",
 })
 export class EvidenceService {
-  private apiUrl = `${environment.apiUrl}/api/evidence`;
+  private apiUrl = `${environment.apiUrl}/evidence`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   findElements(
     page: number = 0,
@@ -31,24 +30,37 @@ export class EvidenceService {
     return this.http.get<ApiResponse<EvidenceDto>>(`${this.apiUrl}/${id}`);
   }
 
-  create(dto: CreateEvidenceDto): Observable<ApiResponse<EvidenceDto>> {
-    return this.http.post<ApiResponse<EvidenceDto>>(this.apiUrl, dto);
-  }
+  create(dto: CreateEvidenceDto): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
+    const formData = new FormData();
+    formData.append('correctiveActionId', dto.correctiveActionId + '');
+    if (dto.description)
+      formData.append('description', dto.description);
+    formData.append('file', dto.file);
 
-  createMultiple(
-    dtos: CreateEvidenceDto[],
-  ): Observable<ApiResponse<EvidenceDto[]>> {
-    return this.http.post<ApiResponse<EvidenceDto[]>>(
-      `${this.apiUrl}/batch`,
-      dtos,
-    );
+    const req = new HttpRequest('POST', this.apiUrl, formData, {
+      reportProgress: true,
+      responseType: 'json'
+    });
+
+    return this.http.request<ApiResponse<EvidenceDto>>(req);
   }
 
   update(
     id: number,
-    dto: UpdateEvidenceDto,
-  ): Observable<ApiResponse<EvidenceDto>> {
-    return this.http.put<ApiResponse<EvidenceDto>>(`${this.apiUrl}/${id}`, dto);
+    dto: CreateEvidenceDto,
+  ): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
+    const formData = new FormData();
+    formData.append('correctiveActionId', dto.correctiveActionId + '');
+    if (dto.description)
+      formData.append('description', dto.description);
+    formData.append('file', dto.file);
+
+    const req = new HttpRequest('PUT', `${this.apiUrl}/${id}`, formData, {
+      reportProgress: true,
+      responseType: 'json'
+    });
+
+    return this.http.request<ApiResponse<EvidenceDto>>(req);
   }
 
   deleteById(id: number): Observable<ApiResponse<EvidenceDto>> {
