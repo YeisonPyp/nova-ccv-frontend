@@ -5,11 +5,13 @@ export interface ImprovementPlan {
   id: number;
   name: string;
   description: string;
+  status: string;
   controlEntityId: number;
   controlEntityName: string;
   expiresAt: string;
   correctiveActionsLength: number;
   completedAt?: string;
+  startsAt: string;
   createdAt: string;
   updatedAt: string;
   employee?: Employee;
@@ -20,7 +22,8 @@ export interface CreateImprovementPlanDto {
   name: string;
   description: string;
   controlEntityId: number;
-  controlEntityName: string;
+  employeeId: number;
+  startsAt: string;
   expiresAt: string;
 }
 
@@ -29,6 +32,7 @@ export interface UpdateImprovementPlanDto {
   description?: string;
   controlEntityId?: number;
   controlEntityName?: string;
+  employeeId?: number;
   completedAt?: string;
   expiresAt?: string;
 }

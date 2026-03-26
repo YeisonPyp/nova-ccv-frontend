@@ -10,10 +10,13 @@ import {
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
 
+
 export const correctiveActionStatus = {
-  COMPLETED: 'COMPLETED',
-  PENDING: 'PENDING',
-  IN_PROGRESS: 'IN_PROGRESS'
+  COMPLETED: 'COMPLETADO',
+  PENDING: 'PENDIENTE',
+  RUNNING: 'EN EJECUCIÓN',
+  CANCELLED: 'CANCELADA',
+  OVERDUE: 'RETRASADA'
 } as const;
 
 export type CorrectiveActionStatus = keyof (typeof correctiveActionStatus);

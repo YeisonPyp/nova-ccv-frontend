@@ -13,3 +13,12 @@
     @apply text-gray-900;
   }
 }
+
+.scrollable-container {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  contain: initial;
+  scrollbar-color: rgb(96, 96, 96);
+  scrollbar-width: thin;
+}

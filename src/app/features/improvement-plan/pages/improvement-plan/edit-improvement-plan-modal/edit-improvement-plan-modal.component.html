@@ -1,6 +1,12 @@
 @if (isOpen()) {
-  <div class="modal-overlay flex flex-col max-h-screen" [formGroup]="form">
-    <div class="modal-container max-w-7xl!" (click)="$event.stopPropagation()">
+  <div
+    class="modal-overlay flex flex-col max-h-screen min-h-[99%]"
+    [formGroup]="form"
+  >
+    <div
+      class="modal-container max-w-7xl! scrollable-container max-h-screen min-h-full"
+      (click)="$event.stopPropagation()"
+    >
       <div class="modal-header">
         <input
           type="text"
@@ -30,103 +36,169 @@
         </button>
       </div>
 
-      <div class="grow overflow-y-auto p-6 space-y-8">
+      <div class="grow overflow-y-auto p-6 space-y-8 bg-white">
         <section
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-gray-50/50 p-4 rounded-xl border border-gray-100"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-gray-50/80 p-6 rounded-2xl border border-gray-200/60 shadow-sm"
         >
-          @if (planId()) {
-            <div class="flex flex-col gap-1">
-              <span
-                class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-                >Estado</span
-              >
-              <select
-                formControlName="status"
-                class="bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-              >
-                <option value="PENDING">PENDIENTE</option>
-                <option value="RUNNING">EN EJECUCIÓN</option>
-                <option value="COMPLETED">COMPLETADO</option>
-              </select>
-            </div>
-          }
-
-          <div class="flex flex-col gap-1">
-            <span
-              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-              >Responsable</span
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5"
             >
-            <div class="flex items-center gap-2">
-              <app-search-select
-                [emptyMessage]="searchSelectEmployeesContext.op?.emptyMessage??''"
-                [items]="searchSelectEmployeesContext.options()"
-                [selectedItems]="searchSelectEmployeesContext.selectedOptions()"
-                [maxElements]="searchSelectEmployeesContext.op?.maxItems??1"
-                [required]="searchSelectEmployeesContext.op?.isRequired ?? false"
-                (onRemove)="searchSelectEmployeesContext.remove($event)"
-                (onSearch)="searchSelectEmployeesContext.search($event)"
-                (onSelect)="searchSelectEmployeesContext.select($event)"
-              ></app-search-select>
-            </div>
-            <span
-              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-              >Entidad de control</span
-            >
-            <div class="flex items-center gap-2">
-              <app-search-select
-                [emptyMessage]="searchSelectControlEntityContext.op?.emptyMessage??''"
-                [items]="searchSelectControlEntityContext.options()"
-                [selectedItems]="searchSelectControlEntityContext.selectedOptions()"
-                [maxElements]="searchSelectControlEntityContext.op?.maxItems??1"
-                [required]="searchSelectControlEntityContext.op?.isRequired??false"
-                (onRemove)="searchSelectControlEntityContext.remove($event)"
-                (onSearch)="searchSelectControlEntityContext.search($event)"
-                (onSelect)="searchSelectControlEntityContext.select($event)"
-              ></app-search-select>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1 lg:col-span-2">
-            <span
-              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-              >Periodo del Plan</span
-            >
-            <div class="flex items-center gap-2">
-              <input
-                type="date"
-                class="bg-transparent text-sm font-medium text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1"
-                formControlName="startsAt"
-              />
               <svg
-                class="w-3 h-3 text-gray-400"
+                class="w-3 h-3"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor font-bold"
+                stroke="currentColor"
               >
-                <path d="M14 5l7 7-7 7" stroke-width="3" />
+                <path
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  stroke-width="2.5"
+                />
+              </svg>
+              Estado
+            </label>
+            <select
+              formControlName="status"
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-blue-700 shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+            >
+              @for (op of planStatus; track op) {
+                <option [value]="op">{{ getPlanStatusName(op) }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  stroke-width="2.5"
+                />
+              </svg>
+              Responsable
+            </label>
+            <app-search-select
+              class="w-full"
+              [emptyMessage]="
+                searchSelectEmployeesContext.op?.emptyMessage ?? ''
+              "
+              [items]="searchSelectEmployeesContext.options()"
+              [selectedItems]="searchSelectEmployeesContext.selectedOptions()"
+              [maxElements]="searchSelectEmployeesContext.op?.maxItems ?? 1"
+              [required]="searchSelectEmployeesContext.op?.isRequired ?? false"
+              (onRemove)="searchSelectEmployeesContext.remove($event)"
+              (onSearch)="searchSelectEmployeesContext.search($event)"
+              (onSelect)="searchSelectEmployeesContext.select($event)"
+            ></app-search-select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  stroke-width="2.5"
+                />
+              </svg>
+              Entidad de control
+            </label>
+            <app-search-select
+              class="w-full"
+              [emptyMessage]="
+                searchSelectControlEntityContext.op?.emptyMessage ?? ''
+              "
+              [items]="searchSelectControlEntityContext.options()"
+              [selectedItems]="
+                searchSelectControlEntityContext.selectedOptions()
+              "
+              [maxElements]="searchSelectControlEntityContext.op?.maxItems ?? 1"
+              [required]="
+                searchSelectControlEntityContext.op?.isRequired ?? false
+              "
+              (onRemove)="searchSelectControlEntityContext.remove($event)"
+              (onSearch)="searchSelectControlEntityContext.search($event)"
+              (onSelect)="searchSelectControlEntityContext.select($event)"
+            ></app-search-select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  stroke-width="2.5"
+                />
+              </svg>
+              Vigencia
+            </label>
+            <div
+              class="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-2 py-1.5 shadow-sm"
+            >
+              <input
+                type="date"
+                formControlName="startsAt"
+                class="bg-transparent text-[13px] font-semibold text-gray-700 outline-none w-full cursor-pointer"
+              />
+              <svg
+                viewBox="0 0 20 20"
+                class="w-10 h-4 fill-current text-gray-600"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.5 3.5l5.5 5.5-5.5 5.5-1.4-1.2 3.2-3.1H0V8.2h13.3l-3.2-3.1L11.5 3.5z"
+                  fill-rule="evenodd"
+                />
               </svg>
               <input
                 type="date"
-                class="bg-transparent text-sm font-medium text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1"
                 formControlName="expiresAt"
+                class="bg-transparent text-[13px] font-semibold text-gray-700 outline-none w-full cursor-pointer text-right"
               />
             </div>
           </div>
         </section>
 
-        <section class="prose prose-sm max-w-none">
-          <h4
-            class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"
+        <section class="space-y-3">
+          <label
+            class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] ml-1"
           >
-            Descripción General
-          </h4>
-          <textarea
-            class="text-gray-600 leading-relaxed italic border-l-4 border-gray-200 pl-4"
-            formControlName="description"
-          ></textarea>
+            Descripción General del Plan
+          </label>
+          <div class="relative group">
+            <textarea
+              class="w-full min-h-25 text-[13px] text-gray-600 leading-relaxed border-l-4 border-blue-100 focus:border-blue-500 pl-5 pr-4 py-3 bg-gray-50/30 focus:bg-white rounded-r-xl outline-none transition-all resize-none shadow-sm"
+              placeholder="Redacte el propósito y alcance de este plan de mejora..."
+              formControlName="description"
+            ></textarea>
+            <div
+              class="absolute top-3 left-0 w-1 h-4 bg-blue-500 rounded-full -translate-x-0.5"
+            ></div>
+          </div>
         </section>
-        @if (planId()) {
-          <section class="pt-4 border-t border-gray-100">
+
+        @if (plan()) {
+          <section class="pt-6 border-t border-gray-100">
             <app-corrective-action-section
               [planId]="plan()?.id!"
               [childActions]="plan()?.correctiveActionsLength ?? 0"
@@ -135,7 +207,7 @@
         }
       </div>
 
-      @if (!planId()) {
+      @if (!plan()) {
         <div
           class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3"
         >

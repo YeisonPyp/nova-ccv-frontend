@@ -90,6 +90,16 @@ export class ImprovementPlanListComponent implements OnInit {
     this.loadPlans(this.currentPage());
   }
 
+  onPlanUpdated(p: ImprovementPlan) {
+    console.log(p);
+    this.plans.set(this.plans().map((i) => {
+      if (i.id === p.id) {
+        return p;
+      }
+      return i;
+    }));
+  }
+
   deletePlan(plan: ImprovementPlan): void {
     if (confirm(`¿Estás seguro de eliminar el plan "${plan.name}"?`)) {
       this.improvementPlanService.deleteById(plan.id).subscribe({

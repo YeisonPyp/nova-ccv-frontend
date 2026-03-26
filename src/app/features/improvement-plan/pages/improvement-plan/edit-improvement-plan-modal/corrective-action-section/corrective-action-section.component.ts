@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, forwardRef, inject, Input, input, signal } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { EvidenceItemComponent } from "../../components/evidence-item/evidence-item.component";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { combineLatest, map, of, switchMap } from "rxjs";
 import { CorrectiveActionService } from "../../../../../../core/services/improvement-plan/corrective-action.service";

@@ -10,6 +10,10 @@ import {
 } from "../../models/improvement-plan/improvement-plan.model";
 import { APIPage } from "../../models/api-page.model";
 
+export const improvementPlanStatus = {
+  RUNNING: 'EN EJECUCION', COMPLETED: 'COMPLETADO', PENDING: 'PENDIENTE'
+}
+
 @Injectable({
   providedIn: "root",
 })

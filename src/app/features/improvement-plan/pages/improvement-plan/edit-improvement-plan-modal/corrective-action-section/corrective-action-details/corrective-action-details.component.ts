@@ -4,7 +4,7 @@ import { EvidenceItemComponent } from "../../../components/evidence-item/evidenc
 import { CorrectiveActionSectionComponent } from "../corrective-action-section.component";
 import { CorrectiveActionDto } from "../../../../../../../core/models/improvement-plan/corrective-action.model";
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { CorrectiveActionService, correctiveActionStatus } from "../../../../../../../core/services/improvement-plan/corrective-action.service";
+import { CorrectiveActionService, CorrectiveActionStatus, correctiveActionStatus } from "../../../../../../../core/services/improvement-plan/corrective-action.service";
 import { debounceTime, distinctUntilChanged, filter, switchMap } from "rxjs";
 import { EvidenceDto } from "../../../../../../../core/models/improvement-plan/evidence.model";
 import { toObservable } from "@angular/core/rxjs-interop";
@@ -34,6 +34,14 @@ export class CorrectiveActionDetailsComponent implements OnInit {
 
     formGroup: FormGroup;
 
+    get correctiveActionStatus() {
+        return Object.keys(correctiveActionStatus) as Array<CorrectiveActionStatus>;
+    }
+
+    getCorrectiveActionStatusName(k: CorrectiveActionStatus) {
+        return correctiveActionStatus[k];
+    }
+
     constructor(private fb: FormBuilder) {
         this.formGroup = this.fb.group({
             name: ['', Validators.required],
@@ -47,7 +55,7 @@ export class CorrectiveActionDetailsComponent implements OnInit {
             this.formGroup.patchValue({
                 name: a.name,
                 description: a.description,
-                progress: a.progress,
+                progress: a.progress * 100,
                 status: a.status
             }, { emitEvent: false });
         })
@@ -58,7 +66,7 @@ export class CorrectiveActionDetailsComponent implements OnInit {
             debounceTime(800),
             filter(() => this.formGroup.valid),
             distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
-            switchMap(values => this.service.update(this.action().id, values))
+            switchMap(values => this.service.update(this.action().id, { ...values, progress: values.progress ? values.progress / 100 : undefined }))
         ).subscribe({
             next: (r) => {
                 console.log("update response: ", r);
@@ -88,5 +96,13 @@ export class CorrectiveActionDetailsComponent implements OnInit {
 
     onRemoveEvidence(ev: EvidenceDto) {
         this.evidences.set(this.evidences().filter((e) => e.id !== ev.id));
+    }
+
+    get assignedEmployeeFullName() {
+        return [this.action().employee?.name, this.action().employee?.lastName].filter((i) => i).join(' ');
+    }
+
+    get dueDate() {
+        return new Date(this.action().expiresAt);
     }
 }

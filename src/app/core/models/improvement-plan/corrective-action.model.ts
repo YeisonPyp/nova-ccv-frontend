@@ -6,6 +6,7 @@ export interface CorrectiveActionDto {
   name: string;
   description: string;
   status: string;
+  expiresAt: string;
   followUp: string;
   progress: number;
   createdAt: string;
