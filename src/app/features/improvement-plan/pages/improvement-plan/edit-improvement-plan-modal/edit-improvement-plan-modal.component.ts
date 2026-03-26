@@ -135,6 +135,10 @@ export class EditImprovementPlanModalComponent {
         if (controlEntity) {
           this.searchSelectControlEntityContext.selectResults([controlEntity]);
         }
+      } else {
+        this.form.reset();
+        this.searchSelectControlEntityContext.clear();
+        this.searchSelectEmployeesContext.clear();
       }
     });
   }
