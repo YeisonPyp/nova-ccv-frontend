@@ -11,22 +11,16 @@
       [columns]="columns"
       emptyMessage="No hay periodos disponibles."
     >
-      <ng-template #customCell let-item let-col="column">
-        @if (col.key === "name") {
-          {{ item.name || "Sin nombre" }}
-        } @else {
-          {{ col.key === "startDate" ? item.startDate : item.endDate }}
-        }
-      </ng-template>
-
       <ng-template #actions let-period>
-        <button
-          class="btn btn-secondary"
-          style="padding: 4px 12px; font-size: 0.8rem"
-          (click)="openEditModal(period)"
-        >
-          Editar
-        </button>
+        @if (canEdit(period)) {
+          <button
+            class="btn btn-secondary"
+            style="padding: 4px 12px; font-size: 0.8rem"
+            (click)="openEditModal(period)"
+          >
+            Editar
+          </button>
+        }
       </ng-template>
     </app-dynamic-table>
   </div>

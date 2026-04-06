@@ -60,8 +60,7 @@ describe("EditAssessmentModalComponent", () => {
       updatedAt: "",
       id: 1,
       name: "Example Period",
-      weightCompetencies: 0,
-      weightResults: 0,
+      averageScore: 0,
     },
     position: {
       id: 1,

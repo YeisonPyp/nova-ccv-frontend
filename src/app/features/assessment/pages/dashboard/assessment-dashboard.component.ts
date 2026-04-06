@@ -15,16 +15,17 @@ import {
   CreateAssessmentModalComponent,
 } from "./create-assessment-modal/create-assessment-modal.component";
 import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
+import { PeriodSelectorComponent } from "./period-selector/period-selector.component";
 
 @Component({
   selector: "app-assessment-dashboard",
   imports: [
     CommonModule,
-    CurrentPeriodsCarouselComponent,
     AssessmentTableComponent,
     EditAssessmentModalComponent,
     CreateAssessmentModalComponent,
     PaginatorComponent,
+    PeriodSelectorComponent,
   ],
   templateUrl: "./assessment-dashboard.component.html",
   styleUrl: "./assessment-dashboard.component.scss",
@@ -34,7 +35,7 @@ export class AssessmentDashboardComponent implements OnInit {
   authService = inject(AuthService);
   selectedPeriod = signal<Period | undefined>(undefined);
   size = signal(20);
-  page = signal(0);
+  page = signal(1);
   pages = signal(0);
   isModalOpen = signal<boolean>(false);
   selectedAssessment = signal<Assessment | null>(null);
@@ -43,6 +44,7 @@ export class AssessmentDashboardComponent implements OnInit {
 
   selectPeriod(period: Period) {
     this.selectedPeriod.set(period);
+    this.fetchPage(1);
   }
 
   get canCreate(): boolean {
@@ -64,9 +66,9 @@ export class AssessmentDashboardComponent implements OnInit {
   fetchPage(p: number) {
     this.page.set(p);
     const period = this.selectedPeriod();
-    // if (!period) return;
+    if (!period) return;
     this.assesmentService
-      .findAssessments({ page: p, size: this.size() })
+      .findAssessments({ page: p - 1, size: this.size(), periodId: period.id })
       .subscribe((result) => {
         if (result.success && result.data && result.data.content) {
           this.pages.set(result.data.totalPages);
@@ -85,7 +87,7 @@ export class AssessmentDashboardComponent implements OnInit {
     this.assesmentService.updateAssessment(data).subscribe((result) => {
       this.fetchPage(this.page());
       this.closeModal();
-    })
+    });
   }
 
   onCreateSubmit(data: CreateAssessmentDto) {

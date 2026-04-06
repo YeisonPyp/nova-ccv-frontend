@@ -1,0 +1,24 @@
+@reference 'tailwindcss';
+
+.metric-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px 24px;
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.metric-label {
+  @apply text-gray-600 text-sm font-medium;
+}
+.metric-value {
+  @apply text-2xl font-bold text-gray-900;
+}
+.metric-value.success {
+  @apply text-green-600;
+}
