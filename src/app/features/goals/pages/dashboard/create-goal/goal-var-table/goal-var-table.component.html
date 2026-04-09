@@ -1,0 +1,24 @@
+<div class="flex flex-col gap-4">
+  <app-dynamic-table
+    [data]="data()"
+    [columns]="columns"
+    emptyMessage="No hay opciones disponibles."
+  >
+    <ng-template #actions let-item>
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded text-sm transition-colors"
+        (click)="$onSelectOption(item)"
+      >
+        Seleccionar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+
+  <app-paginator
+    [pageSize]="pageSize()"
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (onSelectPage)="onPageChange($event)"
+  ></app-paginator>
+</div>

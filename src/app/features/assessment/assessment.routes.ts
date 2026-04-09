@@ -37,13 +37,6 @@ export const ASSESSMENT_ROUTES: Routes = [
       ),
   },
   {
-    path: "goals/dashboard",
-    loadComponent: () =>
-      import("./pages/goals/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
-      ),
-  },
-  {
     path: "areas/dashboard",
     loadComponent: () =>
       import("./pages/areas/areas.component").then((m) => m.AreasComponent),

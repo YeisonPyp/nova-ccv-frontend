@@ -76,6 +76,11 @@ export const routes: Routes = [
         path: 'assessment',
         loadChildren: () => import('./features/assessment/assessment.routes')
           .then(m => m.ASSESSMENT_ROUTES)
+      },
+      {
+        path: 'goals',
+        loadChildren: () => import('./features/goals/goals.routes')
+          .then(m => m.GOALS_ROUTES)
       }
     ]
   },
