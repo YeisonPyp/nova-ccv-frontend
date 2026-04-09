@@ -1,0 +1,24 @@
+@reference "tailwindcss";
+
+.detail-grid-row {
+  @apply grid gap-1 items-center;
+
+  grid-template-columns: minmax(130px, 1fr) minmax(150px, 2fr);
+
+  & > span:first-child {
+    @apply text-gray-500 font-medium;
+  }
+
+  & > span:last-child {
+    @apply text-gray-900;
+  }
+}
+
+.scrollable-container {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  contain: initial;
+  scrollbar-color: rgb(96, 96, 96);
+  scrollbar-width: thin;
+}

@@ -1,5 +1,5 @@
+@import "tailwindcss";
 /* You can add global styles to this file, and also import other style files */
-// src/styles.scss
 
 * {
   box-sizing: border-box;
@@ -32,7 +32,6 @@ button {
   font-family: inherit;
 }
 
-// Scrollbar
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -209,7 +208,6 @@ button {
 }
 
 .form-group {
-  margin-bottom: 20px;
 
   label {
     display: block;
@@ -327,4 +325,19 @@ button {
   &:hover:not(:disabled) {
     background-color: #002255;
   }
+}
+
+
+.input-date-lc {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.input-date-lc::-webkit-calendar-picker-indicator{
+  padding: 0;
+  cursor: pointer;
+  filter: invert(0.5);
 }

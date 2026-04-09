@@ -78,10 +78,15 @@ export const routes: Routes = [
           .then(m => m.ASSESSMENT_ROUTES)
       },
       {
+        path: 'improvement-plan',
+        loadChildren: () => import('./features/improvement-plan/improvement-plan.routes')
+          .then(m => m.IMPROVEMENT_PLAN_ROUTES)
+      },
+      {
         path: 'goals',
         loadChildren: () => import('./features/goals/goals.routes')
           .then(m => m.GOALS_ROUTES)
-      }
+      },
     ]
   },
   {

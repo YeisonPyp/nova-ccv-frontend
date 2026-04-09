@@ -1,18 +1,20 @@
 <div class="form-group">
-  <label [for]="id">
-    {{ label }}
-    @if (required) { <span class="text-danger">*</span> }
-  </label>
+  @if (label) {
+    <label [for]="id">
+      {{ label }}
+      @if (required) { <span class="text-danger">*</span> }
+    </label>
+  }
 
   <div 
     class="input-container form-control" 
     [class.is-invalid]="isInvalid"
   >
     @for (item of selectedItems; track item.id) {
-      <span class="chip">
-        {{ item.title }}
-        <span class="chip-remove" (click)="removeItem(item, $event)">&times;</span>
-      </span>
+      <app-chip-item
+        [op]="item"
+        (onRemove)="removeItem($event)"
+      ></app-chip-item>
     }
 
     @if (maxElements <= 0 || selectedItems.length < maxElements) {

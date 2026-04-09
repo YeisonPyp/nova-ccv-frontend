@@ -11,8 +11,7 @@ describe("PeriodCardComponent", () => {
     name: "",
     startDate: "",
     endDate: "",
-    weightCompetencies: 0,
-    weightResults: 0,
+    averageScore: 0,
     createdAt: "",
     updatedAt: "",
   };

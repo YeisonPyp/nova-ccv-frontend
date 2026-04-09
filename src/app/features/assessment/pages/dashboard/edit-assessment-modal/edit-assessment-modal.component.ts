@@ -1,9 +1,27 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Assessment } from '../../../../../core/models/assessment/assessment.model';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Competencie } from '../../../../../core/models/assessment/competencie.model';
-import { CompetencyScore } from '../../../../../core/models/assessment/competency-score.model';
+import { CommonModule } from "@angular/common";
+import {
+  Component,
+  computed,
+  EventEmitter,
+  input,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  signal,
+  SimpleChanges,
+} from "@angular/core";
+import { Assessment } from "../../../../../core/models/assessment/assessment.model";
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import {
+  ChangeCompetencyScore,
+  CompetencyScoreCardComponent,
+} from "./competency-score-card/competency-score-card.component";
 
 export interface CompetencyAssessmentDto {
   [competencyId: number]: number | null; // competencyId: score
@@ -18,12 +36,12 @@ export interface EditAssesmentDto {
 }
 
 @Component({
-  selector: 'app-edit-assessment-modal',
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './edit-assessment-modal.component.html',
-  styleUrl: './edit-assessment-modal.component.scss'
+  selector: "app-edit-assessment-modal",
+  imports: [CommonModule, ReactiveFormsModule, CompetencyScoreCardComponent],
+  templateUrl: "./edit-assessment-modal.component.html",
+  styleUrl: "./edit-assessment-modal.component.scss",
 })
-export class EditAssessmentModalComponent implements OnInit, OnChanges{
+export class EditAssessmentModalComponent implements OnChanges {
   @Input() isOpen = false;
   assessment = input.required<Assessment>();
 
@@ -31,34 +49,56 @@ export class EditAssessmentModalComponent implements OnInit, OnChanges{
   @Output() saveAssessment = new EventEmitter<EditAssesmentDto>();
 
   assessmentForm: FormGroup;
-  competencyScores: FormGroup;
+  competencyScores = signal<CompetencyAssessmentDto>({});
+
+  $average = computed(() => {
+    const v = Object.values(this.competencyScores());
+    const sum = v.reduce((prev, curr) => {
+      return prev + (Number(curr) || 0);
+    });
+    return sum / (v.length || 1);
+  });
 
   constructor(private fb: FormBuilder) {
-    this.assessmentForm = this.fb.group({});
-    this.competencyScores = this.fb.group({});
-  }
-  ngOnInit(): void {
-    const competencyControls: {[key:number] : Validators} = {};
-    (this.assessment().position?.competencies ?? []).reduce((group, competency) => {
-      group[competency.id] = [0, Validators.required];
-      return group;
-    }, competencyControls);
-
-    this.competencyScores = this.fb.group(competencyControls);
-    
-
     this.assessmentForm = this.fb.group({
-      observations: [''],
-      agreements: [''],
-      aspectsToImprove: [''],
-      id: [this.assessment().id, Validators.required]
+      observations: [""],
+      agreements: [""],
+      aspectsToImprove: [""],
     });
+  }
+
+  getAssessmentCompetencyScores() {
+    return this.assessment().competencyScores ?? [];
+  }
+
+  get average(): number {
+    return this.$average();
+  }
+
+  get averageDescription(): string {
+    const score = this.average;
+    if (score >= 90) return 'Excepcional';
+    if (score >= 75) return 'Destacado';
+    if (score >= 60) return 'Aceptable';
+    return 'Deficiente';
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // Reset the form when the modal is closed
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.assessmentForm.reset();
+      this.competencyScores.set({});
+    }
+
+    if (changes['assessment']) {
+      const { agreements, observations, aspectsToImprove, competencyScores } = this.assessment();
+      this.assessmentForm.patchValue({
+        agreements, observations, aspectsToImprove
+      });
+      this.competencyScores.set((competencyScores ?? []).reduce((prev, curr) => {
+        prev[curr.competency?.id ?? 0] = curr.score;
+        return prev;
+      }, {} as CompetencyAssessmentDto));
     }
   }
 
@@ -67,36 +107,40 @@ export class EditAssessmentModalComponent implements OnInit, OnChanges{
   }
 
   onSubmit(): void {
-      if (this.assessmentForm.valid) {
-        const formValue = this.assessmentForm.value;
-  
-        const payload: EditAssesmentDto = {
-          competencyScores: formValue.competencyScores,
-          observations: formValue.observations,
-          agreements: formValue.agreements,
-          aspectsToImprove: formValue.aspectsToImprove,
-          id: formValue.id
-        };
-  
-        this.saveAssessment.emit(payload);
-      } else {
-        this.assessmentForm.markAllAsTouched();
-      }
+    if (this.assessmentForm.valid) {
+      const formValue = this.assessmentForm.value;
+
+      const payload: EditAssesmentDto = {
+        competencyScores: this.competencyScores(),
+        observations: formValue.observations,
+        agreements: formValue.agreements,
+        aspectsToImprove: formValue.aspectsToImprove,
+        id: this.assessment().id,
+      };
+
+      this.saveAssessment.emit(payload);
+    } else {
+      this.assessmentForm.markAllAsTouched();
+    }
+  }
+
+  onChangeCompetencyScore(change: ChangeCompetencyScore) {
+    this.competencyScores.set({ ...this.competencyScores(), [change.id]: change.score });
   }
 
   get evaluatorFullName(): string {
     const evaluator = this.assessment().evaluator;
-    return `${evaluator?.name ?? ''} ${evaluator?.lastName ?? ''}`;
+    return `${evaluator?.name ?? ""} ${evaluator?.lastName ?? ""}`;
   }
 
   get evaluateeFullName(): string {
     const evaluatee = this.assessment().evaluatee;
-    return `${evaluatee?.name ?? ''} ${evaluatee?.lastName ?? ''}`;
+    return `${evaluatee?.name ?? ""} ${evaluatee?.lastName ?? ""}`;
   }
 
-  get evaluationPeriodRange(): string  {
+  get evaluationPeriodRange(): string {
     const period = this.assessment().period;
-    if (!period) return '';
+    if (!period) return "";
     const startDate = new Date(period.startDate);
     const endDate = new Date(period.endDate);
     return `${startDate.getDate()} - ${endDate.getDate()}`;
@@ -106,7 +150,7 @@ export class EditAssessmentModalComponent implements OnInit, OnChanges{
     return new Date(this.assessment().createdAt).getDate().toLocaleString();
   }
 
-  get competenciesScores(): Array<CompetencyScore>{
-    return this.assessment().competencyScores ?? [];
+  onCancel(): void {
+    this.closeModal.emit();
   }
 }

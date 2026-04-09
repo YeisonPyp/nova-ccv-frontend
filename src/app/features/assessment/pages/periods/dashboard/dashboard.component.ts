@@ -11,7 +11,7 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PeriodCardComponent } from "../card/card.component";
+import { AuthService } from "../../../../../core/services/auth.service";
 
 @Component({
   selector: "app-dashboard",
@@ -26,6 +26,7 @@ import { PeriodCardComponent } from "../card/card.component";
 })
 export class DashboardComponent implements OnInit {
   service = inject(PeriodService);
+  authService = inject(AuthService);
   periods = signal<Array<Period>>([]);
 
   size = signal<number>(10);
@@ -39,6 +40,9 @@ export class DashboardComponent implements OnInit {
     { key: "name", label: "Periodo" },
     { key: "startDate", label: "Fecha de inicio" },
     { key: "endDate", label: "Fecha de fin" },
+    { key: "averageScore", label: "Promedio" },
+    { key: "evaluationsDone", label: "Evaluaciones realizadas" },
+    { key: "totalEvaluations", label: "Total de evaluaciones" },
   ];
 
   private fetchPeriods() {
@@ -80,6 +84,15 @@ export class DashboardComponent implements OnInit {
   closeModal(): void {
     this.isModalOpen.set(false);
     this.selectedPeriod.set(null);
+  }
+
+  canEdit(period: Period): boolean {
+    const hasRole =
+      this.authService
+        .currentUser()
+        ?.roles.filter((role) => ["ROLE_ADMIN", "ROLE_HR"].includes(role))
+        ?.length ?? 0;
+    return hasRole > 0;
   }
 
   onSavePeriod(dto: EditPeriodDto): void {

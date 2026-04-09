@@ -3,8 +3,10 @@ export interface Period {
   name: string;
   startDate: string;
   endDate: string;
-  weightCompetencies: number;
-  weightResults: number;
+  isActive: boolean;
+  averageScore: number;
+  evaluationsDone: number;
+  totalEvaluations: number;
   createdAt: string;
   updatedAt: string;
 }
