@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import {
   Component,
   computed,
+  effect,
   EventEmitter,
   input,
   Input,
@@ -51,12 +52,14 @@ export class EditAssessmentModalComponent implements OnChanges {
   assessmentForm: FormGroup;
   competencyScores = signal<CompetencyAssessmentDto>({});
 
-  $average = computed(() => {
-    const v = Object.values(this.competencyScores());
-    const sum = v.reduce((prev, curr) => {
-      return prev + (Number(curr) || 0);
-    });
-    return sum / (v.length || 1);
+  competencyWeightedScore = signal<CompetencyAssessmentDto>({});
+
+  matrixTotalScore = computed(() => {
+    const scores = this.competencyWeightedScore();
+    return (
+      Object.values(scores).reduce((a, b) => a + (b ?? 0), 0) /
+      (Object.keys(scores).length || 1)
+    );
   });
 
   constructor(private fb: FormBuilder) {
@@ -65,22 +68,30 @@ export class EditAssessmentModalComponent implements OnChanges {
       agreements: [""],
       aspectsToImprove: [""],
     });
+
+    effect(() => {
+      this.competencyWeightedScore.set(
+        this.assessment().competencyScores?.reduce<CompetencyAssessmentDto>(
+          (acc, score) => {
+            acc[score.competency?.id ?? 0] = score.weightedScore;
+            return acc;
+          },
+          {},
+        ) ?? {},
+      );
+    });
   }
 
   getAssessmentCompetencyScores() {
     return this.assessment().competencyScores ?? [];
   }
 
-  get average(): number {
-    return this.$average();
-  }
-
   get averageDescription(): string {
-    const score = this.average;
-    if (score >= 90) return 'Excepcional';
-    if (score >= 75) return 'Destacado';
-    if (score >= 60) return 'Aceptable';
-    return 'Deficiente';
+    const score = this.matrixTotalScore();
+    if (score >= 90) return "Excepcional";
+    if (score >= 75) return "Destacado";
+    if (score >= 60) return "Aceptable";
+    return "Deficiente";
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -90,15 +101,20 @@ export class EditAssessmentModalComponent implements OnChanges {
       this.competencyScores.set({});
     }
 
-    if (changes['assessment']) {
-      const { agreements, observations, aspectsToImprove, competencyScores } = this.assessment();
+    if (changes["assessment"]) {
+      const { agreements, observations, aspectsToImprove, competencyScores } =
+        this.assessment();
       this.assessmentForm.patchValue({
-        agreements, observations, aspectsToImprove
+        agreements,
+        observations,
+        aspectsToImprove,
       });
-      this.competencyScores.set((competencyScores ?? []).reduce((prev, curr) => {
-        prev[curr.competency?.id ?? 0] = curr.score;
-        return prev;
-      }, {} as CompetencyAssessmentDto));
+      this.competencyScores.set(
+        (competencyScores ?? []).reduce((prev, curr) => {
+          prev[curr.competency?.id ?? 0] = curr.score;
+          return prev;
+        }, {} as CompetencyAssessmentDto),
+      );
     }
   }
 
@@ -125,7 +141,14 @@ export class EditAssessmentModalComponent implements OnChanges {
   }
 
   onChangeCompetencyScore(change: ChangeCompetencyScore) {
-    this.competencyScores.set({ ...this.competencyScores(), [change.id]: change.score });
+    this.competencyScores.set({
+      ...this.competencyScores(),
+      [change.id]: change.score,
+    });
+    this.competencyWeightedScore.set({
+      ...this.competencyWeightedScore(),
+      [change.id]: change.weightedScore,
+    });
   }
 
   get evaluatorFullName(): string {

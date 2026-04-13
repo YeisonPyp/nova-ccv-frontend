@@ -208,7 +208,6 @@ button {
 }
 
 .form-group {
-
   label {
     display: block;
     font-size: 0.875rem;
@@ -327,7 +326,6 @@ button {
   }
 }
 
-
 .input-date-lc {
   display: flex;
   flex-direction: row-reverse;
@@ -336,8 +334,17 @@ button {
   gap: 8px;
 }
 
-.input-date-lc::-webkit-calendar-picker-indicator{
+.input-date-lc::-webkit-calendar-picker-indicator {
   padding: 0;
   cursor: pointer;
   filter: invert(0.5);
+}
+
+.scrollable-container {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  contain: initial;
+  scrollbar-color: rgb(96, 96, 96);
+  scrollbar-width: thin;
 }

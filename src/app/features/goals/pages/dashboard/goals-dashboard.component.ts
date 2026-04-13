@@ -76,5 +76,7 @@ export class GoalsDashboardComponent {
     this.modalIsOpen.set(false);
   }
 
-  onGoalSaved(goal: Goal) {}
+  onGoalSaved(_: Goal) {
+    this.fetchGoals(this.currentPage(), this.pageSize());
+  }
 }

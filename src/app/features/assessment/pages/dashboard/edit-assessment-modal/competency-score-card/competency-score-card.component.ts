@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  effect,
   EventEmitter,
   input,
   OnChanges,
@@ -18,6 +19,7 @@ import { CompetencyScore } from "../../../../../../core/models/assessment/compet
 
 export interface ChangeCompetencyScore {
   id: number;
+  weightedScore: number;
   score: number;
 }
 
@@ -32,8 +34,6 @@ export class CompetencyScoreCardComponent implements OnInit {
 
   @Output() scoreChange = new EventEmitter<ChangeCompetencyScore>();
 
-  form: FormGroup;
-
   get competencyName() {
     return this.competencyScore().competency?.name ?? "Competencia Técnica";
   }
@@ -45,25 +45,40 @@ export class CompetencyScoreCardComponent implements OnInit {
     );
   }
 
-  constructor() {
+  form = new FormGroup({
+    score: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+  });
 
-    this.form = new FormGroup({
-      score: new FormControl(0, {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.min(0),
-          Validators.max(100),
-        ],
-      }),
+  constructor() {
+    effect(() => {
+      const { minScore, maxScore } = this.competencyScore();
+
+      const scoreControl = this.form.controls.score;
+
+      scoreControl.setValidators([
+        Validators.required,
+        Validators.min(minScore ?? 0),
+        Validators.max(maxScore ?? 5),
+      ]);
+
+      scoreControl.updateValueAndValidity();
     });
   }
   ngOnInit(): void {
     this.form.patchValue({ score: this.competencyScore().score });
-    this.form.get('score')?.valueChanges.subscribe(value => {
+
+    this.form.get("score")?.valueChanges.subscribe((value) => {
+      const weightedScore =
+        ((Number(value) - this.competencyScore().minScore) /
+          (this.competencyScore().maxScore - this.competencyScore().minScore)) *
+        100;
       this.scoreChange.emit({
         id: this.competencyScore().competency?.id ?? 0,
-        score: Number(value)
+        score: Number(value),
+        weightedScore,
       });
     });
   }

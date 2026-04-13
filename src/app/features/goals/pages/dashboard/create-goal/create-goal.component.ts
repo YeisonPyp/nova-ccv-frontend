@@ -46,7 +46,7 @@ export class CreateGoalComponent implements OnChanges {
 
   goalVars = computed(() => this.selectedTemplate()?.vars ?? []);
 
-  goalVarsValues = signal<CreateGoalFromTemplate["vars"]>({});
+  goalVarsValues = signal<Record<string, GoalOption>>({});
 
   formGroup = this.fb.group({
     templateId: [0, Validators.required],
@@ -55,7 +55,7 @@ export class CreateGoalComponent implements OnChanges {
     targetValue: [0, Validators.required],
     title: ["", Validators.required],
     weight: [0, Validators.required],
-    patProgramId: [0],
+    patProgramId: [null],
   });
 
   constructor() {
@@ -76,18 +76,25 @@ export class CreateGoalComponent implements OnChanges {
 
   onSelectOption(goalVar: GoalVar, option: GoalOption) {
     this.goalVarsValues.update((v) => {
-      v[goalVar.varName] = option.value;
+      v[goalVar.varName] = option;
       return v;
     });
   }
 
   $onClose() {
     this.onClose.emit();
+    this.formGroup.reset();
   }
 
   onSubmit() {
+    const vars = Object.fromEntries(
+      Object.entries(this.goalVarsValues()).map(([k, v]) => [k, v.value]),
+    );
     this.goalService
-      .createGoalFromTemplate(this.formGroup.value as CreateGoalFromTemplate)
+      .createGoalFromTemplate({
+        ...this.formGroup.value,
+        vars,
+      } as CreateGoalFromTemplate)
       .subscribe((r) => {
         if (r.success) {
           this.onSaved.emit(r.data);

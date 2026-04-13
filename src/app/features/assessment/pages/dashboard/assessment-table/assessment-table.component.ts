@@ -41,7 +41,7 @@ export class AssessmentTableComponent {
     // { key: "area", label: "Área" }, // Uncomment if area should be displayed
     { key: "evaluator", label: "Evaluador" },
     { key: "status", label: "Estado" },
-    { key: "score", label: "Desempeño" },
+    { key: "matrixTotalScore", label: "Desempeño" },
   ];
 
   getStatusClass(status: string): string {

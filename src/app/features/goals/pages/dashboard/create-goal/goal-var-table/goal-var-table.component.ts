@@ -38,10 +38,7 @@ export class GoalVarTableComponent {
 
   options = signal<APIPage<GoalOption> | undefined>(undefined);
 
-  columns: TableColumn<GoalOption>[] = [
-    { key: "label", label: "Etiqueta" },
-    { key: "value", label: "Valor" },
-  ];
+  columns: TableColumn<GoalOption>[] = [{ key: "label", label: "Opción" }];
 
   totalPages = computed(() => Math.max(1, this.options()?.totalPages || 1));
   data = computed(() => this.options()?.content || []);

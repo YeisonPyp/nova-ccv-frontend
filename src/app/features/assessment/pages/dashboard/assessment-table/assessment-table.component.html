@@ -17,7 +17,7 @@
         <span class="badge" [ngClass]="getStatusClass(item.status)">
           {{ item.status }}
         </span>
-      } @else if (col.key === "score") {
+      } @else if (col.key === "matrixTotalScore") {
         <div
           class="desempeno-cell"
           style="
@@ -27,7 +27,7 @@
             font-weight: 600;
           "
         >
-          {{ item.score }}%
+          {{ item.matrixTotalScore }}%
           <div
             class="mini-progress-track"
             style="
@@ -45,7 +45,7 @@
                 background-color: #003380;
                 border-radius: 3px;
               "
-              [style.width.%]="item.score"
+              [style.width.%]="item.matrixTotalScore"
             ></div>
           </div>
         </div>

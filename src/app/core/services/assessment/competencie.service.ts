@@ -27,6 +27,8 @@ export interface CreateCompetencyDto {
   name: string;
   type: CompetencyType;
   description: string;
+  minScore: number;
+  maxScore: number;
   positions: Array<number>;
 }
 
@@ -43,18 +45,14 @@ export class CompetencieService {
     if (!q.name) {
       delete q.name;
     }
-    return this.http.get<ApiResponse<APIPage<Competencie>>>(
-      this.API_URL,
-      { params: new PageableQueryParams(q).getParams() },
-    );
+    return this.http.get<ApiResponse<APIPage<Competencie>>>(this.API_URL, {
+      params: new PageableQueryParams(q).getParams(),
+    });
   }
 
   createCompetency(
     dto: CreateCompetencyDto,
   ): Observable<ApiResponse<Competencie>> {
-    return this.http.post<ApiResponse<Competencie>>(
-      this.API_URL,
-      dto,
-    );
+    return this.http.post<ApiResponse<Competencie>>(this.API_URL, dto);
   }
 }

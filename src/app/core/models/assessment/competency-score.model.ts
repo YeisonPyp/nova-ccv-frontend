@@ -5,6 +5,8 @@ export interface CompetencyScore {
   impactFactor: number;
   score: number;
   weightedScore: number;
+  minScore: number;
+  maxScore: number;
   justification?: string;
   competency?: Competencie;
 }

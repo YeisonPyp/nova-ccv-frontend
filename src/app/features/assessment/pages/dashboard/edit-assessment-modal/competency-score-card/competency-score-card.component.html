@@ -10,14 +10,18 @@
         <span style="font-weight: 600; color: black; font-size: 14px"
           >Calificación</span
         >
-        <strong class="score-range">{{ form.get("score")?.value }}/100</strong>
+        <strong class="score-range"
+          >{{ form.get("score")?.value }}/{{
+            competencyScore().maxScore
+          }}</strong
+        >
       </div>
       <input
         type="range"
         class="competency-range"
         formControlName="score"
-        min="0"
-        max="100"
+        min="{{ competencyScore().minScore }}"
+        max="{{ competencyScore().maxScore }}"
         (input)="form.get('score')?.setValue($any($event.target).value)"
         [style.background]="
           'linear-gradient(to right, #0056b3 0%, #0056b3 ' +
@@ -28,8 +32,8 @@
         "
       />
       <div class="score-container">
-        <span>Deficiente (0)</span>
-        <span>Excelente (100)</span>
+        <span>Deficiente ({{ competencyScore().minScore ?? "" }})</span>
+        <span>Excelente ({{ competencyScore().maxScore ?? "" }})</span>
       </div>
     </section>
   </form>
