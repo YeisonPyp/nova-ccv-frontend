@@ -6,10 +6,11 @@
   grid-template-columns: minmax(130px, 1fr) minmax(150px, 2fr);
 
   & > span:first-child {
-    @apply text-gray-500 font-medium;
+    @apply font-medium;
+    color: var(--color-tertiary);
   }
 
   & > span:last-child {
-    @apply text-gray-900;
+    color: var(--color-secondary);
   }
 }

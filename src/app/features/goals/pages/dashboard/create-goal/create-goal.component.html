@@ -20,7 +20,7 @@
           <div class="bg-white rounded-lg shadow border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200">
               <h2
-                class="text-xl font-semibold text-gray-800 uppercase tracking-wide"
+                class="text-xl font-semibold text-secondary uppercase tracking-wide"
               >
                 Seleccionar Plantilla de Meta
               </h2>
@@ -36,7 +36,7 @@
                 @for (template of goalTemplates(); track template.id) {
                   <div
                     class="bg-white p-4 rounded-lg shadow-sm border-2 cursor-pointer transition-all hover:shadow-md"
-                    [class.border-blue-600]="
+                    [class.border-primary]="
                       selectedTemplate()?.id === template.id
                     "
                     [class.border-transparent]="
@@ -46,21 +46,21 @@
                   >
                     <h3
                       class="font-medium text-lg mb-1"
-                      [class.text-blue-700]="
+                      [class.text-primary]="
                         selectedTemplate()?.id === template.id
                       "
-                      [class.text-gray-800]="
+                      [class.text-secondary]="
                         selectedTemplate()?.id !== template.id
                       "
                     >
                       {{ template.name }}
                     </h3>
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-tertiary">
                       Tipo: {{ template.goalType.name }}
                     </p>
                   </div>
                 } @empty {
-                  <div class="text-center p-8 text-gray-500">
+                  <div class="text-center p-8 text-tertiary">
                     No hay plantillas disponibles.
                   </div>
                 }
@@ -69,7 +69,7 @@
               <!-- Right side: Parameter Configuration -->
               <div class="p-6 bg-white flex flex-col h-full">
                 <h3
-                  class="text-lg font-medium text-gray-800 mb-6 uppercase tracking-wide"
+                  class="text-lg font-medium text-secondary mb-6 uppercase tracking-wide"
                 >
                   Configuración de Parámetros
                 </h3>
@@ -83,15 +83,15 @@
                         <div
                           class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center"
                         >
-                          <span class="font-medium text-gray-700">{{
+                          <span class="font-medium text-secondary">{{
                             goalVar.label
                           }}</span>
-                          @if (goalVarsValues()[goalVar.varName]?.label) {
+                          @if (goalVarsValues()[goalVar.varName]) {
                             <span
                               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
                             >
                               Seleccionado:
-                              {{ goalVarsValues()[goalVar.varName].label }}
+                              {{ goalVarsValues()[goalVar.varName] }}
                             </span>
                           } @else {
                             <span
@@ -110,7 +110,7 @@
                       </div>
                     } @empty {
                       <div
-                        class="flex-1 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg border border-gray-200 p-8 text-center"
+                        class="flex-1 flex items-center justify-center text-tertiary bg-gray-50 rounded-lg border border-gray-200 p-8 text-center"
                       >
                         Esta plantilla no requiere configuración de parámetros.
                       </div>
@@ -118,7 +118,7 @@
                   </div>
                 } @else {
                   <div
-                    class="flex-1 flex flex-col items-center justify-center text-gray-400 p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-300"
+                    class="flex-1 flex flex-col items-center justify-center text-alternate p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-300"
                   >
                     <svg
                       class="w-12 h-12 mb-4 text-gray-300"
@@ -148,7 +148,7 @@
             <div>
               <div class="px-6 py-4 border-b border-gray-200">
                 <h2
-                  class="text-xl font-semibold text-gray-800 uppercase tracking-wide"
+                  class="text-xl font-semibold text-secondary uppercase tracking-wide"
                 >
                   Configuración de parámetros de la Meta
                 </h2>
@@ -157,65 +157,65 @@
               <form class="grid grid-cols-2 gap-1.5" [formGroup]="formGroup">
                 <div class="form-group mb-4">
                   <label
-                    class="block text-gray-700 text-sm font-bold mb-2"
+                    class="block text-secondary text-sm font-bold mb-2"
                     for="title"
                   >
                     Título
                   </label>
                   <input
-                    class="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 text-secondary border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     id="title"
                     formControlName="title"
                   />
                 </div>
                 <div class="form-group mb-4">
                   <label
-                    class="block text-gray-700 text-sm font-bold mb-2"
+                    class="block text-secondary text-sm font-bold mb-2"
                     for="deviation"
                   >
                     Desviación
                   </label>
                   <input
-                    class="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 text-secondary border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     id="deviation"
                     formControlName="deviation"
                   />
                 </div>
                 <div class="form-group mb-4">
                   <label
-                    class="block text-gray-700 text-sm font-bold mb-2"
+                    class="block text-secondary text-sm font-bold mb-2"
                     for="targetValue"
                   >
                     Valor Objetivo
                   </label>
                   <input
-                    class="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 text-secondary border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     id="targetValue"
                     formControlName="targetValue"
                   />
                 </div>
                 <div class="form-group mb-4">
                   <label
-                    class="block text-gray-700 text-sm font-bold mb-2"
+                    class="block text-secondary text-sm font-bold mb-2"
                     for="weight"
                   >
                     Peso de la meta
                   </label>
                   <input
-                    class="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 text-secondary border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     id="weight"
                     formControlName="weight"
                   />
                 </div>
                 <div class="form-group mb-4">
                   <label
-                    class="block text-gray-700 text-sm font-bold mb-2"
+                    class="block text-secondary text-sm font-bold mb-2"
                     for="description"
                   >
                     Descripción
                   </label>
                   <textarea
-                    class="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 text-secondary border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     id="description"
                     name="description"
                     formControlName="description"

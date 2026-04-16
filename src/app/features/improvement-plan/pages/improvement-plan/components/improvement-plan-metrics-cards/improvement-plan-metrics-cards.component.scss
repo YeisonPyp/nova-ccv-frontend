@@ -14,11 +14,15 @@
 }
 
 .metric-label {
-  @apply text-gray-600 text-sm font-medium;
+  @apply text-sm font-medium;
+  color: var(--color-tertiary);
 }
+
 .metric-value {
-  @apply text-2xl font-bold text-gray-900;
+  @apply text-2xl font-bold;
+  color: var(--color-secondary);
 }
+
 .metric-value.success {
   @apply text-green-600;
 }

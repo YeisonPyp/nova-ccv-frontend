@@ -1,6 +1,5 @@
 <div
   class="group flex items-center min-h-8 py-2 px-2 mt-2 rounded-md hover:bg-gray-50 transition-all border-b border-transparent hover:border-gray-100"
-
   [formGroup]="form"
 >
   <div class="flex items-center space-x-2">
@@ -15,7 +14,7 @@
       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
     </svg>
-    <app-search-select 
+    <app-search-select
       [emptyMessage]="searchSelectEmployeeContext.op?.emptyMessage ?? ''"
       [items]="searchSelectEmployeeContext.options()"
       [selectedItems]="searchSelectEmployeeContext.selectedOptions()"
@@ -23,12 +22,13 @@
       [required]="searchSelectEmployeeContext.op?.isRequired ?? false"
       (onRemove)="searchSelectEmployeeContext.remove($event)"
       (onSearch)="searchSelectEmployeeContext.search($event)"
-      (onSelect)="searchSelectEmployeeContext.select($event)">
+      (onSelect)="searchSelectEmployeeContext.select($event)"
+    >
     </app-search-select>
 
-    <input 
+    <input
       #datePicker
-      type="date" 
+      type="date"
       class="w-full h-full input-date-lc"
       formControlName="dueDate"
     />
@@ -38,7 +38,7 @@
     #newItemInput
     type="text"
     placeholder="Agregar elemento"
-    class="grow bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:placeholder:text-transparent transition-all ml-2"
+    class="grow bg-transparent text-sm text-secondary outline-none placeholder:text-alternate focus:placeholder:text-transparent transition-all ml-2"
     (keyup.enter)="onEnterPressed($event)"
     formControlName="name"
   />

@@ -7,7 +7,7 @@
   >
     <div class="flex items-center gap-3 grow mr-4">
       <svg
-        class="w-3.5 h-3.5 text-gray-400 transition-transform group-open/item:rotate-90"
+        class="w-3.5 h-3.5 text-alternate transition-transform group-open/item:rotate-90"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -22,7 +22,7 @@
 
       <input
         type="text"
-        class="grow bg-transparent font-semibold text-gray-800 outline-none border-b border-transparent focus:border-blue-500 focus:bg-blue-50/30 transition-all px-2 py-0.5 rounded-sm text-sm"
+        class="grow bg-transparent font-semibold text-secondary outline-none border-b border-transparent focus:border-blue-500 focus:bg-blue-50/30 transition-all px-2 py-0.5 rounded-sm text-sm"
         placeholder="Nombre de la acción..."
         (click)="$event.stopPropagation()"
         formControlName="name"
@@ -32,10 +32,10 @@
     <div class="flex items-center gap-4">
       <div class="hidden md:flex items-center gap-4 text-[13px]">
         <div
-          class="flex items-center gap-1.5 px-2 py-1 bg-gray-100 text-gray-600 rounded-full border border-gray-200 shadow-sm max-w-37.5"
+          class="flex items-center gap-1.5 px-2 py-1 bg-gray-100 text-tertiary rounded-full border border-gray-200 shadow-sm max-w-37.5"
         >
           <svg
-            class="w-3.5 h-3.5 text-gray-500"
+            class="w-3.5 h-3.5 text-tertiary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -52,7 +52,7 @@
           }}</span>
         </div>
 
-        <div class="flex items-center gap-1.5 text-gray-500 font-medium">
+        <div class="flex items-center gap-1.5 text-tertiary font-medium">
           <svg
             class="w-3.5 h-3.5"
             fill="none"
@@ -84,7 +84,7 @@
 
       <button
         type="button"
-        class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 opacity-0 group-hover/item:opacity-100 focus:opacity-100"
+        class="p-1.5 text-alternate hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 opacity-0 group-hover/item:opacity-100 focus:opacity-100"
         (click)="onDeleteCorrectiveAction(); $event.stopPropagation()"
       >
         <svg
@@ -109,14 +109,14 @@
     <div class="space-y-3">
       <div class="flex items-center gap-2">
         <label
-          class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+          class="text-[10px] font-bold text-alternate uppercase tracking-widest"
         >
           Descripción de la acción
         </label>
       </div>
       <textarea
         rows="2"
-        class="w-full text-[13px] text-gray-600 leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
+        class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
         placeholder="Añade una descripción detallada sobre los pasos a seguir..."
         formControlName="description"
       ></textarea>
@@ -126,10 +126,10 @@
       <div class="flex justify-between items-end">
         <div class="space-y-1">
           <label
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+            class="text-[10px] font-bold text-alternate uppercase tracking-widest"
             >Progreso de ejecución</label
           >
-          <p class="text-xs text-gray-500 font-medium">
+          <p class="text-xs text-tertiary font-medium">
             @if (formGroup.get("progress")?.value == 100) {
               <span class="text-emerald-600 flex items-center gap-1">
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -140,14 +140,14 @@
                 Finalizado
               </span>
             } @else if (formGroup.get("progress")?.value > 0) {
-              <span class="text-blue-600">En curso</span>
+              <span class="text-primary">En curso</span>
             } @else {
               <span>Pendiente por iniciar</span>
             }
           </p>
         </div>
         <span
-          class="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-md border border-blue-100"
+          class="px-2 py-1 bg-blue-50 text-primary text-xs font-bold rounded-md border border-blue-100"
         >
           {{ formGroup.get("progress")?.value }}%
         </span>
@@ -156,7 +156,7 @@
       <div class="relative pt-1">
         <input
           type="range"
-          class="action-progress w-full h-1.5 appearance-none bg-gray-200 rounded-lg cursor-pointer accent-blue-600 transition-all"
+          class="action-progress w-full h-1.5 appearance-none bg-gray-200 rounded-lg cursor-pointer accent-primary transition-all"
           formControlName="progress"
           min="0"
           max="100"
@@ -174,11 +174,11 @@
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <label
-          class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+          class="text-[10px] font-bold text-alternate uppercase tracking-widest"
           >Evidencias y Soportes</label
         >
         <span
-          class="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full"
+          class="text-[10px] text-alternate bg-gray-100 px-2 py-0.5 rounded-full"
         >
           {{ evidences().length }} archivos
         </span>
