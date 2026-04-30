@@ -5,10 +5,15 @@ import {
   PageableQuery,
   PageableQueryParams,
 } from "../../../shared/pageable-query";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
 import { Area } from "../../models/assessment/area.model";
+import {
+  OnSelectCallback,
+  SearchSelectContextFactory,
+  SearchSelectContextFactoryOptions,
+} from "../../../shared/components/search-select/on-search-select.interface";
 
 export interface CreateAreaDto {
   name: string;
@@ -33,5 +38,20 @@ export class AreaService {
 
   createArea(dto: CreateAreaDto): Observable<ApiResponse<Area>> {
     return this.http.post<ApiResponse<Area>>(this.API_URL, dto);
+  }
+
+  newSearchSelectAreaContext(
+    onSelectCallback?: OnSelectCallback<Area>,
+    op?: SearchSelectContextFactoryOptions,
+  ) {
+    return new SearchSelectContextFactory<Area>(
+      (term) =>
+        this.findAreas({ name: term }).pipe(
+          map((res) => res?.data?.content ?? []),
+        ),
+      (a) => ({ id: a.id, title: a.name }),
+      onSelectCallback,
+      op,
+    );
   }
 }

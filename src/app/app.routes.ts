@@ -1,96 +1,86 @@
-// // src/app/app.routes.ts
-
-// import { Routes } from '@angular/router';
-
-// export const routes: Routes = [
-//   {
-//     path: '',
-//     redirectTo: 'pat/dashboard',
-//     pathMatch: 'full'
-//   },
-//   {
-//     path: 'pat',
-//     children: [
-//       {
-//         path: 'dashboard',
-//         loadComponent: () => 
-//           import('./features/pat/pages/dashboard/dashboard.component')
-//             .then(m => m.DashboardComponent)
-//       },
-//       {
-//         path: 'programs',
-//         loadComponent: () => 
-//           import('./features/pat/pages/programs/programs.component')
-//             .then(m => m.ProgramsComponent)
-//       },
-//       {
-//         path: 'programs/:id',
-//         loadComponent: () => 
-//           import('./features/pat/pages/program-detail/program-detail.component')
-//             .then(m => m.ProgramDetailComponent)
-//       }
-//     ]
-//   },
-//   {
-//     path: '**',
-//     redirectTo: 'pat/dashboard'
-//   }
-// ];
-
-import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { Routes } from "@angular/router";
+import { authGuard } from "./core/guards/auth.guard";
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
+    path: "",
+    redirectTo: "dashboard",
+    pathMatch: "full",
   },
   {
-    path: 'auth',
-    loadChildren: () => import('./features/auth/auth.routes')
-      .then(m => m.AUTH_ROUTES)
+    path: "auth",
+    loadChildren: () =>
+      import("./features/auth/auth.routes").then((m) => m.AUTH_ROUTES),
   },
   {
-    path: '',
+    path: "",
     canActivate: [authGuard],
-    loadComponent: () => import('./layouts/main-layout/main-layout.component')
-      .then(m => m.MainLayoutComponent),
+    loadComponent: () =>
+      import("./layouts/main-layout/main-layout.component").then(
+        (m) => m.MainLayoutComponent,
+      ),
     children: [
       {
-        path: 'dashboard',
-        loadComponent: () => import('./features/home/home.component')
-          .then(m => m.HomeComponent)
+        path: "dashboard",
+        loadComponent: () =>
+          import("./features/home/home.component").then((m) => m.HomeComponent),
       },
       {
-        path: 'pat',
-        loadChildren: () => import('./features/pat/pat.routes')
-          .then(m => m.PAT_ROUTES)
+        path: "pat",
+        loadChildren: () =>
+          import("./features/pat/pat.routes").then((m) => m.PAT_ROUTES),
       },
       {
-        path: 'profile',
-        loadComponent: () => import('./features/profile/profile.component')
-          .then(m => m.ProfileComponent)
+        path: "profile",
+        loadComponent: () =>
+          import("./features/profile/profile.component").then(
+            (m) => m.ProfileComponent,
+          ),
       },
       {
-        path: 'assessment',
-        loadChildren: () => import('./features/assessment/assessment.routes')
-          .then(m => m.ASSESSMENT_ROUTES)
+        path: "assessment",
+        loadChildren: () =>
+          import("./features/assessment/assessment.routes").then(
+            (m) => m.ASSESSMENT_ROUTES,
+          ),
       },
       {
-        path: 'improvement-plan',
-        loadChildren: () => import('./features/improvement-plan/improvement-plan.routes')
-          .then(m => m.IMPROVEMENT_PLAN_ROUTES)
+        path: "improvement-plan",
+        loadChildren: () =>
+          import("./features/improvement-plan/improvement-plan.routes").then(
+            (m) => m.IMPROVEMENT_PLAN_ROUTES,
+          ),
       },
       {
-        path: 'goals',
-        loadChildren: () => import('./features/goals/goals.routes')
-          .then(m => m.GOALS_ROUTES)
+        path: "goals",
+        loadChildren: () =>
+          import("./features/goals/goals.routes").then((m) => m.GOALS_ROUTES),
       },
-    ]
+      {
+        path: "contracts",
+        loadChildren: () =>
+          import("./features/contract/contract.routes").then(
+            (m) => m.CONTRACT_ROUTES,
+          ),
+      },
+      {
+        path: "cost-centers",
+        loadChildren: () =>
+          import("./features/cost-center/cost-center.routes").then(
+            (m) => m.COST_CENTER_ROUTES,
+          ),
+      },
+      {
+        path: "filings",
+        loadChildren: () =>
+          import("./features/filing/filing.routes").then(
+            (m) => m.FILING_ROUTES,
+          ),
+      },
+    ],
   },
   {
-    path: '**',
-    redirectTo: 'auth/login'
-  }
+    path: "**",
+    redirectTo: "auth/login",
+  },
 ];

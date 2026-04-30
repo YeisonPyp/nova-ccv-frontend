@@ -1,12 +1,12 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
-import { CommonModule, CurrencyPipe, PercentPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PatApiService } from '../../../../core/services/pat-api.service';
-import { DashboardStats, ProgramWithMetrics } from '../../models/pat.models';
+import { DashboardStats, ProgramWithMetrics, ProgramStatus } from '../../models/pat.models';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterLink, CurrencyPipe ],
+  imports: [CommonModule, RouterLink, CurrencyPipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -15,26 +15,26 @@ export class DashboardComponent implements OnInit {
   programs = signal<ProgramWithMetrics[]>([]);
   loading = signal(true);
 
-  topPrograms = computed(() => 
+  topPrograms = computed(() =>
     this.programs()
-      .filter(p => p.estado === 'EJECUCION' || p.estado === 'APROBADO')
+      .filter(p => p.status === 'IN_PROGRESS' || p.status === 'APPROVED')
       .slice(0, 4)
   );
 
   statusSummary = computed(() => {
     const progs = this.programs();
-    const statuses: Array<{estado: string; label: string; count: number; presupuesto: number}> = [
-      { estado: 'EJECUCION', label: 'En Ejecución', count: 0, presupuesto: 0 },
-      { estado: 'APROBADO', label: 'Aprobados', count: 0, presupuesto: 0 },
-      { estado: 'BORRADOR', label: 'Borrador', count: 0, presupuesto: 0 },
-      { estado: 'CERRADO', label: 'Cerrados', count: 0, presupuesto: 0 }
+    const statuses: Array<{ status: ProgramStatus; label: string; count: number; budget: number }> = [
+      { status: 'IN_PROGRESS', label: 'En Ejecución', count: 0, budget: 0 },
+      { status: 'APPROVED', label: 'Aprobados', count: 0, budget: 0 },
+      { status: 'DRAFT', label: 'Borrador', count: 0, budget: 0 },
+      { status: 'CLOSED', label: 'Cerrados', count: 0, budget: 0 }
     ];
 
     progs.forEach(p => {
-      const status = statuses.find(s => s.estado === p.estado);
-      if (status) {
-        status.count++;
-        status.presupuesto += p.totalPlaneado;
+      const s = statuses.find(s => s.status === p.status);
+      if (s) {
+        s.count++;
+        s.budget += p.plannedBudget;
       }
     });
 
@@ -62,11 +62,21 @@ export class DashboardComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'BORRADOR': 'Borrador',
-      'APROBADO': 'Aprobado',
-      'EJECUCION': 'En Ejecución',
-      'CERRADO': 'Cerrado'
+      'DRAFT': 'Borrador',
+      'APPROVED': 'Aprobado',
+      'IN_PROGRESS': 'En Ejecución',
+      'CLOSED': 'Cerrado'
     };
     return labels[status] || status;
+  }
+
+  getStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      'DRAFT': 'borrador',
+      'APPROVED': 'aprobado',
+      'IN_PROGRESS': 'ejecucion',
+      'CLOSED': 'cerrado'
+    };
+    return map[status] ?? status.toLowerCase();
   }
 }

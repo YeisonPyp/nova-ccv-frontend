@@ -15,7 +15,7 @@
       <div class="kpi-card primary">
         <div class="kpi-icon">📋</div>
         <div class="kpi-content">
-          <span class="kpi-value">{{ stats()?.totalProgramas }}</span>
+          <span class="kpi-value">{{ stats()?.totalPrograms }}</span>
           <span class="kpi-label">Total Programas</span>
         </div>
       </div>
@@ -23,7 +23,7 @@
       <div class="kpi-card success">
         <div class="kpi-icon">✅</div>
         <div class="kpi-content">
-          <span class="kpi-value">{{ stats()?.programasActivos }}</span>
+          <span class="kpi-value">{{ stats()?.activePrograms }}</span>
           <span class="kpi-label">Programas Activos</span>
         </div>
       </div>
@@ -31,7 +31,7 @@
       <div class="kpi-card danger">
         <div class="kpi-icon">⚠️</div>
         <div class="kpi-content">
-          <span class="kpi-value">{{ stats()?.programasEnRiesgo }}</span>
+          <span class="kpi-value">{{ stats()?.atRiskPrograms }}</span>
           <span class="kpi-label">En Riesgo</span>
         </div>
       </div>
@@ -39,19 +39,19 @@
       <div class="kpi-card info">
         <div class="kpi-icon">🎯</div>
         <div class="kpi-content">
-          <span class="kpi-value">{{ stats()?.avanceMetaGlobal }}%</span>
+          <span class="kpi-value">{{ stats()?.globalGoalProgress }}%</span>
           <span class="kpi-label">Avance Metas</span>
         </div>
         <div class="kpi-progress">
           <div
             class="progress-bar"
-            [style.width.%]="stats()?.avanceMetaGlobal"
-            [class.low]="(stats()?.avanceMetaGlobal ?? 0) < 40"
+            [style.width.%]="stats()?.globalGoalProgress"
+            [class.low]="(stats()?.globalGoalProgress ?? 0) < 40"
             [class.medium]="
-              (stats()?.avanceMetaGlobal ?? 0) >= 40 &&
-              (stats()?.avanceMetaGlobal ?? 0) < 70
+              (stats()?.globalGoalProgress ?? 0) >= 40 &&
+              (stats()?.globalGoalProgress ?? 0) < 70
             "
-            [class.high]="(stats()?.avanceMetaGlobal ?? 0) >= 70"
+            [class.high]="(stats()?.globalGoalProgress ?? 0) >= 70"
           ></div>
         </div>
       </div>
@@ -59,15 +59,13 @@
       <div class="kpi-card warning">
         <div class="kpi-icon">💰</div>
         <div class="kpi-content">
-          <span class="kpi-value"
-            >{{ stats()?.ejecucionPresupuestalGlobal }}%</span
-          >
+          <span class="kpi-value">{{ stats()?.globalBudgetExecution }}%</span>
           <span class="kpi-label">Ejecución Presupuestal</span>
         </div>
         <div class="kpi-progress">
           <div
             class="progress-bar budget"
-            [style.width.%]="stats()?.ejecucionPresupuestalGlobal"
+            [style.width.%]="stats()?.globalBudgetExecution"
           ></div>
         </div>
       </div>
@@ -76,13 +74,13 @@
         <div class="kpi-icon">🏦</div>
         <div class="kpi-content">
           <span class="kpi-value">{{
-            stats()?.presupuestoEjecutado
+            stats()?.executedBudget
               | currency: "COP" : "symbol-narrow" : "1.0-0"
           }}</span>
           <span class="kpi-label"
             >de
             {{
-              stats()?.presupuestoTotal
+              stats()?.totalBudget
                 | currency: "COP" : "symbol-narrow" : "1.0-0"
             }}
             Planeado</span
@@ -102,21 +100,21 @@
         @for (program of topPrograms(); track program.id) {
           <div
             class="program-card"
-            [class]="'status-' + program.estado.toLowerCase()"
+            [class]="'status-' + getStatusClass(program.status)"
           >
             <div class="program-header">
-              <span class="program-code">{{ program.codigo }}</span>
+              <span class="program-code">{{ program.code }}</span>
               <span
                 class="program-status"
-                [class]="program.estado.toLowerCase()"
+                [class]="getStatusClass(program.status)"
               >
-                {{ getStatusLabel(program.estado) }}
+                {{ getStatusLabel(program.status) }}
               </span>
             </div>
-            <h3 class="program-name">{{ program.nombre }}</h3>
+            <h3 class="program-name">{{ program.name }}</h3>
             <div class="program-meta">
-              <span>📍 {{ program.area }}</span>
-              <span>👤 {{ program.responsable }}</span>
+              <span>📍 {{ program.areaName }}</span>
+              <span>👤 {{ program.employeeName }}</span>
             </div>
             <div class="program-metrics">
               <div class="metric">
@@ -124,24 +122,20 @@
                 <div class="metric-bar">
                   <div
                     class="metric-fill meta"
-                    [style.width.%]="program.metaEjecutadaPct"
+                    [style.width.%]="program.goalAchievedPct"
                   ></div>
                 </div>
-                <span class="metric-value"
-                  >{{ program.metaEjecutadaPct }}%</span
-                >
+                <span class="metric-value">{{ program.goalAchievedPct }}%</span>
               </div>
               <div class="metric">
                 <span class="metric-label">Presupuesto</span>
                 <div class="metric-bar">
                   <div
                     class="metric-fill budget"
-                    [style.width.%]="program.presupuestoEjecutadoPct"
+                    [style.width.%]="program.budgetExecutedPct"
                   ></div>
                 </div>
-                <span class="metric-value"
-                  >{{ program.presupuestoEjecutadoPct }}%</span
-                >
+                <span class="metric-value">{{ program.budgetExecutedPct }}%</span>
               </div>
             </div>
             <a
@@ -159,13 +153,13 @@
     <section class="status-summary">
       <h2>📈 Resumen por Estado</h2>
       <div class="status-cards">
-        @for (status of statusSummary(); track status.estado) {
-          <div class="status-card" [class]="status.estado.toLowerCase()">
+        @for (status of statusSummary(); track status.status) {
+          <div class="status-card" [class]="getStatusClass(status.status)">
             <span class="status-count">{{ status.count }}</span>
             <span class="status-name">{{ status.label }}</span>
             <div class="status-budget">
               {{
-                status.presupuesto | currency: "COP" : "symbol-narrow" : "1.0-0"
+                status.budget | currency: "COP" : "symbol-narrow" : "1.0-0"
               }}
             </div>
           </div>

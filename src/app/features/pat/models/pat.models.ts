@@ -1,106 +1,115 @@
-export type ProgramStatus = 'BORRADOR' | 'APROBADO' | 'EJECUCION' | 'CERRADO';
-export type AuditAction = 'CREATE' | 'UPDATE' | 'DELETE';
+export type ProgramStatus = "DRAFT" | "APPROVED" | "IN_PROGRESS" | "CLOSED";
+export type AuditAction = "CREATE" | "UPDATE" | "DELETE";
 
 export interface Program {
   id: number;
-  codigo: string;
-  nombre: string;
-  area: string;
-  responsable: string;
-  estado: ProgramStatus;
-  objetivoEstrategico?: string;
-  pilar?: string;
-  beneficiarios?: string;
+  code: string;
+  name: string;
+  areaId: number;
+  areaName: string;
+  employeeId: number;
+  employeeName: string;
+  costCenterId: number;
+  costCenterName: string;
+  status: ProgramStatus;
+  objective?: string;
+  pillar?: string;
+  beneficiaries?: string;
+  year: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Activity {
   id: number;
   programId: number;
-  nombre: string;
-  unidadMedida: string;
-  metaTotal: number;
+  name: string;
+  measurement: string;
+  goalTotal: number;
+  displayOrder: number;
 }
 
 export interface BudgetItem {
   id: number;
   activityId: number;
-  rubro: string;
-  planeado: number;
-  ejecutado: number;
+  category: string;
+  planned: number;
+  executed: number;
 }
 
 export interface MonthlyExecution {
   id: number;
   activityId: number;
-  mes: number;
-  metaEjecutada: number;
-  valorEjecutado: number;
-  observaciones?: string;
+  month: number;
+  monthName: string;
+  executedGoal: number;
+  executedAmount: number;
+  notes?: string;
+  registeredBy?: string;
+  createdAt: string;
 }
 
 export interface MonthlyPlan {
   id: number;
   activityId: number;
-  mes: number;
-  metaPlaneada: number;
-  valorPlaneado: number;
+  month: number;
+  plannedGoal: number;
+  plannedAmount: number;
 }
 
 export interface AuditLog {
   id: number;
-  entidad: string;
-  entidadId: number;
-  accion: AuditAction;
-  usuario: string;
-  fecha: string;
-  valorAnterior: any;
-  valorNuevo: any;
+  entity: string;
+  entityId: number;
+  action: AuditAction;
+  user: string;
+  date: string;
+  previousValue: any;
+  newValue: any;
 }
 
-// DTOs calculados para la UI
 export interface ProgramWithMetrics extends Program {
-  metaEjecutadaPct: number;
-  presupuestoEjecutadoPct: number;
-  totalPlaneado: number;
-  totalEjecutado: number;
-  metaTotal: number;
-  metaEjecutada: number;
+  goalAchievedPct: number;
+  budgetExecutedPct: number;
+  plannedBudget: number;
+  executedBudget: number;
+  goalTotal: number;
+  executedGoal: number;
 }
 
 export interface ActivityWithMetrics extends Activity {
-  metaEjecutada: number;
-  avancePct: number;
-  presupuestoPlaneado: number;
-  presupuestoEjecutado: number;
+  executedGoal: number;
+  progressPct: number;
+  plannedBudget: number;
+  executedBudget: number;
 }
 
 export interface DashboardStats {
-  totalProgramas: number;
-  programasActivos: number;
-  programasEnRiesgo: number;
-  avanceMetaGlobal: number;
-  ejecucionPresupuestalGlobal: number;
-  presupuestoTotal: number;
-  presupuestoEjecutado: number;
+  totalPrograms: number;
+  activePrograms: number;
+  atRiskPrograms: number;
+  globalGoalProgress: number;
+  globalBudgetExecution: number;
+  totalBudget: number;
+  executedBudget: number;
 }
 
 export interface ScheduleRow {
-  mes: number;
-  nombreMes: string;
-  metaPlaneada: number;
-  metaEjecutada: number;
-  valorPlaneado: number;
-  valorEjecutado: number;
+  month: number;
+  monthName: string;
+  plannedGoal: number;
+  executedGoal: number;
+  plannedAmount: number;
+  executedAmount: number;
 }
 
 export interface ExecutionFormData {
   activityId: number;
-  mes: number;
-  metaEjecutada: number;
-  valorEjecutado: number;
-  observaciones: string;
+  month: number;
+  executedGoal: number;
+  executedAmount: number;
+  notes: string;
 }
-
 
 export interface MenuNode {
   label: string;
@@ -109,5 +118,5 @@ export interface MenuNode {
   external?: boolean;
   expanded?: boolean;
   children?: MenuNode[];
-  target?: '_blank' | '_self' | '_parent' | '_top'; // Para links externos
+  target?: "_blank" | "_self" | "_parent" | "_top";
 }

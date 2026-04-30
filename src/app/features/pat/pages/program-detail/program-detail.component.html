@@ -9,17 +9,17 @@
     <header class="program-header">
       <div class="header-top">
         <a routerLink="/pat/programs" class="btn-back">← Volver a programas</a>
-        <span class="status-badge" [class]="program()!.estado.toLowerCase()">
-          {{ getStatusLabel(program()!.estado) }}
+        <span class="status-badge" [class]="getStatusClass(program()!.status)">
+          {{ getStatusLabel(program()!.status) }}
         </span>
       </div>
       <div class="header-main">
-        <span class="program-code">{{ program()!.codigo }}</span>
-        <h1>{{ program()!.nombre }}</h1>
+        <span class="program-code">{{ program()!.code }}</span>
+        <h1>{{ program()!.name }}</h1>
       </div>
       <div class="header-meta">
-        <span>📍 {{ program()!.area }}</span>
-        <span>👤 {{ program()!.responsable }}</span>
+        <span>📍 {{ program()!.areaName }}</span>
+        <span>👤 {{ program()!.employeeName }}</span>
       </div>
 
       <!-- Progress Summary -->
@@ -101,7 +101,7 @@
         [class.active]="activeTab() === 'execution'"
         (click)="setTab('execution')"
         [disabled]="
-          program()!.estado === 'CERRADO' || program()!.estado === 'BORRADOR'
+          program()!.status === 'CLOSED' || program()!.status === 'DRAFT'
         "
       >
         ✏️ Registrar Ejecución
@@ -116,15 +116,15 @@
           <div class="info-grid">
             <div class="info-card">
               <h3>🎯 Objetivo Estratégico</h3>
-              <p>{{ program()!.objetivoEstrategico || "No definido" }}</p>
+              <p>{{ program()!.objective || "No definido" }}</p>
             </div>
             <div class="info-card">
               <h3>🏛️ Pilar Estratégico</h3>
-              <p>{{ program()!.pilar || "No definido" }}</p>
+              <p>{{ program()!.pillar || "No definido" }}</p>
             </div>
             <div class="info-card">
               <h3>👥 Beneficiarios</h3>
-              <p>{{ program()!.beneficiarios || "No definido" }}</p>
+              <p>{{ program()!.beneficiaries || "No definido" }}</p>
             </div>
             <div class="info-card">
               <h3>📊 Resumen</h3>
@@ -173,37 +173,37 @@
               <tbody>
                 @for (activity of activities(); track activity.id) {
                   <tr>
-                    <td class="activity-name">{{ activity.nombre }}</td>
-                    <td>{{ activity.unidadMedida }}</td>
-                    <td class="text-center">{{ activity.metaTotal }}</td>
-                    <td class="text-center">{{ activity.metaEjecutada }}</td>
+                    <td class="activity-name">{{ activity.name }}</td>
+                    <td>{{ activity.measurement }}</td>
+                    <td class="text-center">{{ activity.goalTotal }}</td>
+                    <td class="text-center">{{ activity.executedGoal }}</td>
                     <td>
                       <div class="inline-progress">
                         <div class="mini-bar-container">
                           <div
                             class="mini-bar"
-                            [style.width.%]="activity.avancePct"
-                            [class.low]="activity.avancePct < 40"
+                            [style.width.%]="activity.progressPct"
+                            [class.low]="activity.progressPct < 40"
                             [class.medium]="
-                              activity.avancePct >= 40 &&
-                              activity.avancePct < 70
+                              activity.progressPct >= 40 &&
+                              activity.progressPct < 70
                             "
-                            [class.high]="activity.avancePct >= 70"
+                            [class.high]="activity.progressPct >= 70"
                           ></div>
                         </div>
-                        <span class="pct-value">{{ activity.avancePct }}%</span>
+                        <span class="pct-value">{{ activity.progressPct }}%</span>
                       </div>
                     </td>
                     <td class="budget-cell">
                       <div class="budget-info">
                         <span class="executed">{{
-                          activity.presupuestoEjecutado
+                          activity.executedBudget
                             | currency: "COP" : "symbol-narrow" : "1.0-0"
                         }}</span>
                         <span class="planned"
                           >de
                           {{
-                            activity.presupuestoPlaneado
+                            activity.plannedBudget
                               | currency: "COP" : "symbol-narrow" : "1.0-0"
                           }}</span
                         >
@@ -263,25 +263,25 @@
               <tbody>
                 @for (item of budgetItems(); track item.id) {
                   <tr>
-                    <td>{{ item.rubro }}</td>
+                    <td>{{ item.category }}</td>
                     <td class="text-right">
                       {{
-                        item.planeado
+                        item.planned
                           | currency: "COP" : "symbol-narrow" : "1.0-0"
                       }}
                     </td>
                     <td class="text-right">
                       {{
-                        item.ejecutado
+                        item.executed
                           | currency: "COP" : "symbol-narrow" : "1.0-0"
                       }}
                     </td>
                     <td
                       class="text-right"
-                      [class.negative]="item.planeado - item.ejecutado < 0"
+                      [class.negative]="item.planned - item.executed < 0"
                     >
                       {{
-                        item.planeado - item.ejecutado
+                        item.planned - item.executed
                           | currency: "COP" : "symbol-narrow" : "1.0-0"
                       }}
                     </td>
@@ -352,40 +352,38 @@
                 </tr>
               </thead>
               <tbody>
-                @for (row of schedule(); track row.mes) {
-                  <tr [class.current-month]="row.mes === currentMonth">
+                @for (row of schedule(); track row.month) {
+                  <tr [class.current-month]="row.month === currentMonth">
                     <td class="month-cell">
-                      <span class="month-name">{{ row.nombreMes }}</span>
-                      @if (row.mes === currentMonth) {
+                      <span class="month-name">{{ row.monthName }}</span>
+                      @if (row.month === currentMonth) {
                         <span class="current-badge">Actual</span>
                       }
                     </td>
-                    <td class="text-center">{{ row.metaPlaneada }}</td>
-                    <td class="text-center">{{ row.metaEjecutada }}</td>
+                    <td class="text-center">{{ row.plannedGoal }}</td>
+                    <td class="text-center">{{ row.executedGoal }}</td>
                     <td class="text-right">
                       {{
-                        row.valorPlaneado
+                        row.plannedAmount
                           | currency: "COP" : "symbol-narrow" : "1.0-0"
                       }}
                     </td>
                     <td class="text-right">
                       {{
-                        row.valorEjecutado
+                        row.executedAmount
                           | currency: "COP" : "symbol-narrow" : "1.0-0"
                       }}
                     </td>
                     <td>
-                      @if (row.mes < currentMonth) {
+                      @if (row.month < currentMonth) {
                         <span
                           class="schedule-status"
                           [class]="getMonthStatus(row)"
                         >
                           {{ getMonthStatusLabel(row) }}
                         </span>
-                      } @else if (row.mes === currentMonth) {
-                        <span class="schedule-status in-progress"
-                          >En curso</span
-                        >
+                      } @else if (row.month === currentMonth) {
+                        <span class="schedule-status in-progress">En curso</span>
                       } @else {
                         <span class="schedule-status pending">Pendiente</span>
                       }
@@ -401,7 +399,7 @@
       <!-- Execution Tab -->
       @if (activeTab() === "execution") {
         <div class="tab-panel execution-panel">
-          @if (program()!.estado === "CERRADO") {
+          @if (program()!.status === "CLOSED") {
             <div class="alert warning">
               ⚠️ Este programa está cerrado. No se pueden registrar más
               ejecuciones.
@@ -418,9 +416,9 @@
                       <option value="">Seleccione una actividad</option>
                       @for (activity of activities(); track activity.id) {
                         <option [value]="activity.id">
-                          {{ activity.nombre }} (Meta:
+                          {{ activity.name }} (Meta:
                           {{
-                            activity.metaTotal - activity.metaEjecutada
+                            activity.goalTotal - activity.executedGoal
                           }}
                           disponible)
                         </option>
@@ -435,16 +433,16 @@
                   </div>
 
                   <div class="form-group">
-                    <label for="mes">Mes *</label>
-                    <select id="mes" formControlName="mes">
+                    <label for="month">Mes *</label>
+                    <select id="month" formControlName="month">
                       <option value="">Seleccione el mes</option>
                       @for (month of availableMonths; track month.value) {
                         <option [value]="month.value">{{ month.label }}</option>
                       }
                     </select>
                     @if (
-                      executionForm.get("mes")?.touched &&
-                      executionForm.get("mes")?.invalid
+                      executionForm.get("month")?.touched &&
+                      executionForm.get("month")?.invalid
                     ) {
                       <span class="error-msg">Seleccione un mes</span>
                     }
@@ -453,49 +451,45 @@
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="metaEjecutada">Meta Ejecutada *</label>
+                    <label for="executedGoal">Meta Ejecutada *</label>
                     <input
                       type="number"
-                      id="metaEjecutada"
-                      formControlName="metaEjecutada"
+                      id="executedGoal"
+                      formControlName="executedGoal"
                       min="0"
                       placeholder="Ej: 5"
                     />
                     @if (
-                      executionForm.get("metaEjecutada")?.touched &&
-                      executionForm.get("metaEjecutada")?.invalid
+                      executionForm.get("executedGoal")?.touched &&
+                      executionForm.get("executedGoal")?.invalid
                     ) {
-                      <span class="error-msg"
-                        >Ingrese un valor válido mayor a 0</span
-                      >
+                      <span class="error-msg">Ingrese un valor válido mayor o igual a 0</span>
                     }
                   </div>
 
                   <div class="form-group">
-                    <label for="valorEjecutado">Valor Ejecutado (COP) *</label>
+                    <label for="executedAmount">Valor Ejecutado (COP) *</label>
                     <input
                       type="number"
-                      id="valorEjecutado"
-                      formControlName="valorEjecutado"
+                      id="executedAmount"
+                      formControlName="executedAmount"
                       min="0"
                       placeholder="Ej: 5000000"
                     />
                     @if (
-                      executionForm.get("valorEjecutado")?.touched &&
-                      executionForm.get("valorEjecutado")?.invalid
+                      executionForm.get("executedAmount")?.touched &&
+                      executionForm.get("executedAmount")?.invalid
                     ) {
-                      <span class="error-msg"
-                        >Ingrese un valor válido mayor a 0</span
-                      >
+                      <span class="error-msg">Ingrese un valor válido mayor o igual a 0</span>
                     }
                   </div>
                 </div>
 
                 <div class="form-group full-width">
-                  <label for="observaciones">Observaciones</label>
+                  <label for="notes">Observaciones</label>
                   <textarea
-                    id="observaciones"
-                    formControlName="observaciones"
+                    id="notes"
+                    formControlName="notes"
                     rows="3"
                     placeholder="Describa los avances, logros o dificultades..."
                   ></textarea>

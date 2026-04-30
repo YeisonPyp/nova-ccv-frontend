@@ -29,7 +29,7 @@
         <button
           class="chip"
           [class.active]="statusFilter() === status.value"
-          [class]="status.value.toLowerCase()"
+          [class]="getStatusClass(status.value)"
           (click)="filterByStatus(status.value)"
         >
           {{ status.label }} ({{ countByStatus(status.value) }})
@@ -80,40 +80,38 @@
           </thead>
           <tbody>
             @for (program of filteredPrograms(); track program.id) {
-              <tr [class]="'row-' + program.estado.toLowerCase()">
+              <tr [class]="'row-' + getStatusClass(program.status)">
                 <td class="col-code">
-                  <span class="code-badge">{{ program.codigo }}</span>
+                  <span class="code-badge">{{ program.code }}</span>
                 </td>
                 <td class="col-name">
                   <div class="name-cell">
-                    <span class="program-name">{{ program.nombre }}</span>
+                    <span class="program-name">{{ program.name }}</span>
                     <span class="program-budget">
                       {{
-                        program.totalPlaneado
+                        program.plannedBudget
                           | currency: "COP" : "symbol-narrow" : "1.0-0"
                       }}
                     </span>
                   </div>
                 </td>
-                <td class="col-area">{{ program.area }}</td>
-                <td class="col-responsible">{{ program.responsable }}</td>
+                <td class="col-area">{{ program.areaName }}</td>
+                <td class="col-responsible">{{ program.employeeName }}</td>
                 <td class="col-meta">
                   <div class="progress-cell">
                     <div class="mini-progress">
                       <div
                         class="mini-bar meta"
-                        [style.width.%]="program.metaEjecutadaPct"
-                        [class.low]="program.metaEjecutadaPct < 40"
+                        [style.width.%]="program.goalAchievedPct"
+                        [class.low]="program.goalAchievedPct < 40"
                         [class.medium]="
-                          program.metaEjecutadaPct >= 40 &&
-                          program.metaEjecutadaPct < 70
+                          program.goalAchievedPct >= 40 &&
+                          program.goalAchievedPct < 70
                         "
-                        [class.high]="program.metaEjecutadaPct >= 70"
+                        [class.high]="program.goalAchievedPct >= 70"
                       ></div>
                     </div>
-                    <span class="progress-value"
-                      >{{ program.metaEjecutadaPct }}%</span
-                    >
+                    <span class="progress-value">{{ program.goalAchievedPct }}%</span>
                   </div>
                 </td>
                 <td class="col-budget">
@@ -121,20 +119,18 @@
                     <div class="mini-progress">
                       <div
                         class="mini-bar budget"
-                        [style.width.%]="program.presupuestoEjecutadoPct"
+                        [style.width.%]="program.budgetExecutedPct"
                       ></div>
                     </div>
-                    <span class="progress-value"
-                      >{{ program.presupuestoEjecutadoPct }}%</span
-                    >
+                    <span class="progress-value">{{ program.budgetExecutedPct }}%</span>
                   </div>
                 </td>
                 <td class="col-status">
                   <span
                     class="status-badge"
-                    [class]="program.estado.toLowerCase()"
+                    [class]="getStatusClass(program.status)"
                   >
-                    {{ getStatusLabel(program.estado) }}
+                    {{ getStatusLabel(program.status) }}
                   </span>
                 </td>
                 <td class="col-action">

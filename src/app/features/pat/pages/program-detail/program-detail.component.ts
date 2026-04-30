@@ -7,12 +7,15 @@ import {
   Program,
   ActivityWithMetrics,
   BudgetItem,
-  ScheduleRow,
-  MonthlyExecution
+  ScheduleRow
 } from '../../models/pat.models';
-import { MONTHS_NAMES } from '../../../../core/data/pat-mock-data';
 
 type TabType = 'info' | 'activities' | 'budget' | 'schedule' | 'execution';
+
+const MONTH_NAMES = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
 
 @Component({
   selector: 'app-program-detail',
@@ -29,25 +32,23 @@ export class ProgramDetailComponent implements OnInit {
   loading = signal(true);
   activeTab = signal<TabType>('info');
 
-  // Execution Form
   executionForm: FormGroup;
   submitting = signal(false);
   submitError = signal<string | null>(null);
   submitSuccess = signal(false);
 
   currentMonth = new Date().getMonth() + 1;
-  availableMonths = MONTHS_NAMES.map((name, idx) => ({
+  availableMonths = MONTH_NAMES.map((name, idx) => ({
     value: idx + 1,
     label: name
   })).filter(m => m.value <= this.currentMonth);
 
-  // Computed metrics
   totalMeta = computed(() =>
-    this.activities().reduce((sum, a) => sum + a.metaTotal, 0)
+    this.activities().reduce((sum, a) => sum + a.goalTotal, 0)
   );
 
   totalMetaEjecutada = computed(() =>
-    this.activities().reduce((sum, a) => sum + a.metaEjecutada, 0)
+    this.activities().reduce((sum, a) => sum + a.executedGoal, 0)
   );
 
   metaProgress = computed(() => {
@@ -56,11 +57,11 @@ export class ProgramDetailComponent implements OnInit {
   });
 
   totalBudgetPlanned = computed(() =>
-    this.budgetItems().reduce((sum, b) => sum + b.planeado, 0)
+    this.budgetItems().reduce((sum, b) => sum + b.planned, 0)
   );
 
   totalBudgetExecuted = computed(() =>
-    this.budgetItems().reduce((sum, b) => sum + b.ejecutado, 0)
+    this.budgetItems().reduce((sum, b) => sum + b.executed, 0)
   );
 
   budgetProgress = computed(() => {
@@ -79,10 +80,10 @@ export class ProgramDetailComponent implements OnInit {
   ) {
     this.executionForm = this.fb.group({
       activityId: ['', Validators.required],
-      mes: ['', Validators.required],
-      metaEjecutada: ['', [Validators.required, Validators.min(1)]],
-      valorEjecutado: ['', [Validators.required, Validators.min(1)]],
-      observaciones: ['']
+      month: ['', Validators.required],
+      executedGoal: ['', [Validators.required, Validators.min(0)]],
+      executedAmount: ['', [Validators.required, Validators.min(0)]],
+      notes: ['']
     });
   }
 
@@ -97,10 +98,10 @@ export class ProgramDetailComponent implements OnInit {
   loadProgram(id: number): void {
     this.loading.set(true);
 
-    this.patApi.getProgramById(id).subscribe(program => {
-      this.program.set(program || null);
+    this.patApi.getProgramById(id).subscribe({
+      next: (program) => {
+        this.program.set(program);
 
-      if (program) {
         this.patApi.getActivitiesWithMetrics(id).subscribe(activities => {
           this.activities.set(activities);
         });
@@ -113,7 +114,9 @@ export class ProgramDetailComponent implements OnInit {
           this.schedule.set(schedule);
           this.loading.set(false);
         });
-      } else {
+      },
+      error: () => {
+        this.program.set(null);
         this.loading.set(false);
       }
     });
@@ -127,21 +130,31 @@ export class ProgramDetailComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'BORRADOR': 'Borrador',
-      'APROBADO': 'Aprobado',
-      'EJECUCION': 'En Ejecución',
-      'CERRADO': 'Cerrado'
+      'DRAFT': 'Borrador',
+      'APPROVED': 'Aprobado',
+      'IN_PROGRESS': 'En Ejecución',
+      'CLOSED': 'Cerrado'
     };
     return labels[status] || status;
   }
 
+  getStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      'DRAFT': 'borrador',
+      'APPROVED': 'aprobado',
+      'IN_PROGRESS': 'ejecucion',
+      'CLOSED': 'cerrado'
+    };
+    return map[status] ?? status.toLowerCase();
+  }
+
   getBudgetPct(item: BudgetItem): number {
-    return item.planeado > 0 ? Math.round((item.ejecutado / item.planeado) * 100) : 0;
+    return item.planned > 0 ? Math.round((item.executed / item.planned) * 100) : 0;
   }
 
   getMonthStatus(row: ScheduleRow): string {
-    if (row.metaPlaneada === 0) return 'pending';
-    const pct = row.metaPlaneada > 0 ? (row.metaEjecutada / row.metaPlaneada) * 100 : 0;
+    if (row.plannedGoal === 0) return 'pending';
+    const pct = (row.executedGoal / row.plannedGoal) * 100;
     if (pct >= 100) return 'completed';
     if (pct >= 50) return 'partial';
     return 'delayed';
@@ -169,20 +182,19 @@ export class ProgramDetailComponent implements OnInit {
 
     this.patApi.createExecution({
       activityId: +formValue.activityId,
-      mes: +formValue.mes,
-      metaEjecutada: +formValue.metaEjecutada,
-      valorEjecutado: +formValue.valorEjecutado,
-      observaciones: formValue.observaciones
+      month: +formValue.month,
+      executedGoal: +formValue.executedGoal,
+      executedAmount: +formValue.executedAmount,
+      notes: formValue.notes
     }).subscribe({
       next: () => {
         this.submitSuccess.set(true);
         this.submitting.set(false);
         this.resetForm();
-        // Reload data
         this.loadProgram(this.programId());
       },
       error: (err) => {
-        this.submitError.set(err.message);
+        this.submitError.set(err.error?.message ?? err.message ?? 'Error al registrar ejecución');
         this.submitting.set(false);
       }
     });

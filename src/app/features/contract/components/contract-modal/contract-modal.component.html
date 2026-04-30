@@ -1,0 +1,321 @@
+@if (isOpen() && contract()) {
+  <div
+    class="modal-overlay items-start! overflow-y-auto py-8 px-4"
+    (click)="close()"
+  >
+    <div
+      class="modal-container max-w-4xl! relative flex flex-col p-7"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Close -->
+      <button
+        class="absolute top-4 right-4 p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer border-none bg-transparent"
+        (click)="close()"
+        title="Cerrar"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      <!-- Contract info -->
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <h4 class="text-lg font-semibold text-secondary m-0">
+            Contrato {{ contract()!.contractId }}
+          </h4>
+          <span
+            class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 uppercase tracking-wide"
+          >
+            {{ contract()!.status }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3">
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Empleado</span
+            >
+            <span class="text-sm font-medium text-secondary"
+              >{{ contract()!.employeeName ?? "—" }}
+              {{ contract()!.employeeLastName ?? "" }}</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Cédula</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.identification
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Cargo</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.positionName ?? "—"
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Área</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.areaName
+            }}</span>
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Tipo contrato</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.contractType
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Tipo cotización</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.cotizationType
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Inicio</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.starts
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Fin</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.ends ?? "—"
+            }}</span>
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Monto base período</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              formatCurrency(contract()!.basePeriodAmount)
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Total pagado</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              formatCurrency(contract()!.totalPaid)
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Retención</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              formatCurrency(contract()!.retentionAmount)
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Centro de costo</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.costCenterName
+            }}</span>
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Agencia</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.agencyName ?? "—"
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >EPS</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.epsEntityName ?? "—"
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Afiliación EPS</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.epsAffiliationType ?? "—"
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Pensión</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.pensionEntity ?? "—"
+            }}</span>
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Clase empleado</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.employeeClass ?? "—"
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Caja compensación</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.compensationEntity ?? "—"
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Días período</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.periodDays
+            }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Períodos</span
+            >
+            <span class="text-sm font-medium text-secondary">{{
+              contract()!.periods ?? "—"
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-t border-gray-100 my-5" />
+
+      <!-- Tabs bar -->
+      <div class="flex border-b-2 border-gray-200 mb-4 flex-wrap">
+        @for (tab of tabs; track tab.key) {
+          <button
+            class="px-4 py-2.5 text-sm font-medium cursor-pointer border-none bg-transparent border-b-2 -mb-0.5 transition-colors duration-150"
+            [class]="
+              activeTab() === tab.key
+                ? 'text-primary border-primary font-semibold'
+                : 'text-gray-500 border-transparent hover:text-primary'
+            "
+            (click)="setTab(tab.key)"
+          >
+            {{ tab.label }}
+          </button>
+        }
+      </div>
+
+      <!-- Tab content -->
+      <div class="min-h-50">
+        @if (activeTab() === "mutations") {
+          <app-mutations-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "additions") {
+          <app-additions-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "cessions") {
+          <app-cessions-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "suspensions") {
+          <app-suspensions-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "cancellations") {
+          <app-cancellations-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "othersi") {
+          <app-othersi-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "filing") {
+          <div class="flex flex-col gap-4">
+            @if (filingFileNames().length === 0) {
+              <p class="text-sm text-gray-400 text-center py-6">
+                No hay archivos configurados para radicación.
+              </p>
+            }
+            @for (item of filingFileNames(); track item.id) {
+              <div class="flex flex-col gap-1">
+                <label
+                  class="text-xs font-medium text-gray-500 uppercase tracking-wide"
+                >
+                  {{ item.name }}
+                  @if (item.isRequired) {
+                    <span class="text-red-500 ml-0.5">*</span>
+                  }
+                </label>
+                <input
+                  type="file"
+                  [attr.accept]="item.mimeTypes ?? null"
+                  [required]="item.isRequired"
+                  class="block w-full text-sm text-gray-600 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                  (change)="onFileChange(item.name, $event)"
+                />
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Footer -->
+      @if (activeTab() !== "mutations" && activeTab() !== "filing") {
+        <div class="flex justify-end pt-4 border-t border-gray-100 mt-4">
+          <button
+            class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity cursor-pointer border-none"
+            (click)="handleCreate()"
+          >
+            + Crear {{ activeTabLabel() }}
+          </button>
+        </div>
+      }
+      @if (activeTab() === "filing") {
+        <div class="flex justify-end pt-4 border-t border-gray-100 mt-4">
+          <button
+            class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity cursor-pointer border-none"
+            (click)="submitFiling()"
+          >
+            Enviar Radicación
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

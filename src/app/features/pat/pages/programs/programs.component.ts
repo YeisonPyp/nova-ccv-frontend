@@ -18,29 +18,27 @@ export class ProgramsComponent implements OnInit {
   statusFilter = signal<ProgramStatus | null>(null);
 
   statusOptions = [
-    { value: 'EJECUCION' as ProgramStatus, label: 'En Ejecución' },
-    { value: 'APROBADO' as ProgramStatus, label: 'Aprobado' },
-    { value: 'BORRADOR' as ProgramStatus, label: 'Borrador' },
-    { value: 'CERRADO' as ProgramStatus, label: 'Cerrado' }
+    { value: 'IN_PROGRESS' as ProgramStatus, label: 'En Ejecución' },
+    { value: 'APPROVED' as ProgramStatus, label: 'Aprobado' },
+    { value: 'DRAFT' as ProgramStatus, label: 'Borrador' },
+    { value: 'CLOSED' as ProgramStatus, label: 'Cerrado' }
   ];
 
   filteredPrograms = computed(() => {
     let result = this.programs();
 
-    // Filter by status
     const status = this.statusFilter();
     if (status) {
-      result = result.filter(p => p.estado === status);
+      result = result.filter(p => p.status === status);
     }
 
-    // Filter by search term
     const term = this.searchTerm.toLowerCase().trim();
     if (term) {
       result = result.filter(p =>
-        p.nombre.toLowerCase().includes(term) ||
-        p.codigo.toLowerCase().includes(term) ||
-        p.area.toLowerCase().includes(term) ||
-        p.responsable.toLowerCase().includes(term)
+        p.name.toLowerCase().includes(term) ||
+        p.code.toLowerCase().includes(term) ||
+        p.areaName.toLowerCase().includes(term) ||
+        p.employeeName.toLowerCase().includes(term)
       );
     }
 
@@ -48,13 +46,13 @@ export class ProgramsComponent implements OnInit {
   });
 
   totalBudget = computed(() =>
-    this.filteredPrograms().reduce((sum, p) => sum + p.totalPlaneado, 0)
+    this.filteredPrograms().reduce((sum, p) => sum + p.plannedBudget, 0)
   );
 
   averageMetaProgress = computed(() => {
     const progs = this.filteredPrograms();
     if (progs.length === 0) return 0;
-    const sum = progs.reduce((s, p) => s + p.metaEjecutadaPct, 0);
+    const sum = progs.reduce((s, p) => s + p.goalAchievedPct, 0);
     return Math.round(sum / progs.length);
   });
 
@@ -77,7 +75,7 @@ export class ProgramsComponent implements OnInit {
   }
 
   countByStatus(status: ProgramStatus): number {
-    return this.programs().filter(p => p.estado === status).length;
+    return this.programs().filter(p => p.status === status).length;
   }
 
   applyFilters(): void {
@@ -91,11 +89,21 @@ export class ProgramsComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'BORRADOR': 'Borrador',
-      'APROBADO': 'Aprobado',
-      'EJECUCION': 'En Ejecución',
-      'CERRADO': 'Cerrado'
+      'DRAFT': 'Borrador',
+      'APPROVED': 'Aprobado',
+      'IN_PROGRESS': 'En Ejecución',
+      'CLOSED': 'Cerrado'
     };
     return labels[status] || status;
+  }
+
+  getStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      'DRAFT': 'borrador',
+      'APPROVED': 'aprobado',
+      'IN_PROGRESS': 'ejecucion',
+      'CLOSED': 'cerrado'
+    };
+    return map[status] ?? status.toLowerCase();
   }
 }
