@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
 import { Position } from "../../models/assessment/position.model";
@@ -9,6 +9,11 @@ import {
   PageableQuery,
   PageableQueryParams,
 } from "../../../shared/pageable-query";
+import {
+  OnSelectCallback,
+  SearchSelectContextFactory,
+  SearchSelectContextFactoryOptions,
+} from "../../../shared/components/search-select/on-search-select.interface";
 
 export interface CreatePositionDto {
   name: string;
@@ -61,5 +66,20 @@ export class PositionService {
 
   deletePosition(id: number): Observable<ApiResponse<Position>> {
     return this.http.delete<ApiResponse<Position>>(`${this.API_URL}/${id}`);
+  }
+
+  newSearchSelectContext(
+    onSelectCallback?: OnSelectCallback<Position>,
+    op?: SearchSelectContextFactoryOptions,
+  ) {
+    return new SearchSelectContextFactory<Position>(
+      (term) =>
+        this.findPositions({ name: term }).pipe(
+          map((res) => res?.data?.content ?? []),
+        ),
+      (p) => ({ id: p.id, title: p.name }),
+      onSelectCallback,
+      op,
+    );
   }
 }

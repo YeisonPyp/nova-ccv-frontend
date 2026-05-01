@@ -8,4 +8,11 @@ export const CONTRACT_ROUTES: Routes = [
         (m) => m.ContractDashboardComponent,
       ),
   },
+  {
+    path: "create/:type",
+    loadComponent: () =>
+      import(
+        "./components/create-contract-modal/create-contract-modal.component"
+      ).then((m) => m.CreateContractModalComponent),
+  },
 ];

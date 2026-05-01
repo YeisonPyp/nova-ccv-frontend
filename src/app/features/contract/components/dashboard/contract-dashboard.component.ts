@@ -8,6 +8,7 @@ import { PaginationComponent } from "../../../../shared/components/pagination/pa
 import { ContractModalComponent } from "../contract-modal/contract-modal.component";
 import { ContractService } from "../../../../core/services/contract/contract.service";
 import { Contract } from "../../../../core/models/contract/contract.models";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-contract-dashboard",
@@ -22,6 +23,7 @@ import { Contract } from "../../../../core/models/contract/contract.models";
 })
 export class ContractDashboardComponent implements OnInit {
   private readonly service = inject(ContractService);
+  private readonly router = inject(Router);
 
   items = signal<Contract[]>([]);
   currentPage = signal(1);
@@ -75,5 +77,9 @@ export class ContractDashboardComponent implements OnInit {
   closeModal(): void {
     this.isModalOpen.set(false);
     this.selectedContract.set(null);
+  }
+
+  createContract(type: "employee" | "agency"): void {
+    this.router.navigate(["/contracts/create", type]);
   }
 }

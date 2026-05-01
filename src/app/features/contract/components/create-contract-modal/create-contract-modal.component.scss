@@ -1,0 +1,7 @@
+// Inherits modal-overlay and modal-container from global styles.
+// Field-level overrides only.
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+}

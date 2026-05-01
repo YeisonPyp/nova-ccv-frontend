@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
@@ -12,6 +12,11 @@ import {
   PageableQuery,
   PageableQueryParams,
 } from "../../../shared/pageable-query";
+import {
+  OnSelectCallback,
+  SearchSelectContextFactory,
+  SearchSelectContextFactoryOptions,
+} from "../../../shared/components/search-select/on-search-select.interface";
 
 @Injectable({ providedIn: "root" })
 export class CostCenterService {
@@ -48,5 +53,24 @@ export class CostCenterService {
 
   delete(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
+  }
+
+  newSearchSelectContext(
+    onSelectCallback?: OnSelectCallback<CostCenter>,
+    op?: SearchSelectContextFactoryOptions,
+  ) {
+    return new SearchSelectContextFactory<CostCenter>(
+      (term) =>
+        this.findAll({ size: 50 }).pipe(
+          map((res) =>
+            (res?.data?.content ?? []).filter((cc) =>
+              cc.name.toLowerCase().includes(term.toLowerCase()),
+            ),
+          ),
+        ),
+      (cc) => ({ id: cc.id, title: cc.name }),
+      onSelectCallback,
+      op,
+    );
   }
 }

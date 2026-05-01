@@ -115,4 +115,18 @@ export class ContractService {
       { params },
     );
   }
+
+  createForEmployee(dto: Record<string, unknown>, files: Record<string, File> = {}): Observable<ApiResponse<Contract>> {
+    const formData = new FormData();
+    formData.append("contract", new Blob([JSON.stringify(dto)], { type: "application/json" }));
+    Object.entries(files).forEach(([name, file]) => formData.append(name, file));
+    return this.http.post<ApiResponse<Contract>>(`${this.base}/contracts/employee`, formData);
+  }
+
+  createForAgency(dto: Record<string, unknown>, files: Record<string, File> = {}): Observable<ApiResponse<Contract>> {
+    const formData = new FormData();
+    formData.append("contract", new Blob([JSON.stringify(dto)], { type: "application/json" }));
+    Object.entries(files).forEach(([name, file]) => formData.append(name, file));
+    return this.http.post<ApiResponse<Contract>>(`${this.base}/contracts/agency`, formData);
+  }
 }

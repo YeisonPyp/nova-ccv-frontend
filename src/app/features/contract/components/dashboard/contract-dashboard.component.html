@@ -2,6 +2,14 @@
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Contratos</h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" (click)="createContract('employee')">
+        Nuevo empleado
+      </button>
+      <button class="btn btn-primary" (click)="createContract('agency')">
+        Nueva agencia
+      </button>
+    </div>
   </div>
 
   <!-- Table -->
