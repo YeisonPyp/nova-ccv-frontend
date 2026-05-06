@@ -8,27 +8,21 @@ import { PaginatorComponent } from "../../../../shared/components/paginator/pagi
 import { GoalService } from "../../../../core/services/goals/goal.service";
 import { Goal } from "../../../../core/models/goals/goal.model";
 import { APIPage } from "../../../../core/models/api-page.model";
-import { CreateGoalComponent } from "./create-goal/create-goal.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-goals-dashboard",
   standalone: true,
-  imports: [
-    CommonModule,
-    DynamicTableComponent,
-    PaginatorComponent,
-    CreateGoalComponent,
-  ],
+  imports: [CommonModule, DynamicTableComponent, PaginatorComponent],
   templateUrl: "./goals-dashboard.component.html",
   styleUrl: "./goals-dashboard.component.scss",
 })
 export class GoalsDashboardComponent {
   goalService = inject(GoalService);
+  router = inject(Router);
 
   pageSize = signal<number>(10);
   currentPage = signal<number>(1);
-
-  modalIsOpen = signal<boolean>(false);
 
   goalsData = signal<APIPage<Goal> | undefined>(undefined);
 
@@ -68,15 +62,7 @@ export class GoalsDashboardComponent {
     this.currentPage.set(1);
   }
 
-  openModal() {
-    this.modalIsOpen.set(true);
-  }
-
-  closeModal() {
-    this.modalIsOpen.set(false);
-  }
-
-  onGoalSaved(_: Goal) {
-    this.fetchGoals(this.currentPage(), this.pageSize());
+  navigateToCreate() {
+    this.router.navigate(["/goals/dashboard/create"]);
   }
 }

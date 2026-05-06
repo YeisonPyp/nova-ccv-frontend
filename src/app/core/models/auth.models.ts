@@ -26,6 +26,7 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   email: string;
+  isAdmin: boolean;
   enabled: boolean;
   roles: string[];
   permissions: string[];

@@ -77,6 +77,25 @@ export const routes: Routes = [
             (m) => m.FILING_ROUTES,
           ),
       },
+      {
+        path: "projects",
+        loadChildren: () =>
+          import("./features/projects/projects.routes").then(
+            (m) => m.PROJECTS_ROUTES,
+          ),
+      },
+      {
+        path: "conf",
+        loadChildren: () =>
+          import("./features/conf/conf.routes").then((m) => m.CONF_ROUTES),
+      },
+      {
+        path: "billing",
+        loadChildren: () =>
+          import("./features/billing/billing.routes").then(
+            (m) => m.BILLING_ROUTES,
+          ),
+      },
     ],
   },
   {

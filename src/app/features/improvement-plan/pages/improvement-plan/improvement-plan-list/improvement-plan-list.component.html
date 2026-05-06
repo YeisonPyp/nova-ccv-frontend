@@ -1,7 +1,7 @@
 <div class="w-full">
   <div class="flex justify-between mb-3">
     <h1 class="text-2xl font-bold">Planes de Mejoramiento</h1>
-    <button class="btn btn-primary" (click)="openModal()" *ngIf="isAdmin()">
+    <button class="btn btn-primary" (click)="openPlan()" *ngIf="isAdmin()">
       Nuevo Plan
     </button>
   </div>
@@ -26,7 +26,7 @@
             <button
               *ngIf="isAdmin()"
               class="btn btn-sm btn-outline-primary me-2"
-              (click)="openModal(item)"
+              (click)="openPlan(item)"
               title="Editar"
             >
               <i class="bi">✏️</i>
@@ -53,11 +53,3 @@
     </div>
   }
 </div>
-
-<app-edit-improvement-plan-modal
-  [planId]="selectedPlanId()"
-  [isOpen]="isModalOpen()"
-  (onClose)="closeModal()"
-  (onSave)="onPlanSaved($event)"
-  (onUpdate)="onPlanUpdated($event)"
-/>

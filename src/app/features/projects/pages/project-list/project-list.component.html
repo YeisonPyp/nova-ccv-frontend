@@ -1,0 +1,41 @@
+<div class="w-full p-6">
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h2 class="text-xl font-bold text-secondary m-0">Proyectos</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Gestión y seguimiento de proyectos</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center py-12">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  } @else {
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <app-dynamic-table
+        [data]="items()"
+        [columns]="columns"
+        emptyMessage="No hay proyectos registrados."
+      >
+        <ng-template #actions let-item>
+          <button
+            class="btn btn-sm btn-outline-primary"
+            title="Ver proyecto"
+            (click)="openDetail(item)"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </ng-template>
+      </app-dynamic-table>
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [pages]="totalPages()"
+        (pageChange)="onPageChange($event)"
+      />
+    </div>
+  }
+</div>

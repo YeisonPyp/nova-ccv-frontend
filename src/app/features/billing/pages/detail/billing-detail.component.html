@@ -1,0 +1,128 @@
+<div class="p-6">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a cuentas de cobro
+  </button>
+
+  @if (loading()) {
+    <div class="text-center py-8">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  } 
+  @if (account(); as acc) {
+    <div class="space-y-6">
+      <!-- Header -->
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-2xl font-bold text-secondary">
+            Cuenta de Cobro #{{ acc.id }}
+          </h1>
+          <p class="text-tertiary">
+            Contrato: <strong>{{ acc.contractId }}</strong>
+          </p>
+        </div>
+        <span
+          class="badge fs-6 px-3 py-2"
+          [class.bg-success]="acc.status === 'PAGADA'"
+          [class.bg-warning]="acc.status === 'PENDIENTE'"
+          [class.bg-secondary]="
+            acc.status !== 'PAGADA' && acc.status !== 'PENDIENTE'
+          "
+          >{{ acc.status }}</span
+        >
+      </div>
+
+      <!-- Info grid -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-sm"
+          >
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Empleado</span
+              >
+              <span class="font-semibold"
+                >{{ acc.employeeName }} {{ acc.employeeLastName }}</span
+              >
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Centro de Costo</span
+              >
+              <span class="font-semibold">{{ acc.costCenterName }}</span>
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Monto</span
+              >
+              <span class="font-semibold">{{
+                acc.amount | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}</span>
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Retención</span
+              >
+              <span class="font-semibold">{{
+                acc.retentionAmount
+                  | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}</span>
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Saldo</span
+              >
+              <span class="font-semibold">{{
+                acc.balance | currency: "COP" : "symbol-narrow" : "1.0-0"
+              }}</span>
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Recibida</span
+              >
+              <span class="font-semibold">{{ acc.receivedAt }}</span>
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Vence</span
+              >
+              <span class="font-semibold">{{ acc.expiresAt }}</span>
+            </div>
+            <div>
+              <span class="text-tertiary block text-xs uppercase tracking-wide"
+                >Moneda</span
+              >
+              <span class="font-semibold">{{ acc.currency }}</span>
+            </div>
+          </div>
+          @if (acc.observations) {
+            <div class="mt-4 pt-4 border-t border-gray-100">
+              <span
+                class="text-tertiary block text-xs uppercase tracking-wide mb-1"
+                >Observaciones</span
+              >
+              <p class="text-sm">{{ acc.observations }}</p>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- Documents section -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <app-billing-documents-section [documents]="acc.documents" />
+        </div>
+      </div>
+
+      <!-- Charge payments section -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <app-charge-payments-section [billingAccountId]="acc.id" />
+        </div>
+      </div>
+    </div>
+  }
+</div>

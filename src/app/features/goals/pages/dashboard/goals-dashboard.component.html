@@ -3,7 +3,7 @@
     <h1 class="text-2xl font-bold text-secondary">Dashboard de Metas</h1>
     <p class="text-tertiary mt-1">Resumen y gestión de las metas del sistema</p>
     <div class="flex w-full flex-row-reverse">
-      <button class="btn btn-primary" (click)="openModal()">
+      <button class="btn btn-primary" (click)="navigateToCreate()">
         <i></i>
         Nueva Meta
       </button>
@@ -29,9 +29,3 @@
     </div>
   </div>
 </div>
-
-<app-create-goal
-  [isOpen]="modalIsOpen()"
-  (onClose)="closeModal()"
-  (onSaved)="onGoalSaved($event)"
-></app-create-goal>

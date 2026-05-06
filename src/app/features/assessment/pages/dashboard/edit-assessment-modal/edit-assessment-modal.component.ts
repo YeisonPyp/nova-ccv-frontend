@@ -3,29 +3,25 @@ import {
   Component,
   computed,
   effect,
-  EventEmitter,
-  input,
-  Input,
-  OnChanges,
+  inject,
   OnInit,
-  Output,
   signal,
-  SimpleChanges,
 } from "@angular/core";
 import { Assessment } from "../../../../../core/models/assessment/assessment.model";
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
 } from "@angular/forms";
 import {
   ChangeCompetencyScore,
   CompetencyScoreCardComponent,
 } from "./competency-score-card/competency-score-card.component";
+import { Router } from "@angular/router";
+import { AssessmentService } from "../../../../../core/services/assessment/assessment.service";
 
 export interface CompetencyAssessmentDto {
-  [competencyId: number]: number | null; // competencyId: score
+  [competencyId: number]: number | null;
 }
 
 export interface EditAssesmentDto {
@@ -42,16 +38,14 @@ export interface EditAssesmentDto {
   templateUrl: "./edit-assessment-modal.component.html",
   styleUrl: "./edit-assessment-modal.component.scss",
 })
-export class EditAssessmentModalComponent implements OnChanges {
-  @Input() isOpen = false;
-  assessment = input.required<Assessment>();
+export class EditAssessmentModalComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly assessmentService = inject(AssessmentService);
+  private readonly fb = inject(FormBuilder);
 
-  @Output() closeModal = new EventEmitter<void>();
-  @Output() saveAssessment = new EventEmitter<EditAssesmentDto>();
-
+  assessment = signal<Assessment | null>(null);
   assessmentForm: FormGroup;
   competencyScores = signal<CompetencyAssessmentDto>({});
-
   competencyWeightedScore = signal<CompetencyAssessmentDto>({});
 
   matrixTotalScore = computed(() => {
@@ -62,7 +56,7 @@ export class EditAssessmentModalComponent implements OnChanges {
     );
   });
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.assessmentForm = this.fb.group({
       observations: [""],
       agreements: [""],
@@ -70,8 +64,10 @@ export class EditAssessmentModalComponent implements OnChanges {
     });
 
     effect(() => {
+      const a = this.assessment();
+      if (!a) return;
       this.competencyWeightedScore.set(
-        this.assessment().competencyScores?.reduce<CompetencyAssessmentDto>(
+        a.competencyScores?.reduce<CompetencyAssessmentDto>(
           (acc, score) => {
             acc[score.competency?.id ?? 0] = score.weightedScore;
             return acc;
@@ -82,8 +78,25 @@ export class EditAssessmentModalComponent implements OnChanges {
     });
   }
 
+  ngOnInit(): void {
+    const a = history.state?.assessment as Assessment | undefined;
+    if (!a) {
+      this.router.navigate(["/assessment/dashboard"]);
+      return;
+    }
+    this.assessment.set(a);
+    const { agreements, observations, aspectsToImprove, competencyScores } = a;
+    this.assessmentForm.patchValue({ agreements, observations, aspectsToImprove });
+    this.competencyScores.set(
+      (competencyScores ?? []).reduce((prev, curr) => {
+        prev[curr.competency?.id ?? 0] = curr.score;
+        return prev;
+      }, {} as CompetencyAssessmentDto),
+    );
+  }
+
   getAssessmentCompetencyScores() {
-    return this.assessment().competencyScores ?? [];
+    return this.assessment()?.competencyScores ?? [];
   }
 
   get averageDescription(): string {
@@ -94,47 +107,20 @@ export class EditAssessmentModalComponent implements OnChanges {
     return "Deficiente";
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // Reset the form when the modal is closed
-    if (changes["isOpen"] && !changes["isOpen"].currentValue) {
-      this.assessmentForm.reset();
-      this.competencyScores.set({});
-    }
-
-    if (changes["assessment"]) {
-      const { agreements, observations, aspectsToImprove, competencyScores } =
-        this.assessment();
-      this.assessmentForm.patchValue({
-        agreements,
-        observations,
-        aspectsToImprove,
-      });
-      this.competencyScores.set(
-        (competencyScores ?? []).reduce((prev, curr) => {
-          prev[curr.competency?.id ?? 0] = curr.score;
-          return prev;
-        }, {} as CompetencyAssessmentDto),
-      );
-    }
-  }
-
-  onClose(): void {
-    this.closeModal.emit();
-  }
-
   onSubmit(): void {
     if (this.assessmentForm.valid) {
       const formValue = this.assessmentForm.value;
-
       const payload: EditAssesmentDto = {
         competencyScores: this.competencyScores(),
         observations: formValue.observations,
         agreements: formValue.agreements,
         aspectsToImprove: formValue.aspectsToImprove,
-        id: this.assessment().id,
+        id: this.assessment()!.id,
       };
-
-      this.saveAssessment.emit(payload);
+      this.assessmentService.updateAssessment(payload).subscribe({
+        next: () => this.router.navigate(["/assessment/dashboard"]),
+        error: (err) => console.error(err),
+      });
     } else {
       this.assessmentForm.markAllAsTouched();
     }
@@ -152,17 +138,17 @@ export class EditAssessmentModalComponent implements OnChanges {
   }
 
   get evaluatorFullName(): string {
-    const evaluator = this.assessment().evaluator;
+    const evaluator = this.assessment()?.evaluator;
     return `${evaluator?.name ?? ""} ${evaluator?.lastName ?? ""}`;
   }
 
   get evaluateeFullName(): string {
-    const evaluatee = this.assessment().evaluatee;
+    const evaluatee = this.assessment()?.evaluatee;
     return `${evaluatee?.name ?? ""} ${evaluatee?.lastName ?? ""}`;
   }
 
   get evaluationPeriodRange(): string {
-    const period = this.assessment().period;
+    const period = this.assessment()?.period;
     if (!period) return "";
     const startDate = new Date(period.startDate);
     const endDate = new Date(period.endDate);
@@ -170,10 +156,12 @@ export class EditAssessmentModalComponent implements OnChanges {
   }
 
   get evaluationDate(): string {
-    return new Date(this.assessment().createdAt).getDate().toLocaleString();
+    const createdAt = this.assessment()?.createdAt;
+    if (!createdAt) return "";
+    return new Date(createdAt).toLocaleDateString();
   }
 
-  onCancel(): void {
-    this.closeModal.emit();
+  goBack(): void {
+    this.router.navigate(["/assessment/dashboard"]);
   }
 }

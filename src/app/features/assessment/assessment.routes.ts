@@ -48,4 +48,25 @@ export const ASSESSMENT_ROUTES: Routes = [
         (m) => m.EmployeesComponent,
       ),
   },
+  {
+    path: "employees/create",
+    loadComponent: () =>
+      import("./pages/employees/employee-form/employee-form.component").then(
+        (m) => m.EmployeeFormComponent,
+      ),
+  },
+  {
+    path: "employees/:id/edit",
+    loadComponent: () =>
+      import("./pages/employees/employee-form/employee-form.component").then(
+        (m) => m.EmployeeFormComponent,
+      ),
+  },
+  {
+    path: "edit/:id",
+    loadComponent: () =>
+      import(
+        "./pages/dashboard/edit-assessment-modal/edit-assessment-modal.component"
+      ).then((m) => m.EditAssessmentModalComponent),
+  },
 ];

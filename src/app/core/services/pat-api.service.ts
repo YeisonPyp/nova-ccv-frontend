@@ -45,6 +45,23 @@ export class PatApiService {
       .pipe(map((res) => res.data ?? []));
   }
 
+  createProgram(data: {
+    code: string;
+    name: string;
+    areaId: number;
+    employeeId: number;
+    costCenterId: number;
+    status: string;
+    objective?: string | null;
+    pillar?: string | null;
+    beneficiaries?: string | null;
+    year: number;
+  }): Observable<Program> {
+    return this.http
+      .post<ApiResponse<Program>>(`${this.base}/pat/programs`, data)
+      .pipe(map((res) => res.data));
+  }
+
   getProgramById(id: number): Observable<Program> {
     return this.http
       .get<ApiResponse<Program>>(`${this.base}/pat/programs/${id}`)

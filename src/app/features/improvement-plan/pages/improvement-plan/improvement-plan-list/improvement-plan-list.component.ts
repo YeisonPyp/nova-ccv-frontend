@@ -7,8 +7,8 @@ import {
 import { PaginatorComponent } from '../../../../../shared/components/paginator/paginator.component';
 import { ImprovementPlanService } from '../../../../../core/services/improvement-plan/improvement-plan.service';
 import { ImprovementPlan } from '../../../../../core/models/improvement-plan/improvement-plan.model';
-import { EditImprovementPlanModalComponent } from '../edit-improvement-plan-modal/edit-improvement-plan-modal.component';
 import { ImprovementPlanMetricsCardsComponent } from '../components/improvement-plan-metrics-cards/improvement-plan-metrics-cards.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-improvement-plan-list',
@@ -17,7 +17,6 @@ import { ImprovementPlanMetricsCardsComponent } from '../components/improvement-
     CommonModule,
     DynamicTableComponent,
     PaginatorComponent,
-    EditImprovementPlanModalComponent,
     ImprovementPlanMetricsCardsComponent,
   ],
   templateUrl: './improvement-plan-list.component.html',
@@ -25,6 +24,7 @@ import { ImprovementPlanMetricsCardsComponent } from '../components/improvement-
 })
 export class ImprovementPlanListComponent implements OnInit {
   private improvementPlanService = inject(ImprovementPlanService);
+  private readonly router = inject(Router);
 
   plans = signal<ImprovementPlan[]>([]);
   currentPage = signal<number>(1);
@@ -33,9 +33,6 @@ export class ImprovementPlanListComponent implements OnInit {
 
   loading = signal(false);
   error = signal<string | null>(null);
-
-  isModalOpen = signal(false);
-  selectedPlanId = signal<number | null>(null);
 
   columns: TableColumn<ImprovementPlan>[] = [
     { key: 'id', label: 'ID' },
@@ -79,34 +76,12 @@ export class ImprovementPlanListComponent implements OnInit {
     this.loadPlans(1);
   }
 
-  openModal(plan?: ImprovementPlan): void {
+  openPlan(plan?: ImprovementPlan): void {
     if (plan) {
-      this.selectedPlanId.set(plan.id);
+      this.router.navigate(['/improvement-plan/plan', plan.id]);
     } else {
-      this.selectedPlanId.set(null);
+      this.router.navigate(['/improvement-plan/plan/create']);
     }
-    this.isModalOpen.set(true);
-  }
-
-  closeModal(): void {
-    this.isModalOpen.set(false);
-    this.selectedPlanId.set(null);
-  }
-
-  onPlanSaved(p: ImprovementPlan): void {
-    this.loadPlans(this.currentPage());
-  }
-
-  onPlanUpdated(p: ImprovementPlan) {
-    console.log(p);
-    this.plans.set(
-      this.plans().map((i) => {
-        if (i.id === p.id) {
-          return p;
-        }
-        return i;
-      }),
-    );
   }
 
   deletePlan(plan: ImprovementPlan): void {

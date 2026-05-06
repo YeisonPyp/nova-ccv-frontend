@@ -1,0 +1,72 @@
+<div class="p-6">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-3 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a candidatos
+  </button>
+
+  <h1 class="text-2xl font-bold text-secondary mb-1">Logs de Auditoría</h1>
+  <p class="text-tertiary mb-4">
+    Entidad: <strong>{{ entityName() }}</strong>
+  </p>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form
+        [formGroup]="filterForm"
+        (ngSubmit)="search()"
+        class="row g-3 align-items-end"
+      >
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Operación</label>
+          <select class="form-select" formControlName="op">
+            <option value="CREATE">Creación</option>
+            <option value="UPDATE">Actualización</option>
+            <option value="DELETE">Eliminación</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">ID de Usuario</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="userId"
+            placeholder="Ej: 1"
+            min="1"
+          />
+        </div>
+        <div class="col-md-4">
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="loading()"
+          >
+            {{ loading() ? "Buscando..." : "Buscar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if (searched()) {
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <app-dynamic-table
+          [data]="logs()"
+          [columns]="columns"
+          emptyMessage="No se encontraron logs para estos filtros."
+        />
+
+        <app-paginator
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (onSelectPage)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

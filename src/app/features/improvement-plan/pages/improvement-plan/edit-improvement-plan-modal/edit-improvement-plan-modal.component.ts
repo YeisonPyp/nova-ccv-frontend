@@ -3,14 +3,10 @@ import {
   Component,
   computed,
   effect,
-  EventEmitter,
   inject,
-  input,
-  output,
   signal,
 } from "@angular/core";
 import {
-  Form,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -18,7 +14,6 @@ import {
 } from "@angular/forms";
 import { CorrectiveActionSectionComponent } from "./corrective-action-section/corrective-action-section.component";
 import { ImprovementPlanService, improvementPlanStatus } from "../../../../../core/services/improvement-plan/improvement-plan.service";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { catchError, debounceTime, distinctUntilChanged, filter, map, of, switchMap } from "rxjs";
 import { EmployeeService } from "../../../../../core/services/assessment/employee.service";
 import { ControlEntityService } from "../../../../../core/services/improvement-plan/control-entity.service";
@@ -26,6 +21,7 @@ import { SearchSelectComponent } from "../../../../../shared/components/search-s
 import { ImprovementPlan } from "../../../../../core/models/improvement-plan/improvement-plan.model";
 import { Employee } from "../../../../../core/models/assessment/employee.model";
 import { ControlEntity } from "../../../../../core/models/improvement-plan/control-entity.model";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "app-edit-improvement-plan-modal",
@@ -40,16 +36,13 @@ import { ControlEntity } from "../../../../../core/models/improvement-plan/contr
   styleUrl: "./edit-improvement-plan-modal.component.scss",
 })
 export class EditImprovementPlanModalComponent {
-  isOpen = input(false);
   error = signal(null);
   private service = inject(ImprovementPlanService);
   private employeeService = inject(EmployeeService);
   private controlEntityService = inject(ControlEntityService);
   private readonly fb = inject(FormBuilder);
-
-  onClose = output<void>();
-  onSave = output<ImprovementPlan>();
-  onUpdate = output<ImprovementPlan>();
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   searchSelectEmployeesContext =
     this.employeeService.newSearchSelectEmployeeContext((e) => this.updateAssignedEmployee(e), {
@@ -67,8 +60,8 @@ export class EditImprovementPlanModalComponent {
       label: "Entidad",
     });
 
-  planId = input.required<number | null>();
   plan = signal<ImprovementPlan | null>(null);
+  planId = signal<number | null>(null);
 
   get planStatus() {
     return Object.keys(improvementPlanStatus) as Array<keyof typeof improvementPlanStatus>;
@@ -82,7 +75,6 @@ export class EditImprovementPlanModalComponent {
     const plan = this.plan();
     if (plan == null || plan?.employee == null) return "";
     const e = plan.employee;
-
     return `${e.name ?? ""} ${e.lastName ?? ""}`;
   }
 
@@ -97,15 +89,20 @@ export class EditImprovementPlanModalComponent {
   });
 
   constructor() {
-    toObservable(this.planId).pipe(
+    this.route.paramMap.pipe(
+      map(params => {
+        const id = params.get('id');
+        return id ? +id : null;
+      }),
       switchMap((id) => {
+        this.planId.set(id);
         if (!id) return of(null);
         this.form.valueChanges.pipe(
           debounceTime(800),
           filter(() => this.form.valid),
           distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
           switchMap((value) => this.service.update(id, value))
-        ).subscribe({ next: (next) => { this.plan.set(next.data); this.onUpdate.emit(next.data) }, error: (err) => console.log(err) });
+        ).subscribe({ next: (next) => { this.plan.set(next.data); }, error: (err) => console.log(err) });
         return this.service.findById(id).pipe(
           map((response) => response.data),
           catchError((err) => {
@@ -115,8 +112,6 @@ export class EditImprovementPlanModalComponent {
         );
       }),
     ).subscribe((p) => this.plan.set(p));
-
-
 
     effect(() => {
       const p = this.plan();
@@ -185,7 +180,7 @@ export class EditImprovementPlanModalComponent {
         name
       }).subscribe((p) => {
         this.plan.set(p.data);
-        this.onSave.emit(p.data);
+        this.goBack();
       });
     } else {
       this.service.create({
@@ -197,12 +192,12 @@ export class EditImprovementPlanModalComponent {
         name
       }).subscribe((p) => {
         this.plan.set(p.data);
-        this.onSave.emit(p.data);
+        this.goBack();
       });
     }
   }
 
-  onCancel() {
-    this.onClose.emit();
+  goBack(): void {
+    this.router.navigate(["/improvement-plan/dashboard"]);
   }
 }

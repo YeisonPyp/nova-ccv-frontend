@@ -1,0 +1,177 @@
+<div class="p-6">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver
+  </button>
+  <h1 class="text-2xl font-bold text-secondary mb-6">Nueva Cuenta de Cobro</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+    <!-- Contract selector -->
+    <div class="card shadow-sm h-fit">
+      <div class="card-body">
+        <h2 class="text-base font-semibold mb-3">Seleccionar Contrato</h2>
+        @if (loading()) {
+          <div class="text-center py-4">
+            <div
+              class="spinner-border spinner-border-sm text-primary"
+              role="status"
+            ></div>
+          </div>
+        } @else {
+          <div class="space-y-2 max-h-96 overflow-y-auto">
+            @for (c of candidates(); track c.id) {
+              <div
+                class="p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-sm"
+                [class.border-primary]="selected()?.id === c.id"
+                [class.border-gray-200]="selected()?.id !== c.id"
+                (click)="select(c)"
+              >
+                <p class="font-semibold text-sm">{{ c.contractId }}</p>
+                <p class="text-xs text-tertiary">
+                  {{ c.contractType }} · {{ c.areaName }}
+                </p>
+              </div>
+            } @empty {
+              <p class="text-tertiary text-sm text-center py-4">
+                No hay contratos disponibles.
+              </p>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Contract info + files -->
+    <div class="space-y-4">
+      @if (selected(); as contract) {
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="text-base font-semibold mb-4">
+              Información del Contrato
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >ID Contrato</span
+                >
+                <span class="font-semibold">{{ contract.contractId }}</span>
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Tipo</span
+                >
+                <span class="font-semibold">{{ contract.contractType }}</span>
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Identificación</span
+                >
+                <span class="font-semibold">{{ contract.identification }}</span>
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Área</span
+                >
+                <span class="font-semibold">{{ contract.areaName }}</span>
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Centro de Costo</span
+                >
+                <span class="font-semibold">{{ contract.costCenterName }}</span>
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Monto base</span
+                >
+                <span class="font-semibold">{{
+                  contract.basePeriodAmount
+                    | currency: "COP" : "symbol-narrow" : "1.0-0"
+                }}</span>
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Vigencia</span
+                >
+                <span class="font-semibold"
+                  >{{ contract.starts }} → {{ contract.ends }}</span
+                >
+              </div>
+              <div>
+                <span
+                  class="text-tertiary block text-xs uppercase tracking-wide"
+                  >Estado</span
+                >
+                <span class="font-semibold">{{ contract.status }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Files -->
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="text-base font-semibold mb-3">Documentos</h2>
+            <div class="flex flex-wrap gap-3">
+              @for (file of pendingFiles(); track $index) {
+                <div class="relative">
+                  <app-file-item
+                    [file]="pendingFileAsResource(file)"
+                    [label]="file.name"
+                  />
+                  <button
+                    type="button"
+                    class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                    (click)="removeFile($index)"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+              <!-- Add file slot -->
+              <app-file-item
+                [file]="null"
+                label="Agregar"
+                accept=".pdf,image/*"
+                (fileSelected)="onFileAdded($event)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            class="btn btn-primary px-6"
+            [disabled]="saving()"
+            (click)="submit()"
+          >
+            {{ saving() ? "Creando..." : "Crear cuenta de cobro" }}
+          </button>
+        </div>
+      } @else {
+        <div class="card shadow-sm">
+          <div
+            class="card-body flex items-center justify-center py-16 text-center text-tertiary"
+          >
+            <div>
+              <p class="text-lg font-medium mb-1">Selecciona un contrato</p>
+              <p class="text-sm">
+                Elige un contrato del panel izquierdo para continuar.
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

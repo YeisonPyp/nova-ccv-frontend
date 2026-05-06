@@ -55,7 +55,7 @@
     </ng-template>
 
     <ng-template #actions let-assessment>
-      @if (canEdit()) {
+      @if (assessment.permissions?.includes('UPDATE')) {
         <span
           class="icon-btn"
           style="cursor: pointer"

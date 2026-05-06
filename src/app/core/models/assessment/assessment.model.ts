@@ -22,4 +22,5 @@ export interface Assessment {
   position?: Position | undefined;
   evaluator?: Employee | undefined;
   evaluatee?: Employee | undefined;
+  permissions?: string[];
 }

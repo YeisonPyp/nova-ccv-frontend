@@ -1,0 +1,57 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold text-secondary">Candidatos de Auditoría</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-8">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  } @else {
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <app-dynamic-table
+          [data]="candidates()"
+          [columns]="columns"
+          emptyMessage="No hay candidatos registrados."
+        >
+          <ng-template #actions let-item>
+            <div class="d-flex align-items-center gap-2">
+              <div class="form-check form-switch mb-0">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="item.isEnabled"
+                  (change)="toggleEnabled(item)"
+                  [title]="
+                    item.isEnabled
+                      ? 'Deshabilitar auditoría'
+                      : 'Habilitar auditoría'
+                  "
+                />
+              </div>
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                title="Ver logs"
+                (click)="viewLogs(item)"
+              >
+                📋
+              </button>
+            </div>
+          </ng-template>
+        </app-dynamic-table>
+
+        <app-paginator
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (onSelectPage)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

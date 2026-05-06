@@ -1,0 +1,298 @@
+@if (!canRead) {
+  <app-forbidden />
+} @else {
+  <div class="p-6 space-y-6">
+    <button
+      class="btn btn-link text-sm text-gray-500 ps-0"
+      type="button"
+      (click)="goBack()"
+    >
+      ← Volver a usuarios
+    </button>
+
+    @if (loading()) {
+      <div class="text-center py-8">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+    }
+    @if (user(); as u) {
+      <!-- Header -->
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-2xl font-bold text-secondary">
+            {{ u.firstName }} {{ u.lastName }}
+          </h1>
+          <p class="text-tertiary text-sm">{{ u.username }} · {{ u.email }}</p>
+        </div>
+        <span
+          class="badge fs-6 px-3 py-2"
+          [class.bg-success]="u.enabled"
+          [class.bg-secondary]="!u.enabled"
+        >
+          {{ u.enabled ? "Activo" : "Inactivo" }}
+        </span>
+      </div>
+
+      <details (toggle)="onRolesToggle($event)">
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+        >
+          Roles
+        </summary>
+        <!-- Roles section -->
+        <div class="card shadow-sm">
+          <div class="card-body space-y-4">
+            <div class="flex flex-wrap gap-2 min-h-8">
+              @if (u.roles.length === 0) {
+                <span class="text-tertiary text-sm">Sin roles asignados.</span>
+              }
+              @for (role of u.roles; track role; let i = $index) {
+                <span
+                  class="badge bg-primary text-white px-3 py-2 d-inline-flex align-items-center gap-2"
+                  style="font-size: 0.85rem"
+                >
+                  {{ role }}
+                  @if (canUpdate && i != 0) {
+                    <button
+                      type="button"
+                      class="btn-close btn-close-white cursor-pointer"
+                      style="font-size: 1rem"
+                      [disabled]="saving()"
+                      (click)="removeRole(role)"
+                      aria-label="Quitar rol"
+                    >
+                      &times;
+                    </button>
+                  }
+                </span>
+              }
+            </div>
+
+            @if (canUpdate && canReadRoles) {
+              <div class="border-t pt-4">
+                <h4 class="text-sm font-semibold text-tertiary uppercase mb-3">
+                  Roles disponibles
+                </h4>
+                <app-dynamic-table
+                  [data]="pagedRoles()"
+                  [columns]="roleColumns"
+                  emptyMessage="No hay roles disponibles para asignar."
+                >
+                  <ng-template #actions let-role>
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      [disabled]="saving()"
+                      (click)="assignRole(role)"
+                    >
+                      + Asignar
+                    </button>
+                  </ng-template>
+                </app-dynamic-table>
+                <app-pagination
+                  [pages]="rolesTotalPages()"
+                  [currentPage]="rolesPage()"
+                  (pageChange)="rolesPage.set($event)"
+                />
+              </div>
+            }
+          </div>
+        </div>
+      </details>
+
+      <details (toggle)="onPermissionsToggle($event)">
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+        >
+          Permisos
+        </summary>
+        <!-- Permissions section -->
+        <div class="card shadow-sm">
+          <div class="card-body space-y-4">
+            <div class="flex flex-wrap gap-2 min-h-8">
+              @if (u.permissions.length === 0) {
+                <span class="text-tertiary text-sm"
+                  >Sin permisos directos.</span
+                >
+              }
+              @for (perm of u.permissions; track perm) {
+                <span
+                  class="badge bg-info text-white bg-primary px-3 py-2 d-inline-flex align-items-center gap-2"
+                  style="font-size: 0.85rem"
+                >
+                  {{ perm }}
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white cursor-pointer"
+                    style="font-size: 1rem"
+                    [disabled]="saving()"
+                    (click)="removePermission(perm)"
+                    aria-label="Quitar permiso"
+                  >
+                    &times;
+                  </button>
+                  @if (canUpdate) {}
+                </span>
+              }
+            </div>
+
+            @if (canUpdate && canReadPermissions) {
+              <div class="border-t pt-4">
+                <h4 class="text-sm font-semibold text-tertiary uppercase mb-3">
+                  Permisos disponibles
+                </h4>
+                <app-dynamic-table
+                  [data]="pagedPermissions()"
+                  [columns]="permissionColumns"
+                  emptyMessage="No hay permisos disponibles para asignar."
+                >
+                  <ng-template #actions let-perm>
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      [disabled]="saving()"
+                      (click)="assignPermission(perm)"
+                    >
+                      + Asignar
+                    </button>
+                  </ng-template>
+                </app-dynamic-table>
+                <app-pagination
+                  [pages]="permissionsTotalPages()"
+                  [currentPage]="permissionsPage()"
+                  (pageChange)="permissionsPage.set($event)"
+                />
+              </div>
+            }
+          </div>
+        </div>
+      </details>
+
+      @if (canReadStatusChanges) {
+        <details (toggle)="onStatusChangesToggle($event)">
+          <summary
+            class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+          >
+            Cambios de estado
+          </summary>
+          <div class="card shadow-sm">
+            <div class="card-body space-y-4">
+              @if (canCreateStatusChange) {
+                <div class="flex justify-end">
+                  <button
+                    class="btn btn-sm btn-primary"
+                    (click)="openStatusChangeModal()"
+                  >
+                    + Registrar cambio
+                  </button>
+                </div>
+              }
+
+              @if (statusChangesLoading()) {
+                <div class="text-center py-4">
+                  <div
+                    class="spinner-border spinner-border-sm text-primary"
+                    role="status"
+                  ></div>
+                </div>
+              } @else {
+                <app-dynamic-table
+                  [data]="statusChanges()"
+                  [columns]="statusChangeColumns"
+                  emptyMessage="No hay cambios de estado registrados."
+                />
+                <app-paginator
+                  [pageSize]="statusChangesSize()"
+                  [currentPage]="statusChangesPage()"
+                  [totalPages]="statusChangesTotalPages()"
+                  (onSelectPage)="loadStatusChanges($event)"
+                  (pageSizeChange)="changeStatusPageSize($event)"
+                />
+              }
+            </div>
+          </div>
+        </details>
+      }
+    }
+  </div>
+
+  @if (showStatusChangeModal()) {
+    <div
+      class="modal-overlay"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+      "
+    >
+      <div
+        class="modal-container bg-white rounded-xl shadow-lg p-6"
+        style="width: 100%; max-width: 480px"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-secondary m-0">
+            Registrar cambio de estado
+          </h3>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Cerrar"
+            (click)="closeStatusChangeModal()"
+          ></button>
+        </div>
+
+        <form [formGroup]="statusChangeForm" class="space-y-3">
+          <div class="flex justify-between w-[80%] self-center">
+            <label class="form-label fw-semibold">Nuevo estado</label>
+            <select formControlName="newStatus">
+              <option [ngValue]="null">-- Selecciona --</option>
+              @for (s of availableStatuses; track s) {
+                <option [ngValue]="s">{{ s }}</option>
+              }
+            </select>
+            @if (
+              statusChangeForm.get("newStatus")?.invalid &&
+              statusChangeForm.get("newStatus")?.touched
+            ) {
+              <div class="text-danger small">Requerido</div>
+            }
+          </div>
+
+          <div>
+            <label class="form-label fw-semibold">Motivo</label>
+            <textarea
+              class="form-control"
+              rows="3"
+              formControlName="reason"
+              placeholder="Explica el motivo del cambio"
+            ></textarea>
+            @if (
+              statusChangeForm.get("reason")?.invalid &&
+              statusChangeForm.get("reason")?.touched
+            ) {
+              <div class="text-danger small">Requerido</div>
+            }
+          </div>
+        </form>
+
+        <div class="flex justify-end gap-2 mt-4">
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            (click)="closeStatusChangeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            [disabled]="savingStatusChange()"
+            (click)="submitStatusChange()"
+          >
+            {{ savingStatusChange() ? "Guardando..." : "Guardar" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+}

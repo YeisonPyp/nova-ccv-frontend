@@ -1,0 +1,634 @@
+@if (isOpen()) {
+  <div
+    class="modal-overlay items-start! overflow-y-auto py-8 px-4"
+    (click)="close()"
+  >
+    <div
+      class="modal-container max-w-3xl! relative flex flex-col p-7"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Close -->
+      <button
+        class="absolute top-4 right-4 p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer border-none bg-transparent"
+        (click)="close()"
+        title="Cerrar"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-5 pr-8">
+        <h4 class="text-lg font-semibold text-secondary m-0">Nuevo Contrato</h4>
+        <span
+          class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 uppercase tracking-wide"
+        >
+          {{ contractType() === "employee" ? "Empleado" : "Agencia" }}
+        </span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        @if (error()) {
+          <div
+            class="mb-4 px-4 py-2.5 rounded bg-red-50 text-red-700 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <!-- ── INFORMACIÓN BÁSICA ── -->
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
+          Información Básica
+        </h5>
+        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+          <!-- contractId -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >
+              ID Contrato <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="contractId"
+              placeholder="Ej: CON-2025-001"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="isFieldInvalid('contractId')"
+            />
+            @if (isFieldInvalid("contractId")) {
+              <span class="text-xs text-red-500">Campo requerido</span>
+            }
+          </div>
+
+          <!-- contractTypeName -->
+          <app-search-select
+            label="Tipo de Contrato"
+            [required]="true"
+            [items]="contractTypeCtx.options()"
+            [selectedItems]="contractTypeCtx.selectedOptions()"
+            [isInvalid]="isFieldInvalid('contractTypeName')"
+            errorMessage="Tipo de contrato requerido"
+            (onSearch)="contractTypeCtx.search($event)"
+            (onSelect)="contractTypeCtx.select($event)"
+            (onRemove)="
+              onFieldRemove('contractTypeName', contractTypeCtx, $event)
+            "
+          />
+
+          <!-- statusName -->
+          <app-search-select
+            label="Estado"
+            [required]="true"
+            [items]="statusCtx.options()"
+            [selectedItems]="statusCtx.selectedOptions()"
+            [isInvalid]="isFieldInvalid('statusName')"
+            errorMessage="Estado requerido"
+            (onSearch)="statusCtx.search($event)"
+            (onSelect)="statusCtx.select($event)"
+            (onRemove)="onFieldRemove('statusName', statusCtx, $event)"
+          />
+
+          <!-- cotizationTypeName -->
+          <app-search-select
+            label="Tipo de Cotización"
+            [required]="true"
+            [items]="cotizationTypeCtx.options()"
+            [selectedItems]="cotizationTypeCtx.selectedOptions()"
+            [isInvalid]="isFieldInvalid('cotizationTypeName')"
+            errorMessage="Tipo de cotización requerido"
+            (onSearch)="cotizationTypeCtx.search($event)"
+            (onSelect)="cotizationTypeCtx.select($event)"
+            (onRemove)="
+              onFieldRemove('cotizationTypeName', cotizationTypeCtx, $event)
+            "
+          />
+        </div>
+
+        <hr class="border-t border-gray-100 my-5" />
+
+        <!-- ── PARTES ── -->
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
+          Partes del Contrato
+        </h5>
+        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+          @if (contractType() === "employee") {
+            <!-- employeeId -->
+            <app-search-select
+              label="Empleado"
+              [required]="true"
+              [items]="employeeCtx.options()"
+              [selectedItems]="employeeCtx.selectedOptions()"
+              [isInvalid]="isFieldInvalid('employeeId')"
+              errorMessage="Empleado requerido"
+              (onSearch)="employeeCtx.search($event)"
+              (onSelect)="employeeCtx.select($event)"
+              (onRemove)="onFieldRemove('employeeId', employeeCtx, $event)"
+            />
+
+            <!-- positionId -->
+            <app-search-select
+              label="Cargo"
+              [required]="true"
+              [items]="positionCtx.options()"
+              [selectedItems]="positionCtx.selectedOptions()"
+              [isInvalid]="isFieldInvalid('positionId')"
+              errorMessage="Cargo requerido"
+              (onSearch)="positionCtx.search($event)"
+              (onSelect)="positionCtx.select($event)"
+              (onRemove)="onFieldRemove('positionId', positionCtx, $event)"
+            />
+          }
+
+          @if (contractType() === "agency") {
+            <!-- agencyId -->
+            <app-search-select
+              label="Agencia"
+              [required]="true"
+              [items]="agencyCtx.options()"
+              [selectedItems]="agencyCtx.selectedOptions()"
+              [isInvalid]="isFieldInvalid('agencyId')"
+              errorMessage="Agencia requerida"
+              (onSearch)="agencyCtx.search($event)"
+              (onSelect)="agencyCtx.select($event)"
+              (onRemove)="onFieldRemove('agencyId', agencyCtx, $event)"
+            />
+
+            <!-- identification -->
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >
+                Identificación <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="identification"
+                placeholder="NIT o cédula"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+                [class.border-red-400]="isFieldInvalid('identification')"
+              />
+              @if (isFieldInvalid("identification")) {
+                <span class="text-xs text-red-500">Campo requerido</span>
+              }
+            </div>
+          }
+
+          <!-- areaId -->
+          <app-search-select
+            label="Área"
+            [required]="true"
+            [items]="areaCtx.options()"
+            [selectedItems]="areaCtx.selectedOptions()"
+            [isInvalid]="isFieldInvalid('areaId')"
+            errorMessage="Área requerida"
+            (onSearch)="areaCtx.search($event)"
+            (onSelect)="areaCtx.select($event)"
+            (onRemove)="onFieldRemove('areaId', areaCtx, $event)"
+          />
+
+          <!-- costCenterId -->
+          <app-search-select
+            label="Centro de Costo"
+            [required]="true"
+            [items]="costCenterCtx.options()"
+            [selectedItems]="costCenterCtx.selectedOptions()"
+            [isInvalid]="isFieldInvalid('costCenterId')"
+            errorMessage="Centro de costo requerido"
+            (onSearch)="costCenterCtx.search($event)"
+            (onSelect)="costCenterCtx.select($event)"
+            (onRemove)="onFieldRemove('costCenterId', costCenterCtx, $event)"
+          />
+        </div>
+
+        <hr class="border-t border-gray-100 my-5" />
+
+        <!-- ── PERÍODO Y MONTOS ── -->
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
+          Período y Montos
+        </h5>
+        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+          <!-- starts -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >
+              Fecha Inicio <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              formControlName="starts"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="isFieldInvalid('starts')"
+            />
+            @if (isFieldInvalid("starts")) {
+              <span class="text-xs text-red-500"
+                >Fecha de inicio requerida</span
+              >
+            }
+          </div>
+
+          <!-- ends -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Fecha Fin</label
+            >
+            <input
+              type="date"
+              formControlName="ends"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          <!-- basePeriodAmount -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >
+              Monto Base Período <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="basePeriodAmount"
+              min="0"
+              placeholder="0"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="isFieldInvalid('basePeriodAmount')"
+            />
+            @if (isFieldInvalid("basePeriodAmount")) {
+              <span class="text-xs text-red-500">Monto requerido</span>
+            }
+          </div>
+
+          <!-- periodDays -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >
+              Días Período <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="periodDays"
+              min="1"
+              placeholder="30"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="isFieldInvalid('periodDays')"
+            />
+            @if (isFieldInvalid("periodDays")) {
+              <span class="text-xs text-red-500">Días requeridos</span>
+            }
+          </div>
+
+          @if (contractType() === "agency") {
+            <!-- periods -->
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >
+                Períodos <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                formControlName="periods"
+                min="1"
+                placeholder="1"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+                [class.border-red-400]="isFieldInvalid('periods')"
+              />
+              @if (isFieldInvalid("periods")) {
+                <span class="text-xs text-red-500">Períodos requeridos</span>
+              }
+            </div>
+          }
+
+          <!-- filingOrigin -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >
+              Origen Radicación <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="filingOrigin"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="isFieldInvalid('filingOrigin')"
+            />
+            @if (isFieldInvalid("filingOrigin")) {
+              <span class="text-xs text-red-500">Origen requerido</span>
+            }
+          </div>
+
+          <!-- filingDestination -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >
+              Destino Radicación <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="filingDestination"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              [class.border-red-400]="isFieldInvalid('filingDestination')"
+            />
+            @if (isFieldInvalid("filingDestination")) {
+              <span class="text-xs text-red-500">Destino requerido</span>
+            }
+          </div>
+
+          <!-- retentionProcess -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Proceso de Retención</label
+            >
+            <select
+              formControlName="retentionProcess"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+            >
+              <option [value]="null">— Sin retención —</option>
+              <option value="monthly">Mensual</option>
+              <option value="biannual">Semestral</option>
+              <option value="annual">Anual</option>
+            </select>
+          </div>
+
+          <!-- zone -->
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >Zona</label
+            >
+            <input
+              type="text"
+              formControlName="zone"
+              placeholder="Ej: Bogotá"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        </div>
+
+        <!-- ── NÓMINA (employee only) ── -->
+        @if (contractType() === "employee") {
+          <hr class="border-t border-gray-100 my-5" />
+          <h5
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+          >
+            Valores de Nómina
+          </h5>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Sindicato</label
+              >
+              <input
+                type="number"
+                formControlName="periodTradeUnionAmount"
+                min="0"
+                placeholder="0"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Fondo Solidaridad</label
+              >
+              <input
+                type="number"
+                formControlName="periodSolidarityAmount"
+                min="0"
+                placeholder="0"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Contribuciones Parafiscales</label
+              >
+              <input
+                type="number"
+                formControlName="periodParafiscalContributionsAmount"
+                min="0"
+                placeholder="0"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Pensión</label
+              >
+              <input
+                type="number"
+                formControlName="periodPensionAmount"
+                min="0"
+                placeholder="0"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Transporte</label
+              >
+              <input
+                type="number"
+                formControlName="periodTransportAmount"
+                min="0"
+                placeholder="0"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Antigüedad</label
+              >
+              <input
+                type="number"
+                formControlName="periodSeniorityAmount"
+                min="0"
+                placeholder="0"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          <hr class="border-t border-gray-100 my-5" />
+
+          <!-- ── SEGURIDAD SOCIAL (employee only) ── -->
+          <h5
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+          >
+            Seguridad Social
+          </h5>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+            <!-- epsAffiliationType -->
+            <app-search-select
+              label="Afiliación EPS"
+              [items]="epsAffiliationTypeCtx.options()"
+              [selectedItems]="epsAffiliationTypeCtx.selectedOptions()"
+              (onSearch)="epsAffiliationTypeCtx.search($event)"
+              (onSelect)="epsAffiliationTypeCtx.select($event)"
+              (onRemove)="
+                onFieldRemove(
+                  'epsAffiliationType',
+                  epsAffiliationTypeCtx,
+                  $event
+                )
+              "
+            />
+
+            <!-- epsEntityName -->
+            <app-search-select
+              label="Entidad EPS"
+              [items]="epsEntityNameCtx.options()"
+              [selectedItems]="epsEntityNameCtx.selectedOptions()"
+              (onSearch)="epsEntityNameCtx.search($event)"
+              (onSelect)="epsEntityNameCtx.select($event)"
+              (onRemove)="
+                onFieldRemove('epsEntityName', epsEntityNameCtx, $event)
+              "
+            />
+
+            <!-- pensionEntity -->
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >Entidad Pensión</label
+              >
+              <input
+                type="text"
+                formControlName="pensionEntity"
+                placeholder="Ej: Colpensiones"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <!-- pensionType -->
+            <app-search-select
+              label="Tipo Pensión"
+              [items]="pensionTypeCtx.options()"
+              [selectedItems]="pensionTypeCtx.selectedOptions()"
+              (onSearch)="pensionTypeCtx.search($event)"
+              (onSelect)="pensionTypeCtx.select($event)"
+              (onRemove)="onFieldRemove('pensionType', pensionTypeCtx, $event)"
+            />
+
+            <!-- employeeClass -->
+            <app-search-select
+              label="Clase Empleado"
+              [items]="employeeClassCtx.options()"
+              [selectedItems]="employeeClassCtx.selectedOptions()"
+              (onSearch)="employeeClassCtx.search($event)"
+              (onSelect)="employeeClassCtx.select($event)"
+              (onRemove)="
+                onFieldRemove('employeeClass', employeeClassCtx, $event)
+              "
+            />
+
+            <!-- compensationEntity -->
+            <app-search-select
+              label="Caja de Compensación"
+              [items]="compensationEntityCtx.options()"
+              [selectedItems]="compensationEntityCtx.selectedOptions()"
+              (onSearch)="compensationEntityCtx.search($event)"
+              (onSelect)="compensationEntityCtx.select($event)"
+              (onRemove)="
+                onFieldRemove(
+                  'compensationEntity',
+                  compensationEntityCtx,
+                  $event
+                )
+              "
+            />
+          </div>
+        }
+
+        <!-- ── ARCHIVOS DE RADICACIÓN ── -->
+        @if (filingFileNames().length > 0) {
+          <hr class="border-t border-gray-100 my-5" />
+          <h5
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+          >
+            Archivos de Radicación
+          </h5>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+            @for (fn of filingFileNames(); track fn.id) {
+              <div class="flex flex-col gap-1">
+                <label
+                  class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+                >
+                  {{ fn.name }}
+                  @if (fn.isRequired) {
+                    <span class="text-red-500">*</span>
+                  }
+                </label>
+                <input
+                  type="file"
+                  [accept]="fn.mimeTypes ?? undefined"
+                  (change)="onFileChange(fn.name, $event)"
+                  class="text-sm rounded border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-gray-100 file:text-gray-600 hover:file:bg-gray-200 cursor-pointer"
+                />
+                @if (fn.isRequired && !selectedFiles()[fn.name]) {
+                  <span class="text-xs text-gray-400">Archivo requerido</span>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ── FOOTER ── -->
+        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-5">
+          <button
+            type="button"
+            class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors cursor-pointer border-none"
+            (click)="close()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity cursor-pointer border-none disabled:opacity-50"
+            [disabled]="submitting()"
+          >
+            @if (submitting()) {
+              Creando...
+            } @else {
+              Crear Contrato
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

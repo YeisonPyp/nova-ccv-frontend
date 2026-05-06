@@ -14,7 +14,7 @@
         Gestión de empleados de la empresa
       </p>
     </div>
-    <button class="btn btn-primary" (click)="openCreateModal()">
+    <button class="btn btn-primary" (click)="openCreate()">
       + Crear Empleado
     </button>
   </div>
@@ -29,7 +29,7 @@
         <button
           class="btn btn-secondary"
           style="padding: 4px 12px; font-size: 0.8rem"
-          (click)="openEditModal(employee)"
+          (click)="openEdit(employee)"
         >
           Editar
         </button>
@@ -41,7 +41,7 @@
             color: #e53e3e;
             border-color: #fed7d7;
           "
-          (click)="onDeleteEmployee(employee)"
+          (click)="onDelete(employee)"
         >
           Eliminar
         </button>
@@ -57,11 +57,3 @@
     (onSelectPage)="onPageChange($event)"
   ></app-paginator>
 </div>
-
-<app-employee-modal
-  [isOpen]="isModalOpen()"
-  [isEdit]="isEdit()"
-  [employeeData]="selectedEmployee()"
-  (closeModal)="closeModal()"
-  (saveEmployee)="onSaveEmployee($event)"
-></app-employee-modal>
