@@ -28,7 +28,7 @@ export interface Salary {
 })
 export class SalaryService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/salary-parameters/`;
+  private readonly API_URL = `${environment.apiUrl}/salary-parameters`;
 
   getSalaryForYear(year?: number) {
     year ??= new Date().getFullYear();

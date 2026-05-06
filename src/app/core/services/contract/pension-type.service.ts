@@ -14,7 +14,7 @@ export interface PensionType {
 })
 export class PensionTypeService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/pension-types/`;
+  private readonly API_URL = `${environment.apiUrl}/pension-types`;
 
   getPensionTypes() {
     return this.http.get<ApiResponse<PensionType[]>>(this.API_URL);

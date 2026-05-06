@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import {
   Component,
   computed,
+  effect,
   inject,
-  input,
-  output,
+  OnInit,
   signal,
 } from "@angular/core";
 import {
@@ -13,7 +13,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { toObservable } from "@angular/core/rxjs-interop";
 import {
   catchError,
   debounceTime,
@@ -35,6 +34,7 @@ import {
   FilingProcess,
 } from "../../../../../core/models/filing/filing.models";
 import { Area } from "../../../../../core/models/assessment/area.model";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "app-filing-modal",
@@ -48,20 +48,17 @@ import { Area } from "../../../../../core/models/assessment/area.model";
   templateUrl: "./filing-modal.component.html",
   styleUrl: "./filing-modal.component.scss",
 })
-export class FilingModalComponent {
+export class FilingModalComponent implements OnInit {
   private readonly filingService = inject(FilingService);
   private readonly processService = inject(FilingProcessService);
   private readonly fileService = inject(FilingFileService);
   private readonly areaService = inject(AreaService);
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  isOpen = input(false);
-  filing = input<Filing | null>(null);
-  parentId = input<number | null>(null);
-
-  onClose = output<void>();
-  onSaved = output<Filing>();
-  onUpdated = output<Filing>();
+  filing = signal<Filing | null>(null);
+  parentId = signal<number | null>(null);
 
   processes = signal<FilingProcess[]>([]);
   files = signal<FilingFile[]>([]);
@@ -85,57 +82,65 @@ export class FilingModalComponent {
       if (res.success && res.data) this.processes.set(res.data.content);
     });
 
-    toObservable(this.filing)
-      .pipe(
-        switchMap((f) => {
-          this.searchSelectAreaContext.clear();
-          this.files.set([]);
+    effect(() => {
+      const f = this.filing();
+      this.searchSelectAreaContext.clear();
+      this.files.set([]);
 
-          if (!f) {
-            this.form.reset(
-              { processName: null, origin: "", destination: "" },
-              { emitEvent: false },
-            );
-            return of([]);
-          }
+      if (!f) {
+        this.form.reset(
+          { processName: null, origin: "", destination: "" },
+          { emitEvent: false },
+        );
+        return;
+      }
 
-          this.form.patchValue(
-            {
-              processName: f.processName,
-              origin: f.origin ?? "",
-              destination: f.destination ?? "",
+      this.form.patchValue(
+        {
+          processName: f.processName,
+          origin: f.origin ?? "",
+          destination: f.destination ?? "",
+        },
+        { emitEvent: false },
+      );
+
+      if (f.areaId && f.areaName) {
+        this.searchSelectAreaContext.selectResults([
+          { id: f.areaId, name: f.areaName },
+        ]);
+      }
+
+      this.fileService.findByFilingId(f.id).pipe(
+        map((res) => res.data ?? []),
+        catchError(() => of([])),
+      ).subscribe((files) => this.files.set(files));
+    });
+  }
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    const parentIdParam = this.route.snapshot.queryParamMap.get('parentId');
+    this.parentId.set(parentIdParam ? +parentIdParam : null);
+
+    if (id) {
+      this.filingService.findById(+id).subscribe((res) => {
+        if (res.success && res.data) {
+          this.filing.set(res.data);
+          this.form.valueChanges.pipe(
+            debounceTime(800),
+            filter(() => this.form.valid),
+            distinctUntilChanged(
+              (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
+            ),
+            switchMap((value) => this.filingService.update(+id, value)),
+          ).subscribe({
+            next: (res) => {
+              if (res.success && res.data) this.filing.set(res.data);
             },
-            { emitEvent: false },
-          );
-
-          if (f.areaId && f.areaName) {
-            this.searchSelectAreaContext.selectResults([
-              { id: f.areaId, name: f.areaName },
-            ]);
-          }
-
-          this.form.valueChanges
-            .pipe(
-              debounceTime(800),
-              filter(() => this.form.valid),
-              distinctUntilChanged(
-                (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
-              ),
-              switchMap((value) => this.filingService.update(f.id, value)),
-            )
-            .subscribe({
-              next: (res) => {
-                if (res.success && res.data) this.onUpdated.emit(res.data);
-              },
-            });
-
-          return this.fileService.findByFilingId(f.id).pipe(
-            map((res) => res.data ?? []),
-            catchError(() => of([])),
-          );
-        }),
-      )
-      .subscribe((files) => this.files.set(files));
+          });
+        }
+      });
+    }
   }
 
   updateArea(area: Area): void {
@@ -144,7 +149,7 @@ export class FilingModalComponent {
     this.filingService
       .update(f.id, { areaId: area.id })
       .subscribe((res) => {
-        if (res.success && res.data) this.onUpdated.emit(res.data);
+        if (res.success && res.data) this.filing.set(res.data);
       });
   }
 
@@ -168,8 +173,7 @@ export class FilingModalComponent {
     this.filingService.create(dto).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          this.onSaved.emit(res.data);
-          this.onClose.emit();
+          this.goBack();
         }
         this.saving.set(false);
       },
@@ -177,7 +181,7 @@ export class FilingModalComponent {
     });
   }
 
-  close(): void {
-    this.onClose.emit();
+  goBack(): void {
+    this.router.navigate(["/filings/dashboard"]);
   }
 }

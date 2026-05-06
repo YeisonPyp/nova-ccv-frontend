@@ -1,7 +1,14 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
-    <h1>📊 Dashboard PAT 2025</h1>
-    <p class="subtitle">Plan Anual de Trabajo - Cámara de Comercio</p>
+    <div>
+      <h1>📊 Dashboard PAT 2025</h1>
+      <p class="subtitle">Plan Anual de Trabajo - Cámara de Comercio</p>
+    </div>
+    @if (auth.hasPermission('CREATE_PAT_PROGRAM')) {
+      <button class="btn btn-primary" type="button" (click)="createProgram()">
+        + Nuevo Programa
+      </button>
+    }
   </header>
 
   @if (loading()) {

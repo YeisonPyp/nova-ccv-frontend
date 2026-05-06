@@ -14,7 +14,7 @@ export interface ContractType {
 })
 export class ContractTypeService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/contract-types/`;
+  private readonly API_URL = `${environment.apiUrl}/contract-types`;
 
   getContractTypes() {
     return this.http.get<ApiResponse<ContractType[]>>(this.API_URL);

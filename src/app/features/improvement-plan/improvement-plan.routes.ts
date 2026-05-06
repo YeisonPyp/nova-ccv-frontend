@@ -16,7 +16,14 @@ export const IMPROVEMENT_PLAN_ROUTES: Routes = [
       ),
   },
   {
-    path: "edit-improvement-plan",
+    path: "plan/create",
+    loadComponent: () =>
+      import("./pages/improvement-plan/edit-improvement-plan-modal/edit-improvement-plan-modal.component").then(
+        (m) => m.EditImprovementPlanModalComponent,
+      ),
+  },
+  {
+    path: "plan/:id",
     loadComponent: () =>
       import("./pages/improvement-plan/edit-improvement-plan-modal/edit-improvement-plan-modal.component").then(
         (m) => m.EditImprovementPlanModalComponent,

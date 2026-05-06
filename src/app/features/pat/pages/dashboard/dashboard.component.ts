@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PatApiService } from '../../../../core/services/pat-api.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { DashboardStats, ProgramWithMetrics, ProgramStatus } from '../../models/pat.models';
 
 @Component({
@@ -41,7 +42,14 @@ export class DashboardComponent implements OnInit {
     return statuses;
   });
 
+  private readonly router = inject(Router);
+  readonly auth = inject(AuthService);
+
   constructor(private patApi: PatApiService) {}
+
+  createProgram(): void {
+    this.router.navigate(["/pat/programs/create"]);
+  }
 
   ngOnInit(): void {
     this.loadDashboard();

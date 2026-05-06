@@ -14,7 +14,7 @@ export interface CompensationEntity {
 })
 export class CompensationEntityService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/compensation-entities/`;
+  private readonly API_URL = `${environment.apiUrl}/compensation-entities`;
 
   getCompensationEntities() {
     return this.http.get<ApiResponse<CompensationEntity[]>>(this.API_URL);

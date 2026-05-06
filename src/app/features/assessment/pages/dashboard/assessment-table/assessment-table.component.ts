@@ -1,19 +1,15 @@
 import {
   Component,
   EventEmitter,
-  inject,
   input,
   Output,
-  computed,
 } from "@angular/core";
-import { AssessmentService } from "../../../../../core/services/assessment/assessment.service";
 import { Assessment } from "../../../../../core/models/assessment/assessment.model";
 import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
 } from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { AuthService } from "../../../../../core/services/auth.service";
 
 @Component({
   selector: "app-assessment-table",
@@ -28,17 +24,8 @@ export class AssessmentTableComponent {
   size = input.required<number>();
   page = input.required<number>();
 
-  authService = inject(AuthService);
-
-  canEdit = computed(
-    () =>
-      this.authService.hasRole("ROLE_ADMIN") ||
-      this.authService.hasRole("ROLE_HR"),
-  );
-
   columns: TableColumn<Assessment>[] = [
     { key: "evaluatee", label: "Empleado" },
-    // { key: "area", label: "Área" }, // Uncomment if area should be displayed
     { key: "evaluator", label: "Evaluador" },
     { key: "status", label: "Estado" },
     { key: "matrixTotalScore", label: "Desempeño" },

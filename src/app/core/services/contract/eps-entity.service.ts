@@ -14,7 +14,7 @@ export interface EpsEntity {
 })
 export class EpsEntityService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/eps-entities/`;
+  private readonly API_URL = `${environment.apiUrl}/eps-entities`;
 
   getEpsEntities() {
     return this.http.get<ApiResponse<EpsEntity[]>>(this.API_URL);

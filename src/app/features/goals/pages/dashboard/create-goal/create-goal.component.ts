@@ -1,14 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  OnChanges,
-  output,
-  signal,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { GoalService } from "../../../../../core/services/goals/goal.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
@@ -16,12 +6,10 @@ import { map } from "rxjs";
 import { GoalTemplate } from "../../../../../core/models/goals/goal-template.model";
 import { GoalVarTableComponent } from "./goal-var-table/goal-var-table.component";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import {
-  CreateGoalFromTemplate,
-  Goal,
-} from "../../../../../core/models/goals/goal.model";
+import { CreateGoalFromTemplate } from "../../../../../core/models/goals/goal.model";
 import { GoalVar } from "../../../../../core/models/goals/goal-var.model";
 import { GoalOption } from "../../../../../core/models/goals/goal-option.model";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-create-goal",
@@ -30,13 +18,10 @@ import { GoalOption } from "../../../../../core/models/goals/goal-option.model";
   templateUrl: "./create-goal.component.html",
   styleUrl: "./create-goal.component.scss",
 })
-export class CreateGoalComponent implements OnChanges {
+export class CreateGoalComponent {
   goalService = inject(GoalService);
   fb = inject(FormBuilder);
-
-  isOpen = input.required<boolean>();
-  onClose = output<void>();
-  onSaved = output<Goal>();
+  router = inject(Router);
 
   goalTemplates = toSignal(
     this.goalService.findAllGoalTemplates().pipe(map((r) => r.data ?? [])),
@@ -72,8 +57,6 @@ export class CreateGoalComponent implements OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {}
-
   onSelectOption(goalVar: GoalVar, option: GoalOption) {
     this.goalVarsValues.update((v) => {
       v[goalVar.varName] = option;
@@ -81,9 +64,8 @@ export class CreateGoalComponent implements OnChanges {
     });
   }
 
-  $onClose() {
-    this.onClose.emit();
-    this.formGroup.reset();
+  cancel() {
+    this.router.navigate(["/goals/dashboard"]);
   }
 
   onSubmit() {
@@ -97,8 +79,7 @@ export class CreateGoalComponent implements OnChanges {
       } as CreateGoalFromTemplate)
       .subscribe((r) => {
         if (r.success) {
-          this.onSaved.emit(r.data);
-          this.onClose.emit();
+          this.router.navigate(["/goals/dashboard"]);
         }
       });
   }

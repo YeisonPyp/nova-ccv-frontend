@@ -14,7 +14,7 @@ export interface EpsAfiliation {
 })
 export class EpsAfiliationService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/eps-afiliation-types/`;
+  private readonly API_URL = `${environment.apiUrl}/eps-affiliation-types`;
 
   getEpsAfiliations() {
     return this.http.get<ApiResponse<EpsAfiliation[]>>(this.API_URL);

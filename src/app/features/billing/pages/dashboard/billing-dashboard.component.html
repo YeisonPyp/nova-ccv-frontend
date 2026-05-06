@@ -1,0 +1,42 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold text-secondary">Cuentas de Cobro</h1>
+    <button class="btn btn-primary" (click)="openCreate()">
+      + Nueva cuenta
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-8">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  } @else {
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <app-dynamic-table
+          [data]="accounts()"
+          [columns]="columns"
+          emptyMessage="No hay cuentas de cobro registradas."
+        >
+          <ng-template #actions let-item>
+            <button
+              class="btn btn-sm btn-outline-primary"
+              title="Ver detalle"
+              (click)="openDetail(item)"
+            >
+              Ver →
+            </button>
+          </ng-template>
+        </app-dynamic-table>
+
+        <app-pagination
+          [pages]="totalPages()"
+          [currentPage]="currentPage()"
+          (pageChange)="onPageChange($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

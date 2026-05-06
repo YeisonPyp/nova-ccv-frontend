@@ -14,7 +14,7 @@ export interface CotizationType {
 })
 export class CotizationTypeService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/cotization-types/`;
+  private readonly API_URL = `${environment.apiUrl}/cotization-types`;
 
   getCotizationTypes() {
     return this.http.get<ApiResponse<CotizationType[]>>(this.API_URL);

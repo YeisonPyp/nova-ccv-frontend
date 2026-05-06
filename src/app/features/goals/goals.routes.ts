@@ -8,4 +8,11 @@ export const GOALS_ROUTES: Routes = [
         (m) => m.GoalsDashboardComponent,
       ),
   },
+  {
+    path: "dashboard/create",
+    loadComponent: () =>
+      import("./pages/dashboard/create-goal/create-goal.component").then(
+        (m) => m.CreateGoalComponent,
+      ),
+  },
 ];

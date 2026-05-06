@@ -14,7 +14,7 @@ export interface EmployeeClass {
 })
 export class EmployeeClassService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/employee-classes/`;
+  private readonly API_URL = `${environment.apiUrl}/employee-classes`;
 
   getEmployeeClasses() {
     return this.http.get<ApiResponse<EmployeeClass[]>>(this.API_URL);

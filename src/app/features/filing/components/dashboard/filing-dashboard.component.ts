@@ -5,9 +5,9 @@ import {
   TableColumn,
 } from "../../../../shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
-import { FilingModalComponent } from "./filing-modal/filing-modal.component";
 import { FilingService } from "../../../../core/services/filing/filing.service";
 import { Filing } from "../../../../core/models/filing/filing.models";
+import { Router } from "@angular/router";
 
 interface BreadcrumbEntry {
   id: number | null;
@@ -21,12 +21,12 @@ interface BreadcrumbEntry {
     CommonModule,
     DynamicTableComponent,
     PaginationComponent,
-    FilingModalComponent,
   ],
   templateUrl: "./filing-dashboard.component.html",
 })
 export class FilingDashboardComponent implements OnInit {
   private readonly filingService = inject(FilingService);
+  private readonly router = inject(Router);
 
   items = signal<Filing[]>([]);
   currentPage = signal(1);
@@ -39,9 +39,6 @@ export class FilingDashboardComponent implements OnInit {
     const crumbs = this.breadcrumb();
     return crumbs[crumbs.length - 1].id;
   });
-
-  isCreateModalOpen = signal(false);
-  selectedFiling = signal<Filing | null>(null);
 
   columns: TableColumn<Filing>[] = [
     { key: "id", label: "ID" },
@@ -97,30 +94,14 @@ export class FilingDashboardComponent implements OnInit {
     this.load();
   }
 
-  openCreateModal(): void {
-    this.selectedFiling.set(null);
-    this.isCreateModalOpen.set(true);
+  openCreate(): void {
+    const parentId = this.currentParentId();
+    const extras = parentId != null ? { queryParams: { parentId } } : {};
+    this.router.navigate(["/filings/create"], extras);
   }
 
-  openEditModal(filing: Filing): void {
-    this.selectedFiling.set(filing);
-    this.isCreateModalOpen.set(true);
-  }
-
-  closeModal(): void {
-    this.isCreateModalOpen.set(false);
-    this.selectedFiling.set(null);
-  }
-
-  onFilingSaved(): void {
-    this.closeModal();
-    this.load(this.currentPage());
-  }
-
-  onFilingUpdated(updated: Filing): void {
-    this.items.update((items) =>
-      items.map((f) => (f.id === updated.id ? updated : f)),
-    );
+  openEdit(filing: Filing): void {
+    this.router.navigate(["/filings", filing.id, "edit"]);
   }
 
   deleteItem(filing: Filing): void {

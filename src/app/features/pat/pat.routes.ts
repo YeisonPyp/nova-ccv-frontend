@@ -21,6 +21,13 @@ export const PAT_ROUTES: Routes = [
       ),
   },
   {
+    path: "programs/create",
+    loadComponent: () =>
+      import("./pages/create-program/create-program.component").then(
+        (m) => m.CreateProgramComponent,
+      ),
+  },
+  {
     path: "programs/:id",
     loadComponent: () =>
       import("./pages/program-detail/program-detail.component").then(

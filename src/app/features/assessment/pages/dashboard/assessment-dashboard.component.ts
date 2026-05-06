@@ -1,28 +1,23 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { AssessmentService } from "../../../../core/services/assessment/assessment.service";
 import { CommonModule } from "@angular/common";
-import { CurrentPeriodsCarouselComponent } from "../periods/current-periods-carousel/current-periods-carousel.component";
 import { Period } from "../../../../core/models/assessment/period.model";
 import { AssessmentTableComponent } from "./assessment-table/assessment-table.component";
 import { AuthService } from "../../../../core/services/auth.service";
 import { Assessment } from "../../../../core/models/assessment/assessment.model";
-import {
-  EditAssesmentDto,
-  EditAssessmentModalComponent,
-} from "./edit-assessment-modal/edit-assessment-modal.component";
 import {
   CreateAssessmentDto,
   CreateAssessmentModalComponent,
 } from "./create-assessment-modal/create-assessment-modal.component";
 import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
 import { PeriodSelectorComponent } from "./period-selector/period-selector.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-assessment-dashboard",
   imports: [
     CommonModule,
     AssessmentTableComponent,
-    EditAssessmentModalComponent,
     CreateAssessmentModalComponent,
     PaginatorComponent,
     PeriodSelectorComponent,
@@ -33,13 +28,13 @@ import { PeriodSelectorComponent } from "./period-selector/period-selector.compo
 export class AssessmentDashboardComponent implements OnInit {
   assesmentService = inject(AssessmentService);
   authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   selectedPeriod = signal<Period | undefined>(undefined);
   size = signal(20);
   page = signal(1);
   pages = signal(0);
-  isModalOpen = signal<boolean>(false);
-  selectedAssessment = signal<Assessment | null>(null);
-
+  isCreateModalOpen = signal<boolean>(false);
   assessments = signal<Assessment[]>([]);
 
   selectPeriod(period: Period) {
@@ -55,8 +50,7 @@ export class AssessmentDashboardComponent implements OnInit {
   }
 
   openEditModal(a: Assessment) {
-    this.selectedAssessment.set(a);
-    this.isModalOpen.set(true);
+    this.router.navigate(["/assessment/edit", a.id], { state: { assessment: a } });
   }
 
   ngOnInit(): void {
@@ -82,29 +76,20 @@ export class AssessmentDashboardComponent implements OnInit {
     this.fetchPage(1);
   }
 
-  onEditSubmit(data: EditAssesmentDto) {
-    console.log(data);
-    this.assesmentService.updateAssessment(data).subscribe((result) => {
-      this.fetchPage(this.page());
-      this.closeModal();
-    });
-  }
-
   onCreateSubmit(data: CreateAssessmentDto) {
     this.assesmentService.createAssessment(data).subscribe((result) => {
       if (result.success && result.data) {
         this.fetchPage(this.page());
-        this.closeModal();
+        this.closeCreateModal();
       }
     });
   }
 
   openCreateModal() {
-    this.isModalOpen.set(true);
+    this.isCreateModalOpen.set(true);
   }
 
-  closeModal() {
-    this.isModalOpen.set(false);
-    this.selectedAssessment.set(null);
+  closeCreateModal() {
+    this.isCreateModalOpen.set(false);
   }
 }

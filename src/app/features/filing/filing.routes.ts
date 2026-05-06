@@ -8,4 +8,18 @@ export const FILING_ROUTES: Routes = [
         (m) => m.FilingDashboardComponent,
       ),
   },
+  {
+    path: "create",
+    loadComponent: () =>
+      import("./components/dashboard/filing-modal/filing-modal.component").then(
+        (m) => m.FilingModalComponent,
+      ),
+  },
+  {
+    path: ":id/edit",
+    loadComponent: () =>
+      import("./components/dashboard/filing-modal/filing-modal.component").then(
+        (m) => m.FilingModalComponent,
+      ),
+  },
 ];
