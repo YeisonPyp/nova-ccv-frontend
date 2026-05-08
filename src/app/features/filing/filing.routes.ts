@@ -2,23 +2,23 @@ import { Routes } from "@angular/router";
 
 export const FILING_ROUTES: Routes = [
   {
-    path: "dashboard",
+    path: "",
     loadComponent: () =>
-      import("./components/dashboard/filing-dashboard.component").then(
+      import("./pages/dashboard/filing-dashboard.component").then(
         (m) => m.FilingDashboardComponent,
       ),
   },
   {
     path: "create",
     loadComponent: () =>
-      import("./components/dashboard/filing-modal/filing-modal.component").then(
+      import("./pages/filing-detail/filing-detail.component").then(
         (m) => m.FilingModalComponent,
       ),
   },
   {
-    path: ":id/edit",
+    path: ":id",
     loadComponent: () =>
-      import("./components/dashboard/filing-modal/filing-modal.component").then(
+      import("./pages/filing-detail/filing-detail.component").then(
         (m) => m.FilingModalComponent,
       ),
   },

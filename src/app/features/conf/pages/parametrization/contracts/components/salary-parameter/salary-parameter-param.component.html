@@ -1,0 +1,60 @@
+@if (canReadSalaryParameter) {
+  <details class="border rounded-lg" (toggle)="onSalaryParameterToggle($event)">
+    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Parámetros salariales</summary>
+    <div class="p-4 space-y-3">
+      @if (!salaryParameterLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      } @else {
+        @if (canCreateSalaryParameter) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateSalaryParameter()">+ Nuevo parámetro</button></div> }
+        <app-dynamic-table [data]="salaryParameterItems()" [columns]="salaryParameterColumns" emptyMessage="No hay parámetros salariales.">
+          <ng-template #actions let-item>
+            @if (canUpdateSalaryParameter) { <button class="btn btn-sm btn-outline" (click)="openEditSalaryParameter(item)">Editar</button> }
+            @if (canDeleteSalaryParameter) { <button class="btn btn-sm btn-danger" (click)="openDeleteSalaryParameter(item)">Eliminar</button> }
+          </ng-template>
+        </app-dynamic-table>
+        <app-pagination [pages]="salaryParameterTotalPages()" [currentPage]="salaryParameterPage()" (pageChange)="loadSalaryParameter($event)" />
+      }
+    </div>
+  </details>
+}
+@if (salaryParameterModalMode()) {
+  <div class="modal-overlay" (click)="closeSalaryParameterModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">{{ salaryParameterModalMode() === "create" ? "Nuevo parámetro salarial" : "Editar parámetro salarial" }}</h2>
+      <form [formGroup]="salaryParameterForm" (ngSubmit)="submitSalaryParameter()" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-sm font-medium mb-1">Año *</label><input formControlName="year" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">SMMLV *</label><input formControlName="smmlv" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">Auxilio de transporte *</label><input formControlName="transportAllowance" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">Factor salario integral *</label><input formControlName="integralSalaryFactor" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% Salud empleado</label><input formControlName="employeeHealthPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% Pensión empleado</label><input formControlName="employeePensionPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% Salud empleador</label><input formControlName="employerHealthPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% Pensión empleador</label><input formControlName="employerPensionPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% ARL</label><input formControlName="arlPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% SENA</label><input formControlName="senaPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% ICBF</label><input formControlName="icbfPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">% Caja compensación</label><input formControlName="compensationBoxPct" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">UVT</label><input formControlName="uvt" type="number" class="form-control w-full" /></div>
+          <div><label class="block text-sm font-medium mb-1">Vigencia desde *</label><input formControlName="effectiveFrom" type="date" class="form-control w-full" /></div>
+          <div class="col-span-2"><label class="block text-sm font-medium mb-1">Vigencia hasta</label><input formControlName="effectiveTo" type="date" class="form-control w-full" /></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeSalaryParameterModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="salaryParameterForm.invalid">{{ salaryParameterModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+@if (showDeleteSalaryParameterModal()) {
+  <div class="modal-overlay" (click)="closeDeleteSalaryParameterModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar parámetro salarial</h2>
+      <p class="text-sm text-tertiary">¿Seguro de eliminar el parámetro del año <strong>{{ editingSalaryParameter()?.year }}</strong>?</p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteSalaryParameterModal()">Cancelar</button>
+        <button class="btn btn-danger" (click)="confirmDeleteSalaryParameter()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}

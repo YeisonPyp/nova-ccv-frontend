@@ -58,7 +58,7 @@ li {
     font-size: 10px;
     opacity: 0.5;
     transition: transform 0.2s ease;
-    
+
     &.rotated {
       transform: rotate(90deg);
     }
@@ -71,23 +71,6 @@ li {
 
   &.folder {
     font-weight: 500;
-  }
-
-  &.link.internal.active {
-    background: rgba(102, 126, 234, 0.15);
-    color: #667eea;
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background-color: #667eea;
-      border-radius: 0 3px 3px 0;
-    }
   }
 
   &.link.external:hover .external-icon {

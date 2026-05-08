@@ -8,12 +8,13 @@ import { Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
 import { Period } from "../../models/assessment/period.model";
-import { EditPeriodDto } from "../../../features/assessment/pages/periods/edit-period-modal/edit-period-modal.component";
 import { HttpClient } from "@angular/common/http";
 
 export interface EvaluationPeriodPageableQuery extends PageableQuery {
   name?: string;
 }
+
+type EditPeriodDto = Partial<Period>;
 
 @Injectable({
   providedIn: "root",
@@ -39,5 +40,9 @@ export class PeriodService {
     dto: EditPeriodDto,
   ): Observable<ApiResponse<Period>> {
     return this.http.put<ApiResponse<Period>>(`${this.API_URL}/${id}`, dto);
+  }
+
+  deletePeriod(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${id}`);
   }
 }

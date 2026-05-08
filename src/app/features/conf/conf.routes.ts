@@ -29,4 +29,11 @@ export const CONF_ROUTES: Routes = [
         (m) => m.UserDetailComponent,
       ),
   },
+  {
+    path: "parametrization",
+    loadChildren: () =>
+      import("./pages/parametrization/parametrization.routes").then(
+        (m) => m.PARAMETRIZATION_ROUTES,
+      ),
+  },
 ];

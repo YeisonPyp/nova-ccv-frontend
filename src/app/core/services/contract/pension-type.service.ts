@@ -2,12 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { ApiResponse } from "../../models/api-response.model";
-
-export interface PensionType {
-  id: number;
-  name: string;
-  description?: string;
-}
+import { PensionType } from "../../models/contract/contract-params.model";
 
 @Injectable({
   providedIn: "root",

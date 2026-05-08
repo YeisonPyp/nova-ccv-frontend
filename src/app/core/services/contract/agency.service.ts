@@ -30,6 +30,18 @@ export class AgencyService {
     return this.http.get<ApiResponse<APIPage<Agency>>>(this.apiUrl, { params });
   }
 
+  create(dto: Partial<Agency>): Observable<ApiResponse<Agency>> {
+    return this.http.post<ApiResponse<Agency>>(this.apiUrl, dto);
+  }
+
+  update(id: number, dto: Partial<Agency>): Observable<ApiResponse<Agency>> {
+    return this.http.put<ApiResponse<Agency>>(`${this.apiUrl}/${id}`, dto);
+  }
+
+  delete(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
+  }
+
   newSearchSelectContext(
     onSelectCallback?: OnSelectCallback<Agency>,
     op?: SearchSelectContextFactoryOptions,

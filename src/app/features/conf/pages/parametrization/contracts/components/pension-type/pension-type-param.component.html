@@ -1,0 +1,45 @@
+@if (canReadPensionType) {
+  <details class="border rounded-lg" (toggle)="onPensionTypeToggle($event)">
+    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Tipos de pensión</summary>
+    <div class="p-4 space-y-3">
+      @if (!pensionTypeLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      } @else {
+        @if (canCreatePensionType) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreatePensionType()">+ Nuevo tipo</button></div> }
+        <app-dynamic-table [data]="pensionTypeItems()" [columns]="pensionTypeColumns" emptyMessage="No hay tipos de pensión.">
+          <ng-template #actions let-item>
+            @if (canUpdatePensionType) { <button class="btn btn-sm btn-outline" (click)="openEditPensionType(item)">Editar</button> }
+            @if (canDeletePensionType) { <button class="btn btn-sm btn-danger" (click)="openDeletePensionType(item)">Eliminar</button> }
+          </ng-template>
+        </app-dynamic-table>
+        <app-pagination [pages]="pensionTypeTotalPages()" [currentPage]="pensionTypePage()" (pageChange)="loadPensionType($event)" />
+      }
+    </div>
+  </details>
+}
+@if (pensionTypeModalMode()) {
+  <div class="modal-overlay" (click)="closePensionTypeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">{{ pensionTypeModalMode() === "create" ? "Nuevo tipo de pensión" : "Editar tipo de pensión" }}</h2>
+      <form [formGroup]="pensionTypeForm" (ngSubmit)="submitPensionType()" class="space-y-3">
+        <div><label class="block text-sm font-medium mb-1">Nombre *</label><input formControlName="name" class="form-control w-full" /></div>
+        <div><label class="block text-sm font-medium mb-1">Descripción</label><input formControlName="description" class="form-control w-full" /></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closePensionTypeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="pensionTypeForm.invalid">{{ pensionTypeModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+@if (showDeletePensionTypeModal()) {
+  <div class="modal-overlay" (click)="closeDeletePensionTypeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar tipo de pensión</h2>
+      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingPensionType()?.name }}</strong>?</p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeletePensionTypeModal()">Cancelar</button>
+        <button class="btn btn-danger" (click)="confirmDeletePensionType()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}

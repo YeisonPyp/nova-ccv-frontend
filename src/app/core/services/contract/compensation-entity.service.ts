@@ -2,12 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { ApiResponse } from "../../models/api-response.model";
-
-export interface CompensationEntity {
-  id: number;
-  name: string;
-  description?: string;
-}
+import { CompensationEntity } from "../../models/contract/contract-params.model";
 
 @Injectable({
   providedIn: "root",

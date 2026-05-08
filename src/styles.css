@@ -428,27 +428,3 @@ button {
   scrollbar-color: var(--color-tertiary) transparent;
   scrollbar-width: thin;
 }
-
-.nav-item-hover {
-  height: 45.5px;
-
-  &::after {
-    content: "";
-    display: block;
-    width: 0;
-    height: inherit;
-    background: linear-gradient(135deg, var(--color-primary), #764ba2);
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: absolute;
-    x: 0;
-    y: 0;
-    opacity: 40%;
-    z-index: 2;
-  }
-
-  &:hover {
-    &::after {
-      width: 100%;
-    }
-  }
-}

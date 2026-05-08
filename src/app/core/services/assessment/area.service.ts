@@ -40,6 +40,14 @@ export class AreaService {
     return this.http.post<ApiResponse<Area>>(this.API_URL, dto);
   }
 
+  updateArea(id: number, dto: CreateAreaDto): Observable<ApiResponse<Area>> {
+    return this.http.put<ApiResponse<Area>>(`${this.API_URL}/${id}`, dto);
+  }
+
+  deleteArea(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${id}`);
+  }
+
   newSearchSelectAreaContext(
     onSelectCallback?: OnSelectCallback<Area>,
     op?: SearchSelectContextFactoryOptions,

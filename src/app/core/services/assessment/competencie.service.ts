@@ -55,4 +55,12 @@ export class CompetencieService {
   ): Observable<ApiResponse<Competencie>> {
     return this.http.post<ApiResponse<Competencie>>(this.API_URL, dto);
   }
+
+  updateCompetency(id: number, dto: CreateCompetencyDto): Observable<ApiResponse<Competencie>> {
+    return this.http.put<ApiResponse<Competencie>>(`${this.API_URL}/${id}`, dto);
+  }
+
+  deleteCompetency(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${id}`);
+  }
 }

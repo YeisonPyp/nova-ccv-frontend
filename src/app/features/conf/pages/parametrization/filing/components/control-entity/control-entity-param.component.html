@@ -1,0 +1,56 @@
+@if (canReadCe) {
+  <details class="border rounded-lg" (toggle)="onCeToggle($event)">
+    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">
+      Entidades de control
+    </summary>
+    <div class="p-4 space-y-3">
+      @if (!ceLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      } @else {
+        @if (canCreateCe) {
+          <div class="flex justify-end">
+            <button class="btn btn-primary btn-sm" (click)="openCreateCe()">+ Nueva entidad</button>
+          </div>
+        }
+        <app-dynamic-table [data]="ceItems()" [columns]="ceColumns" emptyMessage="No hay entidades de control.">
+          <ng-template #actions let-ce>
+            @if (canUpdateCe) { <button class="btn btn-sm btn-outline" (click)="openEditCe(ce)">Editar</button> }
+            @if (canDeleteCe) { <button class="btn btn-sm btn-danger" (click)="openDeleteCe(ce)">Eliminar</button> }
+          </ng-template>
+        </app-dynamic-table>
+        <app-pagination [pages]="ceTotalPages()" [currentPage]="cePage()" (pageChange)="loadCe($event)" />
+      }
+    </div>
+  </details>
+}
+
+@if (ceModalMode()) {
+  <div class="modal-overlay" (click)="closeCeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">{{ ceModalMode() === 'create' ? 'Nueva entidad de control' : 'Editar entidad de control' }}</h2>
+      <form [formGroup]="ceForm" (ngSubmit)="submitCe()" class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label>
+          <input formControlName="name" class="form-control w-full" placeholder="Nombre de la entidad" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="ceForm.invalid">{{ ceModalMode() === 'create' ? 'Crear' : 'Guardar' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (showDeleteCeModal()) {
+  <div class="modal-overlay" (click)="closeDeleteCeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar entidad de control</h2>
+      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingCe()?.name }}</strong>?</p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteCeModal()">Cancelar</button>
+        <button class="btn btn-danger" (click)="confirmDeleteCe()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}

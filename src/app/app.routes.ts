@@ -64,13 +64,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: "cost-centers",
-        loadChildren: () =>
-          import("./features/cost-center/cost-center.routes").then(
-            (m) => m.COST_CENTER_ROUTES,
-          ),
-      },
-      {
         path: "filings",
         loadChildren: () =>
           import("./features/filing/filing.routes").then(

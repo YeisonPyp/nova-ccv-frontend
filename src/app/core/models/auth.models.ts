@@ -30,5 +30,6 @@ export interface UserProfile {
   enabled: boolean;
   roles: string[];
   permissions: string[];
+  employeeId?: number;
   createdAt: string;
 }
