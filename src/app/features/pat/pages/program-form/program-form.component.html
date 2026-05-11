@@ -1,0 +1,158 @@
+<!-- src/app/pages/pat/program-form/program-form.component.html -->
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">
+            {{ isEditMode() ? 'Editar Programa' : 'Nuevo Programa' }}
+          </h3>
+        </div>
+        
+        @if (loading()) {
+          <div class="card-body text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+        } @else {
+          <form [formGroup]="programForm" (ngSubmit)="onSubmit()">
+            <div class="card-body">
+              <!-- Código y Año -->
+              <div class="row mb-3">
+                <div class="col-md-8">
+                  <label class="form-label">Código *</label>
+                  <div class="input-group">
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      formControlName="codigo"
+                      placeholder="PRG-2024-001"
+                      [class.is-invalid]="programForm.get('codigo')?.invalid && programForm.get('codigo')?.touched">
+                    @if (!isEditMode()) {
+                      <button 
+                        class="btn btn-outline-secondary" 
+                        type="button"
+                        (click)="generateCode()">
+                        Generar
+                      </button>
+                    }
+                  </div>
+                  @if (programForm.get('codigo')?.invalid && programForm.get('codigo')?.touched) {
+                    <div class="invalid-feedback d-block">
+                      Formato requerido: PRG-YYYY-###
+                    </div>
+                  }
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Año *</label>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    formControlName="anio"
+                    [class.is-invalid]="programForm.get('anio')?.invalid && programForm.get('anio')?.touched">
+                </div>
+              </div>
+
+              <!-- Nombre -->
+              <div class="mb-3">
+                <label class="form-label">Nombre del Programa *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="nombre"
+                  [class.is-invalid]="programForm.get('nombre')?.invalid && programForm.get('nombre')?.touched">
+                @if (programForm.get('nombre')?.invalid && programForm.get('nombre')?.touched) {
+                  <div class="invalid-feedback">
+                    El nombre es obligatorio
+                  </div>
+                }
+              </div>
+
+              <!-- Área y Responsable -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Área *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="area"
+                    [class.is-invalid]="programForm.get('area')?.invalid && programForm.get('area')?.touched">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Responsable *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="responsable"
+                    [class.is-invalid]="programForm.get('responsable')?.invalid && programForm.get('responsable')?.touched">
+                </div>
+              </div>
+
+              <!-- Estado -->
+              <div class="mb-3">
+                <label class="form-label">Estado *</label>
+                <select 
+                  class="form-select" 
+                  formControlName="estado"
+                  [class.is-invalid]="programForm.get('estado')?.invalid && programForm.get('estado')?.touched">
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ getStatusLabel(status) }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Pilar -->
+              <div class="mb-3">
+                <label class="form-label">Pilar</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="pilar">
+              </div>
+
+              <!-- Objetivo Estratégico -->
+              <div class="mb-3">
+                <label class="form-label">Objetivo Estratégico</label>
+                <textarea 
+                  class="form-control" 
+                  formControlName="objetivoEstrategico"
+                  rows="3"></textarea>
+              </div>
+
+              <!-- Beneficiarios -->
+              <div class="mb-3">
+                <label class="form-label">Beneficiarios</label>
+                <textarea 
+                  class="form-control" 
+                  formControlName="beneficiarios"
+                  rows="3"></textarea>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="d-flex justify-content-end gap-2">
+                <button 
+                  type="button" 
+                  class="btn btn-secondary" 
+                  (click)="cancel()"
+                  [disabled]="submitting()">
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="programForm.invalid || submitting()">
+                  @if (submitting()) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                  }
+                  {{ isEditMode() ? 'Actualizar' : 'Crear' }} Programa
+                </button>
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</div>

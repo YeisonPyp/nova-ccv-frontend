@@ -1,0 +1,142 @@
+<!-- src/app/pages/pat/programs-list/programs-list.component.html -->
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h2 class="mb-0">Programas PAT</h2>
+      <p class="text-muted">Gestión de Programas del Plan de Acción y Trabajo</p>
+    </div>
+    <div class="col-md-6 text-end">
+      <button class="btn btn-primary" (click)="createProgram()">
+        <i class="bi bi-plus-circle me-2"></i>
+        Nuevo Programa
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Año:</label>
+          <select 
+            class="form-select" 
+            [(ngModel)]="selectedYear" 
+            (change)="onYearChange()">
+            @for (year of availableYears(); track year) {
+              <option [value]="year">{{ year }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+      }
+
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      @if (!loading() && programs().length === 0) {
+        <div class="alert alert-info" role="alert">
+          No hay programas registrados para el año {{ selectedYear() }}
+        </div>
+      }
+
+      @if (!loading() && programs().length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Área</th>
+                <th>Responsable</th>
+                <th>Estado</th>
+                <th class="text-center">Actividades</th>
+                <th class="text-end">Presupuesto</th>
+                <th class="text-center">% Avance</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (program of programs(); track program.id) {
+                <tr>
+                  <td>
+                    <strong>{{ program.codigo }}</strong>
+                  </td>
+                  <td>{{ program.nombre }}</td>
+                  <td>{{ program.area }}</td>
+                  <td>{{ program.responsable }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(program.estado)">
+                      {{ getStatusLabel(program.estado) }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-info">{{ program.totalActividades }}</span>
+                  </td>
+                  <td class="text-end">
+                    <div>
+                      <small class="text-muted">Total:</small>
+                      <strong>S/ {{ program.totalPresupuesto | number:'1.2-2' }}</strong>
+                    </div>
+                    <div>
+                      <small class="text-muted">Ejecutado:</small>
+                      S/ {{ program.presupuestoEjecutado | number:'1.2-2' }}
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="progress" style="height: 20px;">
+                      <div 
+                        class="progress-bar" 
+                        role="progressbar" 
+                        [style.width.%]="program.porcentajeAvance"
+                        [ngClass]="{
+                          'bg-danger': program.porcentajeAvance < 30,
+                          'bg-warning': program.porcentajeAvance >= 30 && program.porcentajeAvance < 70,
+                          'bg-success': program.porcentajeAvance >= 70
+                        }">
+                        {{ program.porcentajeAvance }}%
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group" role="group">
+                      <button 
+                        class="btn btn-sm btn-outline-primary" 
+                        (click)="viewProgram(program.id)"
+                        title="Ver detalles">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      <button 
+                        class="btn btn-sm btn-outline-secondary" 
+                        (click)="editProgram(program.id)"
+                        title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      @if (program.estado === 'DRAFT' && program.totalActividades === 0) {
+                        <button 
+                          class="btn btn-sm btn-outline-danger" 
+                          (click)="deleteProgram(program)"
+                          title="Eliminar">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

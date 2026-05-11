@@ -1,0 +1,27 @@
+// src/app/styles/_variables.scss
+$primary-color: #3498db;
+$primary-dark: #2980b9;
+$success-color: #27ae60;
+$warning-color: #f39c12;
+$danger-color: #e74c3c;
+$info-color: #17a2b8;
+
+$text-dark: #1a1a2e;
+$text-muted: #666;
+$text-light: #7f8c8d;
+
+$border-color: #e0e0e0;
+$bg-light: #f8f9fa;
+$bg-white: #ffffff;
+
+$border-radius-sm: 4px;
+$border-radius: 8px;
+$border-radius-lg: 12px;
+$border-radius-pill: 20px;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+
+$transition-fast: 0.2s ease;
+$transition: 0.3s ease;

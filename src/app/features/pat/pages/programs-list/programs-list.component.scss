@@ -1,0 +1,524 @@
+// src/app/pages/pat/programs-list/programs-list.component.scss
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.programs-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════════════════
+.page-header {
+  @include flex-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .header-content {
+    h1 {
+      font-size: 1.75rem;
+      color: $text-dark;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    p {
+      color: $text-muted;
+      margin: 0.5rem 0 0;
+      font-size: 0.95rem;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+  }
+}
+
+.btn-primary-custom {
+  @include button-primary;
+}
+
+.btn-secondary-custom {
+  @include button-secondary;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════════════════════
+.filters-section {
+  @include card-base;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  select,
+  input {
+    @include input-base;
+    min-width: 180px;
+  }
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.chip {
+  padding: 0.5rem 1rem;
+  border: 2px solid $border-color;
+  background: white;
+  border-radius: $border-radius-pill;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary-color;
+  }
+
+  &.active {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: white;
+  }
+
+  &.draft.active {
+    background: $text-light;
+    border-color: $text-light;
+  }
+
+  &.active-status.active {
+    background: $success-color;
+    border-color: $success-color;
+  }
+
+  &.completed.active {
+    background: $info-color;
+    border-color: $info-color;
+  }
+
+  &.cancelled.active {
+    background: $danger-color;
+    border-color: $danger-color;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUMMARY STATS
+// ═══════════════════════════════════════════════════════════
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  @include card-base;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    @include flex-center;
+    border-radius: $border-radius;
+    font-size: 1.5rem;
+
+    &.primary {
+      background: rgba($primary-color, 0.1);
+      color: $primary-color;
+    }
+
+    &.success {
+      background: rgba($success-color, 0.1);
+      color: $success-color;
+    }
+
+    &.warning {
+      background: rgba($warning-color, 0.1);
+      color: $warning-color;
+    }
+
+    &.info {
+      background: rgba($info-color, 0.1);
+      color: $info-color;
+    }
+  }
+
+  .stat-content {
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: $text-muted;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABLE
+// ═══════════════════════════════════════════════════════════
+.table-section {
+  @include card-base;
+  overflow: hidden;
+}
+
+.table-header {
+  @include flex-between;
+  padding: 1rem 1.5rem;
+  background: $bg-light;
+  border-bottom: 1px solid $border-color;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: $text-dark;
+  }
+
+  .table-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.programs-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+
+  th,
+  td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  th {
+    background: $bg-light;
+    font-weight: 600;
+    color: $text-dark;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: background $transition-fast;
+
+    &:hover {
+      background: lighten($bg-light, 2%);
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+.code-badge {
+  font-family: 'Monaco', 'Consolas', monospace;
+  background: #e8f4fd;
+  padding: 0.3rem 0.6rem;
+  border-radius: $border-radius-sm;
+  font-size: 0.85rem;
+  color: $primary-dark;
+  font-weight: 500;
+}
+
+.name-cell {
+  .program-name {
+    font-weight: 500;
+    color: $text-dark;
+    margin-bottom: 0.25rem;
+  }
+
+  .program-area {
+    font-size: 0.8rem;
+    color: $text-muted;
+  }
+}
+
+.progress-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 120px;
+}
+
+.progress-bar-custom {
+  flex: 1;
+  height: 8px;
+  background: $border-color;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 60px;
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+
+    &.low {
+      background: linear-gradient(90deg, $danger-color, lighten($danger-color, 10%));
+    }
+
+    &.medium {
+      background: linear-gradient(90deg, $warning-color, lighten($warning-color, 10%));
+    }
+
+    &.high {
+      background: linear-gradient(90deg, $success-color, lighten($success-color, 10%));
+    }
+  }
+}
+
+.progress-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+  min-width: 45px;
+  text-align: right;
+  color: $text-dark;
+}
+
+.budget-cell {
+  .budget-total {
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  .budget-executed {
+    font-size: 0.8rem;
+    color: $success-color;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: $border-radius-pill;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.badge-secondary {
+    background: #eaecee;
+    color: $text-light;
+
+    &::before {
+      background: $text-light;
+    }
+  }
+
+  &.badge-success {
+    background: #d5f4e6;
+    color: $success-color;
+
+    &::before {
+      background: $success-color;
+    }
+  }
+
+  &.badge-info {
+    background: #d1ecf1;
+    color: $info-color;
+
+    &::before {
+      background: $info-color;
+    }
+  }
+
+  &.badge-danger {
+    background: #f8d7da;
+    color: $danger-color;
+
+    &::before {
+      background: $danger-color;
+    }
+  }
+}
+
+.actions-cell {
+  .btn-group {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    @include flex-center;
+    border: 1px solid $border-color;
+    background: white;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    transition: all $transition-fast;
+    color: $text-muted;
+
+    &:hover {
+      background: $bg-light;
+      color: $text-dark;
+    }
+
+    &.btn-view:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+
+    &.btn-edit:hover {
+      border-color: $warning-color;
+      color: $warning-color;
+    }
+
+    &.btn-delete:hover {
+      border-color: $danger-color;
+      color: $danger-color;
+      background: rgba($danger-color, 0.05);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOADING & EMPTY STATES
+// ═══════════════════════════════════════════════════════════
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  padding: 4rem 2rem;
+  gap: 1rem;
+
+  .spinner {
+    @include spinner;
+  }
+
+  p {
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  h4 {
+    color: $text-dark;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $text-muted;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.alert-custom {
+  padding: 1rem 1.5rem;
+  border-radius: $border-radius;
+  margin-bottom: 1rem;
+
+  &.alert-danger {
+    background: #f8d7da;
+    color: $danger-color;
+    border: 1px solid lighten($danger-color, 30%);
+  }
+
+  &.alert-info {
+    background: #d1ecf1;
+    color: darken($info-color, 10%);
+    border: 1px solid lighten($info-color, 30%);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// RESPONSIVE
+// ═══════════════════════════════════════════════════════════
+@media (max-width: 992px) {
+  .programs-container {
+    padding: 1.5rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+
+    select,
+    input {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .programs-container {
+    padding: 1rem;
+  }
+
+  .summary-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+}

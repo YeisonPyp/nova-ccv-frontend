@@ -17,8 +17,33 @@ export const PAT_ROUTES: Routes = [
       .then(m => m.ProgramsComponent)
   },
   {
+    path: 'programs/new',
+    loadComponent: () => 
+      import('./pages/program-form/program-form.component')
+        .then(m => m.ProgramFormComponent)
+  },
+  {
     path: 'programs/:id',
     loadComponent: () => import('./pages/program-detail/program-detail.component')
       .then(m => m.ProgramDetailComponent)
+  },
+  {
+    path: 'programs/:id/edit',
+    loadComponent: () => 
+      import('./pages/program-form/program-form.component')
+        .then(m => m.ProgramFormComponent)
+  },
+  {
+    path: 'programs/:programId/activities/new',
+    loadComponent: () => 
+      import('./pages/activity-form/activity-form.component')
+        .then(m => m.ActivityFormComponent)
+  },
+  {
+    path: 'programs/:programId/activities/:activityId/edit',
+    loadComponent: () => 
+      import('./pages/activity-form/activity-form.component')
+        .then(m => m.ActivityFormComponent)
   }
+      
 ];

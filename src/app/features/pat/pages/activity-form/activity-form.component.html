@@ -1,0 +1,86 @@
+<!-- src/app/pages/pat/activity-form/activity-form.component.html -->
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">
+            {{ isEditMode() ? 'Editar Actividad' : 'Nueva Actividad' }}
+          </h3>
+        </div>
+        
+        <form [formGroup]="activityForm" (ngSubmit)="onSubmit()">
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Nombre de la Actividad *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="nombre"
+                [class.is-invalid]="activityForm.get('nombre')?.invalid && activityForm.get('nombre')?.touched">
+              @if (activityForm.get('nombre')?.invalid && activityForm.get('nombre')?.touched) {
+                <div class="invalid-feedback">
+                  El nombre es obligatorio
+                </div>
+              }
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Unidad de Medida *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="unidadMedida"
+                  placeholder="Ej: Capacitaciones, Talleres, Eventos"
+                  [class.is-invalid]="activityForm.get('unidadMedida')?.invalid && activityForm.get('unidadMedida')?.touched">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Meta Total *</label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  formControlName="metaTotal"
+                  min="1"
+                  [class.is-invalid]="activityForm.get('metaTotal')?.invalid && activityForm.get('metaTotal')?.touched">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Orden de Visualización</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                formControlName="displayOrder"
+                min="0">
+              <small class="text-muted">
+                Define el orden en que aparecerá la actividad en el listado
+              </small>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="d-flex justify-content-end gap-2">
+              <button 
+                type="button" 
+                class="btn btn-secondary" 
+                (click)="goBack()"
+                [disabled]="submitting()">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="activityForm.invalid || submitting()">
+                @if (submitting()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+                {{ isEditMode() ? 'Actualizar' : 'Crear' }} Actividad
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
