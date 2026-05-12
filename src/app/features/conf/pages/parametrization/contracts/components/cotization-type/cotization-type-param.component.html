@@ -1,31 +1,90 @@
 @if (canReadCotizationType) {
   <details class="border rounded-lg" (toggle)="onCotizationTypeToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Tipos de cotización</summary>
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Tipos de cotización
+    </summary>
     <div class="p-4 space-y-3">
-      @if (!cotizationTypeLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      @if (!cotizationTypeLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
       } @else {
-        @if (canCreateCotizationType) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateCotizationType()">+ Nuevo tipo</button></div> }
-        <app-dynamic-table [data]="cotizationTypeItems()" [columns]="cotizationTypeColumns" emptyMessage="No hay tipos de cotización.">
+        @if (canCreateCotizationType) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateCotizationType()"
+            >
+              + Nuevo tipo
+            </button>
+          </div>
+        }
+        <app-dynamic-table
+          [data]="cotizationTypeItems()"
+          [columns]="cotizationTypeColumns"
+          emptyMessage="No hay tipos de cotización."
+        >
           <ng-template #actions let-item>
-            @if (canUpdateCotizationType) { <button class="btn btn-sm btn-outline" (click)="openEditCotizationType(item)">Editar</button> }
-            @if (canDeleteCotizationType) { <button class="btn btn-sm btn-danger" (click)="openDeleteCotizationType(item)">Eliminar</button> }
+            @if (canUpdateCotizationType) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditCotizationType(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteCotizationType) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteCotizationType(item)"
+              >
+                Eliminar
+              </button>
+            }
           </ng-template>
         </app-dynamic-table>
-        <app-pagination [pages]="cotizationTypeTotalPages()" [currentPage]="cotizationTypePage()" (pageChange)="loadCotizationType($event)" />
       }
     </div>
   </details>
 }
 @if (cotizationTypeModalMode()) {
   <div class="modal-overlay" (click)="closeCotizationTypeModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ cotizationTypeModalMode() === "create" ? "Nuevo tipo de cotización" : "Editar tipo de cotización" }}</h2>
-      <form [formGroup]="cotizationTypeForm" (ngSubmit)="submitCotizationType()" class="space-y-3">
-        <div><label class="block text-sm font-medium mb-1">Nombre *</label><input formControlName="name" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">Descripción</label><input formControlName="description" class="form-control w-full" /></div>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          cotizationTypeModalMode() === "create"
+            ? "Nuevo tipo de cotización"
+            : "Editar tipo de cotización"
+        }}
+      </h2>
+      <form
+        [formGroup]="cotizationTypeForm"
+        (ngSubmit)="submitCotizationType()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input formControlName="name" class="form-control w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label
+          ><input formControlName="description" class="form-control w-full" />
+        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeCotizationTypeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="cotizationTypeForm.invalid">{{ cotizationTypeModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeCotizationTypeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="cotizationTypeForm.invalid"
+          >
+            {{ cotizationTypeModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
         </div>
       </form>
     </div>
@@ -33,12 +92,22 @@
 }
 @if (showDeleteCotizationTypeModal()) {
   <div class="modal-overlay" (click)="closeDeleteCotizationTypeModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar tipo de cotización</h2>
-      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingCotizationType()?.name }}</strong>?</p>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar <strong>{{ editingCotizationType()?.name }}</strong
+        >?
+      </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteCotizationTypeModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteCotizationType()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteCotizationTypeModal()"
+        >
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteCotizationType()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

@@ -1,31 +1,99 @@
 @if (canReadCompensationEntity) {
-  <details class="border rounded-lg" (toggle)="onCompensationEntityToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Entidades de compensación</summary>
+  <details
+    class="border rounded-lg"
+    (toggle)="onCompensationEntityToggle($event)"
+  >
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Entidades de compensación
+    </summary>
     <div class="p-4 space-y-3">
-      @if (!compensationEntityLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      @if (!compensationEntityLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
       } @else {
-        @if (canCreateCompensationEntity) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateCompensationEntity()">+ Nueva entidad</button></div> }
-        <app-dynamic-table [data]="compensationEntityItems()" [columns]="compensationEntityColumns" emptyMessage="No hay entidades de compensación.">
+        @if (canCreateCompensationEntity) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateCompensationEntity()"
+            >
+              + Nueva entidad
+            </button>
+          </div>
+        }
+        <app-dynamic-table
+          [data]="compensationEntityItems()"
+          [columns]="compensationEntityColumns"
+          emptyMessage="No hay entidades de compensación."
+        >
           <ng-template #actions let-item>
-            @if (canUpdateCompensationEntity) { <button class="btn btn-sm btn-outline" (click)="openEditCompensationEntity(item)">Editar</button> }
-            @if (canDeleteCompensationEntity) { <button class="btn btn-sm btn-danger" (click)="openDeleteCompensationEntity(item)">Eliminar</button> }
+            @if (canUpdateCompensationEntity) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditCompensationEntity(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteCompensationEntity) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteCompensationEntity(item)"
+              >
+                Eliminar
+              </button>
+            }
           </ng-template>
         </app-dynamic-table>
-        <app-pagination [pages]="compensationEntityTotalPages()" [currentPage]="compensationEntityPage()" (pageChange)="loadCompensationEntity($event)" />
       }
     </div>
   </details>
 }
 @if (compensationEntityModalMode()) {
   <div class="modal-overlay" (click)="closeCompensationEntityModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ compensationEntityModalMode() === "create" ? "Nueva entidad de compensación" : "Editar entidad de compensación" }}</h2>
-      <form [formGroup]="compensationEntityForm" (ngSubmit)="submitCompensationEntity()" class="space-y-3">
-        <div><label class="block text-sm font-medium mb-1">Nombre *</label><input formControlName="name" class="form-control w-full" maxlength="40" /></div>
-        <div><label class="block text-sm font-medium mb-1">Descripción</label><input formControlName="description" class="form-control w-full" /></div>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          compensationEntityModalMode() === "create"
+            ? "Nueva entidad de compensación"
+            : "Editar entidad de compensación"
+        }}
+      </h2>
+      <form
+        [formGroup]="compensationEntityForm"
+        (ngSubmit)="submitCompensationEntity()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input
+            formControlName="name"
+            class="form-control w-full"
+            maxlength="40"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label
+          ><input formControlName="description" class="form-control w-full" />
+        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeCompensationEntityModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="compensationEntityForm.invalid">{{ compensationEntityModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeCompensationEntityModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="compensationEntityForm.invalid"
+          >
+            {{
+              compensationEntityModalMode() === "create" ? "Crear" : "Guardar"
+            }}
+          </button>
         </div>
       </form>
     </div>
@@ -33,12 +101,26 @@
 }
 @if (showDeleteCompensationEntityModal()) {
   <div class="modal-overlay" (click)="closeDeleteCompensationEntityModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar entidad de compensación</h2>
-      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingCompensationEntity()?.name }}</strong>?</p>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar
+        <strong>{{ editingCompensationEntity()?.name }}</strong
+        >?
+      </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteCompensationEntityModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteCompensationEntity()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteCompensationEntityModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="confirmDeleteCompensationEntity()"
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

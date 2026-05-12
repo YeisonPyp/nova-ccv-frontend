@@ -1,11 +1,5 @@
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-} from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -13,14 +7,25 @@ import {
   Validators,
 } from "@angular/forms";
 import { CorrectiveActionSectionComponent } from "./corrective-action-section/corrective-action-section.component";
-import { ImprovementPlanService, improvementPlanStatus } from "../../../../../core/services/improvement-plan/improvement-plan.service";
-import { catchError, debounceTime, distinctUntilChanged, filter, map, of, switchMap } from "rxjs";
-import { EmployeeService } from "../../../../../core/services/assessment/employee.service";
-import { ControlEntityService } from "../../../../../core/services/improvement-plan/control-entity.service";
-import { SearchSelectComponent } from "../../../../../shared/components/search-select/search-select.component";
-import { ImprovementPlan } from "../../../../../core/models/improvement-plan/improvement-plan.model";
-import { Employee } from "../../../../../core/models/assessment/employee.model";
-import { ControlEntity } from "../../../../../core/models/improvement-plan/control-entity.model";
+import {
+  ImprovementPlanService,
+  improvementPlanStatus,
+} from "@/app/core/services/improvement-plan/improvement-plan.service";
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  of,
+  switchMap,
+} from "rxjs";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { ControlEntityService } from "@/app/core/services/improvement-plan/control-entity.service";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { ImprovementPlan } from "@/app/core/models/improvement-plan/improvement-plan.model";
+import { Employee } from "@/app/core/models/assessment/employee.model";
+import { ControlEntity } from "@/app/core/models/improvement-plan/control-entity.model";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
@@ -45,26 +50,34 @@ export class EditImprovementPlanModalComponent {
   private readonly route = inject(ActivatedRoute);
 
   searchSelectEmployeesContext =
-    this.employeeService.newSearchSelectEmployeeContext((e) => this.updateAssignedEmployee(e), {
-      maxItems: 1,
-      isRequired: true,
-      placeholder: "Empleado responsable...",
-      label: "Responsable",
-    });
+    this.employeeService.newSearchSelectEmployeeContext(
+      (e) => this.updateAssignedEmployee(e),
+      {
+        maxItems: 1,
+        isRequired: true,
+        placeholder: "Empleado responsable...",
+        label: "Responsable",
+      },
+    );
 
   searchSelectControlEntityContext =
-    this.controlEntityService.newSearchSelectControlEntityContext((c) => this.updateControlEntity(c), {
-      maxItems: 1,
-      isRequired: true,
-      placeholder: "Entidad encargada",
-      label: "Entidad",
-    });
+    this.controlEntityService.newSearchSelectControlEntityContext(
+      (c) => this.updateControlEntity(c),
+      {
+        maxItems: 1,
+        isRequired: true,
+        placeholder: "Entidad encargada",
+        label: "Entidad",
+      },
+    );
 
   plan = signal<ImprovementPlan | null>(null);
   planId = signal<number | null>(null);
 
   get planStatus() {
-    return Object.keys(improvementPlanStatus) as Array<keyof typeof improvementPlanStatus>;
+    return Object.keys(improvementPlanStatus) as Array<
+      keyof typeof improvementPlanStatus
+    >;
   }
 
   getPlanStatusName(k: keyof typeof improvementPlanStatus): string {
@@ -85,45 +98,67 @@ export class EditImprovementPlanModalComponent {
     description: ["", Validators.required],
     expiresAt: ["", Validators.required],
     startsAt: [""],
-    status: [""]
+    status: [""],
   });
 
   constructor() {
-    this.route.paramMap.pipe(
-      map(params => {
-        const id = params.get('id');
-        return id ? +id : null;
-      }),
-      switchMap((id) => {
-        this.planId.set(id);
-        if (!id) return of(null);
-        this.form.valueChanges.pipe(
-          debounceTime(800),
-          filter(() => this.form.valid),
-          distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
-          switchMap((value) => this.service.update(id, value))
-        ).subscribe({ next: (next) => { this.plan.set(next.data); }, error: (err) => console.log(err) });
-        return this.service.findById(id).pipe(
-          map((response) => response.data),
-          catchError((err) => {
-            this.error.set(err);
-            return of(null);
-          }),
-        );
-      }),
-    ).subscribe((p) => this.plan.set(p));
+    this.route.paramMap
+      .pipe(
+        map((params) => {
+          const id = params.get("id");
+          return id ? +id : null;
+        }),
+        switchMap((id) => {
+          this.planId.set(id);
+          if (!id) return of(null);
+          this.form.valueChanges
+            .pipe(
+              debounceTime(800),
+              filter(() => this.form.valid),
+              distinctUntilChanged(
+                (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
+              ),
+              switchMap((value) => this.service.update(id, value)),
+            )
+            .subscribe({
+              next: (next) => {
+                this.plan.set(next.data);
+              },
+              error: (err) => console.log(err),
+            });
+          return this.service.findById(id).pipe(
+            map((response) => response.data),
+            catchError((err) => {
+              this.error.set(err);
+              return of(null);
+            }),
+          );
+        }),
+      )
+      .subscribe((p) => this.plan.set(p));
 
     effect(() => {
       const p = this.plan();
       if (p) {
-        const { name, description, status, expiresAt, controlEntity, employee, startsAt } = p;
-        this.form.patchValue({
+        const {
           name,
           description,
-          expiresAt,
           status,
-          startsAt
-        }, { emitEvent: false });
+          expiresAt,
+          controlEntity,
+          employee,
+          startsAt,
+        } = p;
+        this.form.patchValue(
+          {
+            name,
+            description,
+            expiresAt,
+            status,
+            startsAt,
+          },
+          { emitEvent: false },
+        );
         if (employee) {
           this.searchSelectEmployeesContext.selectResults([employee]);
         }
@@ -141,59 +176,68 @@ export class EditImprovementPlanModalComponent {
   updateAssignedEmployee(e: Employee) {
     const p = this.plan();
     if (p && e.id !== p.employee?.id) {
-      this.service.update(p.id, {
-        employeeId: e.id
-      }).subscribe((r) => {
-        if (r.success && r.data) {
-          this.plan.set(r.data);
-        }
-      });
+      this.service
+        .update(p.id, {
+          employeeId: e.id,
+        })
+        .subscribe((r) => {
+          if (r.success && r.data) {
+            this.plan.set(r.data);
+          }
+        });
     }
   }
 
   updateControlEntity(c: ControlEntity) {
     const p = this.plan();
     if (p && c.id !== p.controlEntityId) {
-      this.service.update(p.id, {
-        controlEntityId: c.id
-      }).subscribe((r) => {
-        if (r.success && r.data) {
-          this.plan.set(r.data);
-        }
-      });
+      this.service
+        .update(p.id, {
+          controlEntityId: c.id,
+        })
+        .subscribe((r) => {
+          if (r.success && r.data) {
+            this.plan.set(r.data);
+          }
+        });
     }
   }
 
   onSavePlan() {
     const p = this.plan();
-    const controlEntity = this.searchSelectControlEntityContext.selectedOptions()[0];
+    const controlEntity =
+      this.searchSelectControlEntityContext.selectedOptions()[0];
     const employee = this.searchSelectEmployeesContext.selectedOptions()[0];
     const { description, expiresAt, name, startsAt } = this.form.value;
     const controlEntityId = controlEntity?.id as number;
     const controlEntityName = controlEntity.title;
     if (p) {
-      this.service.update(p.id, {
-        controlEntityId,
-        controlEntityName,
-        description,
-        expiresAt,
-        name
-      }).subscribe((p) => {
-        this.plan.set(p.data);
-        this.goBack();
-      });
+      this.service
+        .update(p.id, {
+          controlEntityId,
+          controlEntityName,
+          description,
+          expiresAt,
+          name,
+        })
+        .subscribe((p) => {
+          this.plan.set(p.data);
+          this.goBack();
+        });
     } else {
-      this.service.create({
-        controlEntityId,
-        employeeId: employee.id as number,
-        description,
-        expiresAt,
-        startsAt,
-        name
-      }).subscribe((p) => {
-        this.plan.set(p.data);
-        this.goBack();
-      });
+      this.service
+        .create({
+          controlEntityId,
+          employeeId: employee.id as number,
+          description,
+          expiresAt,
+          startsAt,
+          name,
+        })
+        .subscribe((p) => {
+          this.plan.set(p.data);
+          this.goBack();
+        });
     }
   }
 

@@ -1,31 +1,94 @@
 @if (canReadContractStatus) {
   <details class="border rounded-lg" (toggle)="onContractStatusToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Estados de contrato</summary>
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Estados de contrato
+    </summary>
     <div class="p-4 space-y-3">
-      @if (!contractStatusLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      @if (!contractStatusLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
       } @else {
-        @if (canCreateContractStatus) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateContractStatus()">+ Nuevo estado</button></div> }
-        <app-dynamic-table [data]="contractStatusItems()" [columns]="contractStatusColumns" emptyMessage="No hay estados de contrato.">
+        @if (canCreateContractStatus) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateContractStatus()"
+            >
+              + Nuevo estado
+            </button>
+          </div>
+        }
+        <app-dynamic-table
+          [data]="contractStatusItems()"
+          [columns]="contractStatusColumns"
+          emptyMessage="No hay estados de contrato."
+        >
           <ng-template #actions let-item>
-            @if (canUpdateContractStatus) { <button class="btn btn-sm btn-outline" (click)="openEditContractStatus(item)">Editar</button> }
-            @if (canDeleteContractStatus) { <button class="btn btn-sm btn-danger" (click)="openDeleteContractStatus(item)">Eliminar</button> }
+            @if (canUpdateContractStatus) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditContractStatus(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteContractStatus) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteContractStatus(item)"
+              >
+                Eliminar
+              </button>
+            }
           </ng-template>
         </app-dynamic-table>
-        <app-pagination [pages]="contractStatusTotalPages()" [currentPage]="contractStatusPage()" (pageChange)="loadContractStatus($event)" />
       }
     </div>
   </details>
 }
 @if (contractStatusModalMode()) {
   <div class="modal-overlay" (click)="closeContractStatusModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ contractStatusModalMode() === "create" ? "Nuevo estado de contrato" : "Editar estado de contrato" }}</h2>
-      <form [formGroup]="contractStatusForm" (ngSubmit)="submitContractStatus()" class="space-y-3">
-        <div><label class="block text-sm font-medium mb-1">Nombre *</label><input formControlName="name" class="form-control w-full" maxlength="20" /></div>
-        <div><label class="block text-sm font-medium mb-1">Descripción</label><input formControlName="description" class="form-control w-full" /></div>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          contractStatusModalMode() === "create"
+            ? "Nuevo estado de contrato"
+            : "Editar estado de contrato"
+        }}
+      </h2>
+      <form
+        [formGroup]="contractStatusForm"
+        (ngSubmit)="submitContractStatus()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input
+            formControlName="name"
+            class="form-control w-full"
+            maxlength="20"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label
+          ><input formControlName="description" class="form-control w-full" />
+        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeContractStatusModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="contractStatusForm.invalid">{{ contractStatusModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeContractStatusModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="contractStatusForm.invalid"
+          >
+            {{ contractStatusModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
         </div>
       </form>
     </div>
@@ -33,12 +96,22 @@
 }
 @if (showDeleteContractStatusModal()) {
   <div class="modal-overlay" (click)="closeDeleteContractStatusModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar estado de contrato</h2>
-      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingContractStatus()?.name }}</strong>?</p>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar <strong>{{ editingContractStatus()?.name }}</strong
+        >?
+      </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteContractStatusModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteContractStatus()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteContractStatusModal()"
+        >
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteContractStatus()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

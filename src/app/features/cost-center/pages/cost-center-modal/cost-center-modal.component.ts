@@ -15,14 +15,14 @@ import {
 } from "@angular/forms";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { switchMap, of } from "rxjs";
-import { Employee } from "../../../../../../core/models/assessment/employee.model";
+import { Employee } from "@/app/core/models/assessment/employee.model";
 import {
   CostCenter,
   CreateCostCenterDto,
-} from "../../../../../../core/models/cost-center/cost-center.models";
-import { EmployeeService } from "../../../../../../core/services/assessment/employee.service";
-import { CostCenterService } from "../../../../../../core/services/cost-center/cost-center.service";
-import { SearchSelectComponent } from "../../../../../../shared/components/search-select/search-select.component";
+} from "@/app/core/models/cost-center/cost-center.models";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
 
 @Component({
   selector: "app-cost-center-modal",

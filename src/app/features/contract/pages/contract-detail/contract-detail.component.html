@@ -243,14 +243,9 @@
             Registro de {{ activeTabLabel() }}
           </h2>
 
-          @if (activeTab() !== "mutations" && activeTab() !== "filing") {
+          @if (activeTab() !== "mutations" && activeTab() !== "filing" && activeTab() !== "assignments") {
             <button class="btn btn-primary text-sm" (click)="handleCreate()">
               + Crear {{ activeTabLabel() }}
-            </button>
-          }
-          @if (activeTab() === "filing") {
-            <button class="btn btn-primary text-sm" (click)="submitFiling()">
-              Enviar Radicación
             </button>
           }
         </div>
@@ -267,36 +262,24 @@
           <app-cancellations-tab [contractId]="contractId()" />
         } @else if (activeTab() === "othersi") {
           <app-othersi-tab [contractId]="contractId()" />
+        } @else if (activeTab() === "assignments") {
+          <app-assignments-tab [contractId]="contractId()" />
         } @else if (activeTab() === "filing") {
-          <div class="flex flex-col gap-6 max-w-3xl">
-            @if (filingFileNames().length === 0) {
-              <div
-                class="p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-300"
-              >
-                <p class="text-gray-500">
-                  No hay archivos configurados para radicación en este tipo de
-                  contrato.
-                </p>
-              </div>
-            }
-            @for (item of filingFileNames(); track item.id) {
-              <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <label class="block text-sm font-semibold text-secondary mb-2">
-                  {{ item.name }}
-                  @if (item.isRequired) {
-                    <span class="text-red-500 ml-0.5" title="Requerido">*</span>
-                  }
-                </label>
-                <input
-                  type="file"
-                  [attr.accept]="item.mimeTypes ?? null"
-                  [required]="item.isRequired"
-                  class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 cursor-pointer"
-                  (change)="onFileChange(item.name, $event)"
-                />
-              </div>
-            }
-          </div>
+          @if (!filingLoaded()) {
+            <div class="flex items-center gap-3 text-tertiary text-sm">
+              <span>Cargando radicado...</span>
+            </div>
+          } @else if (contractFiling()) {
+            <app-filing-card [filing]="contractFiling()!" />
+          } @else {
+            <div
+              class="p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-300"
+            >
+              <p class="text-gray-500 text-sm">
+                Este contrato no tiene un radicado asociado.
+              </p>
+            </div>
+          }
         }
       </div>
     </div>
@@ -307,3 +290,10 @@
     <span class="ml-3 text-secondary">Cargando detalles del contrato...</span>
   </div>
 }
+
+<app-create-contract-process-modal
+  [isOpen]="showProcessModal()"
+  [processType]="activeProcessType()"
+  [contractId]="contractId()"
+  (onClose)="showProcessModal.set(false)"
+/>

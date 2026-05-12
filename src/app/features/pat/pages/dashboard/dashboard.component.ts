@@ -1,15 +1,19 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { PatApiService } from '../../../../core/services/pat-api.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { DashboardStats, ProgramWithMetrics, ProgramStatus } from '../../models/pat.models';
+import { Component, OnInit, inject, signal, computed } from "@angular/core";
+import { CommonModule, CurrencyPipe } from "@angular/common";
+import { Router, RouterLink } from "@angular/router";
+import { PatApiService } from "@/app/core/services/pat-api.service";
+import { AuthService } from "@/app/core/services/auth.service";
+import {
+  DashboardStats,
+  ProgramWithMetrics,
+  ProgramStatus,
+} from "../../models/pat.models";
 
 @Component({
-  selector: 'app-dashboard',
+  selector: "app-dashboard",
   imports: [CommonModule, RouterLink, CurrencyPipe],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  templateUrl: "./dashboard.component.html",
+  styleUrl: "./dashboard.component.scss",
 })
 export class DashboardComponent implements OnInit {
   stats = signal<DashboardStats | null>(null);
@@ -18,21 +22,26 @@ export class DashboardComponent implements OnInit {
 
   topPrograms = computed(() =>
     this.programs()
-      .filter(p => p.status === 'IN_PROGRESS' || p.status === 'APPROVED')
-      .slice(0, 4)
+      .filter((p) => p.status === "IN_PROGRESS" || p.status === "APPROVED")
+      .slice(0, 4),
   );
 
   statusSummary = computed(() => {
     const progs = this.programs();
-    const statuses: Array<{ status: ProgramStatus; label: string; count: number; budget: number }> = [
-      { status: 'IN_PROGRESS', label: 'En Ejecución', count: 0, budget: 0 },
-      { status: 'APPROVED', label: 'Aprobados', count: 0, budget: 0 },
-      { status: 'DRAFT', label: 'Borrador', count: 0, budget: 0 },
-      { status: 'CLOSED', label: 'Cerrados', count: 0, budget: 0 }
+    const statuses: Array<{
+      status: ProgramStatus;
+      label: string;
+      count: number;
+      budget: number;
+    }> = [
+      { status: "IN_PROGRESS", label: "En Ejecución", count: 0, budget: 0 },
+      { status: "APPROVED", label: "Aprobados", count: 0, budget: 0 },
+      { status: "DRAFT", label: "Borrador", count: 0, budget: 0 },
+      { status: "CLOSED", label: "Cerrados", count: 0, budget: 0 },
     ];
 
-    progs.forEach(p => {
-      const s = statuses.find(s => s.status === p.status);
+    progs.forEach((p) => {
+      const s = statuses.find((s) => s.status === p.status);
       if (s) {
         s.count++;
         s.budget += p.plannedBudget;
@@ -58,11 +67,11 @@ export class DashboardComponent implements OnInit {
   loadDashboard(): void {
     this.loading.set(true);
 
-    this.patApi.getDashboardStats().subscribe(stats => {
+    this.patApi.getDashboardStats().subscribe((stats) => {
       this.stats.set(stats);
     });
 
-    this.patApi.getProgramsWithMetrics().subscribe(programs => {
+    this.patApi.getProgramsWithMetrics().subscribe((programs) => {
       this.programs.set(programs);
       this.loading.set(false);
     });
@@ -70,20 +79,20 @@ export class DashboardComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'DRAFT': 'Borrador',
-      'APPROVED': 'Aprobado',
-      'IN_PROGRESS': 'En Ejecución',
-      'CLOSED': 'Cerrado'
+      DRAFT: "Borrador",
+      APPROVED: "Aprobado",
+      IN_PROGRESS: "En Ejecución",
+      CLOSED: "Cerrado",
     };
     return labels[status] || status;
   }
 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
-      'DRAFT': 'borrador',
-      'APPROVED': 'aprobado',
-      'IN_PROGRESS': 'ejecucion',
-      'CLOSED': 'cerrado'
+      DRAFT: "borrador",
+      APPROVED: "aprobado",
+      IN_PROGRESS: "ejecucion",
+      CLOSED: "cerrado",
     };
     return map[status] ?? status.toLowerCase();
   }

@@ -10,24 +10,15 @@ import { CommonModule } from "@angular/common";
 import {
   FileItemComponent,
   FileResource,
-} from "../../../../../../shared/components/file-item/file-item.component";
-import { FilingFile } from "../../../../../../core/models/filing/filing.models";
-import { FilingFileService } from "../../../../../../core/services/filing/filing-file.service";
+} from "@/app/shared/components/file-item/file-item.component";
+import { FilingFile } from "@/app/core/models/filing/filing.models";
+import { FilingFileService } from "@/app/core/services/filing/filing-file.service";
 
 @Component({
   selector: "app-filing-file-item",
   standalone: true,
   imports: [CommonModule, FileItemComponent],
-  template: `
-    <app-file-item
-      [file]="fileResource()"
-      [loading]="loading()"
-      label="Añadir archivo"
-      accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
-      (fileSelected)="onFileSelected($event)"
-      (deleteRequested)="onDeleteRequested()"
-    />
-  `,
+  templateUrl: "./filing-file-item.component.html",
 })
 export class FilingFileItemComponent {
   private readonly service = inject(FilingFileService);

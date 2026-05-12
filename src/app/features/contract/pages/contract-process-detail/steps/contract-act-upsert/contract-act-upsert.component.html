@@ -1,0 +1,70 @@
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <h3 class="text-base font-semibold text-secondary mb-4">Acto del contrato</h3>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label for="typeCode"
+          >Tipo de acto <span class="text-red-500">*</span></label
+        >
+        <input
+          id="typeCode"
+          type="text"
+          formControlName="typeCode"
+          class="form-control"
+          placeholder="Ej. Resolución, Acuerdo..."
+        />
+      </div>
+      <div class="form-group">
+        <label for="actDate"
+          >Fecha del acto <span class="text-red-500">*</span></label
+        >
+        <input
+          id="actDate"
+          type="date"
+          formControlName="actDate"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group md:col-span-2">
+        <label for="signatories"
+          >Firmantes <span class="text-red-500">*</span></label
+        >
+        <input
+          id="signatories"
+          type="text"
+          formControlName="signatories"
+          class="form-control"
+          placeholder="Nombres separados por coma"
+        />
+      </div>
+      <div class="form-group md:col-span-2">
+        <label for="actDesc">Descripción</label>
+        <textarea
+          id="actDesc"
+          formControlName="description"
+          class="form-control"
+          rows="3"
+          placeholder="Descripción opcional"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="flex gap-3 justify-end mt-6">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel.emit()"
+        [disabled]="saving()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || saving()"
+      >
+        {{ saving() ? "Guardando..." : "Guardar acto" }}
+      </button>
+    </div>
+  </form>
+</div>

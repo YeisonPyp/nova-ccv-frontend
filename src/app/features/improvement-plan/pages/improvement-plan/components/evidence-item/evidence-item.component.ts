@@ -1,12 +1,19 @@
-import { Component, computed, inject, input, output, signal } from "@angular/core";
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { HttpEventType } from "@angular/common/http";
-import { EvidenceService } from "../../../../../../core/services/improvement-plan/evidence.service";
-import { EvidenceDto } from "../../../../../../core/models/improvement-plan/evidence.model";
+import { EvidenceService } from "@/app/core/services/improvement-plan/evidence.service";
+import { EvidenceDto } from "@/app/core/models/improvement-plan/evidence.model";
 import {
   FileItemComponent,
   FileResource,
-} from "../../../../../../shared/components/file-item/file-item.component";
+} from "@/app/shared/components/file-item/file-item.component";
 
 @Component({
   selector: "app-evidence-item",

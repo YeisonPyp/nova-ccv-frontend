@@ -7,43 +7,43 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ContractService } from "../../../../core/services/contract/contract.service";
-import { ContractFilingFileNameService } from "../../../../core/services/contract/contract-filing-file-name.service";
-import { AreaService } from "../../../../core/services/assessment/area.service";
-import { EmployeeService } from "../../../../core/services/assessment/employee.service";
-import { PositionService } from "../../../../core/services/assessment/position.service";
-import { CostCenterService } from "../../../../core/services/cost-center/cost-center.service";
-import { AgencyService } from "../../../../core/services/contract/agency.service";
-import { CompensationEntityService } from "../../../../core/services/contract/compensation-entity.service";
+import { ContractService } from "@/app/core/services/contract/contract.service";
+import { ContractFilingFileNameService } from "@/app/core/services/contract/contract-filing-file-name.service";
+import { AreaService } from "@/app/core/services/assessment/area.service";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { PositionService } from "@/app/core/services/assessment/position.service";
+import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
+import { AgencyService } from "@/app/core/services/contract/agency.service";
+import { CompensationEntityService } from "@/app/core/services/contract/compensation-entity.service";
 import {
   ContractTypeService,
   ContractType,
-} from "../../../../core/services/contract/contract-type.service";
-import { CotizationTypeService } from "../../../../core/services/contract/cotization-type.service";
+} from "@/app/core/services/contract/contract-type.service";
+import { CotizationTypeService } from "@/app/core/services/contract/cotization-type.service";
 import {
   EmployeeClassService,
   EmployeeClass,
-} from "../../../../core/services/contract/employee-class.service";
+} from "@/app/core/services/contract/employee-class.service";
 import {
   EpsAfiliationService,
   EpsAfiliation,
-} from "../../../../core/services/contract/eps-afiliation.service";
-import { EpsEntityService } from "../../../../core/services/contract/eps-entity.service";
-import { PensionTypeService } from "../../../../core/services/contract/pension-type.service";
-import { SearchSelectContextFactory } from "../../../../shared/components/search-select/on-search-select.interface";
-import { SearchSelectComponent } from "../../../../shared/components/search-select/search-select.component";
-import { Area } from "../../../../core/models/assessment/area.model";
-import { Employee } from "../../../../core/models/assessment/employee.model";
-import { Position } from "../../../../core/models/assessment/position.model";
-import { CostCenter } from "../../../../core/models/cost-center/cost-center.models";
-import { Agency } from "../../../../core/models/contract/agency.model";
-import { ContractFilingFileName } from "../../../../core/models/contract/contract.models";
+} from "@/app/core/services/contract/eps-afiliation.service";
+import { EpsEntityService } from "@/app/core/services/contract/eps-entity.service";
+import { PensionTypeService } from "@/app/core/services/contract/pension-type.service";
+import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { Area } from "@/app/core/models/assessment/area.model";
+import { Employee } from "@/app/core/models/assessment/employee.model";
+import { Position } from "@/app/core/models/assessment/position.model";
+import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
+import { Agency } from "@/app/core/models/contract/agency.model";
+import { ContractFilingFileName } from "@/app/core/models/contract/contract.models";
 import {
   CompensationEntity,
   CotizationType,
   EpsEntity,
   PensionType,
-} from "../../../../core/models/contract/contract-params.model";
+} from "@/app/core/models/contract/contract-params.model";
 
 const currentYear = new Date().getFullYear();
 const SALARY_YEARS = Array.from({ length: 6 }, (_, i) => currentYear - i);
@@ -174,7 +174,7 @@ export class CreateContractModalComponent implements OnInit {
 
   private loadOptions(): void {
     this.contractTypeService
-      .getContractTypes()
+      .findAll()
       .subscribe((res) => this.contractTypes.set(res.data ?? []));
     this.cotizationTypeService
       .getCotizationTypes()

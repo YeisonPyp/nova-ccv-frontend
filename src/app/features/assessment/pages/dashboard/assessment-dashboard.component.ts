@@ -1,15 +1,15 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
-import { AssessmentService } from "../../../../core/services/assessment/assessment.service";
+import { AssessmentService } from "@/app/core/services/assessment/assessment.service";
 import { CommonModule } from "@angular/common";
-import { Period } from "../../../../core/models/assessment/period.model";
+import { Period } from "@/app/core/models/assessment/period.model";
 import { AssessmentTableComponent } from "./assessment-table/assessment-table.component";
-import { AuthService } from "../../../../core/services/auth.service";
-import { Assessment } from "../../../../core/models/assessment/assessment.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { Assessment } from "@/app/core/models/assessment/assessment.model";
 import {
   CreateAssessmentDto,
   CreateAssessmentModalComponent,
 } from "./create-assessment-modal/create-assessment-modal.component";
-import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 import { PeriodSelectorComponent } from "./period-selector/period-selector.component";
 import { Router } from "@angular/router";
 
@@ -50,7 +50,9 @@ export class AssessmentDashboardComponent implements OnInit {
   }
 
   openEditModal(a: Assessment) {
-    this.router.navigate(["/assessment/edit", a.id], { state: { assessment: a } });
+    this.router.navigate(["/assessment/edit", a.id], {
+      state: { assessment: a },
+    });
   }
 
   ngOnInit(): void {

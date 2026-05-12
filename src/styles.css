@@ -205,6 +205,8 @@ button {
 }
 
 .modal-overlay {
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;
@@ -215,10 +217,26 @@ button {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
+}
+
+.modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-secondary);
+  margin: 0;
+  font-size: 1.25rem;
 }
 
 .modal-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.2s ease-out;
   background: var(--color-background);
   border-radius: 12px;
   width: 100%;
@@ -254,13 +272,6 @@ button {
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid #f0f0f0;
-
-  .modal-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-secondary);
-  }
 
   .close-btn {
     background: transparent;
@@ -418,13 +429,4 @@ button {
   padding: 0;
   cursor: pointer;
   filter: invert(0.5);
-}
-
-.scrollable-container {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  contain: initial;
-  scrollbar-color: var(--color-tertiary) transparent;
-  scrollbar-width: thin;
 }

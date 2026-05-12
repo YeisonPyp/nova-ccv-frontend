@@ -1,0 +1,61 @@
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <h3 class="text-base font-semibold text-secondary mb-4">Datos de la cancelación</h3>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label for="cancelationTypeName">Tipo de cancelación <span class="text-red-500">*</span></label>
+        <input
+          id="cancelationTypeName"
+          type="text"
+          formControlName="cancelationTypeName"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="cancellationDate">Fecha de cancelación <span class="text-red-500">*</span></label>
+        <input
+          id="cancellationDate"
+          type="date"
+          formControlName="cancellationDate"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group md:col-span-2">
+        <label for="cancellationReason">Motivo</label>
+        <textarea
+          id="cancellationReason"
+          formControlName="cancellationReason"
+          class="form-control"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="indemnityAmount">Monto indemnización</label>
+        <input
+          id="indemnityAmount"
+          type="number"
+          formControlName="indemnityAmount"
+          class="form-control"
+          min="0"
+          step="0.01"
+        />
+      </div>
+      <div class="form-group">
+        <label for="penaltyAmount">Monto penalidad</label>
+        <input
+          id="penaltyAmount"
+          type="number"
+          formControlName="penaltyAmount"
+          class="form-control"
+          min="0"
+          step="0.01"
+        />
+      </div>
+    </div>
+    <div class="flex justify-end mt-6">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving()">
+        {{ saving() ? "Guardando..." : "Guardar cancelación" }}
+      </button>
+    </div>
+  </form>
+</div>

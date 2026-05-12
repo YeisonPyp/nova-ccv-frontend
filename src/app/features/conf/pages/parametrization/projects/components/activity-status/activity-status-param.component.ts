@@ -6,41 +6,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AuthService } from "../../../../../../../core/services/auth.service";
-import { ActivityStatusService } from "../../../../../../../core/services/projects/activity-status.service";
-import { ActivityStatus } from "../../../../../../../core/models/projects/project-params.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { ActivityStatusService } from "@/app/core/services/projects/activity-status.service";
+import { ActivityStatus } from "@/app/core/models/projects/project-params.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-activity-status-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
-  templateUrl: "./activity-status-param.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .modal-overlay {
-        position: fixed; inset: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff; border-radius: 12px; padding: 24px;
-        width: 100%; max-width: 480px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-      .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    PaginationComponent,
   ],
+  templateUrl: "./activity-status-param.component.html",
 })
 export class ActivityStatusParamComponent {
   private readonly auth = inject(AuthService);
@@ -63,10 +47,18 @@ export class ActivityStatusParamComponent {
     { key: "name", label: "Nombre" },
   ];
 
-  get canReadActivityStatus() { return this.auth.hasPermission("ACTIVITY_STATUS_READ"); }
-  get canCreateActivityStatus() { return this.auth.hasPermission("ACTIVITY_STATUS_CREATE"); }
-  get canUpdateActivityStatus() { return this.auth.hasPermission("ACTIVITY_STATUS_UPDATE"); }
-  get canDeleteActivityStatus() { return this.auth.hasPermission("ACTIVITY_STATUS_DELETE"); }
+  get canReadActivityStatus() {
+    return this.auth.hasPermission("ACTIVITY_STATUS_READ");
+  }
+  get canCreateActivityStatus() {
+    return this.auth.hasPermission("ACTIVITY_STATUS_CREATE");
+  }
+  get canUpdateActivityStatus() {
+    return this.auth.hasPermission("ACTIVITY_STATUS_UPDATE");
+  }
+  get canDeleteActivityStatus() {
+    return this.auth.hasPermission("ACTIVITY_STATUS_DELETE");
+  }
 
   onActivityStatusToggle(e: Event) {
     if ((e.target as HTMLDetailsElement).open && !this.activityStatusLoaded()) {
@@ -102,7 +94,9 @@ export class ActivityStatusParamComponent {
     this.activityStatusModalMode.set("update");
   }
 
-  closeActivityStatusModal() { this.activityStatusModalMode.set(null); }
+  closeActivityStatusModal() {
+    this.activityStatusModalMode.set(null);
+  }
 
   submitActivityStatus() {
     if (this.activityStatusForm.invalid) return;
@@ -110,12 +104,18 @@ export class ActivityStatusParamComponent {
     const mode = this.activityStatusModalMode();
     if (mode === "create") {
       this.activityStatusService.create(name!).subscribe({
-        next: () => { this.closeActivityStatusModal(); this.loadActivityStatus(this.activityStatusPage()); },
+        next: () => {
+          this.closeActivityStatusModal();
+          this.loadActivityStatus(this.activityStatusPage());
+        },
       });
     } else if (mode === "update") {
       const item = this.editingActivityStatus()!;
       this.activityStatusService.update(item.id, name!).subscribe({
-        next: () => { this.closeActivityStatusModal(); this.loadActivityStatus(this.activityStatusPage()); },
+        next: () => {
+          this.closeActivityStatusModal();
+          this.loadActivityStatus(this.activityStatusPage());
+        },
       });
     }
   }
@@ -134,7 +134,10 @@ export class ActivityStatusParamComponent {
     const item = this.editingActivityStatus();
     if (!item) return;
     this.activityStatusService.delete(item.id).subscribe({
-      next: () => { this.closeDeleteActivityStatusModal(); this.loadActivityStatus(this.activityStatusPage()); },
+      next: () => {
+        this.closeDeleteActivityStatusModal();
+        this.loadActivityStatus(this.activityStatusPage());
+      },
     });
   }
 }

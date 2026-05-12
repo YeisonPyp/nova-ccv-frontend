@@ -16,6 +16,20 @@ export const CONTRACT_ROUTES: Routes = [
       ),
   },
   {
+    path: "assignment/:id",
+    loadComponent: () =>
+      import("./pages/contract-assignment-detail/contract-assignment-detail.component").then(
+        (m) => m.ContractAssignmentDetailComponent,
+      ),
+  },
+  {
+    path: ":contractId/process/:processId",
+    loadComponent: () =>
+      import("./pages/contract-process-detail/contract-process-detail.component").then(
+        (m) => m.ContractProcessDetailComponent,
+      ),
+  },
+  {
     path: ":id",
     loadComponent: () =>
       import("./pages/contract-detail/contract-detail.component").then(

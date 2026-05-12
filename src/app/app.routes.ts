@@ -89,6 +89,13 @@ export const routes: Routes = [
             (m) => m.BILLING_ROUTES,
           ),
       },
+      {
+        path: "cost-center",
+        loadChildren: () =>
+          import("./features/cost-center/cost-center.routes").then(
+            (m) => m.COST_CENTER_ROUTES,
+          ),
+      },
     ],
   },
   {

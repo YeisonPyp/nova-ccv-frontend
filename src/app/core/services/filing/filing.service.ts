@@ -34,6 +34,12 @@ export class FilingService {
     return this.http.get<ApiResponse<Filing>>(`${this.apiUrl}/${id}`);
   }
 
+  findByContractId(contractId: number): Observable<ApiResponse<Filing>> {
+    return this.http.get<ApiResponse<Filing>>(
+      `${this.apiUrl}/contract/${contractId}`,
+    );
+  }
+
   create(dto: CreateFilingDto): Observable<ApiResponse<Filing>> {
     return this.http.post<ApiResponse<Filing>>(this.apiUrl, dto);
   }

@@ -1,27 +1,27 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { PatApiService } from '../../../../core/services/pat-api.service';
-import { ProgramWithMetrics, ProgramStatus } from '../../models/pat.models';
+import { Component, OnInit, signal, computed } from "@angular/core";
+import { CommonModule, CurrencyPipe } from "@angular/common";
+import { RouterLink } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { PatApiService } from "@/app/core/services/pat-api.service";
+import { ProgramWithMetrics, ProgramStatus } from "../../models/pat.models";
 
 @Component({
-  selector: 'app-programs',
+  selector: "app-programs",
   imports: [CommonModule, RouterLink, FormsModule, CurrencyPipe],
-  templateUrl: './programs.component.html',
-  styleUrl: './programs.component.scss'
+  templateUrl: "./programs.component.html",
+  styleUrl: "./programs.component.scss",
 })
 export class ProgramsComponent implements OnInit {
   programs = signal<ProgramWithMetrics[]>([]);
   loading = signal(true);
-  searchTerm = '';
+  searchTerm = "";
   statusFilter = signal<ProgramStatus | null>(null);
 
   statusOptions = [
-    { value: 'IN_PROGRESS' as ProgramStatus, label: 'En Ejecución' },
-    { value: 'APPROVED' as ProgramStatus, label: 'Aprobado' },
-    { value: 'DRAFT' as ProgramStatus, label: 'Borrador' },
-    { value: 'CLOSED' as ProgramStatus, label: 'Cerrado' }
+    { value: "IN_PROGRESS" as ProgramStatus, label: "En Ejecución" },
+    { value: "APPROVED" as ProgramStatus, label: "Aprobado" },
+    { value: "DRAFT" as ProgramStatus, label: "Borrador" },
+    { value: "CLOSED" as ProgramStatus, label: "Cerrado" },
   ];
 
   filteredPrograms = computed(() => {
@@ -29,16 +29,17 @@ export class ProgramsComponent implements OnInit {
 
     const status = this.statusFilter();
     if (status) {
-      result = result.filter(p => p.status === status);
+      result = result.filter((p) => p.status === status);
     }
 
     const term = this.searchTerm.toLowerCase().trim();
     if (term) {
-      result = result.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        p.code.toLowerCase().includes(term) ||
-        p.areaName.toLowerCase().includes(term) ||
-        p.employeeName.toLowerCase().includes(term)
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(term) ||
+          p.code.toLowerCase().includes(term) ||
+          p.areaName.toLowerCase().includes(term) ||
+          p.employeeName.toLowerCase().includes(term),
       );
     }
 
@@ -46,7 +47,7 @@ export class ProgramsComponent implements OnInit {
   });
 
   totalBudget = computed(() =>
-    this.filteredPrograms().reduce((sum, p) => sum + p.plannedBudget, 0)
+    this.filteredPrograms().reduce((sum, p) => sum + p.plannedBudget, 0),
   );
 
   averageMetaProgress = computed(() => {
@@ -64,7 +65,7 @@ export class ProgramsComponent implements OnInit {
 
   loadPrograms(): void {
     this.loading.set(true);
-    this.patApi.getProgramsWithMetrics().subscribe(programs => {
+    this.patApi.getProgramsWithMetrics().subscribe((programs) => {
       this.programs.set(programs);
       this.loading.set(false);
     });
@@ -75,7 +76,7 @@ export class ProgramsComponent implements OnInit {
   }
 
   countByStatus(status: ProgramStatus): number {
-    return this.programs().filter(p => p.status === status).length;
+    return this.programs().filter((p) => p.status === status).length;
   }
 
   applyFilters(): void {
@@ -83,26 +84,26 @@ export class ProgramsComponent implements OnInit {
   }
 
   clearFilters(): void {
-    this.searchTerm = '';
+    this.searchTerm = "";
     this.statusFilter.set(null);
   }
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'DRAFT': 'Borrador',
-      'APPROVED': 'Aprobado',
-      'IN_PROGRESS': 'En Ejecución',
-      'CLOSED': 'Cerrado'
+      DRAFT: "Borrador",
+      APPROVED: "Aprobado",
+      IN_PROGRESS: "En Ejecución",
+      CLOSED: "Cerrado",
     };
     return labels[status] || status;
   }
 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
-      'DRAFT': 'borrador',
-      'APPROVED': 'aprobado',
-      'IN_PROGRESS': 'ejecucion',
-      'CLOSED': 'cerrado'
+      DRAFT: "borrador",
+      APPROVED: "aprobado",
+      IN_PROGRESS: "ejecucion",
+      CLOSED: "cerrado",
     };
     return map[status] ?? status.toLowerCase();
   }

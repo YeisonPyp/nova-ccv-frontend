@@ -1,14 +1,14 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { GoalService } from "../../../../../core/services/goals/goal.service";
+import { GoalService } from "@/app/core/services/goals/goal.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
-import { GoalTemplate } from "../../../../../core/models/goals/goal-template.model";
+import { GoalTemplate } from "@/app/core/models/goals/goal-template.model";
 import { GoalVarTableComponent } from "./goal-var-table/goal-var-table.component";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { CreateGoalFromTemplate } from "../../../../../core/models/goals/goal.model";
-import { GoalVar } from "../../../../../core/models/goals/goal-var.model";
-import { GoalOption } from "../../../../../core/models/goals/goal-option.model";
+import { CreateGoalFromTemplate } from "@/app/core/models/goals/goal.model";
+import { GoalVar } from "@/app/core/models/goals/goal-var.model";
+import { GoalOption } from "@/app/core/models/goals/goal-option.model";
 import { Router } from "@angular/router";
 
 @Component({

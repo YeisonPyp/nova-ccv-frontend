@@ -2,26 +2,26 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthService } from "../../../../../core/services/auth.service";
-import { UserService } from "../../../../../core/services/user/user.service";
-import { RoleService } from "../../../../../core/services/user/role.service";
-import { PermissionService } from "../../../../../core/services/user/permission.service";
-import { UserStatusChangeService } from "../../../../../core/services/user/user-status-change.service";
-import { UserResponse } from "../../../../../core/models/user/user.model";
-import { RoleResponse } from "../../../../../core/models/user/role.model";
-import { PermissionResponse } from "../../../../../core/models/user/permission.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { UserService } from "@/app/core/services/user/user.service";
+import { RoleService } from "@/app/core/services/user/role.service";
+import { PermissionService } from "@/app/core/services/user/permission.service";
+import { UserStatusChangeService } from "@/app/core/services/user/user-status-change.service";
+import { UserResponse } from "@/app/core/models/user/user.model";
+import { RoleResponse } from "@/app/core/models/user/role.model";
+import { PermissionResponse } from "@/app/core/models/user/permission.model";
 import {
   USER_STATUSES,
   UserStatus,
   UserStatusChange,
-} from "../../../../../core/models/user/user-status-change.model";
+} from "@/app/core/models/user/user-status-change.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
-import { PaginatorComponent } from "../../../../../shared/components/paginator/paginator.component";
-import { ForbiddenComponent } from "../../../../../shared/components/forbidden/forbidden.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
+import { ForbiddenComponent } from "@/app/shared/components/forbidden/forbidden.component";
 
 const PAGE_SIZE = 10;
 

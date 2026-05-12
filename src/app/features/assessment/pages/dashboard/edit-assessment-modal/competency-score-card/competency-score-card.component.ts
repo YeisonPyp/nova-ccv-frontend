@@ -15,7 +15,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { CompetencyScore } from "../../../../../../core/models/assessment/competency-score.model";
+import { CompetencyScore } from "@/app/core/models/assessment/competency-score.model";
 
 export interface ChangeCompetencyScore {
   id: number;

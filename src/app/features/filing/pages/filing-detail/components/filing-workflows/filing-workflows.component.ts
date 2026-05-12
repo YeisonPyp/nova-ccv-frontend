@@ -16,12 +16,12 @@ import {
 import {
   FilingWorkflow,
   FilingStepApproval,
-} from "../../../../../../core/models/filing/filing-workflow.model";
-import { Workflow } from "../../../../../../core/models/filing/workflow.model";
-import { AuthService } from "../../../../../../core/services/auth.service";
-import { FilingWorkflowService } from "../../../../../../core/services/filing/filing-workflow.service";
-import { WorkflowService } from "../../../../../../core/services/filing/workflow.service";
-import { PaginationComponent } from "../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/core/models/filing/filing-workflow.model";
+import { Workflow } from "@/app/core/models/filing/workflow.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { FilingWorkflowService } from "@/app/core/services/filing/filing-workflow.service";
+import { WorkflowService } from "@/app/core/services/filing/workflow.service";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { FilingStepCardComponent } from "../filing-step-card/filing-step-card.component";
 
 const PAGE_SIZE = 3;
@@ -36,39 +36,6 @@ const PAGE_SIZE = 3;
     FilingStepCardComponent,
   ],
   templateUrl: "./filing-workflows.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 50;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff;
-        border-radius: 12px;
-        padding: 24px;
-        width: 100%;
-        max-width: 440px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-    `,
-  ],
 })
 export class FilingWorkflowsComponent implements OnInit {
   private readonly auth = inject(AuthService);

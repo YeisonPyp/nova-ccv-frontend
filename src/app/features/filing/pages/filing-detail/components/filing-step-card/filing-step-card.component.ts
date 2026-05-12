@@ -4,8 +4,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import {
   FilingStepApproval,
   StepStatus,
-} from "../../../../../../core/models/filing/filing-workflow.model";
-import { FilingWorkflowService } from "../../../../../../core/services/filing/filing-workflow.service";
+} from "@/app/core/models/filing/filing-workflow.model";
+import { FilingWorkflowService } from "@/app/core/services/filing/filing-workflow.service";
 
 @Component({
   selector: "app-filing-step-card",

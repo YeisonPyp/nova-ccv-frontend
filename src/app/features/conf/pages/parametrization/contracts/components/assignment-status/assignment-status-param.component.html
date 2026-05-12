@@ -1,31 +1,108 @@
 @if (canReadAssignmentStatus) {
-  <details class="border rounded-lg" (toggle)="onAssignmentStatusToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Estados de asignación de contrato</summary>
+  <details
+    class="border rounded-lg"
+    (toggle)="onAssignmentStatusToggle($event)"
+  >
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Estados de asignación de contrato
+    </summary>
     <div class="p-4 space-y-3">
-      @if (!assignmentStatusLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      @if (!assignmentStatusLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
       } @else {
-        @if (canCreateAssignmentStatus) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateAssignmentStatus()">+ Nuevo estado</button></div> }
-        <app-dynamic-table [data]="assignmentStatusItems()" [columns]="assignmentStatusColumns" emptyMessage="No hay estados de asignación.">
+        @if (canCreateAssignmentStatus) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateAssignmentStatus()"
+            >
+              + Nuevo estado
+            </button>
+          </div>
+        }
+        <app-dynamic-table
+          [data]="assignmentStatusItems()"
+          [columns]="assignmentStatusColumns"
+          emptyMessage="No hay estados de asignación."
+        >
+          <ng-template #customCell let-item let-col="column">
+            @if (col.key === "color") {
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-5 h-5 rounded border border-gray-300 shrink-0"
+                  [style.background]="'#' + item.color"
+                ></div>
+                <span class="font-mono text-xs text-gray-600"
+                  >#{{ item.color }}</span
+                >
+              </div>
+            } @else {
+              {{ item[col.key] }}
+            }
+          </ng-template>
           <ng-template #actions let-item>
-            @if (canUpdateAssignmentStatus) { <button class="btn btn-sm btn-outline" (click)="openEditAssignmentStatus(item)">Editar</button> }
-            @if (canDeleteAssignmentStatus) { <button class="btn btn-sm btn-danger" (click)="openDeleteAssignmentStatus(item)">Eliminar</button> }
+            @if (canUpdateAssignmentStatus) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditAssignmentStatus(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteAssignmentStatus) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteAssignmentStatus(item)"
+              >
+                Eliminar
+              </button>
+            }
           </ng-template>
         </app-dynamic-table>
-        <app-pagination [pages]="assignmentStatusTotalPages()" [currentPage]="assignmentStatusPage()" (pageChange)="loadAssignmentStatus($event)" />
       }
     </div>
   </details>
 }
 @if (assignmentStatusModalMode()) {
   <div class="modal-overlay" (click)="closeAssignmentStatusModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ assignmentStatusModalMode() === "create" ? "Nuevo estado de asignación" : "Editar estado de asignación" }}</h2>
-      <form [formGroup]="assignmentStatusForm" (ngSubmit)="submitAssignmentStatus()" class="space-y-3">
-        <div><label class="block text-sm font-medium mb-1">Nombre *</label><input formControlName="name" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">Color (hex, 6 caracteres) *</label><input formControlName="color" class="form-control w-full" maxlength="6" placeholder="Ej: FF5733" /></div>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          assignmentStatusModalMode() === "create"
+            ? "Nuevo estado de asignación"
+            : "Editar estado de asignación"
+        }}
+      </h2>
+      <form
+        [formGroup]="assignmentStatusForm"
+        (ngSubmit)="submitAssignmentStatus()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input formControlName="name" class="form-control w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Color *</label>
+          <app-color-picker formControlName="color" />
+        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeAssignmentStatusModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="assignmentStatusForm.invalid">{{ assignmentStatusModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeAssignmentStatusModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="assignmentStatusForm.invalid"
+          >
+            {{ assignmentStatusModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
         </div>
       </form>
     </div>
@@ -33,12 +110,26 @@
 }
 @if (showDeleteAssignmentStatusModal()) {
   <div class="modal-overlay" (click)="closeDeleteAssignmentStatusModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar estado de asignación</h2>
-      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingAssignmentStatus()?.name }}</strong>?</p>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar
+        <strong>{{ editingAssignmentStatus()?.name }}</strong
+        >?
+      </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteAssignmentStatusModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteAssignmentStatus()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteAssignmentStatusModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="confirmDeleteAssignmentStatus()"
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

@@ -21,7 +21,7 @@ import {
   PageableQueryParams,
 } from "../../../shared/pageable-query";
 
-type NameDescDto = { name: string; description?: string };
+type NameDescDto = { name: string; description?: string; color?: string };
 type AssignmentStatusDto = { name: string; color: string };
 
 export interface CreateRangeRetentionDto {
@@ -68,7 +68,9 @@ export class ContractParamsService {
 
   // ── ContractStatus ──────────────────────────────────────────────────────────
   findContractStatuses(p: PageableQuery = {}) {
-    return page<ContractStatus>(this.http, `${this.base}/contract-statuses`, p);
+    return this.http.get<ApiResponse<ContractStatus[]>>(
+      `${this.base}/contract-statuses`,
+    );
   }
   createContractStatus(dto: NameDescDto) {
     return this.http.post<ApiResponse<ContractStatus>>(
@@ -89,11 +91,9 @@ export class ContractParamsService {
   }
 
   // ── EpsAffiliationType ──────────────────────────────────────────────────────
-  findEpsAffiliationTypes(p: PageableQuery = {}) {
-    return page<EpsAffiliationType>(
-      this.http,
+  findEpsAffiliationTypes() {
+    return this.http.get<ApiResponse<EpsAffiliationType[]>>(
       `${this.base}/eps-affiliation-types`,
-      p,
     );
   }
   createEpsAffiliationType(dto: NameDescDto) {
@@ -116,7 +116,7 @@ export class ContractParamsService {
 
   // ── EpsEntity ───────────────────────────────────────────────────────────────
   findEpsEntities(p: PageableQuery = {}) {
-    return page<EpsEntity>(this.http, `${this.base}/eps-entities`, p);
+    return this.http.get<ApiResponse<EpsEntity[]>>(`${this.base}/eps-entities`);
   }
   createEpsEntity(dto: NameDescDto) {
     return this.http.post<ApiResponse<EpsEntity>>(
@@ -137,8 +137,10 @@ export class ContractParamsService {
   }
 
   // ── CotizationType ──────────────────────────────────────────────────────────
-  findCotizationTypes(p: PageableQuery = {}) {
-    return page<CotizationType>(this.http, `${this.base}/cotization-types`, p);
+  findCotizationTypes() {
+    return this.http.get<ApiResponse<CotizationType[]>>(
+      `${this.base}/cotization-types`,
+    );
   }
   createCotizationType(dto: NameDescDto) {
     return this.http.post<ApiResponse<CotizationType>>(
@@ -159,8 +161,10 @@ export class ContractParamsService {
   }
 
   // ── PensionType ─────────────────────────────────────────────────────────────
-  findPensionTypes(p: PageableQuery = {}) {
-    return page<PensionType>(this.http, `${this.base}/pension-types`, p);
+  findPensionTypes() {
+    return this.http.get<ApiResponse<PensionType[]>>(
+      `${this.base}/pension-types`,
+    );
   }
   createPensionType(dto: NameDescDto) {
     return this.http.post<ApiResponse<PensionType>>(
@@ -181,11 +185,9 @@ export class ContractParamsService {
   }
 
   // ── CompensationEntity ──────────────────────────────────────────────────────
-  findCompensationEntities(p: PageableQuery = {}) {
-    return page<CompensationEntity>(
-      this.http,
+  findCompensationEntities() {
+    return this.http.get<ApiResponse<CompensationEntity[]>>(
       `${this.base}/compensation-entities`,
-      p,
     );
   }
   createCompensationEntity(dto: NameDescDto) {
@@ -207,8 +209,10 @@ export class ContractParamsService {
   }
 
   // ── RangeRetention ──────────────────────────────────────────────────────────
-  findRangeRetentions(p: PageableQuery = {}) {
-    return page<RangeRetention>(this.http, `${this.base}/range-retentions`, p);
+  findRangeRetentions() {
+    return this.http.get<ApiResponse<RangeRetention[]>>(
+      `${this.base}/range-retentions`,
+    );
   }
   createRangeRetention(dto: CreateRangeRetentionDto) {
     return this.http.post<ApiResponse<RangeRetention>>(
@@ -229,11 +233,9 @@ export class ContractParamsService {
   }
 
   // ── SalaryParameter ─────────────────────────────────────────────────────────
-  findSalaryParameters(p: PageableQuery = {}) {
-    return page<SalaryParameter>(
-      this.http,
+  findSalaryParameters() {
+    return this.http.get<ApiResponse<SalaryParameter[]>>(
       `${this.base}/salary-parameters`,
-      p,
     );
   }
   createSalaryParameter(dto: CreateSalaryParameterDto) {
@@ -255,11 +257,9 @@ export class ContractParamsService {
   }
 
   // ── ContractCancellationType ────────────────────────────────────────────────
-  findCancellationTypes(p: PageableQuery = {}) {
-    return page<ContractCancellationType>(
-      this.http,
+  findCancellationTypes() {
+    return this.http.get<ApiResponse<ContractCancellationType[]>>(
       `${this.base}/contract-cancellation-types`,
-      p,
     );
   }
   createCancellationType(dto: NameDescDto) {
@@ -281,11 +281,9 @@ export class ContractParamsService {
   }
 
   // ── ContractAssignmentStatus ────────────────────────────────────────────────
-  findAssignmentStatuses(p: PageableQuery = {}) {
-    return page<ContractAssignmentStatus>(
-      this.http,
+  findAssignmentStatuses() {
+    return this.http.get<ApiResponse<ContractAssignmentStatus[]>>(
       `${this.base}/contract-assignment-statuses`,
-      p,
     );
   }
   createAssignmentStatus(dto: AssignmentStatusDto) {

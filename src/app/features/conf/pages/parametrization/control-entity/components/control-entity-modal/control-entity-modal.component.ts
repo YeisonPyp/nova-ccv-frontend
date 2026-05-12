@@ -1,4 +1,14 @@
-import { Component, computed, EventEmitter, inject, input, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  input,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
@@ -6,8 +16,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { ControlEntityService } from "../../../../../core/services/improvement-plan/control-entity.service";
-import { ControlEntity, CreateControlEntityDto, UpdateControlEntityDto } from "../../../../../core/models/improvement-plan/control-entity.model";
+import { ControlEntityService } from "@/app/core/services/improvement-plan/control-entity.service";
+import {
+  ControlEntity,
+  CreateControlEntityDto,
+  UpdateControlEntityDto,
+} from "@/app/core/models/improvement-plan/control-entity.model";
 
 @Component({
   selector: "app-control-entity-modal",
@@ -17,7 +31,6 @@ import { ControlEntity, CreateControlEntityDto, UpdateControlEntityDto } from ".
   styleUrl: "./control-entity-modal.component.scss",
 })
 export class ControlEntityModalComponent implements OnChanges {
-
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(ControlEntityService);
 
@@ -36,7 +49,7 @@ export class ControlEntityModalComponent implements OnChanges {
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.form.reset();
     }
-    if (changes['entity'] && changes['entity'].currentValue) {
+    if (changes["entity"] && changes["entity"].currentValue) {
       this.form.patchValue({ name: this.entity()?.name });
     }
   }
@@ -46,12 +59,10 @@ export class ControlEntityModalComponent implements OnChanges {
 
     this.loading = true;
     const e = this.entity();
-    const obs$ = e != null
-      ? this.service.update(
-        e.id,
-        this.form.value as UpdateControlEntityDto,
-      )
-      : this.service.create(this.form.value as CreateControlEntityDto);
+    const obs$ =
+      e != null
+        ? this.service.update(e.id, this.form.value as UpdateControlEntityDto)
+        : this.service.create(this.form.value as CreateControlEntityDto);
 
     obs$.subscribe({
       next: (res) => {

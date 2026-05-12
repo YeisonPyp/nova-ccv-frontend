@@ -1,10 +1,10 @@
 import { Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { BillingAccountDocument } from "../../../../../core/models/billing/billing-account.model";
+import { BillingAccountDocument } from "@/app/core/models/billing/billing-account.model";
 import {
   FileItemComponent,
   FileResource,
-} from "../../../../../shared/components/file-item/file-item.component";
+} from "@/app/shared/components/file-item/file-item.component";
 
 @Component({
   selector: "app-billing-documents-section",

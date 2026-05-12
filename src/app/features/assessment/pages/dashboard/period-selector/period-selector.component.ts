@@ -9,14 +9,14 @@ import {
   ElementRef,
   computed,
 } from "@angular/core";
-import { PaginatorComponent } from "../../../../../shared/components/paginator/paginator.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { Period } from "../../../../../core/models/assessment/period.model";
-import { PeriodService } from "../../../../../core/services/assessment/period.service";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { Period } from "@/app/core/models/assessment/period.model";
+import { PeriodService } from "@/app/core/services/assessment/period.service";
 
 @Component({
   selector: "app-period-selector",

@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlEntityModalComponent } from "./components/control-entity-modal/control-entity-modal.component";
-import { ControlEntity } from "../../../../../core/models/improvement-plan/control-entity.model";
-import { ControlEntityService } from "../../../../../core/services/improvement-plan/control-entity.service";
+import { ControlEntity } from "@/app/core/models/improvement-plan/control-entity.model";
+import { ControlEntityService } from "@/app/core/services/improvement-plan/control-entity.service";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 @Component({
   selector: "app-control-entity-list",
   standalone: true,

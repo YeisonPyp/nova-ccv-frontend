@@ -1,0 +1,22 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm mb-8 overflow-hidden">
+  <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+    <h3 class="text-sm font-semibold text-gray-700 m-0">{{ title() }}</h3>
+    @if (addLabel()) {
+      <button
+        type="button"
+        class="btn btn-primary btn-sm text-xs"
+        (click)="onAdd.emit()"
+      >
+        {{ addLabel() }}
+      </button>
+    }
+  </div>
+
+  @if (isEmpty()) {
+    <div class="px-4 py-8 text-center text-sm text-gray-400">
+      {{ emptyMessage() }}
+    </div>
+  } @else {
+    <ng-content />
+  }
+</div>

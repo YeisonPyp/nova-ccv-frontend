@@ -1,0 +1,123 @@
+@if (assignment()) {
+  <div class="p-6 max-w-5xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button
+          class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-secondary transition-colors"
+          (click)="goBack()"
+          title="Volver"
+        >
+          ←
+        </button>
+        <div>
+          <p
+            class="text-xs text-gray-400 uppercase tracking-wider font-semibold"
+          >
+            Asignación de contrato
+          </p>
+          <h1 class="text-xl font-bold text-secondary">
+            {{ assignment()!.name }}
+          </h1>
+        </div>
+      </div>
+      @if (assignment()!.status) {
+        <span
+          class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 uppercase tracking-wide"
+        >
+          {{ assignment()!.status }}
+        </span>
+      }
+    </div>
+
+    <!-- Info card -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5"
+      >
+        @if (assignment()!.description) {
+          <div class="col-span-full flex flex-col gap-1">
+            <span
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+              >Descripción</span
+            >
+            <span class="text-sm text-secondary">{{
+              assignment()!.description
+            }}</span>
+          </div>
+        }
+        <div class="flex flex-col gap-1">
+          <span
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >Tipo de archivo válido</span
+          >
+          <span class="text-sm font-medium text-secondary">{{
+            assignment()!.validFileType ?? "—"
+          }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >Vencimiento</span
+          >
+          <span class="text-sm font-medium text-secondary">
+            {{
+              assignment()!.dueAt
+                ? (assignment()!.dueAt | date: "dd/MM/yyyy")
+                : "—"
+            }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >Creado</span
+          >
+          <span class="text-sm font-medium text-secondary">{{
+            assignment()!.createdAt | date: "dd/MM/yyyy HH:mm"
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submissions -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-secondary">
+          Entregas
+          <span class="ml-2 text-xs font-normal text-gray-400"
+            >({{ assignment()!.submissions.length }})</span
+          >
+        </h2>
+      </div>
+
+      <div class="flex flex-wrap gap-4">
+        @for (sub of assignment()!.submissions; track sub.id) {
+          <app-file-item
+            [file]="asFileResource(sub)"
+            [accept]="assignment()!.validFileType ?? '*'"
+            [loading]="deletingId() === sub.id"
+            (deleteRequested)="deleteSubmission(sub)"
+          />
+        }
+        <app-file-item
+          [file]="null"
+          label="Subir entrega"
+          [accept]="assignment()!.validFileType ?? '*'"
+          [loading]="uploading()"
+          (fileSelected)="onFileSelected($event)"
+        />
+      </div>
+
+      @if (assignment()!.submissions.length === 0 && !uploading()) {
+        <p class="text-sm text-gray-400 italic">
+          Sin entregas aún. Usa el botón para subir la primera.
+        </p>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="flex items-center justify-center h-64 text-tertiary text-sm">
+    Cargando asignación...
+  </div>
+}

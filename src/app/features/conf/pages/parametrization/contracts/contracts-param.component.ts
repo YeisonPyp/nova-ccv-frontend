@@ -10,6 +10,7 @@ import { RangeRetentionParamComponent } from "./components/range-retention/range
 import { SalaryParameterParamComponent } from "./components/salary-parameter/salary-parameter-param.component";
 import { CancellationTypeParamComponent } from "./components/cancellation-type/cancellation-type-param.component";
 import { AssignmentStatusParamComponent } from "./components/assignment-status/assignment-status-param.component";
+import { ContractTypesParamComponent } from "./components/contract-types/contract-types-param.component";
 
 @Component({
   selector: "app-contracts-param",
@@ -26,6 +27,7 @@ import { AssignmentStatusParamComponent } from "./components/assignment-status/a
     SalaryParameterParamComponent,
     CancellationTypeParamComponent,
     AssignmentStatusParamComponent,
+    ContractTypesParamComponent,
   ],
   templateUrl: "./contracts-param.component.html",
 })

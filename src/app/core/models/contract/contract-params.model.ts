@@ -20,6 +20,7 @@ export interface CotizationType {
   id: number;
   name: string;
   description: string | null;
+  color: string | null;
 }
 
 export interface PensionType {

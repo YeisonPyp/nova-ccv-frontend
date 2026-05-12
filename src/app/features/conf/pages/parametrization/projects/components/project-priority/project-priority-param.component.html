@@ -1,6 +1,8 @@
 @if (canReadProjectPriority) {
   <details class="border rounded-lg" (toggle)="onProjectPriorityToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
       Prioridades de proyecto
     </summary>
 
@@ -10,7 +12,10 @@
       } @else {
         @if (canCreateProjectPriority) {
           <div class="flex justify-end">
-            <button class="btn btn-primary btn-sm" (click)="openCreateProjectPriority()">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateProjectPriority()"
+            >
               + Nueva prioridad
             </button>
           </div>
@@ -23,19 +28,23 @@
         >
           <ng-template #actions let-item>
             @if (canUpdateProjectPriority) {
-              <button class="btn btn-sm btn-outline" (click)="openEditProjectPriority(item)">Editar</button>
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditProjectPriority(item)"
+              >
+                Editar
+              </button>
             }
             @if (canDeleteProjectPriority) {
-              <button class="btn btn-sm btn-danger" (click)="openDeleteProjectPriority(item)">Eliminar</button>
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteProjectPriority(item)"
+              >
+                Eliminar
+              </button>
             }
           </ng-template>
         </app-dynamic-table>
-
-        <app-pagination
-          [pages]="projectPriorityTotalPages()"
-          [currentPage]="projectPriorityPage()"
-          (pageChange)="loadProjectPriority($event)"
-        />
       }
     </div>
   </details>
@@ -43,25 +52,53 @@
 
 @if (projectPriorityModalMode()) {
   <div class="modal-overlay" (click)="closeProjectPriorityModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">
-        {{ projectPriorityModalMode() === "create" ? "Nueva prioridad" : "Editar prioridad" }}
+        {{
+          projectPriorityModalMode() === "create"
+            ? "Nueva prioridad"
+            : "Editar prioridad"
+        }}
       </h2>
 
-      <form [formGroup]="projectPriorityForm" (ngSubmit)="submitProjectPriority()" class="space-y-3">
+      <form
+        [formGroup]="projectPriorityForm"
+        (ngSubmit)="submitProjectPriority()"
+        class="space-y-3"
+      >
         <div>
           <label class="block text-sm font-medium mb-1">Nombre *</label>
-          <input formControlName="name" class="form-control w-full" placeholder="Nombre de la prioridad" maxlength="20" />
+          <input
+            formControlName="name"
+            class="form-control w-full"
+            placeholder="Nombre de la prioridad"
+            maxlength="20"
+          />
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Escala *</label>
-          <input formControlName="scale" type="number" class="form-control w-full" placeholder="Valor de escala" />
+          <input
+            formControlName="scale"
+            type="number"
+            class="form-control w-full"
+            placeholder="Valor de escala"
+          />
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeProjectPriorityModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="projectPriorityForm.invalid">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeProjectPriorityModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="projectPriorityForm.invalid"
+          >
             {{ projectPriorityModalMode() === "create" ? "Crear" : "Guardar" }}
           </button>
         </div>
@@ -72,15 +109,23 @@
 
 @if (showDeleteProjectPriorityModal()) {
   <div class="modal-overlay" (click)="closeDeleteProjectPriorityModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar prioridad de proyecto</h2>
       <p class="text-sm text-tertiary">
-        ¿Está seguro de eliminar <strong>{{ editingProjectPriority()?.name }}</strong>?
-        Esta acción no se puede deshacer.
+        ¿Está seguro de eliminar
+        <strong>{{ editingProjectPriority()?.name }}</strong
+        >? Esta acción no se puede deshacer.
       </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteProjectPriorityModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteProjectPriority()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteProjectPriorityModal()"
+        >
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteProjectPriority()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { BillingService } from "../../../../core/services/billing/billing.service";
-import { ContractCandidate } from "../../../../core/models/billing/billing-account.model";
+import { BillingService } from "@/app/core/services/billing/billing.service";
+import { ContractCandidate } from "@/app/core/models/billing/billing-account.model";
 import {
   FileItemComponent,
   FileResource,
-} from "../../../../shared/components/file-item/file-item.component";
+} from "@/app/shared/components/file-item/file-item.component";
 
 @Component({
   selector: "app-create-billing",

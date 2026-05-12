@@ -1,10 +1,5 @@
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  inject,
-  OnInit,
-  signal,
-} from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -12,21 +7,21 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthService } from "../../../../../core/services/auth.service";
+import { AuthService } from "@/app/core/services/auth.service";
 import {
   CreateEmployeeDto,
   EmployeeService,
   UpdateEmployeeDto,
-} from "../../../../../core/services/assessment/employee.service";
+} from "@/app/core/services/assessment/employee.service";
 import {
   CreateEmployeeScheduleDto,
   EmployeeScheduleService,
-} from "../../../../../core/services/assessment/employee-schedule.service";
-import { PositionService } from "../../../../../core/services/assessment/position.service";
-import { Employee } from "../../../../../core/models/assessment/employee.model";
-import { EmployeeSchedule } from "../../../../../core/models/assessment/employee-schedule.model";
-import { SearchSelectComponent } from "../../../../../shared/components/search-select/search-select.component";
-import { SearchSelectOption } from "../../../../../shared/components/search-select/on-search-select.interface";
+} from "@/app/core/services/assessment/employee-schedule.service";
+import { PositionService } from "@/app/core/services/assessment/position.service";
+import { Employee } from "@/app/core/models/assessment/employee.model";
+import { EmployeeSchedule } from "@/app/core/models/assessment/employee-schedule.model";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { SearchSelectOption } from "@/app/shared/components/search-select/on-search-select.interface";
 
 const DAY_NAMES: Record<number, string> = {
   1: "Lunes",
@@ -129,11 +124,15 @@ export class EmployeeFormComponent implements OnInit {
       employeeReportsToId: employee.reportsTo?.id ?? null,
     });
     if (employee.position) {
-      this.selectedPositions.set([{ id: employee.position.id, title: employee.position.name }]);
+      this.selectedPositions.set([
+        { id: employee.position.id, title: employee.position.name },
+      ]);
     }
     if (employee.reportsTo) {
       const r = employee.reportsTo as Employee;
-      this.selectedEmployees.set([{ id: r.id, title: `${r.name} ${r.lastName} (${r.email})` }]);
+      this.selectedEmployees.set([
+        { id: r.id, title: `${r.name} ${r.lastName} (${r.email})` },
+      ]);
     }
   }
 
@@ -149,11 +148,15 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   findPositions(q: string) {
-    this.positionService.findPositions({ page: 0, size: 10, name: q }).subscribe((r) => {
-      if (r.success && r.data) {
-        this.positions.set(r.data.content.map((p) => ({ id: p.id, title: p.name })));
-      }
-    });
+    this.positionService
+      .findPositions({ page: 0, size: 10, name: q })
+      .subscribe((r) => {
+        if (r.success && r.data) {
+          this.positions.set(
+            r.data.content.map((p) => ({ id: p.id, title: p.name })),
+          );
+        }
+      });
   }
 
   findEmployees(q: string) {
@@ -162,7 +165,10 @@ export class EmployeeFormComponent implements OnInit {
         this.employees.set(
           r.data.content
             .filter((e) => e.id !== this.employeeId())
-            .map((e) => ({ id: e.id, title: `${e.name} ${e.lastName} (${e.email})` }))
+            .map((e) => ({
+              id: e.id,
+              title: `${e.name} ${e.lastName} (${e.email})`,
+            })),
         );
       }
     });
@@ -205,7 +211,10 @@ export class EmployeeFormComponent implements OnInit {
         employeeReportsToId: val.employeeReportsToId,
       };
       this.employeeService.updateEmployee(this.employeeId()!, dto).subscribe({
-        next: () => { this.saving.set(false); this.goBack(); },
+        next: () => {
+          this.saving.set(false);
+          this.goBack();
+        },
         error: () => this.saving.set(false),
       });
     } else {
@@ -217,7 +226,10 @@ export class EmployeeFormComponent implements OnInit {
         employeeReportsToId: val.employeeReportsToId,
       };
       this.employeeService.createEmployee(dto).subscribe({
-        next: () => { this.saving.set(false); this.goBack(); },
+        next: () => {
+          this.saving.set(false);
+          this.goBack();
+        },
         error: () => this.saving.set(false),
       });
     }
@@ -255,7 +267,9 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   minutesToTime(min: number): string {
-    const h = Math.floor(min / 60).toString().padStart(2, "0");
+    const h = Math.floor(min / 60)
+      .toString()
+      .padStart(2, "0");
     const m = (min % 60).toString().padStart(2, "0");
     return `${h}:${m}`;
   }

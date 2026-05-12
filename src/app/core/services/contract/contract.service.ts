@@ -39,9 +39,7 @@ export class ContractService {
   }
 
   findById(id: number): Observable<ApiResponse<Contract>> {
-    return this.http.get<ApiResponse<Contract>>(
-      `${this.base}/contracts/${id}`,
-    );
+    return this.http.get<ApiResponse<Contract>>(`${this.base}/contracts/${id}`);
   }
 
   // Mutations
@@ -116,17 +114,113 @@ export class ContractService {
     );
   }
 
-  createForEmployee(dto: Record<string, unknown>, files: Record<string, File> = {}): Observable<ApiResponse<Contract>> {
-    const formData = new FormData();
-    formData.append("contract", new Blob([JSON.stringify(dto)], { type: "application/json" }));
-    Object.entries(files).forEach(([name, file]) => formData.append(name, file));
-    return this.http.post<ApiResponse<Contract>>(`${this.base}/contracts/employee`, formData);
+  createAddition(dto: {
+    contractId: number;
+    actId: number;
+    newBasePeriodAmount: number;
+    description?: string;
+  }): Observable<ApiResponse<ContractAdditions>> {
+    return this.http.post<ApiResponse<ContractAdditions>>(
+      `${this.base}/contract-additions`,
+      dto,
+    );
   }
 
-  createForAgency(dto: Record<string, unknown>, files: Record<string, File> = {}): Observable<ApiResponse<Contract>> {
+  createCancellation(dto: {
+    contractId: number;
+    actId: number;
+    cancelationTypeName: string;
+    cancellationReason?: string;
+    cancellationDate: string;
+    indemnityAmount?: number;
+    penaltyAmount?: number;
+  }): Observable<ApiResponse<ContractCancellation>> {
+    return this.http.post<ApiResponse<ContractCancellation>>(
+      `${this.base}/contract-cancellations`,
+      dto,
+    );
+  }
+
+  createCession(dto: {
+    contractId: number;
+    actId: number;
+    previousEmployeeId?: number;
+    newEmployeeId?: number;
+    previousAgencyId?: number;
+    newAgencyId?: number;
+    executedAmount: number;
+    pendingAmount: number;
+    description?: string;
+  }): Observable<ApiResponse<ContractCessions>> {
+    return this.http.post<ApiResponse<ContractCessions>>(
+      `${this.base}/contract-cessions`,
+      dto,
+    );
+  }
+
+  createOthersi(dto: {
+    contractId: number;
+    actId: number;
+    index: number;
+    description: string;
+    executionDate?: string;
+  }): Observable<ApiResponse<ContractOthersi>> {
+    return this.http.post<ApiResponse<ContractOthersi>>(
+      `${this.base}/contract-othersi`,
+      dto,
+    );
+  }
+
+  createSuspension(dto: {
+    contractId: number;
+    actId: number;
+    suspensionStatusName: string;
+    suspensionReason: string;
+    suspensionDate: string;
+    expectedTerminationDate?: string;
+    expectedResumeDate?: string;
+    affectsSocialSecurity: boolean;
+    standbyCostAmount: number;
+  }): Observable<ApiResponse<ContractSuspension>> {
+    return this.http.post<ApiResponse<ContractSuspension>>(
+      `${this.base}/contract-suspensions`,
+      dto,
+    );
+  }
+
+  createForEmployee(
+    dto: Record<string, unknown>,
+    files: Record<string, File> = {},
+  ): Observable<ApiResponse<Contract>> {
     const formData = new FormData();
-    formData.append("contract", new Blob([JSON.stringify(dto)], { type: "application/json" }));
-    Object.entries(files).forEach(([name, file]) => formData.append(name, file));
-    return this.http.post<ApiResponse<Contract>>(`${this.base}/contracts/agency`, formData);
+    formData.append(
+      "contract",
+      new Blob([JSON.stringify(dto)], { type: "application/json" }),
+    );
+    Object.entries(files).forEach(([name, file]) =>
+      formData.append(name, file),
+    );
+    return this.http.post<ApiResponse<Contract>>(
+      `${this.base}/contracts/employee`,
+      formData,
+    );
+  }
+
+  createForAgency(
+    dto: Record<string, unknown>,
+    files: Record<string, File> = {},
+  ): Observable<ApiResponse<Contract>> {
+    const formData = new FormData();
+    formData.append(
+      "contract",
+      new Blob([JSON.stringify(dto)], { type: "application/json" }),
+    );
+    Object.entries(files).forEach(([name, file]) =>
+      formData.append(name, file),
+    );
+    return this.http.post<ApiResponse<Contract>>(
+      `${this.base}/contracts/agency`,
+      formData,
+    );
   }
 }

@@ -3,10 +3,10 @@ import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
-import { FilingService } from "../../../../core/services/filing/filing.service";
-import { Filing } from "../../../../core/models/filing/filing.models";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { FilingService } from "@/app/core/services/filing/filing.service";
+import { Filing } from "@/app/core/models/filing/filing.models";
 import { Router } from "@angular/router";
 
 interface BreadcrumbEntry {
@@ -17,11 +17,7 @@ interface BreadcrumbEntry {
 @Component({
   selector: "app-filing-dashboard",
   standalone: true,
-  imports: [
-    CommonModule,
-    DynamicTableComponent,
-    PaginationComponent,
-  ],
+  imports: [CommonModule, DynamicTableComponent, PaginationComponent],
   templateUrl: "./filing-dashboard.component.html",
 })
 export class FilingDashboardComponent implements OnInit {
@@ -44,8 +40,6 @@ export class FilingDashboardComponent implements OnInit {
     { key: "id", label: "ID" },
     { key: "processName", label: "Proceso" },
     { key: "areaName", label: "Área" },
-    { key: "origin", label: "Origen" },
-    { key: "destination", label: "Destino" },
     { key: "createdAt", label: "Fecha" },
   ];
 
@@ -101,7 +95,7 @@ export class FilingDashboardComponent implements OnInit {
   }
 
   openEdit(filing: Filing): void {
-    this.router.navigate(["/filings", filing.id, "edit"]);
+    this.router.navigate(["/filings", filing.id]);
   }
 
   deleteItem(filing: Filing): void {

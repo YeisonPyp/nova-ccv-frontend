@@ -1,35 +1,130 @@
 @if (canReadRangeRetention) {
   <details class="border rounded-lg" (toggle)="onRangeRetentionToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Rangos de retención</summary>
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Rangos de retención
+    </summary>
     <div class="p-4 space-y-3">
-      @if (!rangeRetentionLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      @if (!rangeRetentionLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
       } @else {
-        @if (canCreateRangeRetention) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateRangeRetention()">+ Nuevo rango</button></div> }
-        <app-dynamic-table [data]="rangeRetentionItems()" [columns]="rangeRetentionColumns" emptyMessage="No hay rangos de retención.">
+        @if (canCreateRangeRetention) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateRangeRetention()"
+            >
+              + Nuevo rango
+            </button>
+          </div>
+        }
+        <app-dynamic-table
+          [data]="rangeRetentionItems()"
+          [columns]="rangeRetentionColumns"
+          emptyMessage="No hay rangos de retención."
+        >
           <ng-template #actions let-item>
-            @if (canUpdateRangeRetention) { <button class="btn btn-sm btn-outline" (click)="openEditRangeRetention(item)">Editar</button> }
-            @if (canDeleteRangeRetention) { <button class="btn btn-sm btn-danger" (click)="openDeleteRangeRetention(item)">Eliminar</button> }
+            @if (canUpdateRangeRetention) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditRangeRetention(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteRangeRetention) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteRangeRetention(item)"
+              >
+                Eliminar
+              </button>
+            }
           </ng-template>
         </app-dynamic-table>
-        <app-pagination [pages]="rangeRetentionTotalPages()" [currentPage]="rangeRetentionPage()" (pageChange)="loadRangeRetention($event)" />
       }
     </div>
   </details>
 }
 @if (rangeRetentionModalMode()) {
   <div class="modal-overlay" (click)="closeRangeRetentionModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ rangeRetentionModalMode() === "create" ? "Nuevo rango de retención" : "Editar rango de retención" }}</h2>
-      <form [formGroup]="rangeRetentionForm" (ngSubmit)="submitRangeRetention()" class="space-y-3">
-        <div><label class="block text-sm font-medium mb-1">Año *</label><input formControlName="year" type="number" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">UVT Mínimo</label><input formControlName="minUvt" type="number" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">UVT Máximo</label><input formControlName="maxUvt" type="number" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">Tarifa</label><input formControlName="tax" type="number" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">Sustracción</label><input formControlName="subtraction" type="number" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">Adición</label><input formControlName="addition" type="number" class="form-control w-full" /></div>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          rangeRetentionModalMode() === "create"
+            ? "Nuevo rango de retención"
+            : "Editar rango de retención"
+        }}
+      </h2>
+      <form
+        [formGroup]="rangeRetentionForm"
+        (ngSubmit)="submitRangeRetention()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Año *</label
+          ><input
+            formControlName="year"
+            type="number"
+            class="form-control w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">UVT Mínimo</label
+          ><input
+            formControlName="minUvt"
+            type="number"
+            class="form-control w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">UVT Máximo</label
+          ><input
+            formControlName="maxUvt"
+            type="number"
+            class="form-control w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Tarifa</label
+          ><input
+            formControlName="tax"
+            type="number"
+            class="form-control w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Sustracción</label
+          ><input
+            formControlName="subtraction"
+            type="number"
+            class="form-control w-full"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Adición</label
+          ><input
+            formControlName="addition"
+            type="number"
+            class="form-control w-full"
+          />
+        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeRangeRetentionModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="rangeRetentionForm.invalid">{{ rangeRetentionModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeRangeRetentionModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="rangeRetentionForm.invalid"
+          >
+            {{ rangeRetentionModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
         </div>
       </form>
     </div>
@@ -37,12 +132,23 @@
 }
 @if (showDeleteRangeRetentionModal()) {
   <div class="modal-overlay" (click)="closeDeleteRangeRetentionModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar rango de retención</h2>
-      <p class="text-sm text-tertiary">¿Seguro de eliminar el rango del año <strong>{{ editingRangeRetention()?.year }}</strong>?</p>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar el rango del año
+        <strong>{{ editingRangeRetention()?.year }}</strong
+        >?
+      </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteRangeRetentionModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteRangeRetention()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteRangeRetentionModal()"
+        >
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteRangeRetention()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

@@ -15,7 +15,7 @@
         </button>
       </div>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="modal-body" style="max-height: 60vh; overflow-y: auto">
+        <div class="modal-container" style="max-height: 60vh; overflow-y: auto">
           <div class="form-group">
             <label for="job-name"
               >Nombre del Puesto <span class="required">*</span></label
@@ -61,7 +61,6 @@
             (onSearch)="onSearchArea($event)"
             (onSelect)="onSelectArea($event)"
             (onRemove)="onRemoveArea($event)"
-            
             [maxElements]="1"
             [label]="'Área'"
             [required]="true"
@@ -74,7 +73,6 @@
             (onSearch)="onSearchCompetencie($event)"
             (onSelect)="onSelectCompetencie($event)"
             (onRemove)="onRemoveCompetencie($event)"
-
             [maxElements]="-1"
             [label]="'Competencias'"
             [required]="true"

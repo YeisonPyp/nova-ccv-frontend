@@ -15,12 +15,12 @@ import {
   Validators,
 } from "@angular/forms";
 import { EvidenceItemComponent } from "../evidence-item/evidence-item.component";
-import { CorrectiveActionService } from "../../../../../../core/services/improvement-plan/corrective-action.service";
+import { CorrectiveActionService } from "@/app/core/services/improvement-plan/corrective-action.service";
 import {
   CorrectiveActionDto,
   CreateCorrectiveActionDto,
   UpdateCorrectiveActionDto,
-} from "../../../../../../core/models/improvement-plan/corrective-action.model";
+} from "@/app/core/models/improvement-plan/corrective-action.model";
 
 @Component({
   selector: "app-corrective-action-item",

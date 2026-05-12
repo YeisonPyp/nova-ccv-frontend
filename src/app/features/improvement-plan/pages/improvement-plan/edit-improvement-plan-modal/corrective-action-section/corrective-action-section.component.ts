@@ -1,11 +1,19 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, forwardRef, inject, Input, input, signal } from "@angular/core";
+import {
+  Component,
+  effect,
+  forwardRef,
+  inject,
+  Input,
+  input,
+  signal,
+} from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { combineLatest, map, of, switchMap } from "rxjs";
-import { CorrectiveActionService } from "../../../../../../core/services/improvement-plan/corrective-action.service";
+import { CorrectiveActionService } from "@/app/core/services/improvement-plan/corrective-action.service";
 import { NewCorrectiveActionComponent } from "./new-corrective-action/new-corrective-action.component";
-import { CorrectiveActionDto } from "../../../../../../core/models/improvement-plan/corrective-action.model";
+import { CorrectiveActionDto } from "@/app/core/models/improvement-plan/corrective-action.model";
 import { CorrectiveActionDetailsComponent } from "./corrective-action-details/corrective-action-details.component";
 
 @Component({
@@ -15,7 +23,7 @@ import { CorrectiveActionDetailsComponent } from "./corrective-action-details/co
     CommonModule,
     ReactiveFormsModule,
     NewCorrectiveActionComponent,
-    CorrectiveActionDetailsComponent
+    CorrectiveActionDetailsComponent,
   ],
   templateUrl: "./corrective-action-section.component.html",
   styleUrl: "./corrective-action-section.component.scss",
@@ -34,22 +42,21 @@ export class CorrectiveActionSectionComponent {
       combineLatest([
         toObservable(this.parentId),
         toObservable(this.planId),
-        toObservable(this.isOpen)
+        toObservable(this.isOpen),
       ]).pipe(
         switchMap(([id, planId, open]) => {
           if (!open || !planId) {
             return of([]);
           }
-          return this.service.findByParentId(planId, id).pipe(
-            map(response => response.data)
-          );
-        })
-      )
-    )
+          return this.service
+            .findByParentId(planId, id)
+            .pipe(map((response) => response.data));
+        }),
+      ),
+    );
 
     toObservable(t).subscribe((e) => {
-      if (e)
-        this.actions.set(e);
+      if (e) this.actions.set(e);
     });
   }
 

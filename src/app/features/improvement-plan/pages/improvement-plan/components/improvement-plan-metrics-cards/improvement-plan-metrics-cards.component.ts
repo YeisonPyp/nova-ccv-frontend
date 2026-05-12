@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ImprovementPlanMetricsService } from "../../../../../../core/services/improvement-plan/improvement-plan-metrics.service";
+import { ImprovementPlanMetricsService } from "@/app/core/services/improvement-plan/improvement-plan-metrics.service";
 
 @Component({
   selector: "app-improvement-plan-metrics-cards",

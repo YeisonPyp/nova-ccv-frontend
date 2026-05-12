@@ -15,16 +15,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { SearchSelectComponent } from "../../../../../../shared/components/search-select/search-select.component";
-import { Area } from "../../../../../../core/models/assessment/area.model";
-import { AreaService } from "../../../../../../core/services/assessment/area.service";
-import { CompetencieService } from "../../../../../../core/services/assessment/competencie.service";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { Area } from "@/app/core/models/assessment/area.model";
+import { AreaService } from "@/app/core/services/assessment/area.service";
+import { CompetencieService } from "@/app/core/services/assessment/competencie.service";
 import {
   CreatePositionDto,
   UpdatePositionDto,
-} from "../../../../../../core/services/assessment/position.service";
-import { SearchSelectOption } from "../../../../../../shared/components/search-select/on-search-select.interface";
-import { Position } from "../../../../../../core/models/assessment/position.model";
+} from "@/app/core/services/assessment/position.service";
+import { SearchSelectOption } from "@/app/shared/components/search-select/on-search-select.interface";
+import { Position } from "@/app/core/models/assessment/position.model";
 @Component({
   selector: "app-job-modal",
   standalone: true,

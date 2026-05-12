@@ -1,34 +1,31 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  inject,
-  signal,
-  ElementRef,
-  ViewChild,
-} from "@angular/core";
+import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { gantt } from "dhtmlx-gantt";
-import { ProjectService } from "../../../../core/services/projects/project.service";
+import { ProjectService } from "@/app/core/services/projects/project.service";
 import {
-  GanttData,
   Project,
-} from "../../../../core/models/projects/project.model";
+  ProjectActivity,
+  ProjectRisk,
+} from "@/app/core/models/projects/project.model";
+import { RisksSectionComponent } from "./components/risks-section/risks-section.component";
+import { ActivitesSectionComponent } from "./components/activities-section/activities-section.component";
+import { GanntSectionComponent } from "./components/gantt-section/gannt-section.component";
 
 @Component({
   selector: "app-project-detail",
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, DatePipe],
+  imports: [
+    CommonModule,
+    CurrencyPipe,
+    DatePipe,
+    RisksSectionComponent,
+    ActivitesSectionComponent,
+    GanntSectionComponent,
+  ],
   templateUrl: "./project-detail.component.html",
   styleUrl: "./project-detail.component.scss",
 })
-export class ProjectDetailComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
-  @ViewChild("ganttContainer") ganttContainer!: ElementRef<HTMLDivElement>;
-
+export class ProjectDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly service = inject(ProjectService);
@@ -38,13 +35,10 @@ export class ProjectDetailComponent
   ganttLoading = signal(true);
   error = signal<string | null>(null);
 
-  private pendingGanttData: GanttData | null = null;
-  private ganttInitialized = false;
-
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get("id"));
+    const projectId = Number(this.route.snapshot.paramMap.get("id"));
 
-    this.service.findById(id).subscribe({
+    this.service.findById(projectId).subscribe({
       next: (res) => {
         if (res.success) this.project.set(res.data);
         else this.error.set(res.message);
@@ -55,46 +49,6 @@ export class ProjectDetailComponent
         this.loading.set(false);
       },
     });
-
-    this.service.getGanttData(id).subscribe({
-      next: (res) => {
-        this.ganttLoading.set(false);
-        if (this.ganttInitialized) {
-          gantt.clearAll();
-          gantt.parse(res.data);
-        } else {
-          this.pendingGanttData = res.data;
-        }
-      },
-      error: () => this.ganttLoading.set(false),
-    });
-  }
-
-  ngAfterViewInit(): void {
-    gantt.config.date_format = "%Y-%m-%d";
-    gantt.config.auto_scheduling = true;
-    // gantt.config.date_format = "%Y-%m-%d";
-
-    gantt.config.columns = [
-      { name: "text", label: "Actividad", width: 200, tree: true },
-      { name: "start_date", label: "Inicio", align: "center", width: 90 },
-      { name: "duration", label: "Días", align: "center", width: 50 },
-      { name: "status", label: "Estado", align: "center", width: 90 },
-    ];
-
-    gantt.init(this.ganttContainer.nativeElement);
-    this.ganttInitialized = true;
-
-    if (this.pendingGanttData) {
-      gantt.parse(this.pendingGanttData);
-      this.pendingGanttData = null;
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.ganttInitialized) {
-      gantt.clearAll();
-    }
   }
 
   goBack(): void {
@@ -110,5 +64,41 @@ export class ProjectDetailComponent
       PLANEACION: "badge-info",
     };
     return map[status?.toUpperCase()] ?? "badge-secondary";
+  }
+
+  onActivitySaved(a: ProjectActivity) {
+    this.project.update((p) => {
+      if (!p) return p;
+      const activitiesMap = this.projectActivities.reduce(
+        (acc, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {} as Record<number, ProjectActivity>,
+      );
+      activitiesMap[a.id] = a;
+      const updatedActivities = Object.values(activitiesMap);
+
+      return { ...p, activities: updatedActivities };
+    });
+  }
+
+  onRiskSaved(r: ProjectRisk) {
+    this.project.update((p) => {
+      if (!p) return p;
+      return { ...p, risks: [...this.projectRisks, r] };
+    });
+  }
+
+  get projectActivities() {
+    return (
+      this.project()?.activities?.sort(
+        (a, b) => a.displayOrder - b.displayOrder,
+      ) ?? []
+    );
+  }
+
+  get projectRisks() {
+    return this.project()?.risks ?? [];
   }
 }

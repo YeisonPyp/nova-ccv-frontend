@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditAssessmentModalComponent } from "./edit-assessment-modal.component";
-import { Assessment } from "../../../../../core/models/assessment/assessment.model";
+import { Assessment } from "@/app/core/models/assessment/assessment.model";
 
 describe("EditAssessmentModalComponent", () => {
   let component: EditAssessmentModalComponent;

@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  OnInit,
-} from "@angular/core";
+import { Component, computed, inject, signal, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MutationsTabComponent } from "./tabs/mutations-tab/mutations-tab.component";
@@ -14,12 +7,14 @@ import { CessionsTabComponent } from "./tabs/cessions-tab/cessions-tab.component
 import { SuspensionsTabComponent } from "./tabs/suspensions-tab/suspensions-tab.component";
 import { CancellationsTabComponent } from "./tabs/cancellations-tab/cancellations-tab.component";
 import { OthersiTabComponent } from "./tabs/othersi-tab/othersi-tab.component";
-import { ContractFilingFileNameService } from "../../../../core/services/contract/contract-filing-file-name.service";
-import { ContractService } from "../../../../core/services/contract/contract.service";
-import {
-  Contract,
-  ContractFilingFileName,
-} from "../../../../core/models/contract/contract.models";
+import { AssignmentsTabComponent } from "./tabs/assignments-tab/assignments-tab.component";
+import { FilingCardComponent } from "../../../../features/filing/pages/filing-detail/components/filing-card/filing-card.component";
+import { CreateContractProcessModalComponent } from "../create-contract-process-modal/create-contract-process-modal.component";
+import { ContractPendingProcessType } from "@/app/core/models/contract/contract.models";
+import { ContractService } from "@/app/core/services/contract/contract.service";
+import { FilingService } from "@/app/core/services/filing/filing.service";
+import { Contract } from "@/app/core/models/contract/contract.models";
+import { Filing } from "@/app/core/models/filing/filing.models";
 
 type TabKey =
   | "mutations"
@@ -28,6 +23,7 @@ type TabKey =
   | "suspensions"
   | "cancellations"
   | "othersi"
+  | "assignments"
   | "filing";
 
 interface Tab {
@@ -46,23 +42,39 @@ interface Tab {
     SuspensionsTabComponent,
     CancellationsTabComponent,
     OthersiTabComponent,
+    AssignmentsTabComponent,
+    FilingCardComponent,
+    CreateContractProcessModalComponent,
   ],
   templateUrl: "./contract-detail.component.html",
   styleUrl: "./contract-detail.component.scss",
 })
 export class ContractDetailComponent implements OnInit {
-  private readonly filingFileNameService = inject(
-    ContractFilingFileNameService,
-  );
   private readonly contractService = inject(ContractService);
+  private readonly filingService = inject(FilingService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   contract = signal<Contract | null>(null);
+  contractFiling = signal<Filing | null>(null);
+  filingLoaded = signal(false);
 
   activeTab = signal<TabKey>("mutations");
-  filingFileNames = signal<ContractFilingFileName[]>([]);
-  selectedFiles = signal<Record<string, File>>({});
+  showProcessModal = signal(false);
+
+  readonly tabToProcessType: Partial<
+    Record<TabKey, ContractPendingProcessType>
+  > = {
+    additions: "addition",
+    cancellations: "cancellation",
+    cessions: "cession",
+    othersi: "othersi",
+    suspensions: "suspension",
+  };
+
+  activeProcessType = computed<ContractPendingProcessType>(
+    () => this.tabToProcessType[this.activeTab()] ?? "addition",
+  );
 
   tabs: Tab[] = [
     { key: "mutations", label: "Mutaciones" },
@@ -71,6 +83,7 @@ export class ContractDetailComponent implements OnInit {
     { key: "suspensions", label: "Suspensiones" },
     { key: "cancellations", label: "Cancelaciones" },
     { key: "othersi", label: "Otros Sí" },
+    { key: "assignments", label: "Asignaciones" },
     { key: "filing", label: "Radicación" },
   ];
 
@@ -79,14 +92,6 @@ export class ContractDetailComponent implements OnInit {
   activeTabLabel = computed(
     () => this.tabs.find((t) => t.key === this.activeTab())?.label ?? "",
   );
-
-  constructor() {
-    effect(() => {
-      this.filingFileNameService.findAll().subscribe((res) => {
-        this.filingFileNames.set(res.data ?? []);
-      });
-    });
-  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("id");
@@ -101,6 +106,14 @@ export class ContractDetailComponent implements OnInit {
 
   setTab(key: TabKey): void {
     this.activeTab.set(key);
+    if (key === "filing" && !this.filingLoaded()) {
+      this.filingLoaded.set(true);
+      this.filingService.findByContractId(this.contractId()).subscribe({
+        next: (res) => {
+          if (res.success && res.data) this.contractFiling.set(res.data);
+        },
+      });
+    }
   }
 
   close(): void {
@@ -108,25 +121,7 @@ export class ContractDetailComponent implements OnInit {
   }
 
   handleCreate(): void {
-    // Navigate to respective create screen based on active tab
-    // e.g. this.router.navigate(["/contracts", this.contractId(), "create", this.activeTab()]);
-    // For now we'll just log since the output event was used before
-    console.log("Create record for:", this.activeTab());
-  }
-
-  onFileChange(name: string, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    this.selectedFiles.update((prev) => {
-      const next = { ...prev };
-      if (file) next[name] = file;
-      else delete next[name];
-      return next;
-    });
-  }
-
-  submitFiling(): void {
-    console.log("Filing submitted with files:", this.selectedFiles());
+    this.showProcessModal.set(true);
   }
 
   formatCurrency(value: number | null): string {

@@ -3,11 +3,11 @@ import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
-import { GoalService } from "../../../../core/services/goals/goal.service";
-import { Goal } from "../../../../core/models/goals/goal.model";
-import { APIPage } from "../../../../core/models/api-page.model";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
+import { GoalService } from "@/app/core/services/goals/goal.service";
+import { Goal } from "@/app/core/models/goals/goal.model";
+import { APIPage } from "@/app/core/models/api-page.model";
 import { Router } from "@angular/router";
 
 @Component({

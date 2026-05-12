@@ -1,13 +1,14 @@
+import { Area } from "../assessment/area.model";
+import { CostCenter } from "../cost-center/cost-center.models";
+
 export interface Project {
   id: number;
   code: string;
   name: string;
   description?: string;
   generalObjective: string;
-  areaId?: number;
-  areaName?: string;
-  costCenterId?: number;
-  costCenterName?: string;
+  area?: Area;
+  costCenter?: CostCenter;
   startDate: string;
   endDate: string;
   totalBudget: number;
@@ -17,6 +18,9 @@ export interface Project {
   createdAt: string;
   createdById?: number;
   createdByUsername?: string;
+
+  activities?: ProjectActivity[];
+  risks?: ProjectRisk[];
 }
 
 export interface ProjectActivity {
@@ -37,28 +41,15 @@ export interface ProjectActivity {
   budgetAmount?: number;
 }
 
-export interface GanttTask {
+export interface ProjectRisk {
   id: number;
-  text: string;
-  start_date: string;
-  duration: number;
-  progress: number;
-  parent: number;
-  open: boolean;
-  color?: string;
-  status?: string;
-  budget_amount?: number;
-}
-
-export interface GanttLink {
-  id: number;
-  source: number;
-  target: number;
-  type: string;
-  lag: number;
-}
-
-export interface GanttData {
-  data: GanttTask[];
-  links: GanttLink[];
+  projectId: number;
+  name: string;
+  description?: string;
+  displayOrder: number;
+  estimatedCostAmount?: number;
+  estimatedHours?: number;
+  probability: string;
+  priority: string;
+  createdAt: string;
 }

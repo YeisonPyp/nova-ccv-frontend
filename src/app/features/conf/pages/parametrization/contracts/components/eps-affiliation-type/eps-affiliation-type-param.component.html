@@ -1,31 +1,95 @@
 @if (canReadEpsAffiliationType) {
-  <details class="border rounded-lg" (toggle)="onEpsAffiliationTypeToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">Tipos de afiliación EPS</summary>
+  <details
+    class="border rounded-lg"
+    (toggle)="onEpsAffiliationTypeToggle($event)"
+  >
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Tipos de afiliación EPS
+    </summary>
     <div class="p-4 space-y-3">
-      @if (!epsAffiliationTypeLoaded()) { <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      @if (!epsAffiliationTypeLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
       } @else {
-        @if (canCreateEpsAffiliationType) { <div class="flex justify-end"><button class="btn btn-primary btn-sm" (click)="openCreateEpsAffiliationType()">+ Nuevo tipo</button></div> }
-        <app-dynamic-table [data]="epsAffiliationTypeItems()" [columns]="epsAffiliationTypeColumns" emptyMessage="No hay tipos de afiliación EPS.">
+        @if (canCreateEpsAffiliationType) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateEpsAffiliationType()"
+            >
+              + Nuevo tipo
+            </button>
+          </div>
+        }
+        <app-dynamic-table
+          [data]="epsAffiliationTypeItems()"
+          [columns]="epsAffiliationTypeColumns"
+          emptyMessage="No hay tipos de afiliación EPS."
+        >
           <ng-template #actions let-item>
-            @if (canUpdateEpsAffiliationType) { <button class="btn btn-sm btn-outline" (click)="openEditEpsAffiliationType(item)">Editar</button> }
-            @if (canDeleteEpsAffiliationType) { <button class="btn btn-sm btn-danger" (click)="openDeleteEpsAffiliationType(item)">Eliminar</button> }
+            @if (canUpdateEpsAffiliationType) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditEpsAffiliationType(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteEpsAffiliationType) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteEpsAffiliationType(item)"
+              >
+                Eliminar
+              </button>
+            }
           </ng-template>
         </app-dynamic-table>
-        <app-pagination [pages]="epsAffiliationTypeTotalPages()" [currentPage]="epsAffiliationTypePage()" (pageChange)="loadEpsAffiliationType($event)" />
       }
     </div>
   </details>
 }
 @if (epsAffiliationTypeModalMode()) {
   <div class="modal-overlay" (click)="closeEpsAffiliationTypeModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ epsAffiliationTypeModalMode() === "create" ? "Nuevo tipo de afiliación EPS" : "Editar tipo de afiliación EPS" }}</h2>
-      <form [formGroup]="epsAffiliationTypeForm" (ngSubmit)="submitEpsAffiliationType()" class="space-y-3">
-        <div><label class="block text-sm font-medium mb-1">Nombre *</label><input formControlName="name" class="form-control w-full" /></div>
-        <div><label class="block text-sm font-medium mb-1">Descripción</label><input formControlName="description" class="form-control w-full" /></div>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          epsAffiliationTypeModalMode() === "create"
+            ? "Nuevo tipo de afiliación EPS"
+            : "Editar tipo de afiliación EPS"
+        }}
+      </h2>
+      <form
+        [formGroup]="epsAffiliationTypeForm"
+        (ngSubmit)="submitEpsAffiliationType()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input formControlName="name" class="form-control w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label
+          ><input formControlName="description" class="form-control w-full" />
+        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeEpsAffiliationTypeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="epsAffiliationTypeForm.invalid">{{ epsAffiliationTypeModalMode() === "create" ? "Crear" : "Guardar" }}</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeEpsAffiliationTypeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="epsAffiliationTypeForm.invalid"
+          >
+            {{
+              epsAffiliationTypeModalMode() === "create" ? "Crear" : "Guardar"
+            }}
+          </button>
         </div>
       </form>
     </div>
@@ -33,12 +97,26 @@
 }
 @if (showDeleteEpsAffiliationTypeModal()) {
   <div class="modal-overlay" (click)="closeDeleteEpsAffiliationTypeModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar tipo de afiliación EPS</h2>
-      <p class="text-sm text-tertiary">¿Seguro de eliminar <strong>{{ editingEpsAffiliationType()?.name }}</strong>?</p>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar
+        <strong>{{ editingEpsAffiliationType()?.name }}</strong
+        >?
+      </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteEpsAffiliationTypeModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteEpsAffiliationType()">Eliminar</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteEpsAffiliationTypeModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="confirmDeleteEpsAffiliationType()"
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

@@ -1,12 +1,12 @@
 import { Component, OnInit, inject, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CostCenter } from "../../../../../core/models/cost-center/cost-center.models";
-import { CostCenterService } from "../../../../../core/services/cost-center/cost-center.service";
+import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
+import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { CostCenterModalComponent } from "./cost-center-modal/cost-center-modal.component";
 interface BreadcrumbEntry {
   id: number | null;

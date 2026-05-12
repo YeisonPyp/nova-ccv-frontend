@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { AuditCandidatesService } from "../../../../core/services/audit-candidates.service";
-import { AuditCandidate } from "../../../../core/models/audit/audit-candidate.model";
+import { AuditCandidatesService } from "@/app/core/services/audit-candidates.service";
+import { AuditCandidate } from "@/app/core/models/audit/audit-candidate.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 
 @Component({
   selector: "app-audit-candidates",

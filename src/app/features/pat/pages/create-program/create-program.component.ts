@@ -7,19 +7,22 @@ import {
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { PatApiService } from "../../../../core/services/pat-api.service";
-import { AreaService } from "../../../../core/services/assessment/area.service";
-import { EmployeeService } from "../../../../core/services/assessment/employee.service";
-import { CostCenterService } from "../../../../core/services/cost-center/cost-center.service";
-import { SearchSelectComponent } from "../../../../shared/components/search-select/search-select.component";
-import { SearchSelectContextFactory } from "../../../../shared/components/search-select/on-search-select.interface";
-import { Area } from "../../../../core/models/assessment/area.model";
-import { Employee } from "../../../../core/models/assessment/employee.model";
-import { CostCenter } from "../../../../core/models/cost-center/cost-center.models";
+import { PatApiService } from "@/app/core/services/pat-api.service";
+import { AreaService } from "@/app/core/services/assessment/area.service";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
+import { Area } from "@/app/core/models/assessment/area.model";
+import { Employee } from "@/app/core/models/assessment/employee.model";
+import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
 import { ProgramStatus } from "../../models/pat.models";
 
 const currentYear = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from({ length: currentYear - 2019 }, (_, i) => currentYear + 1 - i);
+const YEAR_OPTIONS = Array.from(
+  { length: currentYear - 2019 },
+  (_, i) => currentYear + 1 - i,
+);
 
 const STATUS_OPTIONS: { value: ProgramStatus; label: string }[] = [
   { value: "DRAFT", label: "Borrador" },

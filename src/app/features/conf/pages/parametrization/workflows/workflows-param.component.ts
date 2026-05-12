@@ -1,5 +1,5 @@
 import { Component, signal } from "@angular/core";
-import { Workflow } from "../../../../../core/models/filing/workflow.model";
+import { Workflow } from "@/app/core/models/filing/workflow.model";
 import { WorkflowListParamComponent } from "./components/workflow-list/workflow-list-param.component";
 import { WorkflowStepsParamComponent } from "./components/workflow-steps/workflow-steps-param.component";
 

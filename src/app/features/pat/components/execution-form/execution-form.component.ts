@@ -11,8 +11,8 @@ import {
   ExecutionFormData,
   Program,
 } from "../../models/pat.models";
-import { MONTH_NAMES } from "../../../../core/data/mock-data";
-import { CurrencyPipe } from "../../../../shared/pipes/percentage.pipe";
+import { MONTH_NAMES } from "@/app/core/data/mock-data";
+import { CurrencyPipe } from "@/app/shared/pipes/percentage.pipe";
 
 @Component({
   selector: "app-execution-form",

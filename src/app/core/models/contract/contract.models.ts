@@ -150,3 +150,50 @@ export interface ContractFilingFileName {
   isRequired: boolean;
   mimeTypes: string | null;
 }
+
+export interface ContractSubmission {
+  id: number;
+  assignmentId: number;
+  fileName: string;
+  bucketName: string;
+  description: string | null;
+  createdAt: string;
+}
+
+export interface ContractAssignment {
+  id: number;
+  contractId: number;
+  name: string;
+  description: string | null;
+  status: string | null;
+  validFileType: string | null;
+  dueAt: string | null;
+  createdAt: string;
+  submissions: ContractSubmission[];
+}
+
+export type ContractPendingProcessType =
+  | "addition"
+  | "cancellation"
+  | "cession"
+  | "mutation"
+  | "othersi"
+  | "suspension";
+
+export interface ContractPendingProcess {
+  id: number;
+  name: string;
+  processType: ContractPendingProcessType;
+  createdAt: string;
+}
+
+export interface ContractAct {
+  id: number;
+  contractId: number;
+  filingId: number | null;
+  typeCode: string;
+  actDate: string;
+  signatories: string;
+  description: string | null;
+  createdAt: string;
+}

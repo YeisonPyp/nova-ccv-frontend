@@ -1,6 +1,11 @@
 @if (workflow()) {
-  <details class="border rounded-lg border-primary/30" (toggle)="onStepsToggle($event)">
-    <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">
+  <details
+    class="border rounded-lg border-primary/30"
+    (toggle)="onStepsToggle($event)"
+  >
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
       Pasos — {{ workflow()!.name }}
     </summary>
 
@@ -10,17 +15,33 @@
       } @else {
         @if (canCreateStep) {
           <div class="flex justify-end">
-            <button class="btn btn-primary btn-sm" (click)="openCreateStep()">+ Nuevo paso</button>
+            <button class="btn btn-primary btn-sm" (click)="openCreateStep()">
+              + Nuevo paso
+            </button>
           </div>
         }
 
-        <app-dynamic-table [data]="steps()" [columns]="stepColumns" emptyMessage="No hay pasos para este flujo.">
+        <app-dynamic-table
+          [data]="steps()"
+          [columns]="stepColumns"
+          emptyMessage="No hay pasos para este flujo."
+        >
           <ng-template #actions let-step>
             @if (canUpdateStep) {
-              <button class="btn btn-sm btn-outline" (click)="openEditStep(step)">Editar</button>
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditStep(step)"
+              >
+                Editar
+              </button>
             }
             @if (canDeleteStep) {
-              <button class="btn btn-sm btn-danger" (click)="openDeleteStep(step)">Eliminar</button>
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteStep(step)"
+              >
+                Eliminar
+              </button>
             }
           </ng-template>
         </app-dynamic-table>
@@ -31,33 +52,66 @@
 
 @if (stepModalMode()) {
   <div class="modal-overlay" (click)="closeStepModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="modal-title">{{ stepModalMode() === "create" ? "Nuevo paso" : "Editar paso" }}</h2>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{ stepModalMode() === "create" ? "Nuevo paso" : "Editar paso" }}
+      </h2>
 
       <form [formGroup]="stepForm" (ngSubmit)="submitStep()" class="space-y-3">
         <div>
           <label class="block text-sm font-medium mb-1">Nombre *</label>
-          <input formControlName="name" class="form-control w-full" placeholder="Nombre del paso" />
+          <input
+            formControlName="name"
+            class="form-control w-full"
+            placeholder="Nombre del paso"
+          />
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Descripción</label>
-          <textarea formControlName="description" class="form-control w-full" rows="2" placeholder="Descripción opcional"></textarea>
+          <textarea
+            formControlName="description"
+            class="form-control w-full"
+            rows="2"
+            placeholder="Descripción opcional"
+          ></textarea>
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Orden *</label>
-          <input formControlName="stepOrder" type="number" min="1" class="form-control w-full" />
+          <input
+            formControlName="stepOrder"
+            type="number"
+            min="1"
+            class="form-control w-full"
+          />
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-1">ID Cargo (opcional)</label>
-          <input formControlName="positionId" type="number" class="form-control w-full" placeholder="ID del cargo asociado" />
+          <label class="block text-sm font-medium mb-1"
+            >ID Cargo (opcional)</label
+          >
+          <input
+            formControlName="positionId"
+            type="number"
+            class="form-control w-full"
+            placeholder="ID del cargo asociado"
+          />
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeStepModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" [disabled]="stepForm.invalid">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeStepModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="stepForm.invalid"
+          >
             {{ stepModalMode() === "create" ? "Crear" : "Guardar" }}
           </button>
         </div>
@@ -68,14 +122,20 @@
 
 @if (showDeleteStepModal()) {
   <div class="modal-overlay" (click)="closeDeleteStepModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar paso</h2>
       <p class="text-sm text-tertiary">
-        ¿Está seguro de eliminar el paso <strong>{{ editingStep()?.name }}</strong>?
+        ¿Está seguro de eliminar el paso
+        <strong>{{ editingStep()?.name }}</strong
+        >?
       </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeleteStepModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeleteStep()">Eliminar</button>
+        <button class="btn btn-secondary" (click)="closeDeleteStepModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteStep()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

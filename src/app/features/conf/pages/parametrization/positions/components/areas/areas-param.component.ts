@@ -6,41 +6,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AuthService } from "../../../../../../../core/services/auth.service";
-import { AreaService } from "../../../../../../../core/services/assessment/area.service";
-import { Area } from "../../../../../../../core/models/assessment/area.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { AreaService } from "@/app/core/services/assessment/area.service";
+import { Area } from "@/app/core/models/assessment/area.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-areas-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
-  templateUrl: "./areas-param.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .modal-overlay {
-        position: fixed; inset: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff; border-radius: 12px; padding: 24px;
-        width: 100%; max-width: 480px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-      .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    PaginationComponent,
   ],
+  templateUrl: "./areas-param.component.html",
 })
 export class AreasParamComponent {
   private readonly auth = inject(AuthService);
@@ -62,10 +46,18 @@ export class AreasParamComponent {
 
   areaColumns: TableColumn<Area>[] = [{ key: "name", label: "Nombre" }];
 
-  get canReadArea() { return this.auth.hasPermission("AREA_READ"); }
-  get canCreateArea() { return this.auth.hasPermission("AREA_CREATE"); }
-  get canUpdateArea() { return this.auth.hasPermission("AREA_UPDATE"); }
-  get canDeleteArea() { return this.auth.hasPermission("AREA_DELETE"); }
+  get canReadArea() {
+    return this.auth.hasPermission("AREA_READ");
+  }
+  get canCreateArea() {
+    return this.auth.hasPermission("AREA_CREATE");
+  }
+  get canUpdateArea() {
+    return this.auth.hasPermission("AREA_UPDATE");
+  }
+  get canDeleteArea() {
+    return this.auth.hasPermission("AREA_DELETE");
+  }
 
   onAreasToggle(event: Event) {
     if ((event.target as HTMLDetailsElement).open && !this.areasLoaded()) {
@@ -101,7 +93,9 @@ export class AreasParamComponent {
     this.areaModalMode.set("update");
   }
 
-  closeAreaModal() { this.areaModalMode.set(null); }
+  closeAreaModal() {
+    this.areaModalMode.set(null);
+  }
 
   submitArea() {
     if (this.areaForm.invalid) return;
@@ -110,12 +104,18 @@ export class AreasParamComponent {
     const mode = this.areaModalMode();
     if (mode === "create") {
       this.areaService.createArea(dto).subscribe({
-        next: () => { this.closeAreaModal(); this.loadAreas(this.areaPage()); },
+        next: () => {
+          this.closeAreaModal();
+          this.loadAreas(this.areaPage());
+        },
       });
     } else if (mode === "update") {
       const area = this.editingArea()!;
       this.areaService.updateArea(area.id, dto).subscribe({
-        next: () => { this.closeAreaModal(); this.loadAreas(this.areaPage()); },
+        next: () => {
+          this.closeAreaModal();
+          this.loadAreas(this.areaPage());
+        },
       });
     }
   }
@@ -134,7 +134,10 @@ export class AreasParamComponent {
     const area = this.editingArea();
     if (!area) return;
     this.areaService.deleteArea(area.id).subscribe({
-      next: () => { this.closeDeleteAreaModal(); this.loadAreas(this.areaPage()); },
+      next: () => {
+        this.closeDeleteAreaModal();
+        this.loadAreas(this.areaPage());
+      },
     });
   }
 }

@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { BillingService } from "../../../../core/services/billing/billing.service";
-import { BillingAccount } from "../../../../core/models/billing/billing-account.model";
+import { BillingService } from "@/app/core/services/billing/billing.service";
+import { BillingAccount } from "@/app/core/models/billing/billing-account.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-billing-dashboard",

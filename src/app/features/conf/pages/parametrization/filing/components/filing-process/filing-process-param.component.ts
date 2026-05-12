@@ -6,41 +6,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AuthService } from "../../../../../../../core/services/auth.service";
-import { FilingProcessService } from "../../../../../../../core/services/filing/filing-process.service";
-import { FilingProcess } from "../../../../../../../core/models/filing/filing.models";
+import { AuthService } from "@/app/core/services/auth.service";
+import { FilingProcessService } from "@/app/core/services/filing/filing-process.service";
+import { FilingProcess } from "@/app/core/models/filing/filing.models";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-filing-process-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
-  templateUrl: "./filing-process-param.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .modal-overlay {
-        position: fixed; inset: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff; border-radius: 12px; padding: 24px;
-        width: 100%; max-width: 480px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-      .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    PaginationComponent,
   ],
+  templateUrl: "./filing-process-param.component.html",
 })
 export class FilingProcessParamComponent {
   private readonly auth = inject(AuthService);
@@ -67,13 +51,22 @@ export class FilingProcessParamComponent {
     { key: "canDelete", label: "Puede eliminar" },
   ];
 
-  get canReadFp() { return this.auth.hasPermission("FILING_PROCESS_READ"); }
-  get canCreateFp() { return this.auth.hasPermission("FILING_PROCESS_CREATE"); }
-  get canUpdateFp() { return this.auth.hasPermission("FILING_PROCESS_UPDATE"); }
-  get canDeleteFp() { return this.auth.hasPermission("FILING_PROCESS_DELETE"); }
+  get canReadFp() {
+    return this.auth.hasPermission("FILING_PROCESS_READ");
+  }
+  get canCreateFp() {
+    return this.auth.hasPermission("FILING_PROCESS_CREATE");
+  }
+  get canUpdateFp() {
+    return this.auth.hasPermission("FILING_PROCESS_UPDATE");
+  }
+  get canDeleteFp() {
+    return this.auth.hasPermission("FILING_PROCESS_DELETE");
+  }
 
   onFpToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.fpLoaded()) this.loadFp(1);
+    if ((e.target as HTMLDetailsElement).open && !this.fpLoaded())
+      this.loadFp(1);
   }
 
   loadFp(page: number) {
@@ -108,20 +101,32 @@ export class FilingProcessParamComponent {
     this.fpModalMode.set("update");
   }
 
-  closeFpModal() { this.fpModalMode.set(null); }
+  closeFpModal() {
+    this.fpModalMode.set(null);
+  }
 
   submitFp() {
     if (this.fpForm.invalid) return;
     const { name, canUpdate, canDelete } = this.fpForm.value;
-    const dto = { name: name!, canUpdate: canUpdate ?? false, canDelete: canDelete ?? false };
+    const dto = {
+      name: name!,
+      canUpdate: canUpdate ?? false,
+      canDelete: canDelete ?? false,
+    };
     const mode = this.fpModalMode();
     if (mode === "create") {
       this.filingProcessService.create(dto).subscribe({
-        next: () => { this.closeFpModal(); this.loadFp(this.fpPage()); },
+        next: () => {
+          this.closeFpModal();
+          this.loadFp(this.fpPage());
+        },
       });
     } else {
       this.filingProcessService.update(this.editingFp()!.id, dto).subscribe({
-        next: () => { this.closeFpModal(); this.loadFp(this.fpPage()); },
+        next: () => {
+          this.closeFpModal();
+          this.loadFp(this.fpPage());
+        },
       });
     }
   }
@@ -140,7 +145,10 @@ export class FilingProcessParamComponent {
     const fp = this.editingFp();
     if (!fp) return;
     this.filingProcessService.delete(fp.id).subscribe({
-      next: () => { this.closeDeleteFpModal(); this.loadFp(this.fpPage()); },
+      next: () => {
+        this.closeDeleteFpModal();
+        this.loadFp(this.fpPage());
+      },
     });
   }
 }

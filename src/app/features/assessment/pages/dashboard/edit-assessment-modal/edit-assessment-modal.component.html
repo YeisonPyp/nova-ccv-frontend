@@ -1,5 +1,9 @@
 <div class="p-4">
-  <button class="btn btn-link text-sm text-gray-500 mb-3 ps-0" type="button" (click)="goBack()">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-3 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
     ← Volver a evaluaciones
   </button>
 
@@ -7,7 +11,7 @@
     <h2 class="modal-title">Formulario de evaluación de desempeño</h2>
   </div>
 
-  <div class="modal-body" style="padding: 0">
+  <div class="modal-container" style="padding: 0">
     <section class="assessment-info">
       <div class="assessment-info-item">
         <strong class="assessment-info-label">Empleado</strong>
@@ -30,7 +34,10 @@
     <section class="assessment-competencies">
       <p>Evaluación de competencias</p>
 
-      @for (competencyScore of getAssessmentCompetencyScores(); track competencyScore.id) {
+      @for (
+        competencyScore of getAssessmentCompetencyScores();
+        track competencyScore.id
+      ) {
         <app-competency-score-card
           [competencyScore]="competencyScore"
           (scoreChange)="onChangeCompetencyScore($event)"
@@ -47,25 +54,52 @@
     </section>
 
     <section>
-      <form id="assessmentForm" [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
+      <form
+        id="assessmentForm"
+        [formGroup]="assessmentForm"
+        (ngSubmit)="onSubmit()"
+      >
         <div class="form-group">
           <label for="observations">Observaciones Adicionales</label>
-          <textarea id="observations" formControlName="observations" class="form-control"></textarea>
+          <textarea
+            id="observations"
+            formControlName="observations"
+            class="form-control"
+          ></textarea>
         </div>
         <div class="form-group">
           <label for="agreements">Compromisos</label>
-          <textarea id="agreements" formControlName="agreements" class="form-control"></textarea>
+          <textarea
+            id="agreements"
+            formControlName="agreements"
+            class="form-control"
+          ></textarea>
         </div>
         <div class="form-group">
           <label for="aspects-to-improve">Aspectos a mejorar</label>
-          <textarea id="aspects-to-improve" formControlName="aspectsToImprove" class="form-control"></textarea>
+          <textarea
+            id="aspects-to-improve"
+            formControlName="aspectsToImprove"
+            class="form-control"
+          ></textarea>
         </div>
       </form>
     </section>
 
-    <div class="modal-footer" style="border-top: 1px solid #f0f0f0; padding: 1rem 0 0; justify-content: flex-end">
-      <button type="button" class="btn btn-secondary" (click)="goBack()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" (click)="onSubmit()">Guardar</button>
+    <div
+      class="modal-footer"
+      style="
+        border-top: 1px solid #f0f0f0;
+        padding: 1rem 0 0;
+        justify-content: flex-end;
+      "
+    >
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+        Guardar
+      </button>
     </div>
   </div>
 </div>

@@ -6,41 +6,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AuthService } from "../../../../../../../core/services/auth.service";
-import { ControlEntityService } from "../../../../../../../core/services/improvement-plan/control-entity.service";
-import { ControlEntity } from "../../../../../../../core/models/improvement-plan/control-entity.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { ControlEntityService } from "@/app/core/services/improvement-plan/control-entity.service";
+import { ControlEntity } from "@/app/core/models/improvement-plan/control-entity.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-control-entity-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
-  templateUrl: "./control-entity-param.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .modal-overlay {
-        position: fixed; inset: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff; border-radius: 12px; padding: 24px;
-        width: 100%; max-width: 480px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-      .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    PaginationComponent,
   ],
+  templateUrl: "./control-entity-param.component.html",
 })
 export class ControlEntityParamComponent {
   private readonly auth = inject(AuthService);
@@ -61,13 +45,22 @@ export class ControlEntityParamComponent {
 
   ceColumns: TableColumn<ControlEntity>[] = [{ key: "name", label: "Nombre" }];
 
-  get canReadCe() { return this.auth.hasPermission("CONTROL_ENTITY_READ"); }
-  get canCreateCe() { return this.auth.hasPermission("CONTROL_ENTITY_CREATE"); }
-  get canUpdateCe() { return this.auth.hasPermission("CONTROL_ENTITY_UPDATE"); }
-  get canDeleteCe() { return this.auth.hasPermission("CONTROL_ENTITY_DELETE"); }
+  get canReadCe() {
+    return this.auth.hasPermission("CONTROL_ENTITY_READ");
+  }
+  get canCreateCe() {
+    return this.auth.hasPermission("CONTROL_ENTITY_CREATE");
+  }
+  get canUpdateCe() {
+    return this.auth.hasPermission("CONTROL_ENTITY_UPDATE");
+  }
+  get canDeleteCe() {
+    return this.auth.hasPermission("CONTROL_ENTITY_DELETE");
+  }
 
   onCeToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.ceLoaded()) this.loadCe(1);
+    if ((e.target as HTMLDetailsElement).open && !this.ceLoaded())
+      this.loadCe(1);
   }
 
   loadCe(page: number) {
@@ -98,7 +91,9 @@ export class ControlEntityParamComponent {
     this.ceModalMode.set("update");
   }
 
-  closeCeModal() { this.ceModalMode.set(null); }
+  closeCeModal() {
+    this.ceModalMode.set(null);
+  }
 
   submitCe() {
     if (this.ceForm.invalid) return;
@@ -107,11 +102,17 @@ export class ControlEntityParamComponent {
     const mode = this.ceModalMode();
     if (mode === "create") {
       this.controlEntityService.create(dto).subscribe({
-        next: () => { this.closeCeModal(); this.loadCe(this.cePage()); },
+        next: () => {
+          this.closeCeModal();
+          this.loadCe(this.cePage());
+        },
       });
     } else {
       this.controlEntityService.update(this.editingCe()!.id, dto).subscribe({
-        next: () => { this.closeCeModal(); this.loadCe(this.cePage()); },
+        next: () => {
+          this.closeCeModal();
+          this.loadCe(this.cePage());
+        },
       });
     }
   }
@@ -130,7 +131,10 @@ export class ControlEntityParamComponent {
     const ce = this.editingCe();
     if (!ce) return;
     this.controlEntityService.delete(ce.id).subscribe({
-      next: () => { this.closeDeleteCeModal(); this.loadCe(this.cePage()); },
+      next: () => {
+        this.closeDeleteCeModal();
+        this.loadCe(this.cePage());
+      },
     });
   }
 }

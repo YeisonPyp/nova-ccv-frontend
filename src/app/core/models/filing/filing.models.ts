@@ -14,9 +14,8 @@ export interface Filing {
   areaName: string | null;
   parentId: number | null;
   processName: string | null;
-  origin: string | null;
-  destination: string | null;
   createdAt: string;
+  files: FilingFile[];
 }
 
 export interface FilingFile {

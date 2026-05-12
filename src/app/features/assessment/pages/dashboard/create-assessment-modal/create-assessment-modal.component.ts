@@ -17,12 +17,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { PeriodService } from "../../../../../core/services/assessment/period.service";
-import { Period } from "../../../../../core/models/assessment/period.model";
-import { EmployeeService } from "../../../../../core/services/assessment/employee.service";
-import { Employee } from "../../../../../core/models/assessment/employee.model";
-import { SearchSelectComponent } from "../../../../../shared/components/search-select/search-select.component";
-import { SearchSelectOption } from "../../../../../shared/components/search-select/on-search-select.interface";
+import { PeriodService } from "@/app/core/services/assessment/period.service";
+import { Period } from "@/app/core/models/assessment/period.model";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { Employee } from "@/app/core/models/assessment/employee.model";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { SearchSelectOption } from "@/app/shared/components/search-select/on-search-select.interface";
 
 export interface CreateAssessmentDto {
   evaluateeId: number;
@@ -60,7 +60,7 @@ export class CreateAssessmentModalComponent implements OnChanges {
   get searchSelectOptions(): Array<SearchSelectOption> {
     return this.employees().map((emp) => ({
       id: emp.id,
-      title: `${emp.name ?? ''} ${emp.lastName ?? ''} (${emp.email ?? ''})`,
+      title: `${emp.name ?? ""} ${emp.lastName ?? ""} (${emp.email ?? ""})`,
     }));
   }
 
@@ -69,7 +69,9 @@ export class CreateAssessmentModalComponent implements OnChanges {
       this.assessmentForm.reset();
       const currentPeriod = this.currentPeriod();
       if (currentPeriod) {
-        this.selectedPeriods.set([{ id: currentPeriod.id, title: currentPeriod.name }]);
+        this.selectedPeriods.set([
+          { id: currentPeriod.id, title: currentPeriod.name },
+        ]);
         this.assessmentForm.patchValue({ periodId: currentPeriod.id });
       }
     }
@@ -83,9 +85,11 @@ export class CreateAssessmentModalComponent implements OnChanges {
   onSearchPeriod(s: string) {
     this.periodService.findCurrentPeriods({ name: s }).subscribe((r) => {
       if (r.data && r.success) {
-        this.periods.set(r.data.content.map((p) => ({ id: p.id, title: p.name })));
+        this.periods.set(
+          r.data.content.map((p) => ({ id: p.id, title: p.name })),
+        );
       }
-    })
+    });
   }
 
   onSelectPeriod(option: SearchSelectOption) {

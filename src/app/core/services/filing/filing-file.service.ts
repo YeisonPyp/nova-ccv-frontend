@@ -20,6 +20,9 @@ export class FilingFileService {
     const formData = new FormData();
     formData.append("filingId", filingId.toString());
     formData.append("file", file);
+    formData.append("origin", "");
+    formData.append("destination", "");
+    console.log(formData);
     return this.http.post<ApiResponse<FilingFile>>(this.apiUrl, formData);
   }
 

@@ -1,7 +1,19 @@
 <details class="border border-gray-200 rounded-xl overflow-hidden">
-  <summary class="px-4 py-3 bg-gray-50 cursor-pointer font-semibold text-sm text-secondary flex items-center gap-2 select-none list-none">
-    <svg class="w-4 h-4 text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+  <summary
+    class="px-4 py-3 bg-gray-50 cursor-pointer font-semibold text-sm text-secondary flex items-center gap-2 select-none list-none"
+  >
+    <svg
+      class="w-4 h-4 text-tertiary"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+      />
     </svg>
     Flujos de trabajo
     <span class="ml-auto text-xs text-tertiary font-normal">
@@ -22,24 +34,37 @@
 
     <!-- Loading -->
     @if (loading()) {
-      <div class="text-center py-8 text-tertiary text-sm">Cargando flujos...</div>
+      <div class="text-center py-8 text-tertiary text-sm">
+        Cargando flujos...
+      </div>
     } @else if (workflows().length === 0) {
-      <div class="text-center py-8 text-tertiary text-sm">No hay flujos de trabajo asignados.</div>
+      <div class="text-center py-8 text-tertiary text-sm">
+        No hay flujos de trabajo asignados.
+      </div>
     } @else {
       <!-- Workflow cards -->
       <div class="space-y-6">
         @for (wf of paginatedWorkflows(); track wf.id) {
           <div class="border border-gray-200 rounded-xl overflow-hidden">
             <!-- Workflow header -->
-            <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-b border-gray-200">
+            <div
+              class="bg-gray-50 px-4 py-3 flex items-center justify-between border-b border-gray-200"
+            >
               <div>
-                <span class="text-sm font-bold text-secondary">Flujo #{{ wf.id }}</span>
-                <span class="ml-2 text-xs text-tertiary">workflow {{ wf.workflowId }}</span>
+                <span class="text-sm font-bold text-secondary"
+                  >Flujo #{{ wf.id }}</span
+                >
+                <span class="ml-2 text-xs text-tertiary"
+                  >workflow {{ wf.workflowId }}</span
+                >
               </div>
               <div class="text-[10px] text-tertiary space-x-2">
-                <span>Inicio: {{ wf.startedAt | date:'dd/MM/yyyy' }}</span>
+                <span>Inicio: {{ wf.startedAt | date: "dd/MM/yyyy" }}</span>
                 @if (wf.completedAt) {
-                  <span>· Completado: {{ wf.completedAt | date:'dd/MM/yyyy' }}</span>
+                  <span
+                    >· Completado:
+                    {{ wf.completedAt | date: "dd/MM/yyyy" }}</span
+                  >
                 }
               </div>
             </div>
@@ -47,9 +72,13 @@
             <!-- Steps grid -->
             <div class="p-4">
               @if (wf.steps.length === 0) {
-                <p class="text-xs text-tertiary text-center py-4">Sin pasos registrados.</p>
+                <p class="text-xs text-tertiary text-center py-4">
+                  Sin pasos registrados.
+                </p>
               } @else {
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+                >
                   @for (step of wf.steps; track step.id) {
                     <app-filing-step-card
                       [step]="step"
@@ -81,12 +110,17 @@
 <!-- Add workflow modal -->
 @if (showAddModal()) {
   <div class="modal-overlay" (click)="closeAddModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2 class="text-base font-bold text-secondary mb-4">Agregar flujo de trabajo</h2>
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="text-base font-bold text-secondary mb-4">
+        Agregar flujo de trabajo
+      </h2>
 
       <form [formGroup]="addForm" (ngSubmit)="submitAdd()" class="space-y-4">
         <div>
-          <label class="block text-[10px] font-bold text-tertiary uppercase mb-1">Flujo de trabajo *</label>
+          <label
+            class="block text-[10px] font-bold text-tertiary uppercase mb-1"
+            >Flujo de trabajo *</label
+          >
           <select
             formControlName="workflowId"
             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -99,17 +133,29 @@
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold text-tertiary uppercase mb-1">Intervalo de alerta</label>
-          <input
+          <label
+            class="block text-[10px] font-bold text-tertiary uppercase mb-1"
+            >Intervalo de alerta</label
+          >
+          <select
             formControlName="alertTimeInterval"
             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
-            placeholder="ej. 1 day, 2 hours"
-          />
-          <p class="text-[10px] text-tertiary mt-1">Formato PostgreSQL interval (1 day, 30 minutes, etc.)</p>
+          >
+            <option [value]="null" disabled>Seleccionar intervalo...</option>
+            <option value="1 day">1 día</option>
+            <option value="30 minutes">30 minutos</option>
+            <option value="1 hour">1 hora</option>
+            <option value="2 hours">2 horas</option>
+          </select>
+          <p class="text-[10px] text-tertiary mt-1">Intervalo de alerta</p>
         </div>
 
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" (click)="closeAddModal()" class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-tertiary hover:bg-gray-50">
+          <button
+            type="button"
+            (click)="closeAddModal()"
+            class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-tertiary hover:bg-gray-50"
+          >
             Cancelar
           </button>
           <button
@@ -117,7 +163,7 @@
             [disabled]="addForm.invalid || saving()"
             class="px-3 py-1.5 text-sm bg-primary text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
           >
-            {{ saving() ? 'Agregando...' : 'Agregar' }}
+            {{ saving() ? "Agregando..." : "Agregar" }}
           </button>
         </div>
       </form>

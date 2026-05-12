@@ -6,50 +6,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AuthService } from "../../../../../../../core/services/auth.service";
-import { ProjectPriorityService } from "../../../../../../../core/services/projects/project-priority.service";
-import { ProjectPriority } from "../../../../../../../core/models/projects/project-params.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { ProjectPriorityService } from "@/app/core/services/projects/project-priority.service";
+import { ProjectPriority } from "@/app/core/models/projects/project-params.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
 
 @Component({
   selector: "app-project-priority-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
+  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
   templateUrl: "./project-priority-param.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .modal-overlay {
-        position: fixed; inset: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff; border-radius: 12px; padding: 24px;
-        width: 100%; max-width: 480px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-      .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    `,
-  ],
 })
 export class ProjectPriorityParamComponent {
   private readonly auth = inject(AuthService);
   private readonly projectPriorityService = inject(ProjectPriorityService);
 
   projectPriorityItems = signal<ProjectPriority[]>([]);
-  projectPriorityPage = signal(1);
-  projectPrioritySize = signal(10);
-  projectPriorityTotalPages = signal(0);
   projectPriorityLoaded = signal(false);
   projectPriorityModalMode = signal<"create" | "update" | null>(null);
   showDeleteProjectPriorityModal = signal(false);
@@ -65,31 +40,38 @@ export class ProjectPriorityParamComponent {
     { key: "scale", label: "Escala" },
   ];
 
-  get canReadProjectPriority() { return this.auth.hasPermission("PROJECT_PRIORITY_READ"); }
-  get canCreateProjectPriority() { return this.auth.hasPermission("PROJECT_PRIORITY_CREATE"); }
-  get canUpdateProjectPriority() { return this.auth.hasPermission("PROJECT_PRIORITY_UPDATE"); }
-  get canDeleteProjectPriority() { return this.auth.hasPermission("PROJECT_PRIORITY_DELETE"); }
+  get canReadProjectPriority() {
+    return this.auth.hasPermission("PROJECT_PRIORITY_READ");
+  }
+  get canCreateProjectPriority() {
+    return this.auth.hasPermission("PROJECT_PRIORITY_CREATE");
+  }
+  get canUpdateProjectPriority() {
+    return this.auth.hasPermission("PROJECT_PRIORITY_UPDATE");
+  }
+  get canDeleteProjectPriority() {
+    return this.auth.hasPermission("PROJECT_PRIORITY_DELETE");
+  }
 
   onProjectPriorityToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.projectPriorityLoaded()) {
-      this.loadProjectPriority(1);
+    if (
+      (e.target as HTMLDetailsElement).open &&
+      !this.projectPriorityLoaded()
+    ) {
+      this.loadProjectPriority();
     }
   }
 
-  loadProjectPriority(page: number) {
-    this.projectPriorityPage.set(page);
+  loadProjectPriority() {
     this.projectPriorityLoaded.set(true);
-    this.projectPriorityService
-      .findAll({ page: page - 1, size: this.projectPrioritySize() })
-      .subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.projectPriorityItems.set(res.data.content);
-            this.projectPriorityTotalPages.set(res.data.totalPages);
-          }
-        },
-        error: () => this.projectPriorityLoaded.set(false),
-      });
+    this.projectPriorityService.findAll().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.projectPriorityItems.set(res.data);
+        }
+      },
+      error: () => this.projectPriorityLoaded.set(false),
+    });
   }
 
   openCreateProjectPriority() {
@@ -104,7 +86,9 @@ export class ProjectPriorityParamComponent {
     this.projectPriorityModalMode.set("update");
   }
 
-  closeProjectPriorityModal() { this.projectPriorityModalMode.set(null); }
+  closeProjectPriorityModal() {
+    this.projectPriorityModalMode.set(null);
+  }
 
   submitProjectPriority() {
     if (this.projectPriorityForm.invalid) return;
@@ -112,12 +96,18 @@ export class ProjectPriorityParamComponent {
     const mode = this.projectPriorityModalMode();
     if (mode === "create") {
       this.projectPriorityService.create(name!, scale!).subscribe({
-        next: () => { this.closeProjectPriorityModal(); this.loadProjectPriority(this.projectPriorityPage()); },
+        next: () => {
+          this.closeProjectPriorityModal();
+          this.loadProjectPriority();
+        },
       });
     } else if (mode === "update") {
       const item = this.editingProjectPriority()!;
       this.projectPriorityService.update(item.id, name!, scale!).subscribe({
-        next: () => { this.closeProjectPriorityModal(); this.loadProjectPriority(this.projectPriorityPage()); },
+        next: () => {
+          this.closeProjectPriorityModal();
+          this.loadProjectPriority();
+        },
       });
     }
   }
@@ -136,7 +126,10 @@ export class ProjectPriorityParamComponent {
     const item = this.editingProjectPriority();
     if (!item) return;
     this.projectPriorityService.delete(item.id).subscribe({
-      next: () => { this.closeDeleteProjectPriorityModal(); this.loadProjectPriority(this.projectPriorityPage()); },
+      next: () => {
+        this.closeDeleteProjectPriorityModal();
+        this.loadProjectPriority();
+      },
     });
   }
 }

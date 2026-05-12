@@ -1,12 +1,19 @@
-import { Component, OnInit, inject, input, output, signal } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  inject,
+  input,
+  output,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../shared/components/pagination/pagination.component";
-import { ContractService } from "../../../../../../core/services/contract/contract.service";
-import { ContractAdditions } from "../../../../../../core/models/contract/contract.models";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ContractService } from "@/app/core/services/contract/contract.service";
+import { ContractAdditions } from "@/app/core/models/contract/contract.models";
 
 @Component({
   selector: "app-additions-tab",

@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
-import { EmployeeService } from "../../../../core/services/assessment/employee.service";
-import { Employee } from "../../../../core/models/assessment/employee.model";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { Employee } from "@/app/core/models/assessment/employee.model";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 
 @Component({
   selector: "app-employees",
@@ -59,11 +59,11 @@ export class EmployeesComponent implements OnInit {
   }
 
   openCreate() {
-    this.router.navigate(["/assessment/employees/create"]);
+    this.router.navigate(["/employees/create"]);
   }
 
   openEdit(employee: Employee) {
-    this.router.navigate(["/assessment/employees", employee.id, "edit"], {
+    this.router.navigate(["/employees", employee.id, "edit"], {
       state: { employee },
     });
   }

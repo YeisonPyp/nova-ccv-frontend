@@ -1,15 +1,10 @@
-import {
-  Component,
-  EventEmitter,
-  input,
-  Output,
-} from "@angular/core";
-import { Assessment } from "../../../../../core/models/assessment/assessment.model";
+import { Component, EventEmitter, input, Output } from "@angular/core";
+import { Assessment } from "@/app/core/models/assessment/assessment.model";
 import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
 
 @Component({
   selector: "app-assessment-table",

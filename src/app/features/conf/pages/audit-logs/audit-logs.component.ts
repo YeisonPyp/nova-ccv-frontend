@@ -2,13 +2,13 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
-import { AuditCandidatesService } from "../../../../core/services/audit-candidates.service";
-import { AuditLog } from "../../../../core/models/audit/audit-log.model";
+import { AuditCandidatesService } from "@/app/core/services/audit-candidates.service";
+import { AuditLog } from "@/app/core/models/audit/audit-log.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginatorComponent } from "../../../../shared/components/paginator/paginator.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 
 @Component({
   selector: "app-audit-logs",

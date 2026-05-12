@@ -1,0 +1,95 @@
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <h3 class="text-base font-semibold text-secondary mb-4">
+    Datos de la suspensión
+  </h3>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-group">
+        <label for="suspensionStatusName"
+          >Estado de suspensión <span class="text-red-500">*</span></label
+        >
+        <input
+          id="suspensionStatusName"
+          type="text"
+          formControlName="suspensionStatusName"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="suspensionDate"
+          >Fecha de suspensión <span class="text-red-500">*</span></label
+        >
+        <input
+          id="suspensionDate"
+          type="date"
+          formControlName="suspensionDate"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group md:col-span-2">
+        <label for="suspensionReason"
+          >Motivo <span class="text-red-500">*</span></label
+        >
+        <textarea
+          id="suspensionReason"
+          formControlName="suspensionReason"
+          class="form-control"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="expectedTerminationDate"
+          >Fecha esperada de terminación</label
+        >
+        <input
+          id="expectedTerminationDate"
+          type="date"
+          formControlName="expectedTerminationDate"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="expectedResumeDate">Fecha esperada de reanudación</label>
+        <input
+          id="expectedResumeDate"
+          type="date"
+          formControlName="expectedResumeDate"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label for="standbyCostAmount"
+          >Monto costo en espera <span class="text-red-500">*</span></label
+        >
+        <input
+          id="standbyCostAmount"
+          type="number"
+          formControlName="standbyCostAmount"
+          class="form-control"
+          min="0"
+          step="0.01"
+        />
+      </div>
+      <div class="form-group flex items-center gap-3 mt-6">
+        <input
+          id="affectsSocialSecurity"
+          type="checkbox"
+          formControlName="affectsSocialSecurity"
+          class="w-4 h-4"
+        />
+        <label for="affectsSocialSecurity" class="mb-0! cursor-pointer"
+          >Afecta seguridad social</label
+        >
+      </div>
+    </div>
+    <div class="flex justify-end mt-6">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || saving()"
+      >
+        {{ saving() ? "Guardando..." : "Guardar suspensión" }}
+      </button>
+    </div>
+  </form>
+</div>

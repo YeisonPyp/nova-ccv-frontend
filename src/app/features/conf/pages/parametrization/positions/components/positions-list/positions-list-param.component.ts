@@ -1,45 +1,29 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { AuthService } from "../../../../../../../core/services/auth.service";
+import { AuthService } from "@/app/core/services/auth.service";
 import {
   PositionService,
   CreatePositionDto,
   UpdatePositionDto,
-} from "../../../../../../../core/services/assessment/position.service";
-import { Position } from "../../../../../../../core/models/assessment/position.model";
+} from "@/app/core/services/assessment/position.service";
+import { Position } from "@/app/core/models/assessment/position.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { JobModalComponent } from "../../job-modal/job-modal.component";
 
 @Component({
   selector: "app-positions-list-param",
   standalone: true,
-  imports: [CommonModule, DynamicTableComponent, PaginationComponent, JobModalComponent],
-  templateUrl: "./positions-list-param.component.html",
-  styles: [
-    `
-      @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .modal-overlay {
-        position: fixed; inset: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      }
-      .modal-box {
-        background: #fff; border-radius: 12px; padding: 24px;
-        width: 100%; max-width: 480px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        animation: slideUp 0.2s ease-out;
-      }
-      .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-      .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
-    `,
+  imports: [
+    CommonModule,
+    DynamicTableComponent,
+    PaginationComponent,
+    JobModalComponent,
   ],
+  templateUrl: "./positions-list-param.component.html",
 })
 export class PositionsListParamComponent {
   private readonly auth = inject(AuthService);
@@ -64,10 +48,18 @@ export class PositionsListParamComponent {
     { key: "description", label: "Descripción" },
   ];
 
-  get canReadPosition() { return this.auth.hasPermission("POSITION_READ"); }
-  get canCreatePosition() { return this.auth.hasPermission("POSITION_CREATE"); }
-  get canUpdatePosition() { return this.auth.hasPermission("POSITION_UPDATE"); }
-  get canDeletePosition() { return this.auth.hasPermission("POSITION_DELETE"); }
+  get canReadPosition() {
+    return this.auth.hasPermission("POSITION_READ");
+  }
+  get canCreatePosition() {
+    return this.auth.hasPermission("POSITION_CREATE");
+  }
+  get canUpdatePosition() {
+    return this.auth.hasPermission("POSITION_UPDATE");
+  }
+  get canDeletePosition() {
+    return this.auth.hasPermission("POSITION_DELETE");
+  }
 
   onPositionsToggle(event: Event) {
     if ((event.target as HTMLDetailsElement).open && !this.positionsLoaded()) {
@@ -112,12 +104,20 @@ export class PositionsListParamComponent {
   onSaveJob(dto: CreatePositionDto | UpdatePositionDto) {
     if (this.isEditPosition()) {
       const position = this.editingPosition()!;
-      this.positionService.updatePosition(position.id, dto as UpdatePositionDto).subscribe({
-        next: () => { this.closeJobModal(); this.loadPositions(this.positionPage()); },
-      });
+      this.positionService
+        .updatePosition(position.id, dto as UpdatePositionDto)
+        .subscribe({
+          next: () => {
+            this.closeJobModal();
+            this.loadPositions(this.positionPage());
+          },
+        });
     } else {
       this.positionService.createPosition(dto as CreatePositionDto).subscribe({
-        next: () => { this.closeJobModal(); this.loadPositions(this.positionPage()); },
+        next: () => {
+          this.closeJobModal();
+          this.loadPositions(this.positionPage());
+        },
       });
     }
   }
@@ -136,7 +136,10 @@ export class PositionsListParamComponent {
     const position = this.deletingPosition();
     if (!position) return;
     this.positionService.deletePosition(position.id).subscribe({
-      next: () => { this.closeDeletePositionModal(); this.loadPositions(this.positionPage()); },
+      next: () => {
+        this.closeDeletePositionModal();
+        this.loadPositions(this.positionPage());
+      },
     });
   }
 }

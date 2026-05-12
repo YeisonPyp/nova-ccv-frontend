@@ -1,17 +1,17 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from '../../../../../shared/components/dynamic-table/dynamic-table.component';
-import { PaginatorComponent } from '../../../../../shared/components/paginator/paginator.component';
-import { ImprovementPlanService } from '../../../../../core/services/improvement-plan/improvement-plan.service';
-import { ImprovementPlan } from '../../../../../core/models/improvement-plan/improvement-plan.model';
-import { ImprovementPlanMetricsCardsComponent } from '../components/improvement-plan-metrics-cards/improvement-plan-metrics-cards.component';
-import { Router } from '@angular/router';
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
+import { ImprovementPlanService } from "@/app/core/services/improvement-plan/improvement-plan.service";
+import { ImprovementPlan } from "@/app/core/models/improvement-plan/improvement-plan.model";
+import { ImprovementPlanMetricsCardsComponent } from "../components/improvement-plan-metrics-cards/improvement-plan-metrics-cards.component";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-improvement-plan-list',
+  selector: "app-improvement-plan-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -19,8 +19,8 @@ import { Router } from '@angular/router';
     PaginatorComponent,
     ImprovementPlanMetricsCardsComponent,
   ],
-  templateUrl: './improvement-plan-list.component.html',
-  styleUrls: ['./improvement-plan-list.component.scss'],
+  templateUrl: "./improvement-plan-list.component.html",
+  styleUrls: ["./improvement-plan-list.component.scss"],
 })
 export class ImprovementPlanListComponent implements OnInit {
   private improvementPlanService = inject(ImprovementPlanService);
@@ -35,11 +35,11 @@ export class ImprovementPlanListComponent implements OnInit {
   error = signal<string | null>(null);
 
   columns: TableColumn<ImprovementPlan>[] = [
-    { key: 'id', label: 'ID' },
-    { key: 'name', label: 'Nombre' },
-    { key: 'controlEntityName', label: 'Entidad de Control' },
-    { key: 'completedAt', label: 'Completado en' },
-    { key: 'createdAt', label: 'Creado en' },
+    { key: "id", label: "ID" },
+    { key: "name", label: "Nombre" },
+    { key: "controlEntityName", label: "Entidad de Control" },
+    { key: "completedAt", label: "Completado en" },
+    { key: "createdAt", label: "Creado en" },
   ];
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ export class ImprovementPlanListComponent implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          this.error.set('Error loading improvement plans');
+          this.error.set("Error loading improvement plans");
           this.loading.set(false);
           console.error(err);
         },
@@ -78,9 +78,9 @@ export class ImprovementPlanListComponent implements OnInit {
 
   openPlan(plan?: ImprovementPlan): void {
     if (plan) {
-      this.router.navigate(['/improvement-plan/plan', plan.id]);
+      this.router.navigate(["/improvement-plan", plan.id]);
     } else {
-      this.router.navigate(['/improvement-plan/plan/create']);
+      this.router.navigate(["/improvement-plan/create"]);
     }
   }
 
@@ -92,7 +92,7 @@ export class ImprovementPlanListComponent implements OnInit {
             this.loadPlans(this.currentPage());
           }
         },
-        error: (err) => console.error('Error deleting plan:', err),
+        error: (err) => console.error("Error deleting plan:", err),
       });
     }
   }

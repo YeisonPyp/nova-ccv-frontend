@@ -1,24 +1,27 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService } from "../../../../../../../core/services/auth.service";
-import { ContractParamsService, CreateSalaryParameterDto } from "../../../../../../../core/services/contract/contract-params.service";
-import { SalaryParameter } from "../../../../../../../core/models/contract/contract-params.model";
-import { DynamicTableComponent, TableColumn } from "../../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../../../shared/components/pagination/pagination.component";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { AuthService } from "@/app/core/services/auth.service";
+import {
+  ContractParamsService,
+  CreateSalaryParameterDto,
+} from "@/app/core/services/contract/contract-params.service";
+import { SalaryParameter } from "@/app/core/models/contract/contract-params.model";
+import {
+  DynamicTableComponent,
+  TableColumn,
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
 
 @Component({
   selector: "app-salary-parameter-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
+  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
   templateUrl: "./salary-parameter-param.component.html",
-  styles: [`
-    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    .modal-overlay { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); }
-    .modal-box { background:#fff; border-radius:12px; padding:24px; width:100%; max-width:560px; box-shadow:0 20px 60px rgba(0,0,0,0.15); animation:slideUp 0.2s ease-out; }
-    .modal-title { font-size:1.1rem; font-weight:600; margin-bottom:16px; }
-    .modal-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
-  `],
 })
 export class SalaryParameterParamComponent {
   private readonly auth = inject(AuthService);
@@ -36,8 +39,12 @@ export class SalaryParameterParamComponent {
   salaryParameterForm = new FormGroup({
     year: new FormControl<number | null>(null, [Validators.required]),
     smmlv: new FormControl<number | null>(null, [Validators.required]),
-    transportAllowance: new FormControl<number | null>(null, [Validators.required]),
-    integralSalaryFactor: new FormControl<number | null>(null, [Validators.required]),
+    transportAllowance: new FormControl<number | null>(null, [
+      Validators.required,
+    ]),
+    integralSalaryFactor: new FormControl<number | null>(null, [
+      Validators.required,
+    ]),
     employeeHealthPct: new FormControl<number | null>(null),
     employeePensionPct: new FormControl<number | null>(null),
     employerHealthPct: new FormControl<number | null>(null),
@@ -58,66 +65,117 @@ export class SalaryParameterParamComponent {
     { key: "effectiveFrom", label: "Vigencia desde" },
   ];
 
-  get canReadSalaryParameter() { return this.auth.hasPermission("SALARY_PARAMETER_READ"); }
-  get canCreateSalaryParameter() { return this.auth.hasPermission("SALARY_PARAMETER_CREATE"); }
-  get canUpdateSalaryParameter() { return this.auth.hasPermission("SALARY_PARAMETER_UPDATE"); }
-  get canDeleteSalaryParameter() { return this.auth.hasPermission("SALARY_PARAMETER_DELETE"); }
-
-  onSalaryParameterToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.salaryParameterLoaded()) this.loadSalaryParameter(1);
+  get canReadSalaryParameter() {
+    return this.auth.hasPermission("SALARY_PARAMETER_READ");
+  }
+  get canCreateSalaryParameter() {
+    return this.auth.hasPermission("SALARY_PARAMETER_CREATE");
+  }
+  get canUpdateSalaryParameter() {
+    return this.auth.hasPermission("SALARY_PARAMETER_UPDATE");
+  }
+  get canDeleteSalaryParameter() {
+    return this.auth.hasPermission("SALARY_PARAMETER_DELETE");
   }
 
-  loadSalaryParameter(page: number) {
-    this.salaryParameterPage.set(page);
+  onSalaryParameterToggle(e: Event) {
+    if ((e.target as HTMLDetailsElement).open && !this.salaryParameterLoaded())
+      this.loadSalaryParameter();
+  }
+
+  loadSalaryParameter() {
     this.salaryParameterLoaded.set(true);
-    this.contractParamsService.findSalaryParameters({ page: page - 1, size: this.salaryParameterSize() }).subscribe({
-      next: (res) => { if (res.success && res.data) { this.salaryParameterItems.set(res.data.content); this.salaryParameterTotalPages.set(res.data.totalPages); } },
+    this.contractParamsService.findSalaryParameters().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.salaryParameterItems.set(res.data);
+        }
+      },
       error: () => this.salaryParameterLoaded.set(false),
     });
   }
 
   openCreateSalaryParameter() {
-    this.salaryParameterForm.reset({ year: null, smmlv: null, transportAllowance: null, integralSalaryFactor: null, effectiveFrom: "", effectiveTo: "" });
-    this.editingSalaryParameter.set(null); this.salaryParameterModalMode.set("create");
+    this.salaryParameterForm.reset({
+      year: null,
+      smmlv: null,
+      transportAllowance: null,
+      integralSalaryFactor: null,
+      effectiveFrom: "",
+      effectiveTo: "",
+    });
+    this.editingSalaryParameter.set(null);
+    this.salaryParameterModalMode.set("create");
   }
 
   openEditSalaryParameter(item: SalaryParameter) {
     this.salaryParameterForm.reset({
-      year: item.year, smmlv: item.smmlv, transportAllowance: item.transportAllowance, integralSalaryFactor: item.integralSalaryFactor,
-      employeeHealthPct: item.employeeHealthPct ?? null, employeePensionPct: item.employeePensionPct ?? null,
-      employerHealthPct: item.employerHealthPct ?? null, employerPensionPct: item.employerPensionPct ?? null,
-      arlPct: item.arlPct ?? null, senaPct: item.senaPct ?? null, icbfPct: item.icbfPct ?? null,
-      compensationBoxPct: item.compensationBoxPct ?? null, uvt: item.uvt ?? null,
-      effectiveFrom: item.effectiveFrom, effectiveTo: item.effectiveTo ?? "",
+      year: item.year,
+      smmlv: item.smmlv,
+      transportAllowance: item.transportAllowance,
+      integralSalaryFactor: item.integralSalaryFactor,
+      employeeHealthPct: item.employeeHealthPct ?? null,
+      employeePensionPct: item.employeePensionPct ?? null,
+      employerHealthPct: item.employerHealthPct ?? null,
+      employerPensionPct: item.employerPensionPct ?? null,
+      arlPct: item.arlPct ?? null,
+      senaPct: item.senaPct ?? null,
+      icbfPct: item.icbfPct ?? null,
+      compensationBoxPct: item.compensationBoxPct ?? null,
+      uvt: item.uvt ?? null,
+      effectiveFrom: item.effectiveFrom,
+      effectiveTo: item.effectiveTo ?? "",
     });
-    this.editingSalaryParameter.set(item); this.salaryParameterModalMode.set("update");
+    this.editingSalaryParameter.set(item);
+    this.salaryParameterModalMode.set("update");
   }
 
-  closeSalaryParameterModal() { this.salaryParameterModalMode.set(null); }
+  closeSalaryParameterModal() {
+    this.salaryParameterModalMode.set(null);
+  }
 
   submitSalaryParameter() {
     if (this.salaryParameterForm.invalid) return;
     const dto = this.salaryParameterForm.value;
     const mode = this.salaryParameterModalMode();
     if (mode === "create") {
-      this.contractParamsService.createSalaryParameter(dto as CreateSalaryParameterDto).subscribe({
-        next: () => { this.closeSalaryParameterModal(); this.loadSalaryParameter(this.salaryParameterPage()); },
-      });
+      this.contractParamsService
+        .createSalaryParameter(dto as CreateSalaryParameterDto)
+        .subscribe({
+          next: () => {
+            this.closeSalaryParameterModal();
+            this.loadSalaryParameter();
+          },
+        });
     } else if (mode === "update") {
       const item = this.editingSalaryParameter()!;
-      this.contractParamsService.updateSalaryParameter(item.id, dto as CreateSalaryParameterDto).subscribe({
-        next: () => { this.closeSalaryParameterModal(); this.loadSalaryParameter(this.salaryParameterPage()); },
-      });
+      this.contractParamsService
+        .updateSalaryParameter(item.id, dto as CreateSalaryParameterDto)
+        .subscribe({
+          next: () => {
+            this.closeSalaryParameterModal();
+            this.loadSalaryParameter();
+          },
+        });
     }
   }
 
-  openDeleteSalaryParameter(item: SalaryParameter) { this.editingSalaryParameter.set(item); this.showDeleteSalaryParameterModal.set(true); }
-  closeDeleteSalaryParameterModal() { this.showDeleteSalaryParameterModal.set(false); this.editingSalaryParameter.set(null); }
+  openDeleteSalaryParameter(item: SalaryParameter) {
+    this.editingSalaryParameter.set(item);
+    this.showDeleteSalaryParameterModal.set(true);
+  }
+  closeDeleteSalaryParameterModal() {
+    this.showDeleteSalaryParameterModal.set(false);
+    this.editingSalaryParameter.set(null);
+  }
   confirmDeleteSalaryParameter() {
     const item = this.editingSalaryParameter();
     if (!item) return;
     this.contractParamsService.deleteSalaryParameter(item.id).subscribe({
-      next: () => { this.closeDeleteSalaryParameterModal(); this.loadSalaryParameter(this.salaryParameterPage()); },
+      next: () => {
+        this.closeDeleteSalaryParameterModal();
+        this.loadSalaryParameter();
+      },
     });
   }
 }

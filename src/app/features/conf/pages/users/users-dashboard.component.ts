@@ -1,15 +1,15 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { AuthService } from "../../../../core/services/auth.service";
-import { UserService } from "../../../../core/services/user/user.service";
-import { UserResponse } from "../../../../core/models/user/user.model";
+import { AuthService } from "@/app/core/services/auth.service";
+import { UserService } from "@/app/core/services/user/user.service";
+import { UserResponse } from "@/app/core/models/user/user.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
-import { ForbiddenComponent } from "../../../../shared/components/forbidden/forbidden.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ForbiddenComponent } from "@/app/shared/components/forbidden/forbidden.component";
 
 @Component({
   selector: "app-users-dashboard",

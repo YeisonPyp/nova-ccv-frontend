@@ -68,7 +68,7 @@
 <!-- ── Workflow create/update modal ──────────────────────────────────────────── -->
 @if (workflowModalMode()) {
   <div class="modal-overlay" (click)="closeWorkflowModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">
         {{
           workflowModalMode() === "create"
@@ -125,7 +125,7 @@
 <!-- ── Workflow delete confirm modal ─────────────────────────────────────────── -->
 @if (showDeleteWorkflowModal()) {
   <div class="modal-overlay" (click)="closeDeleteWorkflowModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar flujo de trabajo</h2>
       <p class="text-sm text-tertiary">
         ¿Está seguro de eliminar <strong>{{ editingWorkflow()?.name }}</strong

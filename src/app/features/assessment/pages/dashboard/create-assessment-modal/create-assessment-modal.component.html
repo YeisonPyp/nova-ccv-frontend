@@ -1,9 +1,6 @@
 @if (isOpen) {
   <div class="modal-overlay" (click)="onClose()">
-    <div
-      class="modal-container"
-      (click)="$event.stopPropagation()"
-    >
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2 class="modal-title">Crear evaluación de desempeño</h2>
         <button
@@ -18,33 +15,28 @@
 
       <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
-          
-
           <app-search-select
-          (onSearch)="onSearchPeriod($event)"
-          (onSelect)="onSelectPeriod($event)"
-          (onRemove)="onRemovePeriod($event)"
-
-          [selectedItems]="selectedPeriods()"
-          [emptyMessage]="'No se encontraron periodos de evaluación.'"
-          [errorMessage]="'El periodo de evaluación es requerido'"
-          [required]="true"
-          [label]="'Periodo de evaluación'"
-          [items]="periods()"
+            (onSearch)="onSearchPeriod($event)"
+            (onSelect)="onSelectPeriod($event)"
+            (onRemove)="onRemovePeriod($event)"
+            [selectedItems]="selectedPeriods()"
+            [emptyMessage]="'No se encontraron periodos de evaluación.'"
+            [errorMessage]="'El periodo de evaluación es requerido'"
+            [required]="true"
+            [label]="'Periodo de evaluación'"
+            [items]="periods()"
           ></app-search-select>
 
-
           <app-search-select
-          (onSearch)="onSearchEvaluatee($event)"
-          (onSelect)="selectEvaluatee($event)"
-          (onRemove)="onRemoveEvaluatee($event)"
-
-          [selectedItems]="selectedEvaluatee()"
-          [emptyMessage]="'No se encontraron empleados.'"
-          [errorMessage]="'El empleado es requerido'"
-          [required]="true"
-          [label]="'Empleado'"
-          [items]="searchSelectOptions"
+            (onSearch)="onSearchEvaluatee($event)"
+            (onSelect)="selectEvaluatee($event)"
+            (onRemove)="onRemoveEvaluatee($event)"
+            [selectedItems]="selectedEvaluatee()"
+            [emptyMessage]="'No se encontraron empleados.'"
+            [errorMessage]="'El empleado es requerido'"
+            [required]="true"
+            [label]="'Empleado'"
+            [items]="searchSelectOptions"
           ></app-search-select>
         </div>
 

@@ -7,18 +7,14 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { Assessment } from "../../../../../core/models/assessment/assessment.model";
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { Assessment } from "@/app/core/models/assessment/assessment.model";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import {
   ChangeCompetencyScore,
   CompetencyScoreCardComponent,
 } from "./competency-score-card/competency-score-card.component";
 import { Router } from "@angular/router";
-import { AssessmentService } from "../../../../../core/services/assessment/assessment.service";
+import { AssessmentService } from "@/app/core/services/assessment/assessment.service";
 
 export interface CompetencyAssessmentDto {
   [competencyId: number]: number | null;
@@ -67,13 +63,10 @@ export class EditAssessmentModalComponent implements OnInit {
       const a = this.assessment();
       if (!a) return;
       this.competencyWeightedScore.set(
-        a.competencyScores?.reduce<CompetencyAssessmentDto>(
-          (acc, score) => {
-            acc[score.competency?.id ?? 0] = score.weightedScore;
-            return acc;
-          },
-          {},
-        ) ?? {},
+        a.competencyScores?.reduce<CompetencyAssessmentDto>((acc, score) => {
+          acc[score.competency?.id ?? 0] = score.weightedScore;
+          return acc;
+        }, {}) ?? {},
       );
     });
   }
@@ -86,7 +79,11 @@ export class EditAssessmentModalComponent implements OnInit {
     }
     this.assessment.set(a);
     const { agreements, observations, aspectsToImprove, competencyScores } = a;
-    this.assessmentForm.patchValue({ agreements, observations, aspectsToImprove });
+    this.assessmentForm.patchValue({
+      agreements,
+      observations,
+      aspectsToImprove,
+    });
     this.competencyScores.set(
       (competencyScores ?? []).reduce((prev, curr) => {
         prev[curr.competency?.id ?? 0] = curr.score;

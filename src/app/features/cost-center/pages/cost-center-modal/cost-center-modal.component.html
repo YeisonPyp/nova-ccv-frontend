@@ -1,5 +1,8 @@
 @if (isOpen()) {
-  <div class="modal-overlay flex flex-col max-h-screen min-h-[99%]" [formGroup]="form">
+  <div
+    class="modal-overlay flex flex-col max-h-screen min-h-[99%]"
+    [formGroup]="form"
+  >
     <div
       class="modal-container max-w-2xl! scrollable-container max-h-screen min-h-full"
       (click)="$event.stopPropagation()"
@@ -22,7 +25,12 @@
           class="p-2 text-alternate hover:text-tertiary hover:bg-gray-100 rounded-full transition-all"
           (click)="close()"
         >
-          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -35,24 +43,38 @@
 
       <!-- Body -->
       <div class="grow overflow-y-auto p-6 space-y-6 bg-white">
-
         <!-- Budget summary (view mode) -->
         @if (isViewMode()) {
           <section class="grid grid-cols-3 gap-4">
-            <div class="flex flex-col gap-1 bg-blue-50 border border-blue-100 rounded-2xl p-4">
-              <span class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.15em]">Presupuesto Total</span>
+            <div
+              class="flex flex-col gap-1 bg-blue-50 border border-blue-100 rounded-2xl p-4"
+            >
+              <span
+                class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.15em]"
+                >Presupuesto Total</span
+              >
               <span class="text-lg font-bold text-blue-700">
                 {{ costCenter()?.totalBudget | number: "1.2-2" }}
               </span>
             </div>
-            <div class="flex flex-col gap-1 bg-orange-50 border border-orange-100 rounded-2xl p-4">
-              <span class="text-[10px] font-bold text-orange-400 uppercase tracking-[0.15em]">Comprometido</span>
+            <div
+              class="flex flex-col gap-1 bg-orange-50 border border-orange-100 rounded-2xl p-4"
+            >
+              <span
+                class="text-[10px] font-bold text-orange-400 uppercase tracking-[0.15em]"
+                >Comprometido</span
+              >
               <span class="text-lg font-bold text-orange-700">
                 {{ costCenter()?.committedAmount | number: "1.2-2" }}
               </span>
             </div>
-            <div class="flex flex-col gap-1 bg-red-50 border border-red-100 rounded-2xl p-4">
-              <span class="text-[10px] font-bold text-red-400 uppercase tracking-[0.15em]">Ejecutado</span>
+            <div
+              class="flex flex-col gap-1 bg-red-50 border border-red-100 rounded-2xl p-4"
+            >
+              <span
+                class="text-[10px] font-bold text-red-400 uppercase tracking-[0.15em]"
+                >Ejecutado</span
+              >
               <span class="text-lg font-bold text-red-700">
                 {{ costCenter()?.executedAmount | number: "1.2-2" }}
               </span>
@@ -68,7 +90,13 @@
             <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
               <div
                 class="h-full bg-primary rounded-full transition-all"
-                [style.width.%]="costCenter()?.totalBudget ? (costCenter()!.executedAmount / costCenter()!.totalBudget) * 100 : 0"
+                [style.width.%]="
+                  costCenter()?.totalBudget
+                    ? (costCenter()!.executedAmount /
+                        costCenter()!.totalBudget) *
+                      100
+                    : 0
+                "
               ></div>
             </div>
           </section>
@@ -80,12 +108,13 @@
         >
           <!-- Responsable -->
           <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em]">
+            <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
               Responsable
             </label>
             @if (isViewMode()) {
               <span class="text-sm font-semibold text-secondary">
-                {{ costCenter()?.managerName }} {{ costCenter()?.managerLastName }}
+                {{ costCenter()?.managerName }}
+                {{ costCenter()?.managerLastName }}
               </span>
             } @else {
               <app-search-select
@@ -105,7 +134,7 @@
           <!-- Parent -->
           @if (isViewMode() && costCenter()?.parentName) {
             <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em]">
+              <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
                 Centro Padre
               </label>
               <span class="text-sm font-semibold text-secondary">
@@ -117,7 +146,7 @@
           <!-- Total Budget (create only) -->
           @if (!isViewMode()) {
             <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em]">
+              <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
                 Presupuesto Total
               </label>
               <input
@@ -134,11 +163,13 @@
 
         <!-- Description -->
         <section class="space-y-2">
-          <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em] ml-1">
+          <label class="text-[10px] font-bold uppercase tracking-[0.15em] ml-1">
             Descripción
           </label>
           @if (isViewMode()) {
-            <p class="text-sm text-tertiary leading-relaxed pl-5 border-l-4 border-blue-100 py-2">
+            <p
+              class="text-sm text-tertiary leading-relaxed pl-5 border-l-4 border-blue-100 py-2"
+            >
               {{ costCenter()?.description || "Sin descripción." }}
             </p>
           } @else {
@@ -149,14 +180,18 @@
                 placeholder="Descripción del centro de costo..."
                 class="w-full text-[13px] text-tertiary leading-relaxed border-l-4 border-blue-100 focus:border-blue-500 pl-5 pr-4 py-3 bg-gray-50/30 focus:bg-white rounded-r-xl outline-none transition-all resize-none shadow-sm"
               ></textarea>
-              <div class="absolute top-3 left-0 w-1 h-4 bg-blue-500 rounded-full -translate-x-0.5"></div>
+              <div
+                class="absolute top-3 left-0 w-1 h-4 bg-blue-500 rounded-full -translate-x-0.5"
+              ></div>
             </div>
           }
         </section>
       </div>
 
       <!-- Footer -->
-      <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+      <div
+        class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3"
+      >
         <button
           class="px-4 py-2 text-sm font-semibold text-tertiary hover:text-secondary transition-colors"
           (click)="close()"
@@ -167,7 +202,11 @@
           <button
             class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg shadow-sm hover:bg-primary transition-all disabled:opacity-50"
             (click)="onSubmit()"
-            [disabled]="form.invalid || !searchSelectManagerContext.selectedOptions().length || saving()"
+            [disabled]="
+              form.invalid ||
+              !searchSelectManagerContext.selectedOptions().length ||
+              saving()
+            "
           >
             {{ saving() ? "Creando..." : "Crear centro de costo" }}
           </button>

@@ -1,0 +1,8 @@
+<app-file-item
+  [file]="fileResource()"
+  [loading]="loading()"
+  label="Añadir archivo"
+  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+  (fileSelected)="onFileSelected($event)"
+  (deleteRequested)="onDeleteRequested()"
+/>

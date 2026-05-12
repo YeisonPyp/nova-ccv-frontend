@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BillingService } from "../../../../core/services/billing/billing.service";
+import { BillingService } from "@/app/core/services/billing/billing.service";
 import { ChargePaymentsSectionComponent } from "./charge-payments-section/charge-payments-section.component";
 import { BillingDocumentsSectionComponent } from "./documents-section/billing-documents-section.component";
 import { catchError, finalize, map, of, switchMap, tap } from "rxjs";

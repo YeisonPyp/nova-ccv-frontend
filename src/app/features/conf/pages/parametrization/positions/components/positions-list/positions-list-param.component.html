@@ -1,5 +1,7 @@
 <details class="border rounded-lg" (toggle)="onPositionsToggle($event)">
-  <summary class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none">
+  <summary
+    class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+  >
     Cargos
   </summary>
 
@@ -9,22 +11,42 @@
     } @else {
       @if (canCreatePosition) {
         <div class="flex justify-end">
-          <button class="btn btn-primary btn-sm" (click)="openCreatePosition()">+ Nuevo cargo</button>
+          <button class="btn btn-primary btn-sm" (click)="openCreatePosition()">
+            + Nuevo cargo
+          </button>
         </div>
       }
 
-      <app-dynamic-table [data]="positions()" [columns]="positionColumns" emptyMessage="No hay cargos.">
+      <app-dynamic-table
+        [data]="positions()"
+        [columns]="positionColumns"
+        emptyMessage="No hay cargos."
+      >
         <ng-template #actions let-item>
           @if (canUpdatePosition) {
-            <button class="btn btn-sm btn-outline" (click)="openEditPosition(item)">Editar</button>
+            <button
+              class="btn btn-sm btn-outline"
+              (click)="openEditPosition(item)"
+            >
+              Editar
+            </button>
           }
           @if (canDeletePosition) {
-            <button class="btn btn-sm btn-danger" (click)="openDeletePosition(item)">Eliminar</button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeletePosition(item)"
+            >
+              Eliminar
+            </button>
           }
         </ng-template>
       </app-dynamic-table>
 
-      <app-pagination [pages]="positionTotalPages()" [currentPage]="positionPage()" (pageChange)="loadPositions($event)" />
+      <app-pagination
+        [pages]="positionTotalPages()"
+        [currentPage]="positionPage()"
+        (pageChange)="loadPositions($event)"
+      />
     }
   </div>
 </details>
@@ -39,15 +61,19 @@
 
 @if (showDeletePositionModal()) {
   <div class="modal-overlay" (click)="closeDeletePositionModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Eliminar cargo</h2>
       <p class="text-sm text-tertiary">
-        ¿Está seguro de eliminar <strong>{{ deletingPosition()?.name }}</strong>?
-        Esta acción no se puede deshacer.
+        ¿Está seguro de eliminar <strong>{{ deletingPosition()?.name }}</strong
+        >? Esta acción no se puede deshacer.
       </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeDeletePositionModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDeletePosition()">Eliminar</button>
+        <button class="btn btn-secondary" (click)="closeDeletePositionModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeletePosition()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

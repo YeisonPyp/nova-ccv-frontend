@@ -12,12 +12,12 @@ import { CommonModule } from "@angular/common";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { GoalService } from "../../../../../../core/services/goals/goal.service";
-import { GoalVar } from "../../../../../../core/models/goals/goal-var.model";
-import { PaginatorComponent } from "../../../../../../shared/components/paginator/paginator.component";
-import { APIPage } from "../../../../../../core/models/api-page.model";
-import { GoalOption } from "../../../../../../core/models/goals/goal-option.model";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { GoalService } from "@/app/core/services/goals/goal.service";
+import { GoalVar } from "@/app/core/models/goals/goal-var.model";
+import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
+import { APIPage } from "@/app/core/models/api-page.model";
+import { GoalOption } from "@/app/core/models/goals/goal-option.model";
 
 @Component({
   selector: "app-goal-var-table",

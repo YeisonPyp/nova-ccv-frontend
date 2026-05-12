@@ -1,13 +1,13 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { ProjectService } from "../../../../core/services/projects/project.service";
-import { Project } from "../../../../core/models/projects/project.model";
+import { ProjectService } from "@/app/core/services/projects/project.service";
+import { Project } from "@/app/core/models/projects/project.model";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-project-list",

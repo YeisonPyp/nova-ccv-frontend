@@ -53,7 +53,7 @@ export const PARAMETRIZATION_ROUTES: Routes = [
   {
     path: "",
     loadComponent: () =>
-      import("../parametrization/cost-center/cost-center-dashboard.component").then(
+      import("../../../cost-center/pages/cost-center-dashboard.component").then(
         (m) => m.CostCenterDashboardComponent,
       ),
   },

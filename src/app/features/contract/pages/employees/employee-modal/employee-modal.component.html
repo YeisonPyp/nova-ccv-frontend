@@ -15,7 +15,7 @@
         </button>
       </div>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="modal-body" style="max-height: 60vh; overflow-y: auto">
+        <div class="modal-container" style="max-height: 60vh; overflow-y: auto">
           <div class="form-group">
             <label for="employee-name"
               >Nombre <span class="required">*</span></label
@@ -79,7 +79,6 @@
             [required]="true"
             [items]="positions()"
             [selectedItems]="selectedPositions()"
-
             (onSearch)="findPositions($event)"
             (onRemove)="onRemovePosition($event)"
             (onSelect)="onSelectPosition($event)"
@@ -91,7 +90,6 @@
             [required]="false"
             [items]="employees()"
             [selectedItems]="selectedEmployees()"
-
             (onSearch)="findEmployees($event)"
             (onRemove)="onRemoveReportsTo($event)"
             (onSelect)="onSelectReportsTo($event)"

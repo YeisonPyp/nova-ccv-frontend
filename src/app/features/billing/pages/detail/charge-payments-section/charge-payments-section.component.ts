@@ -1,14 +1,14 @@
 import { Component, inject, input, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { BillingService } from "../../../../../core/services/billing/billing.service";
-import { BillingChargePayment } from "../../../../../core/models/billing/billing-account.model";
-import { AuthService } from "../../../../../core/services/auth.service";
+import { BillingService } from "@/app/core/services/billing/billing.service";
+import { BillingChargePayment } from "@/app/core/models/billing/billing-account.model";
+import { AuthService } from "@/app/core/services/auth.service";
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../../../../../shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
+} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 
 @Component({
   selector: "app-charge-payments-section",

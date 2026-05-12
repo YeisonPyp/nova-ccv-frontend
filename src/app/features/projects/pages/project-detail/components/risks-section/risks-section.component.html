@@ -1,0 +1,63 @@
+<app-project-section-card
+  title="Riesgos"
+  addLabel="+ Nuevo riesgo"
+  (onAdd)="openCreateRisk()"
+>
+  <app-dynamic-table
+    [data]="risks()"
+    [columns]="riskColumns"
+    emptyMessage="Sin riesgos registrados."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @switch (col.key) {
+        @case ("displayOrder") {
+          <span class="text-gray-400 text-xs">{{ item.displayOrder }}</span>
+        }
+        @case ("name") {
+          <div class="font-medium text-sm text-gray-800">
+            {{ item.name }}
+          </div>
+          @if (item.description) {
+            <div class="text-xs text-gray-400 mt-0.5">
+              {{ item.description }}
+            </div>
+          }
+        }
+        @case ("probability") {
+          {{ item.probability | priorityLabel }}
+        }
+        @case ("priority") {
+          {{ item.priority | priorityLabel }}
+        }
+        @case ("estimatedCostAmount") {
+          {{
+            item.estimatedCostAmount != null
+              ? (item.estimatedCostAmount
+                | currency: "COP" : "symbol-narrow" : "1.0-0")
+              : "—"
+          }}
+        }
+        @case ("estimatedHours") {
+          {{ item.estimatedHours != null ? item.estimatedHours + " h" : "—" }}
+        }
+      }
+    </ng-template>
+    <ng-template #actions let-item>
+      <button
+        class="btn btn-sm btn-outline text-xs"
+        (click)="openEditRisk(item)"
+      >
+        Editar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-risk-upsert-modal
+  [isOpen]="riskModalOpen()"
+  [projectId]="projectId()"
+  [risk]="editingRisk()"
+  [risks]="risks()"
+  (onClose)="closeRiskModal()"
+  (onSaved)="onRiskSaved($event)"
+/>
