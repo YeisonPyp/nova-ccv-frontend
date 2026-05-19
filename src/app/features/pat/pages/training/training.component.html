@@ -1,0 +1,293 @@
+<!-- training.component.html -->
+<div class="training-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header__title">
+      <span class="material-icons">school</span>
+      <div>
+        <h1>Plan de Capacitaciones</h1>
+        <p>Gestión y seguimiento del plan formativo</p>
+      </div>
+    </div>
+    <div class="page-header__actions">
+      <select class="form-control form-control--sm"
+        [value]="selectedYear()"
+        (change)="changeYear(+$any($event.target).value)">
+        @for (y of yearOptions; track y) {
+          <option [value]="y">{{ y }}</option>
+        }
+      </select>
+      <button class="btn btn--primary" (click)="activeView.set('add')">
+        <span class="material-icons">add</span> Nueva Capacitación
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  @if (!loading()) {
+    <div class="kpis-grid">
+      @for (kpi of kpis(); track kpi.title) {
+        <app-kpi-card [config]="kpi" />
+      }
+    </div>
+  }
+
+  <!-- Tabs -->
+  <div class="view-tabs">
+    <button [class.active]="activeView() === 'calendar'"
+      (click)="activeView.set('calendar')">
+      <span class="material-icons">calendar_month</span> Capacitaciones
+    </button>
+    <button [class.active]="activeView() === 'employees'"
+      (click)="activeView.set('employees')">
+      <span class="material-icons">people</span> Por Empleado
+    </button>
+    @if (activeView() === 'add') {
+      <button class="active">
+        <span class="material-icons">add_circle</span> Nueva
+      </button>
+    }
+  </div>
+
+  @if (uploadError()) {
+    <div class="alert alert--danger">{{ uploadError() }}</div>
+  }
+
+  <!-- Vista: Calendario de capacitaciones -->
+  @if (activeView() === 'calendar') {
+    <div class="training-list">
+      @if (loading()) {
+        <div class="loading-spinner">Cargando capacitaciones...</div>
+      } @else {
+        @for (training of trainings(); track training.id) {
+          <div class="training-card" (click)="selectTraining(training)">
+            <div class="training-card__left">
+              <span class="training-card__category">{{ training.category }}</span>
+              <h3 class="training-card__name">{{ training.name }}</h3>
+              <div class="training-card__meta">
+                <span>
+                  <span class="material-icons">event</span>
+                  {{ training.scheduledDate | date:'dd/MM/yyyy' }}
+                </span>
+                <span>
+                  <span class="material-icons">timer</span>
+                  {{ training.durationHours }}h
+                </span>
+                @if (training.provider) {
+                  <span>
+                    <span class="material-icons">business</span>
+                    {{ training.provider }}
+                  </span>
+                }
+              </div>
+            </div>
+            <div class="training-card__right">
+              <div class="training-card__participants">
+                <span class="material-icons">group</span>
+                {{ training.participants.length }} participantes
+              </div>
+              <div class="participants-status">
+                @for (p of training.participants.slice(0, 5); track p.id) {
+                  <span class="participant-dot participant-dot--{{ getStatusClass(p.status) }}"
+                    [title]="p.employeeName + ': ' + getStatusLabel(p.status)">
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <span class="material-icons">school</span>
+            <p>No hay capacitaciones registradas para {{ selectedYear() }}</p>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Detalle modal inline -->
+    @if (selectedTraining()) {
+      <div class="training-detail-overlay" (click)="closeDetail()">
+        <div class="training-detail" (click)="$event.stopPropagation()">
+          <div class="training-detail__header">
+            <h2>{{ selectedTraining()!.name }}</h2>
+            <button class="btn-icon" (click)="closeDetail()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <div class="training-detail__info">
+            <div class="info-grid">
+              <div><strong>Categoría:</strong> {{ selectedTraining()!.category }}</div>
+              <div><strong>Fecha:</strong> {{ selectedTraining()!.scheduledDate | date:'dd/MM/yyyy' }}</div>
+              <div><strong>Duración:</strong> {{ selectedTraining()!.durationHours }}h</div>
+              <div><strong>Proveedor:</strong> {{ selectedTraining()!.provider ?? 'Interno' }}</div>
+            </div>
+          </div>
+
+          <div class="training-detail__participants">
+            <h3>Participantes</h3>
+            <table class="participants-table">
+              <thead>
+                <tr>
+                  <th>Empleado</th>
+                  <th>Estado</th>
+                  <th>Fecha Completado</th>
+                  <th>Evidencia</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of selectedTraining()!.participants; track p.id) {
+                  <tr>
+                    <td>{{ p.employeeName }}</td>
+                    <td>
+                      <span class="status-chip status-chip--{{ getStatusClass(p.status) }}">
+                        {{ getStatusLabel(p.status) }}
+                      </span>
+                    </td>
+                    <td>
+                      {{ p.completionDate ? (p.completionDate | date:'dd/MM/yyyy') : '—' }}
+                    </td>
+                    <td>
+                      @if (p.evidenceUrl) {
+                        <a [href]="p.evidenceUrl" target="_blank" class="btn-link">
+                          <span class="material-icons">attach_file</span>
+                          {{ p.evidenceFileName }}
+                        </a>
+                      } @else {
+                        <label class="upload-btn"
+                          [class.uploading]="uploadingFor() === p.id">
+                          <span class="material-icons">
+                            {{ uploadingFor() === p.id ? 'hourglass_empty' : 'upload_file' }}
+                          </span>
+                          {{ uploadingFor() === p.id ? 'Subiendo...' : 'Cargar' }}
+                          <input type="file" hidden
+                            [disabled]="uploadingFor() === p.id"
+                            (change)="onFileSelected($event, p)"
+                            accept=".pdf,.jpg,.jpeg,.png,.docx">
+                        </label>
+                      }
+                    </td>
+                    <td>
+                      <select class="form-control form-control--xs"
+                        [value]="p.status"
+                        (change)="updateParticipantStatus(p.id, $any($event.target).value)">
+                        @for (opt of statusOptions; track opt.value) {
+                          <option [value]="opt.value">{{ opt.label }}</option>
+                        }
+                      </select>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- Vista: Por empleado -->
+  @if (activeView() === 'employees') {
+    <div class="employees-view">
+      @if (loading()) {
+        <div class="loading-spinner">Cargando...</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Área</th>
+              <th>Capacitaciones</th>
+              <th>Horas</th>
+              <th>% Cumplimiento</th>
+              <th>Evidencias Pendientes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of employeeStats(); track emp.employeeId) {
+              <tr [class.row--complete]="emp.completionPct >= 100"
+                  [class.row--warning]="emp.completionPct >= 50 && emp.completionPct < 100"
+                  [class.row--danger]="emp.completionPct < 50">
+                <td class="td--name">{{ emp.employeeName }}</td>
+                <td>{{ emp.areaName }}</td>
+                <td class="td--center">
+                  {{ emp.completedTrainings }}/{{ emp.plannedTrainings }}
+                </td>
+                <td class="td--center">
+                  {{ emp.totalHoursCompleted }}/{{ emp.totalHoursPlanned }}h
+                </td>
+                <td class="td--progress">
+                  <app-pat-progress-bar [value]="emp.completionPct" />
+                </td>
+                <td class="td--center">
+                  @if (emp.pendingEvidences > 0) {
+                    <span class="badge badge--warning">{{ emp.pendingEvidences }}</span>
+                  } @else {
+                    <span class="material-icons text-success">check_circle</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- Vista: Nueva capacitación -->
+  @if (activeView() === 'add') {
+    <div class="add-training-form">
+      <h2>Registrar Nueva Capacitación</h2>
+      <form [formGroup]="trainingForm" (ngSubmit)="submitTraining()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre de la Capacitación *</label>
+            <input formControlName="name" class="form-control"
+              placeholder="Ej: Gestión de Proyectos con PMI">
+            @if (trainingForm.get('name')?.invalid && trainingForm.get('name')?.touched) {
+              <span class="form-error">Campo requerido</span>
+            }
+          </div>
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select formControlName="category" class="form-control">
+              <option value="">-- Seleccionar --</option>
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha Programada *</label>
+            <input type="date" formControlName="scheduledDate" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Duración (horas) *</label>
+            <input type="number" formControlName="durationHours"
+              class="form-control" min="1">
+          </div>
+          <div class="form-group">
+            <label>Proveedor / Instructor</label>
+            <input formControlName="provider" class="form-control"
+              placeholder="Ej: SENA, consultor externo">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost"
+            (click)="activeView.set('calendar')">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn--primary"
+            [disabled]="submitting()">
+            {{ submitting() ? 'Guardando...' : 'Registrar Capacitación' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

@@ -1,0 +1,167 @@
+<!-- reports.component.html -->
+<div class="reports-page">
+  <div class="page-header">
+    <div class="page-header__title">
+      <span class="material-icons">summarize</span>
+      <div>
+        <h1>Generación de Reportes</h1>
+        <p>Informes estandarizados para Junta Directiva y entes externos</p>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert--danger">{{ error() }}</div>
+  }
+
+  <!-- Selección de plantilla -->
+  @if (!selectedTemplate()) {
+    <div class="templates-grid">
+      @for (tpl of reportTemplates; track tpl.type) {
+        <div class="report-card report-card--{{ tpl.colorClass }}"
+          (click)="selectTemplate(tpl)">
+          <div class="report-card__icon">
+            <span class="material-icons">{{ tpl.icon }}</span>
+          </div>
+          <div class="report-card__body">
+            <h3>{{ tpl.title }}</h3>
+            <p>{{ tpl.description }}</p>
+            <div class="report-card__meta">
+              <span class="audience-badge">
+                <span class="material-icons">person</span>
+                {{ tpl.audience }}
+              </span>
+              <div class="format-badges">
+                @for (fmt of tpl.formats; track fmt) {
+                  <span class="format-badge">{{ fmt }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          @if (isGenerating(tpl.type)) {
+            <div class="report-card__loading">
+              <span class="material-icons spin">hourglass_empty</span>
+              Generando...
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Reportes recientes -->
+    @if (recentReports().length > 0) {
+      <div class="recent-reports">
+        <h3>
+          <span class="material-icons">history</span>
+          Reportes Recientes
+        </h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Reporte</th>
+              <th>Generado</th>
+              <th>Formato</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of recentReports(); track r.id) {
+              <tr>
+                <td>{{ r.type }}</td>
+                <td>{{ r.generatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="format-badge">{{ r.format }}</span>
+                </td>
+                <td>
+                  <button class="btn btn--outline-sm"
+                    (click)="downloadReport(r)">
+                    <span class="material-icons">download</span>
+                    Descargar
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  <!-- Configuración de reporte seleccionado -->
+  @if (selectedTemplate()) {
+    <div class="report-config">
+      <div class="report-config__header">
+        <button class="btn-icon" (click)="cancelSelection()">
+          <span class="material-icons">arrow_back</span>
+        </button>
+        <div class="report-config__title">
+          <span class="material-icons">{{ selectedTemplate()!.icon }}</span>
+          <div>
+            <h2>{{ selectedTemplate()!.title }}</h2>
+            <p>{{ selectedTemplate()!.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="configForm" (ngSubmit)="generateReport()">
+        <div class="config-grid">
+          <div class="form-group">
+            <label>Año del reporte *</label>
+            <select formControlName="year" class="form-control">
+              @for (y of yearOptions; track y) {
+                <option [value]="y">{{ y }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Formato de salida *</label>
+            <div class="format-selector">
+              @for (fmt of selectedTemplate()!.formats; track fmt) {
+                <label class="format-option"
+                  [class.selected]="configForm.get('format')?.value === fmt">
+                  <input type="radio" formControlName="format" [value]="fmt" hidden>
+                  <span class="material-icons">{{ getFormatIcon(fmt) }}</span>
+                  {{ fmt }}
+                </label>
+              }
+            </div>
+          </div>
+
+          @if (selectedTemplate()!.type !== 'SUPERSOCIEDADES') {
+            <div class="form-group">
+              <label>Filtrar por área (opcional)</label>
+              <select formControlName="areaId" class="form-control">
+                <option [ngValue]="null">Todas las áreas</option>
+                @for (area of consolidations(); track area.areaId) {
+                  <option [ngValue]="area.areaId">{{ area.areaName }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          <div class="form-group form-group--checkbox">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="includeCharts">
+              Incluir gráficas y visualizaciones
+            </label>
+          </div>
+        </div>
+
+        <div class="config-actions">
+          <button type="button" class="btn btn--ghost"
+            (click)="cancelSelection()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn--primary"
+            [disabled]="generating() !== null">
+            <span class="material-icons">
+              {{ generating() ? 'hourglass_empty' : 'download' }}
+            </span>
+            {{ generating() ? 'Generando reporte...' : 'Generar y Descargar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

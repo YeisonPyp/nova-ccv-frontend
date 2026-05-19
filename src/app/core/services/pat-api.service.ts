@@ -1,250 +1,133 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable, switchMap, forkJoin, of, map } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { ApiResponse } from "../models/api-response.model";
+// core/services/pat-api.service.ts  (métodos añadidos)
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
-  Program,
-  Activity,
-  BudgetItem,
-  MonthlyExecution,
-  ProgramWithMetrics,
-  ActivityWithMetrics,
-  DashboardStats,
-  ScheduleRow,
-  ExecutionFormData,
-} from "../../features/pat/models/pat.models";
+  Program, ProgramWithMetrics, CreateProgramPayload,
+  ActivityWithMetrics, BudgetItem, ScheduleRow,
+  CreateExecutionPayload, ExecutionRecord,
+  StrategicGoal, GoalLink, PerformanceIndicator, CreateIndicatorPayload,
+  AreaConsolidation, DashboardStats,
+  Training, EmployeeTrainingStats, UploadEvidencePayload, TrainingStatus,
+  ReportConfig, ReportResult,
+} from '../../features/pat/models/pat.models';
 
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-}
-
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class PatApiService {
   private readonly http = inject(HttpClient);
-  private readonly base = environment.apiUrl;
+  private readonly base = `${environment.apiUrl}/pat`;
 
-  // ========== PROGRAMS ==========
-
-  getPrograms(year?: number): Observable<Program[]> {
-    const params: Record<string, any> = {};
-    if (year != null) params["anio"] = year;
-    return this.http
-      .get<ApiResponse<Program[]>>(`${this.base}/pat/programs`, { params })
-      .pipe(map((res) => res.data ?? []));
+  // ── Programas ─────────────────────────────────────────────
+  getDashboardStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.base}/dashboard/stats`);
   }
-
-  getProgramsWithMetrics(year?: number): Observable<ProgramWithMetrics[]> {
-    const params: Record<string, any> = {};
-    if (year != null) params["anio"] = year;
-    return this.http
-      .get<
-        ApiResponse<ProgramWithMetrics[]>
-      >(`${this.base}/pat/programs/with-metrics`, { params })
-      .pipe(map((res) => res.data ?? []));
+  getProgramsWithMetrics(): Observable<ProgramWithMetrics[]> {
+    return this.http.get<ProgramWithMetrics[]>(`${this.base}/programs/metrics`);
   }
-
-  createProgram(data: {
-    code: string;
-    name: string;
-    areaId: number;
-    employeeId: number;
-    costCenterId: number;
-    status: string;
-    objective?: string | null;
-    pillar?: string | null;
-    beneficiaries?: string | null;
-    year: number;
-  }): Observable<Program> {
-    return this.http
-      .post<ApiResponse<Program>>(`${this.base}/pat/programs`, data)
-      .pipe(map((res) => res.data));
-  }
-
   getProgramById(id: number): Observable<Program> {
-    return this.http
-      .get<ApiResponse<Program>>(`${this.base}/pat/programs/${id}`)
-      .pipe(map((res) => res.data));
+    return this.http.get<Program>(`${this.base}/programs/${id}`);
+  }
+  createProgram(payload: CreateProgramPayload): Observable<Program> {
+    return this.http.post<Program>(`${this.base}/programs`, payload);
+  }
+  updateProgram(id: number, payload: Partial<CreateProgramPayload>): Observable<Program> {
+    return this.http.patch<Program>(`${this.base}/programs/${id}`, payload);
   }
 
-  getProgramWithMetricsById(id: number): Observable<ProgramWithMetrics> {
-    return this.http
-      .get<
-        ApiResponse<ProgramWithMetrics>
-      >(`${this.base}/pat/programs/${id}/with-metrics`)
-      .pipe(map((res) => res.data));
+  // ── Actividades ───────────────────────────────────────────
+  getActivitiesWithMetrics(programId: number): Observable<ActivityWithMetrics[]> {
+    return this.http.get<ActivityWithMetrics[]>(`${this.base}/programs/${programId}/activities/metrics`);
   }
 
-  // ========== ACTIVITIES ==========
-
-  getActivitiesByProgram(programId: number): Observable<Activity[]> {
-    return this.http
-      .get<
-        ApiResponse<Activity[]>
-      >(`${this.base}/pat/activities/program/${programId}`)
-      .pipe(map((res) => res.data ?? []));
-  }
-
-  getActivitiesWithMetrics(
-    programId: number,
-  ): Observable<ActivityWithMetrics[]> {
-    return this.http
-      .get<
-        ApiResponse<ActivityWithMetrics[]>
-      >(`${this.base}/pat/activities/program/${programId}/with-metrics`)
-      .pipe(map((res) => res.data ?? []));
-  }
-
-  // ========== BUDGET ==========
-
-  getBudgetByActivity(activityId: number): Observable<BudgetItem[]> {
-    return this.http
-      .get<
-        ApiResponse<BudgetItem[]>
-      >(`${this.base}/pat/activities/${activityId}/budget`)
-      .pipe(map((res) => res.data ?? []));
-  }
-
+  // ── Presupuesto ───────────────────────────────────────────
   getBudgetByProgram(programId: number): Observable<BudgetItem[]> {
-    return this.getActivitiesByProgram(programId).pipe(
-      switchMap((activities) => {
-        if (activities.length === 0) return of([]);
-        return forkJoin(
-          activities.map((a) => this.getBudgetByActivity(a.id)),
-        ).pipe(map((arrays) => arrays.flat()));
-      }),
+    return this.http.get<BudgetItem[]>(`${this.base}/programs/${programId}/budget`);
+  }
+
+  // ── Cronograma ────────────────────────────────────────────
+  getScheduleByProgram(programId: number): Observable<ScheduleRow[]> {
+    return this.http.get<ScheduleRow[]>(`${this.base}/programs/${programId}/schedule`);
+  }
+
+  // ── Ejecución ─────────────────────────────────────────────
+  createExecution(payload: CreateExecutionPayload): Observable<ExecutionRecord> {
+    return this.http.post<ExecutionRecord>(`${this.base}/executions`, payload);
+  }
+
+  // ── Metas Estratégicas ────────────────────────────────────
+  getStrategicGoals(year?: number): Observable<StrategicGoal[]> {
+    const params = year ? new HttpParams().set('year', year) : undefined;
+    return this.http.get<StrategicGoal[]>(`${this.base}/strategic-goals`, { params });
+  }
+  getGoalLinks(programId: number): Observable<GoalLink[]> {
+    return this.http.get<GoalLink[]>(`${this.base}/programs/${programId}/goal-links`);
+  }
+  createGoalLink(payload: {
+    strategicGoalId: number;
+    linkType: string;
+    weight: number;
+    programId?: number;
+    activityId?: number;
+  }): Observable<GoalLink> {
+    return this.http.post<GoalLink>(`${this.base}/goal-links`, payload);
+  }
+  deleteGoalLink(linkId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/goal-links/${linkId}`);
+  }
+
+  // ── Indicadores ───────────────────────────────────────────
+  getIndicatorsByProgram(programId: number): Observable<PerformanceIndicator[]> {
+    return this.http.get<PerformanceIndicator[]>(`${this.base}/programs/${programId}/indicators`);
+  }
+  createIndicator(payload: CreateIndicatorPayload): Observable<PerformanceIndicator> {
+    return this.http.post<PerformanceIndicator>(`${this.base}/indicators`, payload);
+  }
+  updateIndicatorValue(id: number, currentValue: number): Observable<PerformanceIndicator> {
+    return this.http.patch<PerformanceIndicator>(`${this.base}/indicators/${id}/value`, { currentValue });
+  }
+
+  // ── Consolidado por área ──────────────────────────────────
+  getAreaConsolidation(year: number): Observable<AreaConsolidation[]> {
+    return this.http.get<AreaConsolidation[]>(
+      `${this.base}/area-consolidation`, { params: new HttpParams().set('year', year) }
     );
   }
 
-  // ========== EXECUTIONS ==========
-
-  getExecutionsByActivity(activityId: number): Observable<MonthlyExecution[]> {
-    return this.http
-      .get<
-        ApiResponse<MonthlyExecution[]>
-      >(`${this.base}/pat/executions/activity/${activityId}`)
-      .pipe(map((res) => res.data ?? []));
+  // ── Capacitaciones ────────────────────────────────────────
+  getTrainings(year: number): Observable<Training[]> {
+    return this.http.get<Training[]>(
+      `${this.base}/trainings`, { params: new HttpParams().set('year', year) }
+    );
+  }
+  createTraining(payload: Partial<Training> & { year: number }): Observable<Training> {
+    return this.http.post<Training>(`${this.base}/trainings`, payload);
+  }
+  getEmployeeTrainingStats(year: number): Observable<EmployeeTrainingStats[]> {
+    return this.http.get<EmployeeTrainingStats[]>(
+      `${this.base}/trainings/employee-stats`, { params: new HttpParams().set('year', year) }
+    );
+  }
+  updateParticipantStatus(participantId: number, status: TrainingStatus): Observable<void> {
+    return this.http.patch<void>(`${this.base}/training-participants/${participantId}/status`, { status });
+  }
+  uploadTrainingEvidence(payload: UploadEvidencePayload): Observable<void> {
+    const formData = new FormData();
+    formData.append('file',           payload.file);
+    formData.append('completionDate', payload.completionDate);
+    if (payload.score != null) {
+      formData.append('score', String(payload.score));
+    }
+    return this.http.post<void>(
+      `${this.base}/training-participants/${payload.participantId}/evidence`, formData
+    );
   }
 
-  createExecution(data: ExecutionFormData): Observable<MonthlyExecution> {
-    return this.http
-      .post<ApiResponse<MonthlyExecution>>(`${this.base}/pat/executions`, data)
-      .pipe(map((res) => res.data));
+  // ── Reportes ──────────────────────────────────────────────
+  generateReport(config: ReportConfig): Observable<ReportResult> {
+    return this.http.post<ReportResult>(`${this.base}/reports/generate`, config);
   }
-
-  // ========== SCHEDULE ==========
-
-  getScheduleByProgram(programId: number): Observable<ScheduleRow[]> {
-    return this.http
-      .get<
-        ApiResponse<ScheduleRow[]>
-      >(`${this.base}/pat/executions/program/${programId}/schedule`)
-      .pipe(map((res) => res.data ?? []));
+  getRecentReports(): Observable<ReportResult[]> {
+    return this.http.get<ReportResult[]>(`${this.base}/reports/recent`);
   }
-
-  // ========== DASHBOARD ==========
-
-  getDashboardStats(year?: number): Observable<DashboardStats> {
-    const params: Record<string, any> = {};
-    if (year != null) params["anio"] = year;
-    return this.http
-      .get<
-        ApiResponse<DashboardStats>
-      >(`${this.base}/pat/dashboard`, { params })
-      .pipe(map((res) => res.data));
-  }
-
-  validateExecution(
-    activityId: number,
-    data: ExecutionFormData,
-  ): Observable<ValidationResult> {
-    throw new Error("Method not implemented.");
-    // const activity = this.activities.find((a) => a.id === activityId);
-    // const program = this.programs.find((p) => p.id === activity?.programId);
-    // if (!activity || !program) {
-    //   return of({
-    //     isValid: false,
-    //     errors: ["Actividad o programa no encontrado"],
-    //   });
-    // }
-    // return of(
-    //   PatCalculations.validateExecution(
-    //     activityId,
-    //     data.mes,
-    //     data.metaEjecutada,
-    //     data.valorEjecutado,
-    //     activity,
-    //     this.executions,
-    //     this.budgetItems,
-    //     program,
-    //   ),
-    // ).pipe(delay(100));
-  }
-
-  // validateExecution(
-  //   activityId: number,
-  //   mes: number,
-  //   metaEjecutada: number,
-  //   valorEjecutado: number,
-  //   activity: Activity,
-  //   existingExecutions: MonthlyExecution[],
-  //   budgetItems: BudgetItem[],
-  //   program: Program,
-  // ) {
-  //   const errors: string[] = [];
-
-  //   // Regla 1: No ejecutar si el programa está cerrado
-  //   if (program.status === "CLOSED") {
-  //     errors.push("No se puede registrar ejecución en un programa CERRADO");
-  //   }
-
-  //   // Regla 2: No ejecutar si el programa está en borrador
-  //   if (program.status === "DRAFT") {
-  //     errors.push(
-  //       "No se puede registrar ejecución en un programa en estado BORRADOR",
-  //     );
-  //   }
-
-  //   // Regla 3: Verificar que no se supere la meta total
-  //   const metaActual = existingExecutions
-  //     .filter((b) => b.activityId === activityId)
-  //     .reduce((sum, b) => sum + b.executedAmount, 0);
-
-  //   const nuevaMetaTotal = metaActual + metaEjecutada;
-  //   if (nuevaMetaTotal > activity.goalTotal) {
-  //     errors.push(
-  //       `La meta ejecutada (${nuevaMetaTotal}) superaría la meta total (${activity.goalTotal})`,
-  //     );
-  //   }
-
-  //   // Regla 4: Verificar que no se supere el presupuesto planeado
-  //   const presupuestoPlaneado = budgetItems
-  //     .filter((b) => b.activityId === activityId)
-  //     .reduce((sum, b) => sum + b.planned, 0);
-  //   const presupuestoActual = budgetItems
-  //     .filter((b) => b.activityId === activityId)
-  //     .reduce((sum, b) => sum + b.executed, 0);
-  //   const nuevoPresupuesto = presupuestoActual + valorEjecutado;
-  //   if (nuevoPresupuesto > presupuestoPlaneado) {
-  //     errors.push(
-  //       `El presupuesto ejecutado ($${nuevoPresupuesto.toLocaleString()}) superaría el planeado ($${presupuestoPlaneado.toLocaleString()})`,
-  //     );
-  //   }
-
-  //   // Regla 5: Verificar que el mes sea válido
-  //   if (mes < 1 || mes > 12) {
-  //     errors.push("El mes debe estar entre 1 y 12");
-  //   }
-
-  //   // Regla 6: Verificar valores positivos
-  //   if (metaEjecutada < 0 || valorEjecutado < 0) {
-  //     errors.push("Los valores ejecutados deben ser positivos");
-  //   }
-
-  //   return {
-  //     isValid: errors.length === 0,
-  //     errors,
-  //   };
-  // }
 }
