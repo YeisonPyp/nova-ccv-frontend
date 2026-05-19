@@ -1,0 +1,544 @@
+// reports.component.scss
+
+// ─── Design tokens alineados al theme global ────────────────
+$primary:       var(--color-primary);
+$secondary:     var(--color-secondary);
+$tertiary:      var(--color-tertiary);
+$border:        var(--color-border-primary);
+$bg:            var(--color-background);
+$text-muted:    var(--text-alternate);
+
+$radius-sm:     8px;
+$radius-md:     12px;
+$radius-lg:     16px;
+
+$shadow-sm:     0 1px 3px rgba(0, 0, 0, .05);
+$shadow-md:     0 4px 12px rgba(0, 0, 0, .08);
+$shadow-hover:  0 8px 20px rgba(0, 0, 0, .10);
+
+$ease:          .25s cubic-bezier(.4, 0, .2, 1);
+$ease-fast:     .15s ease;
+
+// ─── Color map para variantes ────────────────────────────────
+$variant-colors: (
+  'primary':   #ed3237,
+  'danger':    #dc3545,
+  'warning':   #fd7e14,
+  'info':      #0dcaf0,
+  'success':   #198754,
+  'secondary': #6f42c1,
+);
+
+// ─── Animations ──────────────────────────────────────────────
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PAGE CONTAINER
+// ═══════════════════════════════════════════════════════════════
+.reports-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  animation: fadeInUp .35s ease;
+}
+
+// ─── Header icon ─────────────────────────────────────────────
+.reports-header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #ed3237, #c4282d);
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ALERTAS (específicas del componente — no pisar las globales)
+// ═══════════════════════════════════════════════════════════════
+.rpt-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: $radius-md;
+  margin-bottom: 20px;
+  animation: fadeInUp .3s ease;
+  font-size: .85rem;
+  border: 1px solid transparent;
+
+  &__icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    opacity: .5;
+    transition: opacity $ease-fast;
+    display: flex;
+    color: inherit;
+
+    &:hover { opacity: 1; }
+  }
+
+  &--danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+  }
+
+  &--success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+  }
+}
+
+// ─── Count badge ─────────────────────────────────────────────
+.rpt-count-badge {
+  background: color-mix(in srgb, #ed3237 8%, transparent);
+  color: #ed3237;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TARJETAS DE REPORTE
+// ═══════════════════════════════════════════════════════════════
+.rpt-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: $bg;
+  border-radius: $radius-lg;
+  padding: 20px;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform $ease,
+    box-shadow $ease,
+    border-color $ease;
+  animation: fadeInUp .4s ease both;
+
+  // Stagger
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 50}ms;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-hover;
+
+    .rpt-card__arrow {
+      opacity: 1;
+      transform: translateX(0) translateY(-50%);
+    }
+
+    .rpt-card__icon-wrap {
+      transform: scale(1.06);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ed3237;
+    outline-offset: 2px;
+  }
+
+  &--generating {
+    pointer-events: none;
+    opacity: .65;
+  }
+
+  // ── Variantes de color ──
+  @each $name, $color in $variant-colors {
+    &--#{$name} {
+      border-left: 4px solid $color;
+
+      &:hover {
+        border-color: $color;
+      }
+
+      .rpt-card__icon-wrap {
+        background: color-mix(in srgb, $color 10%, transparent);
+        color: $color;
+      }
+    }
+  }
+
+  // ── Icon wrapper ──
+  &__icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform $ease;
+  }
+
+  // ── Arrow ──
+  &__arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateX(6px) translateY(-50%);
+    opacity: 0;
+    transition: all $ease;
+    color: $tertiary;
+
+    .material-icons { font-size: 20px; }
+  }
+
+  // ── Overlay generación ──
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, .88);
+    backdrop-filter: blur(3px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #ed3237;
+    z-index: 2;
+    border-radius: inherit;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BADGES
+// ═══════════════════════════════════════════════════════════════
+.rpt-audience-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .72rem;
+  font-weight: 500;
+  color: $tertiary;
+  background: #f1f5f9;
+  padding: 2px 10px;
+  border-radius: 20px;
+
+  &--lg {
+    font-size: .78rem;
+    padding: 4px 14px;
+  }
+}
+
+.rpt-format-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 5px;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  background: #e9ecef;
+  color: #495057;
+
+  &--pdf {
+    background: #fef2f2;
+    color: #dc3545;
+  }
+
+  &--excel {
+    background: #f0fdf4;
+    color: #198754;
+  }
+
+  &--csv {
+    background: #eff6ff;
+    color: #0d6efd;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REPORTES RECIENTES
+// ═══════════════════════════════════════════════════════════════
+.rpt-recent-section {
+  animation: fadeInUp .4s ease .1s both;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURACIÓN DE REPORTE
+// ═══════════════════════════════════════════════════════════════
+.rpt-config-section {
+  animation: slideInRight .3s ease;
+}
+
+.rpt-config-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: $bg;
+  border-radius: $radius-lg;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border;
+  border-left: 5px solid #ed3237;
+
+  @each $name, $color in $variant-colors {
+    &--#{$name} {
+      border-left-color: $color;
+
+      .rpt-config-header__icon {
+        background: color-mix(in srgb, $color 10%, transparent);
+        color: $color;
+      }
+    }
+  }
+
+  &__icon {
+    width: 60px;
+    height: 60px;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}
+
+.rpt-config-form-wrap {
+  background: $bg;
+  border-radius: $radius-lg;
+  padding: 24px;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border;
+}
+
+// ─── Format selector (radio visual) ─────────────────────────
+.rpt-format-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 20px;
+  border: 2px solid $border;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $ease;
+  min-width: 78px;
+  text-align: center;
+  color: $tertiary;
+
+  &:hover {
+    border-color: color-mix(in srgb, $tertiary 40%, transparent);
+    background: #f8fafc;
+  }
+
+  &--selected {
+    box-shadow: 0 0 0 3px color-mix(in srgb, #ed3237 10%, transparent);
+    border-color: #ed3237;
+    color: #ed3237;
+    background: color-mix(in srgb, #ed3237 4%, transparent);
+  }
+
+  // Color-coded cuando seleccionado
+  &--selected[data-format="PDF"] {
+    border-color: #dc3545;
+    color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(#dc3545, .1);
+    background: rgba(#dc3545, .04);
+  }
+
+  &--selected[data-format="EXCEL"] {
+    border-color: #198754;
+    color: #198754;
+    box-shadow: 0 0 0 3px rgba(#198754, .1);
+    background: rgba(#198754, .04);
+  }
+
+  &--selected[data-format="CSV"] {
+    border-color: #0dcaf0;
+    color: #0dcaf0;
+    box-shadow: 0 0 0 3px rgba(#0dcaf0, .1);
+    background: rgba(#0dcaf0, .04);
+  }
+}
+
+// ─── Checkbox custom ─────────────────────────────────────────
+.rpt-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 14px 16px;
+  border: 1.5px solid $border;
+  border-radius: $radius-md;
+  transition: all $ease-fast;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: color-mix(in srgb, $tertiary 30%, transparent);
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .rpt-checkbox__box {
+      background: #ed3237;
+      border-color: #ed3237;
+
+      .material-icons {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    &:focus-visible + .rpt-checkbox__box {
+      box-shadow: 0 0 0 3px rgba(#ed3237, .2);
+    }
+  }
+
+  &__box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid $border;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all $ease-fast;
+
+    .material-icons {
+      opacity: 0;
+      transform: scale(.4);
+      transition: all $ease-fast;
+    }
+  }
+}
+
+// ─── Preview / Resumen ───────────────────────────────────────
+.rpt-preview {
+  background: #f8fafc;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  padding: 18px;
+  margin-bottom: 0;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__label {
+    font-size: .7rem;
+    font-weight: 600;
+    color: $tertiary;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  &__value {
+    font-size: .85rem;
+    font-weight: 500;
+    color: $secondary;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════════════════════════
+
+// Tailwind's sr-only ya existe, pero para safety:
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RESPONSIVE
+// ═══════════════════════════════════════════════════════════════
+@media (max-width: 768px) {
+  .reports-page {
+    padding: 16px;
+  }
+
+  .rpt-card {
+    padding: 16px;
+
+    &__arrow {
+      display: none;
+    }
+  }
+
+  .rpt-config-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+
+    &__icon {
+      margin: 0 auto;
+    }
+  }
+
+  .rpt-format-option {
+    padding: 10px 14px;
+    min-width: 68px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rpt-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .rpt-format-option {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ACCESIBILIDAD
+// ═══════════════════════════════════════════════════════════════
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

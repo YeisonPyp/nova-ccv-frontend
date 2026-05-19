@@ -1,156 +1,323 @@
-<div class="programs-container">
-  <header class="page-header">
-    <div class="header-content">
-      <h1>📋 Programas PAT 2025</h1>
-      <p>Gestión y seguimiento de programas del Plan Anual de Trabajo</p>
+<!-- programs.component.html -->
+<div class="prg-page">
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="flex items-start justify-between gap-4 mb-6 flex-wrap">
+    <div class="flex items-center gap-4">
+      <div class="prg-header-icon">
+        <span class="material-icons text-2xl text-white">list_alt</span>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-secondary m-0 leading-tight">
+          Programas PAT
+        </h1>
+        <p class="text-sm text-tertiary mt-1 m-0">
+          Gestión y seguimiento de programas del Plan Anual de Trabajo
+        </p>
+      </div>
     </div>
-    <a routerLink="/pat/dashboard" class="btn-back">← Volver al Dashboard</a>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <a
+        routerLink="/pat/dashboard"
+        class="btn btn-secondary gap-2"
+        aria-label="Volver al dashboard">
+        <span class="material-icons text-lg">arrow_back</span>
+        Dashboard
+      </a>
+      <button
+        class="btn btn-primary gap-2"
+        (click)="createProgram()"
+        aria-label="Crear nuevo programa">
+        <span class="material-icons text-lg">add</span>
+        Nuevo Programa
+      </button>
+    </div>
   </header>
 
-  <!-- Filters -->
-  <section class="filters-section">
-    <div class="search-box">
+  <!-- ─── Error ──────────────────────────────────────────── -->
+  @if (error()) {
+    <div class="prg-alert" role="alert">
+      <span class="material-icons text-xl flex-shrink-0">error_outline</span>
+      <span class="flex-1 text-sm">{{ error() }}</span>
+      <button
+        class="prg-alert__retry"
+        (click)="loadPrograms()"
+        aria-label="Reintentar">
+        <span class="material-icons text-lg">refresh</span>
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- ─── Filtros ────────────────────────────────────────── -->
+  <section class="prg-filters" aria-label="Filtros de programas">
+    <!-- Barra de búsqueda -->
+    <div class="prg-search-wrap">
+      <span class="material-icons prg-search-icon">search</span>
       <input
         type="text"
-        placeholder="🔍 Buscar por nombre, código o área..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="applyFilters()"
-      />
-    </div>
-    <div class="filter-chips">
-      <button
-        class="chip"
-        [class.active]="statusFilter() === null"
-        (click)="filterByStatus(null)"
-      >
-        Todos ({{ programs().length }})
-      </button>
-      @for (status of statusOptions; track status.value) {
+        class="form-control prg-search-input"
+        placeholder="Buscar por nombre, código, área o responsable..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
+        aria-label="Buscar programas" />
+      @if (searchTerm()) {
         <button
-          class="chip"
-          [class.active]="statusFilter() === status.value"
-          [class]="getStatusClass(status.value)"
-          (click)="filterByStatus(status.value)"
-        >
-          {{ status.label }} ({{ countByStatus(status.value) }})
+          class="prg-search-clear"
+          (click)="onSearchChange('')"
+          aria-label="Limpiar búsqueda">
+          <span class="material-icons text-lg">close</span>
+        </button>
+      }
+    </div>
+
+    <!-- Chips de estado -->
+    <div class="flex items-center gap-2 flex-wrap" role="tablist" aria-label="Filtrar por estado">
+      <button
+        class="prg-chip"
+        [class.prg-chip--active]="statusFilter() === null"
+        (click)="filterByStatus(null)"
+        role="tab"
+        [attr.aria-selected]="statusFilter() === null">
+        <span class="material-icons text-sm">apps</span>
+        Todos
+        <span class="prg-chip__count">{{ programs().length }}</span>
+      </button>
+
+      @for (opt of statusFilters; track trackByStatusValue($index, opt)) {
+        <button
+          class="prg-chip prg-chip--{{ getStatusClass(opt.value) }}"
+          [class.prg-chip--active]="statusFilter() === opt.value"
+          (click)="filterByStatus(opt.value)"
+          role="tab"
+          [attr.aria-selected]="statusFilter() === opt.value">
+          <span class="material-icons text-sm">{{ opt.icon }}</span>
+          {{ opt.label }}
+          <span class="prg-chip__count">{{ countByStatus(opt.value) }}</span>
+        </button>
+      }
+
+      @if (hasActiveFilters()) {
+        <button
+          class="prg-chip prg-chip--clear"
+          (click)="clearFilters()"
+          aria-label="Limpiar todos los filtros">
+          <span class="material-icons text-sm">filter_alt_off</span>
+          Limpiar
         </button>
       }
     </div>
   </section>
 
+  <!-- ─── Skeleton loading ───────────────────────────────── -->
   @if (loading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Cargando programas...</p>
+    <div class="animate-pulse space-y-4">
+      <!-- Summary skeleton -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="bg-white rounded-xl p-4 border border-border-primary">
+            <div class="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+            <div class="h-6 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        }
+      </div>
+
+      <!-- Table skeleton -->
+      <div class="bg-white rounded-xl border border-border-primary overflow-hidden">
+        <div class="h-12 bg-gray-100 border-b border-border-primary"></div>
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="flex items-center gap-4 p-4 border-b border-gray-100">
+            <div class="h-4 bg-gray-200 rounded w-20"></div>
+            <div class="h-4 bg-gray-200 rounded flex-1"></div>
+            <div class="h-4 bg-gray-200 rounded w-24"></div>
+            <div class="h-4 bg-gray-200 rounded w-24"></div>
+            <div class="h-3 bg-gray-200 rounded w-16"></div>
+            <div class="h-3 bg-gray-200 rounded w-16"></div>
+            <div class="h-6 bg-gray-200 rounded-full w-20"></div>
+            <div class="h-8 bg-gray-200 rounded w-20"></div>
+          </div>
+        }
+      </div>
     </div>
-  } @else {
-    <!-- Summary Stats -->
-    <section class="summary-stats">
-      <div class="stat">
-        <span class="stat-value">{{ filteredPrograms().length }}</span>
-        <span class="stat-label">Programas</span>
+  }
+
+  <!-- ─── Contenido cargado ──────────────────────────────── -->
+  @if (!loading() && !error()) {
+    <!-- Resumen de métricas -->
+    <section
+      class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"
+      aria-label="Resumen de métricas">
+      <div class="prg-stat-card">
+        <span class="prg-stat-card__icon material-icons">folder</span>
+        <div>
+          <span class="prg-stat-card__value">{{ filteredCount() }}</span>
+          <span class="prg-stat-card__label">Programas</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-value">{{
-          totalBudget() | currency: "COP" : "symbol-narrow" : "1.0-0"
-        }}</span>
-        <span class="stat-label">Presupuesto Total</span>
+
+      <div class="prg-stat-card">
+        <span class="prg-stat-card__icon material-icons">account_balance_wallet</span>
+        <div>
+          <span class="prg-stat-card__value">
+            {{ totalBudget() | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </span>
+          <span class="prg-stat-card__label">Presupuesto Planificado</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-value">{{ averageMetaProgress() }}%</span>
-        <span class="stat-label">Avance Promedio</span>
+
+      <div class="prg-stat-card">
+        <span class="prg-stat-card__icon material-icons">flag</span>
+        <div>
+          <span class="prg-stat-card__value prg-stat-card__value--pct">
+            {{ averageGoalProgress() }}%
+          </span>
+          <span class="prg-stat-card__label">Avance Metas (Prom.)</span>
+        </div>
+      </div>
+
+      <div class="prg-stat-card">
+        <span class="prg-stat-card__icon material-icons">payments</span>
+        <div>
+          <span class="prg-stat-card__value prg-stat-card__value--pct">
+            {{ averageBudgetProgress() }}%
+          </span>
+          <span class="prg-stat-card__label">Ejecución Presup. (Prom.)</span>
+        </div>
       </div>
     </section>
 
-    <!-- Programs Table -->
-    <section class="table-section">
-      <div class="table-container">
-        <table class="programs-table">
+    <!-- ─── Tabla de programas ───────────────────────────── -->
+    <section class="prg-table-wrap" aria-label="Lista de programas">
+      <div class="table-container !p-0 overflow-x-auto">
+        <table
+          class="base-table prg-table"
+          aria-label="Programas del Plan Anual de Trabajo">
           <thead>
             <tr>
-              <th class="col-code">Código</th>
-              <th class="col-name">Programa</th>
-              <th class="col-area">Área</th>
-              <th class="col-responsible">Responsable</th>
-              <th class="col-meta">% Meta</th>
-              <th class="col-budget">% Presupuesto</th>
-              <th class="col-status">Estado</th>
-              <th class="col-action">Acción</th>
+              <th class="table-header-cell" scope="col">Código</th>
+              <th class="table-header-cell" scope="col">Programa</th>
+              <th class="table-header-cell hidden md:table-cell" scope="col">Área</th>
+              <th class="table-header-cell hidden lg:table-cell" scope="col">Responsable</th>
+              <th class="table-header-cell" scope="col">Metas</th>
+              <th class="table-header-cell hidden sm:table-cell" scope="col">Presupuesto</th>
+              <th class="table-header-cell" scope="col">Estado</th>
+              <th class="table-header-cell text-right" scope="col">Acción</th>
             </tr>
           </thead>
           <tbody>
-            @for (program of filteredPrograms(); track program.id) {
-              <tr [class]="'row-' + getStatusClass(program.status)">
-                <td class="col-code">
-                  <span class="code-badge">{{ program.code }}</span>
+            @for (program of filteredPrograms(); track trackByProgramId($index, program)) {
+              <tr class="table-row group prg-row">
+                <!-- Código -->
+                <td class="table-cell">
+                  <span class="prg-code">{{ program.code }}</span>
                 </td>
-                <td class="col-name">
-                  <div class="name-cell">
-                    <span class="program-name">{{ program.name }}</span>
-                    <span class="program-budget">
+
+                <!-- Nombre + presupuesto -->
+                <td class="table-cell">
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-sm font-medium text-secondary leading-snug">
+                      {{ program.name }}
+                    </span>
+                    <span class="text-xs text-tertiary">
                       {{
                         program.plannedBudget
-                          | currency: "COP" : "symbol-narrow" : "1.0-0"
+                          | currency : 'COP' : 'symbol-narrow' : '1.0-0'
                       }}
+                    </span>
+                    <!-- Info mobile: Área y responsable -->
+                    <div class="flex items-center gap-2 mt-1 md:hidden">
+                      <span class="text-xs text-tertiary flex items-center gap-1">
+                        <span class="material-icons !text-xs">corporate_fare</span>
+                        {{ program.areaName }}
+                      </span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Área -->
+                <td class="table-cell hidden md:table-cell">
+                  <span class="text-sm text-secondary">{{ program.areaName }}</span>
+                </td>
+
+                <!-- Responsable -->
+                <td class="table-cell hidden lg:table-cell">
+                  <div class="flex items-center gap-2">
+                    <div class="prg-avatar">
+                      {{ program.employeeName.charAt(0) }}
+                    </div>
+                    <span class="text-sm text-secondary">{{ program.employeeName }}</span>
+                  </div>
+                </td>
+
+                <!-- % Metas -->
+                <td class="table-cell">
+                  <div class="prg-progress-cell">
+                    <app-pat-progress-bar
+                      [value]="program.goalAchievedPct"
+                      [height]="6" />
+                    <span class="prg-progress-value">
+                      {{ program.goalAchievedPct }}%
                     </span>
                   </div>
                 </td>
-                <td class="col-area">{{ program.areaName }}</td>
-                <td class="col-responsible">{{ program.employeeName }}</td>
-                <td class="col-meta">
-                  <div class="progress-cell">
-                    <div class="mini-progress">
-                      <div
-                        class="mini-bar meta"
-                        [style.width.%]="program.goalAchievedPct"
-                        [class.low]="program.goalAchievedPct < 40"
-                        [class.medium]="
-                          program.goalAchievedPct >= 40 &&
-                          program.goalAchievedPct < 70
-                        "
-                        [class.high]="program.goalAchievedPct >= 70"
-                      ></div>
-                    </div>
-                    <span class="progress-value">{{ program.goalAchievedPct }}%</span>
+
+                <!-- % Presupuesto -->
+                <td class="table-cell hidden sm:table-cell">
+                  <div class="prg-progress-cell">
+                    <app-pat-progress-bar
+                      [value]="program.budgetExecutedPct"
+                      [height]="6" />
+                    <span class="prg-progress-value">
+                      {{ program.budgetExecutedPct }}%
+                    </span>
                   </div>
                 </td>
-                <td class="col-budget">
-                  <div class="progress-cell">
-                    <div class="mini-progress">
-                      <div
-                        class="mini-bar budget"
-                        [style.width.%]="program.budgetExecutedPct"
-                      ></div>
-                    </div>
-                    <span class="progress-value">{{ program.budgetExecutedPct }}%</span>
-                  </div>
+
+                <!-- Estado -->
+                <td class="table-cell">
+                  <app-status-badge [status]="program.status" />
                 </td>
-                <td class="col-status">
-                  <span
-                    class="status-badge"
-                    [class]="getStatusClass(program.status)"
-                  >
-                    {{ getStatusLabel(program.status) }}
-                  </span>
-                </td>
-                <td class="col-action">
+
+                <!-- Acción -->
+                <td class="table-cell text-right">
                   <a
                     [routerLink]="['/pat/programs', program.id]"
-                    class="btn-detail"
-                  >
-                    Ver detalle
+                    class="prg-detail-btn group-hover:border-primary group-hover:text-primary"
+                    [attr.aria-label]="'Ver detalle de ' + program.name">
+                    <span class="material-icons text-base">visibility</span>
+                    <span class="hidden sm:inline">Detalle</span>
                   </a>
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="8" class="empty-state">
-                  <div class="empty-content">
-                    <span class="empty-icon">📭</span>
-                    <p>No se encontraron programas con los filtros aplicados</p>
-                    <button class="btn-clear" (click)="clearFilters()">
-                      Limpiar filtros
-                    </button>
+                <td colspan="8">
+                  <div class="prg-empty">
+                    <span class="material-icons prg-empty__icon">
+                      {{ hasActiveFilters() ? 'filter_alt_off' : 'folder_off' }}
+                    </span>
+                    <p class="prg-empty__title">
+                      @if (hasActiveFilters()) {
+                        No se encontraron programas con los filtros aplicados
+                      } @else {
+                        No hay programas registrados
+                      }
+                    </p>
+                    @if (hasActiveFilters()) {
+                      <button
+                        class="btn btn-secondary gap-2 !py-2 !px-4 !text-xs"
+                        (click)="clearFilters()">
+                        <span class="material-icons !text-base">filter_alt_off</span>
+                        Limpiar filtros
+                      </button>
+                    } @else {
+                      <button
+                        class="btn btn-primary gap-2 !py-2 !px-4 !text-xs"
+                        (click)="createProgram()">
+                        <span class="material-icons !text-base">add</span>
+                        Crear primer programa
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>
@@ -158,6 +325,19 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pie de tabla: conteo -->
+      @if (filteredCount() > 0) {
+        <div class="prg-table-footer">
+          <span class="text-xs text-tertiary">
+            Mostrando
+            <strong class="text-secondary">{{ filteredCount() }}</strong>
+            de
+            <strong class="text-secondary">{{ programs().length }}</strong>
+            programas
+          </span>
+        </div>
+      }
     </section>
   }
 </div>
