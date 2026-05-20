@@ -35,7 +35,7 @@ export class ProjectPriorityParamComponent {
     scale: new FormControl<number | null>(null, [Validators.required]),
   });
 
-  projectPriorityColumns: TableColumn<ProjectPriority>[] = [
+  projectPriorityColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "scale", label: "Escala" },
   ];

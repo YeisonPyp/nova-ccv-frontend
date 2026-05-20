@@ -26,7 +26,7 @@ export class GoalsDashboardComponent {
 
   goalsData = signal<APIPage<Goal> | undefined>(undefined);
 
-  columns: TableColumn<Goal>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "title", label: "Título" },
     { key: "description", label: "Descripción" },

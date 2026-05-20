@@ -1,3 +1,4 @@
+import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
 import { Routes } from "@angular/router";
 
 export const GOALS_ROUTES: Routes = [
@@ -7,6 +8,7 @@ export const GOALS_ROUTES: Routes = [
       import("./pages/dashboard/goals-dashboard.component").then(
         (m) => m.GoalsDashboardComponent,
       ),
+    canActivate: [hasPermissionGuard(["GOALS_READ"])],
   },
   {
     path: "create",
@@ -14,5 +16,6 @@ export const GOALS_ROUTES: Routes = [
       import("./pages/dashboard/create-goal/create-goal.component").then(
         (m) => m.CreateGoalComponent,
       ),
+    canActivate: [hasPermissionGuard(["GOALS_CREATE"])],
   },
 ];

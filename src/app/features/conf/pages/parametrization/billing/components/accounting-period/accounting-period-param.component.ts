@@ -49,7 +49,7 @@ export class AccountingPeriodParamComponent {
     endDate: new FormControl("", [Validators.required]),
   });
 
-  accountingPeriodColumns: TableColumn<AccountingPeriod>[] = [
+  accountingPeriodColumns: TableColumn[] = [
     { key: "period", label: "Período" },
     { key: "startDate", label: "Inicio" },
     { key: "endDate", label: "Fin" },

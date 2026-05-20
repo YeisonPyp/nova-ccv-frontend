@@ -46,7 +46,7 @@ export class PeriodsParamComponent {
     endDate: new FormControl("", [Validators.required]),
   });
 
-  periodColumns: TableColumn<Period>[] = [
+  periodColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "startDate", label: "Inicio" },
     { key: "endDate", label: "Fin" },

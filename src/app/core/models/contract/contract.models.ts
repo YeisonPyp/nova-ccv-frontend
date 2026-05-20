@@ -1,5 +1,8 @@
+import { Filing } from "../filing/filing.models";
+
 export interface Contract {
   id: number;
+  filingId: number;
   contractId: string;
   contractType: string;
   identification: string;
@@ -178,11 +181,17 @@ export type ContractPendingProcessType =
   | "cession"
   | "mutation"
   | "othersi"
-  | "suspension";
+  | "suspension"
+  | "resume";
 
 export interface ContractPendingProcess {
   id: number;
   name: string;
+  filingId: number | null;
+  actId: number | null;
+  filing: Filing | null;
+  act: ContractAct | null;
+  contractType: "employee" | "agency";
   processType: ContractPendingProcessType;
   createdAt: string;
 }
@@ -195,5 +204,14 @@ export interface ContractAct {
   actDate: string;
   signatories: string;
   description: string | null;
+  createdAt: string;
+}
+
+export interface ContractResume {
+  id: number;
+  contractId: number;
+  contractMutationId: number | null;
+  runningStatusName: string;
+  resumeDate: string;
   createdAt: string;
 }

@@ -46,7 +46,7 @@ export class WorkflowStepsParamComponent {
     positionId: new FormControl<number | null>(null),
   });
 
-  stepColumns: TableColumn<WorkflowStep>[] = [
+  stepColumns: TableColumn[] = [
     { key: "stepOrder", label: "Orden" },
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },

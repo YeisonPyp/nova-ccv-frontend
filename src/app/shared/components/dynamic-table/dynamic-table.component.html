@@ -30,7 +30,10 @@
           @if (actionsTemplate) {
             <td class="table-cell actions-cell">
               <ng-container
-                *ngTemplateOutlet="actionsTemplate; context: { $implicit: item }"
+                *ngTemplateOutlet="
+                  actionsTemplate;
+                  context: { $implicit: item }
+                "
               ></ng-container>
             </td>
           }

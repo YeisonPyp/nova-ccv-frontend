@@ -35,7 +35,7 @@ export class EpsEntityParamComponent {
     description: new FormControl(""),
   });
 
-  epsEntityColumns: TableColumn<EpsEntity>[] = [
+  epsEntityColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

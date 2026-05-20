@@ -45,7 +45,7 @@ export class ChargePaymentsSectionComponent implements OnInit {
     paymentDate: ["", Validators.required],
   });
 
-  columns: TableColumn<BillingChargePayment>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "username", label: "Usuario" },
     { key: "amount", label: "Monto" },

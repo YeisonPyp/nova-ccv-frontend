@@ -25,7 +25,7 @@ export class BillingDashboardComponent implements OnInit {
   pageSize = 20;
   loading = signal(false);
 
-  columns: TableColumn<BillingAccount>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "contractId", label: "Contrato" },
     { key: "employeeName", label: "Empleado" },

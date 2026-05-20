@@ -35,7 +35,7 @@ export class PensionTypeParamComponent {
     description: new FormControl(""),
   });
 
-  pensionTypeColumns: TableColumn<PensionType>[] = [
+  pensionTypeColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

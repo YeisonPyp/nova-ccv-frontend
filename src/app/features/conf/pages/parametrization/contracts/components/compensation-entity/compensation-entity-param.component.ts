@@ -35,7 +35,7 @@ export class CompensationEntityParamComponent {
     description: new FormControl(""),
   });
 
-  compensationEntityColumns: TableColumn<CompensationEntity>[] = [
+  compensationEntityColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

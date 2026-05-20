@@ -35,7 +35,7 @@ export class CancellationTypeParamComponent {
     description: new FormControl(""),
   });
 
-  cancellationTypeColumns: TableColumn<ContractCancellationType>[] = [
+  cancellationTypeColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

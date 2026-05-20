@@ -45,7 +45,7 @@ export class FilingProcessParamComponent {
     canDelete: new FormControl(false),
   });
 
-  fpColumns: TableColumn<FilingProcess>[] = [
+  fpColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "canUpdate", label: "Puede modificar" },
     { key: "canDelete", label: "Puede eliminar" },

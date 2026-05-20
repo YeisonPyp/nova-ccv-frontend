@@ -1,0 +1,42 @@
+<app-filter-section
+  [columns]="tableColumns()"
+  [rows]="filterRows()"
+  (filterChange)="onFilterChange($event)"
+  (onUpdateRow)="onUpdateFilterRow($event.index, $event.row)"
+  (onClearFilter)="onClearFilters()"
+  (onAddRow)="onAddFilterRow($event)"
+  (onRemoveRow)="onRemoveFilterRow($event)"
+/>
+@if (loading()) {
+  <div class="text-center py-4">
+    <div
+      class="spinner-border spinner-border-sm text-primary"
+      role="status"
+    ></div>
+  </div>
+} @else {
+  <app-dynamic-table [data]="items()" [columns]="tableColumns()">
+    @if (actionsTemplate) {
+      <ng-template #actions let-item>
+        <ng-container
+          *ngTemplateOutlet="actionsTemplate; context: { $implicit: item }"
+        ></ng-container>
+      </ng-template>
+    }
+    @if (customCellTemplate) {
+      <ng-template #customCell let-item let-col="column">
+        <ng-container
+          *ngTemplateOutlet="
+            customCellTemplate;
+            context: { $implicit: item, column: col }
+          "
+        ></ng-container>
+      </ng-template>
+    }
+  </app-dynamic-table>
+  <app-pagination
+    [currentPage]="currentPage()"
+    [pages]="totalPages()"
+    (pageChange)="onPageChange($event)"
+  />
+}

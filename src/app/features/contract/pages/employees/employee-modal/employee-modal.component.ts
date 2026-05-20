@@ -42,11 +42,11 @@ export class EmployeeModalComponent implements OnChanges {
   >();
 
   form: FormGroup;
-  positions = signal<SearchSelectOption[]>([]);
 
   selectedPositions = signal<SearchSelectOption[]>([]);
   private positionService = inject(PositionService);
 
+  positions = signal<SearchSelectOption[]>([]);
   employees = signal<SearchSelectOption[]>([]);
 
   selectedEmployees = signal<SearchSelectOption[]>([]);

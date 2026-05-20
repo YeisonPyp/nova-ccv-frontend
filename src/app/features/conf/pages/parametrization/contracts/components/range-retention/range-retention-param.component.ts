@@ -42,7 +42,7 @@ export class RangeRetentionParamComponent {
     addition: new FormControl<number | null>(null),
   });
 
-  rangeRetentionColumns: TableColumn<RangeRetention>[] = [
+  rangeRetentionColumns: TableColumn[] = [
     { key: "year", label: "Año" },
     { key: "minUvt", label: "UVT Mín." },
     { key: "maxUvt", label: "UVT Máx." },

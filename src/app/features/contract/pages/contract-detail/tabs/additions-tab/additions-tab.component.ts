@@ -32,7 +32,7 @@ export class AdditionsTabComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<ContractAdditions>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "newBasePeriodAmount", label: "Nuevo Monto Base" },
     { key: "description", label: "Descripción" },

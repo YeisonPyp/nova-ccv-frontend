@@ -32,7 +32,7 @@ export class OthersiTabComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<ContractOthersi>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "index", label: "#" },
     { key: "description", label: "Descripción" },

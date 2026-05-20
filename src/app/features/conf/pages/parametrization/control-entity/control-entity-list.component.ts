@@ -34,7 +34,7 @@ export class ControlEntityListComponent implements OnInit {
   isModalOpen = signal(false);
   selectedEntity = signal<ControlEntity | null>(null);
 
-  columns: TableColumn<ControlEntity>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "name", label: "Nombre" },
   ];

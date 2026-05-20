@@ -32,7 +32,7 @@ export class CessionsTabComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<ContractCessions>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "previousEmployeeName", label: "Empleado Anterior" },
     { key: "newEmployeeName", label: "Nuevo Empleado" },

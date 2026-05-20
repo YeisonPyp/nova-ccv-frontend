@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "./core/guards/auth.guard";
+import { ForbiddenComponent } from "./shared/components/forbidden/forbidden.component";
 
 export const routes: Routes = [
   {
@@ -96,7 +97,18 @@ export const routes: Routes = [
             (m) => m.COST_CENTER_ROUTES,
           ),
       },
+      {
+        path: "security",
+        loadChildren: () =>
+          import("./features/security/security.routes").then(
+            (m) => m.SECURITY_ROUTES,
+          ),
+      },
     ],
+  },
+  {
+    path: "forbidden",
+    component: ForbiddenComponent,
   },
   {
     path: "**",

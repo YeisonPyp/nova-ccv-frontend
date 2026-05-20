@@ -242,6 +242,6 @@ export class EditImprovementPlanModalComponent {
   }
 
   goBack(): void {
-    this.router.navigate(["/improvement-plan/dashboard"]);
+    this.router.navigate(["improvement-plan"]);
   }
 }

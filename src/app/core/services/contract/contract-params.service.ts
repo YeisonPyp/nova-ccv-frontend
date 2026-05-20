@@ -67,7 +67,7 @@ export class ContractParamsService {
   private readonly base = environment.apiUrl;
 
   // ── ContractStatus ──────────────────────────────────────────────────────────
-  findContractStatuses(p: PageableQuery = {}) {
+  findContractStatuses() {
     return this.http.get<ApiResponse<ContractStatus[]>>(
       `${this.base}/contract-statuses`,
     );

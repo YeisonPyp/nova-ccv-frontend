@@ -43,9 +43,7 @@ export class ProjectStatusParamComponent {
     name: new FormControl("", [Validators.required, Validators.maxLength(20)]),
   });
 
-  projectStatusColumns: TableColumn<ProjectStatus>[] = [
-    { key: "name", label: "Nombre" },
-  ];
+  projectStatusColumns: TableColumn[] = [{ key: "name", label: "Nombre" }];
 
   get canReadProjectStatus() {
     return this.auth.hasPermission("PROJECT_STATUS_READ");

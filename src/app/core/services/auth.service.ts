@@ -55,6 +55,23 @@ export class AuthService {
       );
   }
 
+  forgotPassword(email: string): Observable<ApiResponse<void>> {
+    return this.http
+      .post<ApiResponse<void>>(`${this.API_URL}/forgot-password`, { email })
+      .pipe(catchError(this.handleError));
+  }
+
+  resetPassword(
+    token: string,
+    password: string,
+  ): Observable<ApiResponse<void>> {
+    return this.http
+      .post<
+        ApiResponse<void>
+      >(`${this.API_URL}/reset-password`, { token, password })
+      .pipe(catchError(this.handleError));
+  }
+
   /**
    * Registrar nuevo usuario
    */
@@ -189,7 +206,7 @@ export class AuthService {
    */
   hasRole(role: string): boolean {
     const user = this.currentUser();
-    return user?.roles?.includes(role) ?? false;
+    return user?.roles?.includes(role) || false;
   }
 
   /**
@@ -197,7 +214,7 @@ export class AuthService {
    */
   hasAnyRole(roles: string[]): boolean {
     const user = this.currentUser();
-    return roles.some((role) => user?.roles?.includes(role)) ?? false;
+    return roles.some((role) => user?.roles?.includes(role)) || false;
   }
 
   /**
@@ -205,7 +222,7 @@ export class AuthService {
    */
   hasPermission(permission: string): boolean {
     const user = this.currentUser();
-    return user?.isAdmin ?? user?.permissions?.includes(permission) ?? false;
+    return user?.isAdmin || user?.permissions?.includes(permission) || false;
   }
 
   /**
@@ -214,7 +231,7 @@ export class AuthService {
   hasAnyPermission(permissions: string[]): boolean {
     const user = this.currentUser();
     return (
-      permissions.some((perm) => user?.permissions?.includes(perm)) ?? false
+      permissions.some((perm) => user?.permissions?.includes(perm)) || false
     );
   }
 

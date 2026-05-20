@@ -1,0 +1,108 @@
+<div class="w-full">
+  <div class="card-body">
+    <form [formGroup]="form" class="space-y-4" (ngSubmit)="submit()">
+      <div class="row g-3">
+        <div>
+          <label class="form-label fw-semibold text-sm">
+            Nombre <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="firstName"
+            placeholder="Nombre"
+          />
+        </div>
+        <div>
+          <label class="form-label fw-semibold text-sm">
+            Apellido <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="lastName"
+            placeholder="Apellido"
+          />
+        </div>
+        <div>
+          <label class="form-label fw-semibold text-sm"> Posición </label>
+          <app-search-select
+            [label]="'Puesto'"
+            [placeholder]="'Selleciona un puesto'"
+            [maxElements]="1"
+            [required]="true"
+            [items]="positions()"
+            [selectedItems]="selectedPositions()"
+            (onSearch)="findPositions($event)"
+            (onRemove)="onRemovePosition($event)"
+            (onSelect)="onSelectPosition($event)"
+          ></app-search-select>
+          <app-search-select
+            [label]="'Reporta A (Jefe directo)'"
+            [placeholder]="'Selecciona un empleado'"
+            [maxElements]="1"
+            [required]="false"
+            [items]="employees()"
+            [selectedItems]="selectedEmployees()"
+            (onSearch)="findEmployees($event)"
+            (onRemove)="onRemoveReportsTo($event)"
+            (onSelect)="onSelectReportsTo($event)"
+          ></app-search-select>
+        </div>
+      </div>
+      <div>
+        <label class="form-label text-sm">Franja horaria</label>
+        <select class="" formControlName="scheduleId">
+          @for (schedule of schedules(); track schedule.id) {
+            <option [value]="schedule.id">{{ schedule.name }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="form-label fw-semibold text-sm">
+          Identificación <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="upin" />
+      </div>
+      <div>
+        <label class="form-label fw-semibold text-sm">
+          Correo electrónico <span class="text-danger">*</span>
+        </label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+        />
+      </div>
+      <div>
+        <label class="form-label fw-semibold text-sm"> Rol </label>
+        <select class="form-control" formControlName="roleId">
+          @for (role of roles(); track role.id) {
+            <option [value]="role.id">{{ role.name }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="form-label fw-semibold text-sm"> Contraseña </label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="Mínimo 8 caracteres"
+        />
+      </div>
+
+      <div class="d-flex justify-content-end pt-2">
+        <button
+          class="btn btn-primary btn-sm"
+          type="button"
+          [disabled]="creating() || form.invalid"
+          (click)="submit()"
+        >
+          {{ creating() ? "Creando..." : "Crear usuario" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

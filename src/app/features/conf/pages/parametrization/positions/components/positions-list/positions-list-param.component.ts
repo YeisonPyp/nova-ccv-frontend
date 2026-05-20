@@ -42,7 +42,7 @@ export class PositionsListParamComponent {
   showDeletePositionModal = signal(false);
   deletingPosition = signal<Position | null>(null);
 
-  positionColumns: TableColumn<Position>[] = [
+  positionColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "areaName", label: "Área" },
     { key: "description", label: "Descripción" },

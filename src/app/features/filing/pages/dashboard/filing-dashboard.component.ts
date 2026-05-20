@@ -36,7 +36,7 @@ export class FilingDashboardComponent implements OnInit {
     return crumbs[crumbs.length - 1].id;
   });
 
-  columns: TableColumn<Filing>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "processName", label: "Proceso" },
     { key: "areaName", label: "Área" },

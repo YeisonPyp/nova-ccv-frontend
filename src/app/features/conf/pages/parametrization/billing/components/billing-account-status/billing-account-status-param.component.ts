@@ -43,7 +43,7 @@ export class BillingAccountStatusParamComponent {
     name: new FormControl("", [Validators.required, Validators.maxLength(20)]),
   });
 
-  billingAccountStatusColumns: TableColumn<BillingAccountStatus>[] = [
+  billingAccountStatusColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
   ];
 

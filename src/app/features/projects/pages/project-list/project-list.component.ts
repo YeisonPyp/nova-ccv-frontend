@@ -25,7 +25,7 @@ export class ProjectListComponent implements OnInit {
   loading = signal(false);
   pageSize = 10;
 
-  columns: TableColumn<Project>[] = [
+  columns: TableColumn[] = [
     { key: "code", label: "Código" },
     { key: "name", label: "Nombre" },
     { key: "areaName", label: "Área" },

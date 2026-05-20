@@ -1,3 +1,4 @@
+import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
 import { Routes } from "@angular/router";
 
 export const PROJECTS_ROUTES: Routes = [
@@ -7,6 +8,7 @@ export const PROJECTS_ROUTES: Routes = [
       import("./pages/project-list/project-list.component").then(
         (m) => m.ProjectListComponent,
       ),
+    canActivate: [hasPermissionGuard(["PROJECTS_READ"])],
   },
   {
     path: "create",
@@ -14,6 +16,7 @@ export const PROJECTS_ROUTES: Routes = [
       import("./pages/create-project/create-project.component").then(
         (m) => m.CreateProjectComponent,
       ),
+    canActivate: [hasPermissionGuard(["PROJECTS_CREATE"])],
   },
   {
     path: ":id",
@@ -21,5 +24,6 @@ export const PROJECTS_ROUTES: Routes = [
       import("./pages/project-detail/project-detail.component").then(
         (m) => m.ProjectDetailComponent,
       ),
+    canActivate: [hasPermissionGuard(["PROJECTS_READ"])],
   },
 ];

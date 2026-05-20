@@ -43,9 +43,7 @@ export class ActivityStatusParamComponent {
     name: new FormControl("", [Validators.required, Validators.maxLength(20)]),
   });
 
-  activityStatusColumns: TableColumn<ActivityStatus>[] = [
-    { key: "name", label: "Nombre" },
-  ];
+  activityStatusColumns: TableColumn[] = [{ key: "name", label: "Nombre" }];
 
   get canReadActivityStatus() {
     return this.auth.hasPermission("ACTIVITY_STATUS_READ");

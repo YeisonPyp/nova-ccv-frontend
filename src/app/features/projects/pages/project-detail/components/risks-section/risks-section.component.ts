@@ -27,7 +27,7 @@ export class RisksSectionComponent {
   riskModalOpen = signal(false);
   editingRisk = signal<ProjectRisk | null>(null);
 
-  readonly riskColumns: TableColumn<ProjectRisk>[] = [
+  readonly riskColumns: TableColumn[] = [
     { key: "displayOrder", label: "#" },
     { key: "name", label: "Nombre" },
     { key: "probability", label: "Probabilidad" },

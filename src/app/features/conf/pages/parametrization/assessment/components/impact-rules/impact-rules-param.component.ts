@@ -45,7 +45,7 @@ export class ImpactRulesParamComponent {
     impactFactor: new FormControl<number | null>(null, [Validators.required]),
   });
 
-  impactRuleColumns: TableColumn<ImpactRule>[] = [
+  impactRuleColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "impactFactor", label: "Factor de impacto" },
   ];

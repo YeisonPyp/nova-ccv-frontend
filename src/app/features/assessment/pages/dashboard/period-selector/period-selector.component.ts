@@ -38,7 +38,7 @@ export class PeriodSelectorComponent implements OnInit {
   pageSize = signal(10);
   totalPages = signal(0);
 
-  columns: TableColumn<any>[] = [
+  columns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "status", label: "Estado" },
     { key: "dates", label: "Empieza/Termina" },

@@ -77,30 +77,30 @@
     } @else if (currentStep() === 2) {
       <app-contract-act-upsert
         [contractId]="contractId()"
-        [filingId]="createdFiling()?.id ?? null"
+        [filingId]="getProcessFilingId()"
         (onSave)="onActSaved($event)"
-        (onCancel)="currentStep.set(1)"
       />
     } @else if (currentStep() === 3) {
       @switch (process()!.processType) {
         @case ("addition") {
           <app-addition-form
             [contractId]="contractId()"
-            [actId]="createdAct()!.id"
+            [actId]="getProcessActId()"
             (onCompleted)="onProcessCompleted()"
           />
         }
         @case ("cancellation") {
           <app-cancellation-form
             [contractId]="contractId()"
-            [actId]="createdAct()!.id"
+            [actId]="getProcessActId()"
             (onCompleted)="onProcessCompleted()"
           />
         }
         @case ("cession") {
           <app-cession-form
             [contractId]="contractId()"
-            [actId]="createdAct()!.id"
+            [actId]="getProcessActId()"
+            [contractType]="getProcessContractType()"
             (onCompleted)="onProcessCompleted()"
           />
         }
@@ -113,14 +113,21 @@
         @case ("othersi") {
           <app-othersi-form
             [contractId]="contractId()"
-            [actId]="createdAct()!.id"
+            [actId]="getProcessActId()"
             (onCompleted)="onProcessCompleted()"
           />
         }
         @case ("suspension") {
           <app-suspension-form
             [contractId]="contractId()"
-            [actId]="createdAct()!.id"
+            [actId]="getProcessActId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("resume") {
+          <app-resume-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
             (onCompleted)="onProcessCompleted()"
           />
         }

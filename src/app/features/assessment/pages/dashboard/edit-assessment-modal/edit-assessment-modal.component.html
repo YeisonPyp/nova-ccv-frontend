@@ -1,103 +1,171 @@
-<div class="p-4">
+<div class="w-full max-w-5xl mx-auto p-6">
   <button
-    class="btn btn-link text-sm text-gray-500 mb-3 ps-0"
+    class="text-sm text-gray-500 mb-4 hover:text-gray-700 transition-colors"
     type="button"
     (click)="goBack()"
   >
     ← Volver a evaluaciones
   </button>
 
-  <div class="modal-header" style="border-bottom: none; padding: 0 0 1rem 0">
-    <h2 class="modal-title">Formulario de evaluación de desempeño</h2>
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-secondary m-0">
+      Formulario de evaluación de desempeño
+    </h2>
   </div>
 
-  <div class="modal-container" style="padding: 0">
-    <section class="assessment-info">
-      <div class="assessment-info-item">
-        <strong class="assessment-info-label">Empleado</strong>
-        <span class="assessment-info-value">{{ evaluateeFullName }}</span>
+  <div class="flex flex-col gap-6">
+    <!-- ── INFO ── -->
+    <section
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white rounded-lg border border-gray-200 shadow-sm p-6"
+    >
+      <div class="flex flex-col gap-1">
+        <strong
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+        >
+          Empleado
+        </strong>
+        <span class="text-base font-semibold text-secondary">
+          {{ evaluateeFullName }}
+        </span>
       </div>
-      <div class="assessment-info-item">
-        <strong class="assessment-info-label">Evaluador</strong>
-        <span class="assessment-info-value">{{ evaluatorFullName }}</span>
+      <div class="flex flex-col gap-1">
+        <strong
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+        >
+          Evaluador
+        </strong>
+        <span class="text-base font-semibold text-secondary">
+          {{ evaluatorFullName }}
+        </span>
       </div>
-      <div class="assessment-info-item">
-        <strong class="assessment-info-label">Periodo</strong>
-        <span class="assessment-info-value">{{ evaluationPeriodRange }}</span>
+      <div class="flex flex-col gap-1">
+        <strong
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+        >
+          Periodo
+        </strong>
+        <span class="text-base font-semibold text-secondary">
+          {{ evaluationPeriodRange }}
+        </span>
       </div>
-      <div class="assessment-info-item">
-        <strong class="assessment-info-label">Fecha de evaluación</strong>
-        <span class="assessment-info-value">{{ evaluationDate }}</span>
+      <div class="flex flex-col gap-1">
+        <strong
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+        >
+          Fecha de evaluación
+        </strong>
+        <span class="text-base font-semibold text-secondary">
+          {{ evaluationDate }}
+        </span>
       </div>
     </section>
 
-    <section class="assessment-competencies">
-      <p>Evaluación de competencias</p>
+    <!-- ── COMPETENCIES ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">
+        Evaluación de competencias
+      </h3>
 
-      @for (
-        competencyScore of getAssessmentCompetencyScores();
-        track competencyScore.id
-      ) {
-        <app-competency-score-card
-          [competencyScore]="competencyScore"
-          (scoreChange)="onChangeCompetencyScore($event)"
-        ></app-competency-score-card>
-      }
+      <div class="flex flex-col gap-4">
+        @for (
+          competencyScore of getAssessmentCompetencyScores();
+          track competencyScore.id
+        ) {
+          <app-competency-score-card
+            [competencyScore]="competencyScore"
+            (scoreChange)="onChangeCompetencyScore($event)"
+          />
+        }
+      </div>
 
-      <div class="score-average-container">
-        <div class="score-average">
-          <span>Promedio General:</span>
-          <span class="score">{{ matrixTotalScore() }}%</span>
+      <!-- Average card -->
+      <div
+        class="mt-6 flex items-center justify-between gap-4 px-6 py-8 rounded-xl border-2 border-gray-200 bg-gray-50"
+      >
+        <div class="flex flex-col">
+          <span class="text-sm text-gray-500">Promedio General:</span>
+          <span class="text-3xl font-bold text-gray-900">
+            {{ matrixTotalScore() | number: "1.0-1" }}%
+          </span>
         </div>
-        <span class="score-description">{{ averageDescription }}</span>
+        <span
+          class="text-lg font-bold text-white text-center px-4 py-3 rounded-xl"
+          [ngClass]="averageBadgeClass"
+        >
+          {{ averageDescription }}
+        </span>
       </div>
     </section>
 
-    <section>
+    <!-- ── FORM ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <form
         id="assessmentForm"
         [formGroup]="assessmentForm"
         (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4"
       >
-        <div class="form-group">
-          <label for="observations">Observaciones Adicionales</label>
+        <div class="flex flex-col gap-1">
+          <label
+            for="observations"
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Observaciones Adicionales
+          </label>
           <textarea
             id="observations"
             formControlName="observations"
-            class="form-control"
+            rows="3"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
           ></textarea>
         </div>
-        <div class="form-group">
-          <label for="agreements">Compromisos</label>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="agreements"
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Compromisos
+          </label>
           <textarea
             id="agreements"
             formControlName="agreements"
-            class="form-control"
+            rows="3"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
           ></textarea>
         </div>
-        <div class="form-group">
-          <label for="aspects-to-improve">Aspectos a mejorar</label>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="aspects-to-improve"
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Aspectos a mejorar
+          </label>
           <textarea
             id="aspects-to-improve"
             formControlName="aspectsToImprove"
-            class="form-control"
+            rows="3"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
           ></textarea>
         </div>
       </form>
     </section>
 
-    <div
-      class="modal-footer"
-      style="
-        border-top: 1px solid #f0f0f0;
-        padding: 1rem 0 0;
-        justify-content: flex-end;
-      "
-    >
-      <button type="button" class="btn btn-secondary" (click)="goBack()">
+    <!-- ── FOOTER ── -->
+    <div class="flex justify-end gap-3 pb-8">
+      <button
+        type="button"
+        class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+        (click)="goBack()"
+      >
         Cancelar
       </button>
-      <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+      <button
+        type="submit"
+        class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+        (click)="onSubmit()"
+      >
         Guardar
       </button>
     </div>

@@ -36,7 +36,7 @@ export class CotizationTypeParamComponent {
     description: new FormControl(""),
   });
 
-  cotizationTypeColumns: TableColumn<CotizationType>[] = [
+  cotizationTypeColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

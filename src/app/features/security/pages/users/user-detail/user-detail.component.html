@@ -10,36 +10,89 @@
       ← Volver a usuarios
     </button>
 
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-secondary m-0">
+        {{ user()?.firstName }} {{ user()?.lastName }}
+      </h1>
+      <div class="flex items-center gap-3">
+        @if (autoSaving()) {
+          <span class="text-xs text-tertiary">Guardando...</span>
+        }
+        @if (user(); as u) {
+          <span
+            class="badge fs-6 px-3 py-2"
+            [class.bg-success]="u.enabled"
+            [class.bg-secondary]="!u.enabled"
+          >
+            {{ u.enabled ? "Activo" : "Inactivo" }}
+          </span>
+        }
+      </div>
+    </div>
+
     @if (loading()) {
       <div class="text-center py-8">
         <div class="spinner-border text-primary" role="status"></div>
       </div>
     }
-    @if (user(); as u) {
-      <!-- Header -->
-      <div class="flex justify-between items-start">
-        <div>
-          <h1 class="text-2xl font-bold text-secondary">
-            {{ u.firstName }} {{ u.lastName }}
-          </h1>
-          <p class="text-tertiary text-sm">{{ u.username }} · {{ u.email }}</p>
-        </div>
-        <span
-          class="badge fs-6 px-3 py-2"
-          [class.bg-success]="u.enabled"
-          [class.bg-secondary]="!u.enabled"
-        >
-          {{ u.enabled ? "Activo" : "Inactivo" }}
-        </span>
-      </div>
 
+    <!-- Form card -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        @if (user(); as u) {
+          <p class="text-tertiary text-sm mb-4">
+            {{ u.username }} · {{ u.email }}
+          </p>
+        }
+        <form [formGroup]="form" class="space-y-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-sm">
+                Nombre <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="firstName"
+                placeholder="Nombre"
+                [ngClass]="{ 'is-invalid': isFieldInvalid('firstName') }"
+                (input)="onFieldChange()"
+              />
+              @if (isFieldInvalid("firstName")) {
+                <div class="invalid-feedback">Mínimo 2 caracteres</div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-sm">
+                Apellido <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="lastName"
+                placeholder="Apellido"
+                [ngClass]="{ 'is-invalid': isFieldInvalid('lastName') }"
+                (input)="onFieldChange()"
+              />
+              @if (isFieldInvalid("lastName")) {
+                <div class="invalid-feedback">Mínimo 2 caracteres</div>
+              }
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit-only sections -->
+    @if (user(); as u) {
       <details (toggle)="onRolesToggle($event)">
         <summary
           class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
         >
           Roles
         </summary>
-        <!-- Roles section -->
         <div class="card shadow-sm">
           <div class="card-body space-y-4">
             <div class="flex flex-wrap gap-2 min-h-8">
@@ -52,7 +105,7 @@
                   style="font-size: 0.85rem"
                 >
                   {{ role }}
-                  @if (canUpdate && i != 0) {
+                  @if (canUpdate && i !== 0) {
                     <button
                       type="button"
                       class="btn-close btn-close-white cursor-pointer"
@@ -105,63 +158,17 @@
         >
           Permisos
         </summary>
-        <!-- Permissions section -->
         <div class="card shadow-sm">
           <div class="card-body space-y-4">
-            <div class="flex flex-wrap gap-2 min-h-8">
-              @if (u.permissions.length === 0) {
-                <span class="text-tertiary text-sm"
-                  >Sin permisos directos.</span
-                >
-              }
-              @for (perm of u.permissions; track perm) {
-                <span
-                  class="badge bg-info text-white bg-primary px-3 py-2 d-inline-flex align-items-center gap-2"
-                  style="font-size: 0.85rem"
-                >
-                  {{ perm }}
-                  <button
-                    type="button"
-                    class="btn-close btn-close-white cursor-pointer"
-                    style="font-size: 1rem"
-                    [disabled]="saving()"
-                    (click)="removePermission(perm)"
-                    aria-label="Quitar permiso"
-                  >
-                    &times;
-                  </button>
-                  @if (canUpdate) {}
-                </span>
-              }
-            </div>
-
-            @if (canUpdate && canReadPermissions) {
-              <div class="border-t pt-4">
-                <h4 class="text-sm font-semibold text-tertiary uppercase mb-3">
-                  Permisos disponibles
-                </h4>
-                <app-dynamic-table
-                  [data]="pagedPermissions()"
-                  [columns]="permissionColumns"
-                  emptyMessage="No hay permisos disponibles para asignar."
-                >
-                  <ng-template #actions let-perm>
-                    <button
-                      class="btn btn-sm btn-outline-primary"
-                      [disabled]="saving()"
-                      (click)="assignPermission(perm)"
-                    >
-                      + Asignar
-                    </button>
-                  </ng-template>
-                </app-dynamic-table>
-                <app-pagination
-                  [pages]="permissionsTotalPages()"
-                  [currentPage]="permissionsPage()"
-                  (pageChange)="permissionsPage.set($event)"
-                />
-              </div>
-            }
+            <app-permissions-manager
+              [assigned]="u.permissions"
+              [all]="allPermissions()"
+              [loaded]="permissionsLoaded()"
+              [saving]="saving()"
+              [editable]="canUpdate && canReadPermissions"
+              (assign)="assignPermission($event)"
+              (remove)="removePermission($event)"
+            />
           </div>
         </div>
       </details>
@@ -185,7 +192,6 @@
                   </button>
                 </div>
               }
-
               @if (statusChangesLoading()) {
                 <div class="text-center py-4">
                   <div
@@ -211,6 +217,16 @@
           </div>
         </details>
       }
+
+      <!-- Employee section at the end -->
+      <details>
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+        >
+          Empleado
+        </summary>
+        <app-user-employee [userId]="u.id" [employee]="u.employee" />
+      </details>
     }
   </div>
 
@@ -259,7 +275,6 @@
               <div class="text-danger small">Requerido</div>
             }
           </div>
-
           <div>
             <label class="form-label fw-semibold">Motivo</label>
             <textarea

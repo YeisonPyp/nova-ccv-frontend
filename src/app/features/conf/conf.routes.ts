@@ -1,3 +1,4 @@
+import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
 import { Routes } from "@angular/router";
 
 export const CONF_ROUTES: Routes = [
@@ -7,6 +8,7 @@ export const CONF_ROUTES: Routes = [
       import("./pages/audit-candidates/audit-candidates.component").then(
         (m) => m.AuditCandidatesComponent,
       ),
+    canActivate: [hasPermissionGuard(["AUDIT_ENTITIES_CANDIDATES_READ"])],
   },
   {
     path: "audit-logs/:entityName",
@@ -14,20 +16,7 @@ export const CONF_ROUTES: Routes = [
       import("./pages/audit-logs/audit-logs.component").then(
         (m) => m.AuditLogsComponent,
       ),
-  },
-  {
-    path: "users",
-    loadComponent: () =>
-      import("./pages/users/users-dashboard.component").then(
-        (m) => m.UsersDashboardComponent,
-      ),
-  },
-  {
-    path: "users/:id",
-    loadComponent: () =>
-      import("./pages/users/user-detail/user-detail.component").then(
-        (m) => m.UserDetailComponent,
-      ),
+    canActivate: [hasPermissionGuard(["AUDIT_LOGS_READ"])],
   },
   {
     path: "parametrization",

@@ -32,7 +32,7 @@ export class CancellationsTabComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<ContractCancellation>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "cancelationTypeName", label: "Tipo" },
     { key: "cancellationDate", label: "Fecha Cancelación" },

@@ -41,7 +41,7 @@ export class AuditLogsComponent implements OnInit {
     userId: [null as number | null],
   });
 
-  columns: TableColumn<AuditLog>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "op", label: "Operación" },
     { key: "userId", label: "Usuario" },

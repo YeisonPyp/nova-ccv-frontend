@@ -38,6 +38,7 @@ export class CreateContractProcessModalComponent {
     mutation: "Mutación",
     othersi: "Otro Sí",
     suspension: "Suspensión",
+    resume: "Reanudación",
   };
 
   get label(): string {

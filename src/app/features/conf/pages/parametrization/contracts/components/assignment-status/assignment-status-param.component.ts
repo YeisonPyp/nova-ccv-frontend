@@ -42,7 +42,7 @@ export class AssignmentStatusParamComponent {
     color: new FormControl("", [Validators.required, Validators.maxLength(6)]),
   });
 
-  assignmentStatusColumns: TableColumn<ContractAssignmentStatus>[] = [
+  assignmentStatusColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "color", label: "Color" },
   ];

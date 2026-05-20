@@ -30,7 +30,7 @@ export class ActivitesSectionComponent {
 
   onSaved = output<ProjectActivity>();
 
-  readonly activityColumns: TableColumn<ProjectActivity>[] = [
+  readonly activityColumns: TableColumn[] = [
     { key: "displayOrder", label: "#" },
     { key: "name", label: "Nombre" },
     { key: "startsAt", label: "Inicio" },

@@ -49,7 +49,7 @@ export class WorkflowListParamComponent {
     description: new FormControl(""),
   });
 
-  workflowColumns: TableColumn<Workflow>[] = [
+  workflowColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
     { key: "stepsCount", label: "Pasos" },

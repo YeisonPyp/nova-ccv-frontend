@@ -25,7 +25,7 @@ export class AuditCandidatesComponent implements OnInit {
   pageSize = signal(20);
   loading = signal(false);
 
-  columns: TableColumn<AuditCandidate>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "name", label: "Nombre" },
     { key: "tableName", label: "Tabla" },

@@ -4,19 +4,19 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { ContractService } from "@/app/core/services/contract/contract.service";
 import { Contract } from "@/app/core/models/contract/contract.models";
 import { Router } from "@angular/router";
+import { PaginationTableComponent } from "@/app/shared/components/pagination-table/pagination-table.component";
 
 @Component({
   selector: "app-contract-dashboard",
   standalone: true,
-  imports: [CommonModule, DynamicTableComponent, PaginationComponent],
+  imports: [CommonModule, PaginationTableComponent],
   templateUrl: "./contract-dashboard.component.html",
 })
-export class ContractDashboardComponent implements OnInit {
-  private readonly service = inject(ContractService);
+export class ContractDashboardComponent {
+  service = inject(ContractService);
   private readonly router = inject(Router);
 
   items = signal<Contract[]>([]);
@@ -25,40 +25,21 @@ export class ContractDashboardComponent implements OnInit {
   loading = signal(false);
   pageSize = 10;
 
-  columns: TableColumn<Contract>[] = [
+  columns: TableColumn[] = [
     { key: "contractId", label: "ID Contrato" },
     { key: "contractType", label: "Tipo" },
     { key: "identification", label: "Cédula" },
     { key: "employeeName", label: "Empleado" },
     { key: "areaName", label: "Área" },
-    { key: "status", label: "Estado" },
+    {
+      key: "status",
+      label: "Estado",
+      filterSet: { valueType: "text", operators: ["eq", "ne"] },
+    },
     { key: "starts", label: "Inicio" },
     { key: "ends", label: "Fin" },
     { key: "basePeriodAmount", label: "Monto Base" },
   ];
-
-  ngOnInit(): void {
-    this.load();
-  }
-
-  load(page = 1): void {
-    this.loading.set(true);
-    this.service.findAll({ page: page - 1, size: this.pageSize }).subscribe({
-      next: (res) => {
-        if (res.success && res.data) {
-          this.items.set(res.data.content);
-          this.currentPage.set(res.data.pageable.pageNumber + 1);
-          this.totalPages.set(res.data.totalPages);
-        }
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
-    });
-  }
-
-  onPageChange(page: number): void {
-    this.load(page);
-  }
 
   openContract(contract: Contract): void {
     this.router.navigate(["/contracts", contract.id]);

@@ -24,7 +24,7 @@ export class MutationsTabComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<ContractMutation>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "opName", label: "Operación" },
     { key: "createdAt", label: "Fecha" },

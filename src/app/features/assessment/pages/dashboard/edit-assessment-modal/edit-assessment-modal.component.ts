@@ -104,6 +104,14 @@ export class EditAssessmentModalComponent implements OnInit {
     return "Deficiente";
   }
 
+  get averageBadgeClass(): string {
+    const score = this.matrixTotalScore();
+    if (score >= 90) return "bg-green-600";
+    if (score >= 75) return "bg-primary";
+    if (score >= 60) return "bg-yellow-500";
+    return "bg-red-600";
+  }
+
   onSubmit(): void {
     if (this.assessmentForm.valid) {
       const formValue = this.assessmentForm.value;

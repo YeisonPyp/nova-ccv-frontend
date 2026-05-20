@@ -35,7 +35,7 @@ export class ContractStatusParamComponent {
     description: new FormControl(""),
   });
 
-  contractStatusColumns: TableColumn<ContractStatus>[] = [
+  contractStatusColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

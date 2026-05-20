@@ -1,3 +1,4 @@
+import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
 import { Routes } from "@angular/router";
 
 export const BILLING_ROUTES: Routes = [
@@ -7,6 +8,7 @@ export const BILLING_ROUTES: Routes = [
       import("./pages/dashboard/billing-dashboard.component").then(
         (m) => m.BillingDashboardComponent,
       ),
+    canActivate: [hasPermissionGuard(["BILLING_ACCOUNT_READ"])],
   },
   {
     path: "create",
@@ -14,6 +16,7 @@ export const BILLING_ROUTES: Routes = [
       import("./pages/create/create-billing.component").then(
         (m) => m.CreateBillingComponent,
       ),
+    canActivate: [hasPermissionGuard(["BILLING_ACCOUNT_CREATE"])],
   },
   {
     path: ":id",
@@ -21,5 +24,6 @@ export const BILLING_ROUTES: Routes = [
       import("./pages/detail/billing-detail.component").then(
         (m) => m.BillingDetailComponent,
       ),
+    canActivate: [hasPermissionGuard(["BILLING_ACCOUNT_READ"])],
   },
 ];

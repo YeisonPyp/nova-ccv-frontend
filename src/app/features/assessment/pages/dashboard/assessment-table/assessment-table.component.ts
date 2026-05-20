@@ -19,7 +19,7 @@ export class AssessmentTableComponent {
   size = input.required<number>();
   page = input.required<number>();
 
-  columns: TableColumn<Assessment>[] = [
+  columns: TableColumn[] = [
     { key: "evaluatee", label: "Empleado" },
     { key: "evaluator", label: "Evaluador" },
     { key: "status", label: "Estado" },

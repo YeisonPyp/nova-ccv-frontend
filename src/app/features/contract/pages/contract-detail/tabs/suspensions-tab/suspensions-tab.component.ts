@@ -32,7 +32,7 @@ export class SuspensionsTabComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<ContractSuspension>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "suspensionStatusName", label: "Estado" },
     { key: "suspensionDate", label: "Fecha Suspensión" },

@@ -20,9 +20,9 @@
       </div>
     </div>
   } @else {
-    <app-dynamic-table
-      [data]="items()"
-      [columns]="columns"
+    <app-pagination-table
+      [service]="service"
+      [tableColumns]="columns"
       emptyMessage="No hay contratos registrados."
     >
       <ng-template #actions let-item>
@@ -53,12 +53,6 @@
           </svg>
         </button>
       </ng-template>
-    </app-dynamic-table>
-
-    <app-pagination
-      [currentPage]="currentPage()"
-      [pages]="totalPages()"
-      (pageChange)="onPageChange($event)"
-    />
+    </app-pagination-table>
   }
 </div>

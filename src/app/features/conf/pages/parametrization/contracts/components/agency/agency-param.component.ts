@@ -45,7 +45,7 @@ export class AgencyParamComponent {
     vatResponsible: new FormControl(false),
   });
 
-  agencyColumns: TableColumn<Agency>[] = [
+  agencyColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "nit", label: "NIT" },
     { key: "description", label: "Descripción" },

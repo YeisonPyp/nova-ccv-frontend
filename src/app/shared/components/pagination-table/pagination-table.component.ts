@@ -1,0 +1,116 @@
+import {
+  Component,
+  ContentChild,
+  input,
+  OnInit,
+  signal,
+  TemplateRef,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  DynamicTableComponent,
+  TableColumn,
+} from "../dynamic-table/dynamic-table.component";
+import { PaginationComponent } from "../pagination/pagination.component";
+import { PageableQuery } from "../../pageable-query";
+import { Observable } from "rxjs";
+import { ApiResponse } from "@/app/core/models/api-response.model";
+import { APIPage } from "@/app/core/models/api-page.model";
+import {
+  FilterRow,
+  FilterSectionComponent,
+} from "../dynamic-table/filter-section/filter-section.component";
+
+export interface PageableQueryWithRsql extends PageableQuery {
+  rsqlQuery?: string;
+}
+export interface FilterServiceSpec {
+  /**
+   * Find all resources using pagination and filters.
+   * @param pageable Pagination query parameters
+   * @param rsql RSQL query string to apply
+   */
+  findAll(
+    pageable: PageableQueryWithRsql,
+  ): Observable<ApiResponse<APIPage<any>>>;
+}
+
+@Component({
+  selector: "app-pagination-table",
+  standalone: true,
+  imports: [
+    CommonModule,
+    DynamicTableComponent,
+    PaginationComponent,
+    FilterSectionComponent,
+  ],
+  templateUrl: "./pagination-table.component.html",
+})
+export class PaginationTableComponent<T = any> implements OnInit {
+  service = input.required<FilterServiceSpec>();
+  tableColumns = input.required<TableColumn[]>();
+  filterRows = signal<FilterRow[]>([]);
+
+  @ContentChild("actions") actionsTemplate?: TemplateRef<any>;
+  @ContentChild("customCell") customCellTemplate?: TemplateRef<any>;
+
+  items = signal<T[]>([]);
+  currentPage = signal(1);
+  totalPages = signal(0);
+  loading = signal(false);
+
+  rsqlQuery = signal("");
+
+  ngOnInit(): void {
+    this.load();
+  }
+  load(page = 1) {
+    this.loading.set(true);
+
+    this.service()
+      .findAll({ page: page - 1, size: 10, rsqlQuery: this.rsqlQuery() })
+      .subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            this.items.set(res.data.content);
+            this.currentPage.set(res.data.pageable.pageNumber + 1);
+            this.totalPages.set(res.data.totalPages);
+          }
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      });
+  }
+
+  onPageChange(page: number) {
+    this.load(page);
+  }
+
+  onFilterChange(query: string) {
+    console.log("juputica");
+    if (query) {
+      this.rsqlQuery.set(query);
+      this.load(this.currentPage());
+    }
+  }
+
+  onAddFilterRow(row: FilterRow) {
+    this.filterRows.update((rows) => [...rows, row]);
+  }
+
+  onRemoveFilterRow(index: number) {
+    this.filterRows.update((rows) => rows.filter((_, i) => i !== index));
+  }
+
+  onUpdateFilterRow(index: number, row: FilterRow) {
+    this.filterRows.update((rows) =>
+      rows.map((r, i) => (i === index ? row : r)),
+    );
+  }
+
+  onClearFilters() {
+    this.filterRows.set([]);
+    this.rsqlQuery.set("");
+    this.load(this.currentPage());
+  }
+}

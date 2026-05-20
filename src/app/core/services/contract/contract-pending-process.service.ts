@@ -20,10 +20,21 @@ export interface CreateContractPendingProcessDto {
   filingId?: number;
 }
 
+export interface UpdateContractPendingProcessDto {
+  filingId?: number;
+  actId?: number;
+}
+
 @Injectable({ providedIn: "root" })
 export class ContractPendingProcessService {
   private readonly http = inject(HttpClient);
   private readonly base = environment.apiUrl;
+
+  findById(id: number): Observable<ApiResponse<ContractPendingProcess>> {
+    return this.http.get<ApiResponse<ContractPendingProcess>>(
+      `${this.base}/contract-pending-process/${id}`,
+    );
+  }
 
   findByContractId(
     contractId: number,
@@ -31,7 +42,7 @@ export class ContractPendingProcessService {
   ): Observable<ApiResponse<APIPage<ContractPendingProcess>>> {
     const params = new PageableQueryParams(p).getParams();
     return this.http.get<ApiResponse<APIPage<ContractPendingProcess>>>(
-      `${this.base}/contract-pending-process/${contractId}`,
+      `${this.base}/contract-pending-process/contract/${contractId}`,
       { params },
     );
   }
@@ -41,6 +52,16 @@ export class ContractPendingProcessService {
   ): Observable<ApiResponse<ContractPendingProcess>> {
     return this.http.post<ApiResponse<ContractPendingProcess>>(
       `${this.base}/contract-pending-process`,
+      dto,
+    );
+  }
+
+  update(
+    id: number,
+    dto: UpdateContractPendingProcessDto,
+  ): Observable<ApiResponse<ContractPendingProcess>> {
+    return this.http.patch<ApiResponse<ContractPendingProcess>>(
+      `${this.base}/contract-pending-process/${id}`,
       dto,
     );
   }

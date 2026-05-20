@@ -48,7 +48,7 @@ export class CompetenciesParamComponent {
     maxScore: new FormControl<number>(5),
   });
 
-  competencieColumns: TableColumn<Competencie>[] = [
+  competencieColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

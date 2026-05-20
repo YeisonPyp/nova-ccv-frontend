@@ -1,9 +1,21 @@
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Subject, debounceTime, distinctUntilChanged, switchMap } from "rxjs";
 import { AuthService } from "@/app/core/services/auth.service";
-import { UserService } from "@/app/core/services/user/user.service";
+import {
+  UpdateUserDto,
+  UserService,
+} from "@/app/core/services/user/user.service";
 import { RoleService } from "@/app/core/services/user/role.service";
 import { PermissionService } from "@/app/core/services/user/permission.service";
 import { UserStatusChangeService } from "@/app/core/services/user/user-status-change.service";
@@ -22,8 +34,11 @@ import {
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 import { ForbiddenComponent } from "@/app/shared/components/forbidden/forbidden.component";
+import { UserEmployeeComponent } from "../user-employee/user-employee.component";
+import { PermissionsManagerComponent } from "@/app/shared/components/permissions-manager/permissions-manager.component";
 
 const PAGE_SIZE = 10;
+const AUTOSAVE_DELAY_MS = 700;
 
 @Component({
   selector: "app-user-detail",
@@ -35,6 +50,8 @@ const PAGE_SIZE = 10;
     PaginationComponent,
     PaginatorComponent,
     ForbiddenComponent,
+    UserEmployeeComponent,
+    PermissionsManagerComponent,
   ],
   templateUrl: "./user-detail.component.html",
 })
@@ -47,10 +64,12 @@ export class UserDetailComponent implements OnInit {
   private permissionService = inject(PermissionService);
   private statusChangeService = inject(UserStatusChangeService);
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   user = signal<UserResponse | null>(null);
   loading = signal(false);
   saving = signal(false);
+  autoSaving = signal(false);
 
   allRoles = signal<RoleResponse[]>([]);
   allPermissions = signal<PermissionResponse[]>([]);
@@ -59,7 +78,6 @@ export class UserDetailComponent implements OnInit {
   permissionsLoaded = signal(false);
 
   rolesPage = signal(1);
-  permissionsPage = signal(1);
 
   statusChanges = signal<UserStatusChange[]>([]);
   statusChangesLoaded = signal(false);
@@ -73,24 +91,26 @@ export class UserDetailComponent implements OnInit {
 
   readonly availableStatuses = USER_STATUSES;
 
+  form = this.fb.group({
+    firstName: ["", [Validators.required, Validators.minLength(2)]],
+    lastName: ["", [Validators.required, Validators.minLength(2)]],
+  });
+
   statusChangeForm = this.fb.group({
     newStatus: this.fb.control<UserStatus | null>(null, Validators.required),
     reason: ["", [Validators.required, Validators.minLength(1)]],
   });
 
-  statusChangeColumns: TableColumn<UserStatusChange>[] = [
+  private autoSave$ = new Subject<void>();
+
+  statusChangeColumns: TableColumn[] = [
     { key: "oldStatus", label: "Estado anterior" },
     { key: "newStatus", label: "Nuevo estado" },
     { key: "reason", label: "Motivo" },
     { key: "createdAt", label: "Fecha" },
   ];
 
-  roleColumns: TableColumn<RoleResponse>[] = [
-    { key: "name", label: "Nombre" },
-    { key: "description", label: "Descripción" },
-  ];
-
-  permissionColumns: TableColumn<PermissionResponse>[] = [
+  roleColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];
@@ -100,17 +120,8 @@ export class UserDetailComponent implements OnInit {
     return this.allRoles().filter((r) => !assigned.has(r.name));
   });
 
-  availablePermissions = computed(() => {
-    const assigned = new Set(this.user()?.permissions ?? []);
-    return this.allPermissions().filter((p) => !assigned.has(p.name));
-  });
-
   rolesTotalPages = computed(() =>
     Math.max(1, Math.ceil(this.availableRoles().length / PAGE_SIZE)),
-  );
-
-  permissionsTotalPages = computed(() =>
-    Math.max(1, Math.ceil(this.availablePermissions().length / PAGE_SIZE)),
   );
 
   pagedRoles = computed(() => {
@@ -118,31 +129,24 @@ export class UserDetailComponent implements OnInit {
     return this.availableRoles().slice(start, start + PAGE_SIZE);
   });
 
-  pagedPermissions = computed(() => {
-    const start = (this.permissionsPage() - 1) * PAGE_SIZE;
-    return this.availablePermissions().slice(start, start + PAGE_SIZE);
-  });
+  // edit-mode flag kept true so HTML branches gated on it still work
+  readonly isEditMode = () => true;
 
   get canUpdate() {
     return this.auth.hasPermission("USERS_UPDATE");
   }
-
   get canRead() {
     return this.auth.hasPermission("USERS_READ");
   }
-
   get canReadRoles() {
     return this.auth.hasPermission("ROLE_READ");
   }
-
   get canReadPermissions() {
     return this.auth.hasPermission("PERMISSION_READ");
   }
-
   get canReadStatusChanges() {
     return this.auth.hasPermission("USER_STATUS_CHANGE_READ");
   }
-
   get canCreateStatusChange() {
     return this.auth.hasPermission("USER_STATUS_CHANGE_CREATE");
   }
@@ -155,13 +159,46 @@ export class UserDetailComponent implements OnInit {
       return;
     }
     this.loadUser(id);
+    this.wireAutoSave();
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const c = this.form.get(field);
+    return !!(c?.touched && c?.invalid);
+  }
+
+  onFieldChange() {
+    if (!this.canUpdate || this.form.invalid) return;
+    this.autoSave$.next();
+  }
+
+  private wireAutoSave() {
+    this.autoSave$
+      .pipe(
+        debounceTime(AUTOSAVE_DELAY_MS),
+        distinctUntilChanged(),
+        switchMap(() => {
+          this.autoSaving.set(true);
+          const u = this.user()!;
+          return this.userService.updateUser(
+            u.id,
+            this.form.getRawValue() as UpdateUserDto,
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.success && res.data) this.user.set(res.data);
+          this.autoSaving.set(false);
+        },
+        error: () => this.autoSaving.set(false),
+      });
   }
 
   onRolesToggle(event: Event) {
     const open = (event.target as HTMLDetailsElement).open;
-    if (open && !this.rolesLoaded() && this.canReadRoles) {
-      this.loadRoles();
-    }
+    if (open && !this.rolesLoaded() && this.canReadRoles) this.loadRoles();
   }
 
   onPermissionsToggle(event: Event) {
@@ -248,7 +285,13 @@ export class UserDetailComponent implements OnInit {
     this.loading.set(true);
     this.userService.getUserById(id).subscribe({
       next: (res) => {
-        if (res.success && res.data) this.user.set(res.data);
+        if (res.success && res.data) {
+          this.user.set(res.data);
+          this.form.patchValue(
+            { firstName: res.data.firstName, lastName: res.data.lastName },
+            { emitEvent: false },
+          );
+        }
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -307,16 +350,13 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
-  assignPermission(permission: PermissionResponse) {
+  assignPermission(permission: string) {
     const u = this.user();
     if (!u || this.saving()) return;
     this.saving.set(true);
-    this.userService.assignPermission(u.id, permission.name).subscribe({
+    this.userService.assignPermission(u.id, permission).subscribe({
       next: (res) => {
-        if (res.success && res.data) {
-          this.user.set(res.data);
-          this.clampPages();
-        }
+        if (res.success && res.data) this.user.set(res.data);
         this.saving.set(false);
       },
       error: () => this.saving.set(false),
@@ -329,10 +369,7 @@ export class UserDetailComponent implements OnInit {
     this.saving.set(true);
     this.userService.removePermission(u.id, permissionName).subscribe({
       next: (res) => {
-        if (res.success && res.data) {
-          this.user.set(res.data);
-          this.clampPages();
-        }
+        if (res.success && res.data) this.user.set(res.data);
         this.saving.set(false);
       },
       error: () => this.saving.set(false),
@@ -342,9 +379,6 @@ export class UserDetailComponent implements OnInit {
   private clampPages() {
     if (this.rolesPage() > this.rolesTotalPages()) {
       this.rolesPage.set(this.rolesTotalPages());
-    }
-    if (this.permissionsPage() > this.permissionsTotalPages()) {
-      this.permissionsPage.set(this.permissionsTotalPages());
     }
   }
 

@@ -4,72 +4,44 @@
   </h3>
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="form-group">
-        <label for="previousEmployeeId">ID empleado anterior</label>
-        <input
-          id="previousEmployeeId"
-          type="number"
-          formControlName="previousEmployeeId"
-          class="form-control"
-          min="1"
+      @if (contractType() === "employee") {
+        <app-search-select
+          [label]="employeeCtx.op?.label ?? 'Nuevo Empleado'"
+          [required]="true"
+          [items]="employeeCtx.options()"
+          [selectedItems]="employeeCtx.selectedOptions()"
+          errorMessage="Empleado requerido"
+          (onSearch)="employeeCtx.search($event)"
+          (onSelect)="employeeCtx.select($event)"
+          (onRemove)="onFieldRemove('newEmployeeId')"
         />
-      </div>
-      <div class="form-group">
-        <label for="newEmployeeId">ID nuevo empleado</label>
-        <input
-          id="newEmployeeId"
-          type="number"
-          formControlName="newEmployeeId"
-          class="form-control"
-          min="1"
+      }
+
+      @if (contractType() === "agency") {
+        <app-search-select
+          label="agencyCtx.label()"
+          [required]="true"
+          [items]="agencyCtx.options()"
+          [selectedItems]="agencyCtx.selectedOptions()"
+          errorMessage="Empleado requerido"
+          (onSearch)="agencyCtx.search($event)"
+          (onSelect)="agencyCtx.select($event)"
+          (onRemove)="onFieldRemove('newEmployeeId')"
         />
-      </div>
-      <div class="form-group">
-        <label for="previousAgencyId">ID agencia anterior</label>
-        <input
-          id="previousAgencyId"
-          type="number"
-          formControlName="previousAgencyId"
-          class="form-control"
-          min="1"
-        />
-      </div>
-      <div class="form-group">
-        <label for="newAgencyId">ID nueva agencia</label>
-        <input
-          id="newAgencyId"
-          type="number"
-          formControlName="newAgencyId"
-          class="form-control"
-          min="1"
-        />
-      </div>
-      <div class="form-group">
-        <label for="executedAmount"
-          >Monto ejecutado <span class="text-red-500">*</span></label
-        >
-        <input
-          id="executedAmount"
-          type="number"
-          formControlName="executedAmount"
-          class="form-control"
-          min="0"
-          step="0.01"
-        />
-      </div>
-      <div class="form-group">
-        <label for="pendingAmount"
-          >Monto pendiente <span class="text-red-500">*</span></label
-        >
-        <input
-          id="pendingAmount"
-          type="number"
-          formControlName="pendingAmount"
-          class="form-control"
-          min="0"
-          step="0.01"
-        />
-      </div>
+        <div class="form-group">
+          <label for="executedAmount"
+            >Monto ejecutado <span class="text-red-500">*</span></label
+          >
+          <input
+            id="executedAmount"
+            type="number"
+            formControlName="executedAmount"
+            class="form-control"
+            min="0"
+            step="0.01"
+          />
+        </div>
+      }
       <div class="form-group md:col-span-2">
         <label for="cessionDesc">Descripción</label>
         <textarea

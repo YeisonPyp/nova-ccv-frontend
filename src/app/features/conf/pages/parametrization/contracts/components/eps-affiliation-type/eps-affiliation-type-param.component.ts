@@ -35,7 +35,7 @@ export class EpsAffiliationTypeParamComponent {
     description: new FormControl(""),
   });
 
-  epsAffiliationTypeColumns: TableColumn<EpsAffiliationType>[] = [
+  epsAffiliationTypeColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
   ];

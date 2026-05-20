@@ -44,7 +44,7 @@ export class AreasParamComponent {
     name: new FormControl("", [Validators.required, Validators.maxLength(50)]),
   });
 
-  areaColumns: TableColumn<Area>[] = [{ key: "name", label: "Nombre" }];
+  areaColumns: TableColumn[] = [{ key: "name", label: "Nombre" }];
 
   get canReadArea() {
     return this.auth.hasPermission("AREA_READ");

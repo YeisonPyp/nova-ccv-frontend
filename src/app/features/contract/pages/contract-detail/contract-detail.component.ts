@@ -1,5 +1,12 @@
-import { Component, computed, inject, signal, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  Type,
+  computed,
+  inject,
+  signal,
+  OnInit,
+} from "@angular/core";
+import { CommonModule, NgComponentOutlet } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MutationsTabComponent } from "./tabs/mutations-tab/mutations-tab.component";
 import { AdditionsTabComponent } from "./tabs/additions-tab/additions-tab.component";
@@ -8,13 +15,13 @@ import { SuspensionsTabComponent } from "./tabs/suspensions-tab/suspensions-tab.
 import { CancellationsTabComponent } from "./tabs/cancellations-tab/cancellations-tab.component";
 import { OthersiTabComponent } from "./tabs/othersi-tab/othersi-tab.component";
 import { AssignmentsTabComponent } from "./tabs/assignments-tab/assignments-tab.component";
-import { FilingCardComponent } from "../../../../features/filing/pages/filing-detail/components/filing-card/filing-card.component";
 import { CreateContractProcessModalComponent } from "../create-contract-process-modal/create-contract-process-modal.component";
 import { ContractPendingProcessType } from "@/app/core/models/contract/contract.models";
 import { ContractService } from "@/app/core/services/contract/contract.service";
-import { FilingService } from "@/app/core/services/filing/filing.service";
 import { Contract } from "@/app/core/models/contract/contract.models";
-import { Filing } from "@/app/core/models/filing/filing.models";
+import { PendingProcessTabComponent } from "./tabs/pending-process-tab/pending-process-tab.component";
+import { ResumeTabComponent } from "./tabs/resume-tab/resume-tab.component";
+import { FilingUpsertComponent } from "@/app/features/filing/pages/filing-detail/components/filing-upsert/filing-upsert.component";
 
 type TabKey =
   | "mutations"
@@ -24,7 +31,9 @@ type TabKey =
   | "cancellations"
   | "othersi"
   | "assignments"
-  | "filing";
+  | "filing"
+  | "pending"
+  | "resume";
 
 interface Tab {
   key: TabKey;
@@ -36,14 +45,7 @@ interface Tab {
   standalone: true,
   imports: [
     CommonModule,
-    MutationsTabComponent,
-    AdditionsTabComponent,
-    CessionsTabComponent,
-    SuspensionsTabComponent,
-    CancellationsTabComponent,
-    OthersiTabComponent,
-    AssignmentsTabComponent,
-    FilingCardComponent,
+    NgComponentOutlet,
     CreateContractProcessModalComponent,
   ],
   templateUrl: "./contract-detail.component.html",
@@ -51,13 +53,10 @@ interface Tab {
 })
 export class ContractDetailComponent implements OnInit {
   private readonly contractService = inject(ContractService);
-  private readonly filingService = inject(FilingService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   contract = signal<Contract | null>(null);
-  contractFiling = signal<Filing | null>(null);
-  filingLoaded = signal(false);
 
   activeTab = signal<TabKey>("mutations");
   showProcessModal = signal(false);
@@ -70,11 +69,21 @@ export class ContractDetailComponent implements OnInit {
     cessions: "cession",
     othersi: "othersi",
     suspensions: "suspension",
+    resume: "resume",
   };
 
-  activeProcessType = computed<ContractPendingProcessType>(
-    () => this.tabToProcessType[this.activeTab()] ?? "addition",
-  );
+  readonly tabComponentMap: Record<TabKey, Type<any>> = {
+    mutations: MutationsTabComponent,
+    additions: AdditionsTabComponent,
+    cessions: CessionsTabComponent,
+    suspensions: SuspensionsTabComponent,
+    cancellations: CancellationsTabComponent,
+    othersi: OthersiTabComponent,
+    assignments: AssignmentsTabComponent,
+    pending: PendingProcessTabComponent,
+    resume: ResumeTabComponent,
+    filing: FilingUpsertComponent,
+  };
 
   tabs: Tab[] = [
     { key: "mutations", label: "Mutaciones" },
@@ -83,6 +92,8 @@ export class ContractDetailComponent implements OnInit {
     { key: "suspensions", label: "Suspensiones" },
     { key: "cancellations", label: "Cancelaciones" },
     { key: "othersi", label: "Otros Sí" },
+    { key: "resume", label: "Reanudaciones" },
+    { key: "pending", label: "Procesos Pendientes" },
     { key: "assignments", label: "Asignaciones" },
     { key: "filing", label: "Radicación" },
   ];
@@ -92,6 +103,21 @@ export class ContractDetailComponent implements OnInit {
   activeTabLabel = computed(
     () => this.tabs.find((t) => t.key === this.activeTab())?.label ?? "",
   );
+
+  activeProcessType = computed<ContractPendingProcessType>(
+    () => this.tabToProcessType[this.activeTab()] ?? "addition",
+  );
+
+  activeTabComponent = computed(() => this.tabComponentMap[this.activeTab()]);
+  // inject the inputs for the active tab
+  activeTabInputs = computed<Record<string, unknown>>(() => {
+    // for filing tab include the filing id
+    if (this.activeTab() === "filing") {
+      return { id: this.contract()?.filingId };
+    }
+    // for another tabs, include the contract id
+    return { contractId: this.contractId() };
+  });
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("id");
@@ -106,14 +132,6 @@ export class ContractDetailComponent implements OnInit {
 
   setTab(key: TabKey): void {
     this.activeTab.set(key);
-    if (key === "filing" && !this.filingLoaded()) {
-      this.filingLoaded.set(true);
-      this.filingService.findByContractId(this.contractId()).subscribe({
-        next: (res) => {
-          if (res.success && res.data) this.contractFiling.set(res.data);
-        },
-      });
-    }
   }
 
   close(): void {

@@ -1,0 +1,61 @@
+<div class="card shadow-sm">
+  <div class="card-body space-y-4">
+    @if (!employee()) {
+      <p class="text-tertiary text-sm">Sin empleado vinculado.</p>
+    } @else {
+      <div class="flex justify-between items-center">
+        <div class="flex gap-2">
+          <span
+            class="badge px-2 py-1 text-xs"
+            [class.bg-success]="employee()!.isActive"
+            [class.bg-secondary]="!employee()!.isActive"
+          >
+            {{ employee()!.isActive ? "Activo" : "Inactivo" }}
+          </span>
+        </div>
+        @if (autoSaving()) {
+          <span class="text-xs text-tertiary">Guardando...</span>
+        }
+      </div>
+
+      <form [formGroup]="form" class="space-y-4">
+        <div>
+          <label class="form-label fw-semibold text-sm">Correo electrónico</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="correo@ejemplo.com"
+            (input)="onFieldChange()"
+          />
+        </div>
+      </form>
+
+      <div>
+        <app-search-select
+          [label]="positionCtx.op?.label ?? 'Cargo'"
+          [placeholder]="positionCtx.op?.placeholder ?? 'Buscar cargo...'"
+          [maxElements]="1"
+          [items]="positionCtx.options()"
+          [selectedItems]="positionCtx.selectedOptions()"
+          (onSearch)="positionCtx.search($event)"
+          (onSelect)="onPositionSelect($event)"
+          (onRemove)="onPositionRemove($event)"
+        />
+      </div>
+
+      <div>
+        <app-search-select
+          [label]="reportsToCtx.op?.label ?? 'Reporta a'"
+          [placeholder]="reportsToCtx.op?.placeholder ?? 'Buscar empleado...'"
+          [maxElements]="1"
+          [items]="reportsToCtx.options()"
+          [selectedItems]="reportsToCtx.selectedOptions()"
+          (onSearch)="reportsToCtx.search($event)"
+          (onSelect)="onReportsToSelect($event)"
+          (onRemove)="onReportsToRemove($event)"
+        />
+      </div>
+    }
+  </div>
+</div>

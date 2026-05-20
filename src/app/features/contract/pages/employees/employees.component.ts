@@ -25,7 +25,7 @@ export class EmployeesComponent implements OnInit {
   page = signal<number>(0);
   totalPages = signal<number>(0);
 
-  columns: TableColumn<Employee>[] = [
+  columns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "lastName", label: "Apellido" },
     { key: "email", label: "Correo Electrónico" },

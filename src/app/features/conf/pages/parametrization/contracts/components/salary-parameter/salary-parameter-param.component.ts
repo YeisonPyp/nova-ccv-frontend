@@ -58,7 +58,7 @@ export class SalaryParameterParamComponent {
     effectiveTo: new FormControl(""),
   });
 
-  salaryParameterColumns: TableColumn<SalaryParameter>[] = [
+  salaryParameterColumns: TableColumn[] = [
     { key: "year", label: "Año" },
     { key: "smmlv", label: "SMMLV" },
     { key: "transportAllowance", label: "Auxilio transporte" },

@@ -1,3 +1,4 @@
+import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
 import { Routes } from "@angular/router";
 
 export const CONTRACT_ROUTES: Routes = [
@@ -7,12 +8,21 @@ export const CONTRACT_ROUTES: Routes = [
       import("./pages/dashboard/contract-dashboard.component").then(
         (m) => m.ContractDashboardComponent,
       ),
+    canActivate: [hasPermissionGuard(["CONTRACT_READ"])],
   },
   {
-    path: "create/:type",
+    path: "create/employee",
     loadComponent: () =>
-      import("./pages/create-contract-modal/create-contract-modal.component").then(
-        (m) => m.CreateContractModalComponent,
+      import("./pages/create-employee-contract/create-employee-contract.component").then(
+        (m) => m.CreateEmployeeContractComponent,
+      ),
+    canActivate: [hasPermissionGuard(["CONTRACT_CREATE"])],
+  },
+  {
+    path: "create/agency",
+    loadComponent: () =>
+      import("./pages/create-agency-contract/create-agency-contract.component").then(
+        (m) => m.CreateAgencyContractComponent,
       ),
   },
   {
@@ -21,6 +31,7 @@ export const CONTRACT_ROUTES: Routes = [
       import("./pages/contract-assignment-detail/contract-assignment-detail.component").then(
         (m) => m.ContractAssignmentDetailComponent,
       ),
+    canActivate: [hasPermissionGuard(["CONTRACT_ASSIGNMENTS_READ"])],
   },
   {
     path: ":contractId/process/:processId",
@@ -28,6 +39,12 @@ export const CONTRACT_ROUTES: Routes = [
       import("./pages/contract-process-detail/contract-process-detail.component").then(
         (m) => m.ContractProcessDetailComponent,
       ),
+    canActivate: [
+      hasPermissionGuard([
+        "CONTRACT_PENDING_PROCESS_READ",
+        "CONTRACT_PENDING_PROCESS_UPDATE",
+      ]),
+    ],
   },
   {
     path: ":id",
@@ -35,19 +52,6 @@ export const CONTRACT_ROUTES: Routes = [
       import("./pages/contract-detail/contract-detail.component").then(
         (m) => m.ContractDetailComponent,
       ),
-  },
-  {
-    path: "employees/create",
-    loadComponent: () =>
-      import("./pages/employees/employee-form/employee-form.component").then(
-        (m) => m.EmployeeFormComponent,
-      ),
-  },
-  {
-    path: "employees/:id/edit",
-    loadComponent: () =>
-      import("./pages/employees/employee-form/employee-form.component").then(
-        (m) => m.EmployeeFormComponent,
-      ),
+    canActivate: [hasPermissionGuard(["CONTRACT_READ"])],
   },
 ];

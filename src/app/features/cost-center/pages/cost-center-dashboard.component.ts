@@ -44,7 +44,7 @@ export class CostCenterDashboardComponent implements OnInit {
   isModalOpen = signal(false);
   selectedCostCenter = signal<CostCenter | null>(null);
 
-  columns: TableColumn<CostCenter>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "name", label: "Nombre" },
     { key: "managerName", label: "Responsable" },

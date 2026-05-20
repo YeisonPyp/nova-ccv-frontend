@@ -39,7 +39,7 @@ export class ContractTypesParamComponent {
     description: new FormControl(""),
   });
 
-  columns: TableColumn<ContractType>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "Código" },
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },

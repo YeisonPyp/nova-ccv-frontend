@@ -1,7 +1,17 @@
-import { Component, inject, input, output, signal } from "@angular/core";
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { ContractService } from "@/app/core/services/contract/contract.service";
+import { ContractParamsService } from "@/app/core/services/contract/contract-params.service";
+import { tap } from "rxjs";
+import { ContractStatus } from "@/app/core/models/contract/contract-params.model";
 
 @Component({
   selector: "app-suspension-form",
@@ -11,11 +21,13 @@ import { ContractService } from "@/app/core/services/contract/contract.service";
 })
 export class SuspensionFormComponent {
   private readonly service = inject(ContractService);
+  private readonly contractParamService = inject(ContractParamsService);
   private readonly fb = inject(FormBuilder);
 
   contractId = input.required<number>();
   actId = input.required<number>();
   onCompleted = output<void>();
+  statusOptions = signal<ContractStatus[]>([]);
 
   saving = signal(false);
 
@@ -28,6 +40,14 @@ export class SuspensionFormComponent {
     affectsSocialSecurity: [false, Validators.required],
     standbyCostAmount: [null as number | null, Validators.required],
   });
+
+  constructor() {
+    this.contractParamService.findContractStatuses().subscribe((res) => {
+      if (res.data && res.success) {
+        this.statusOptions.set(res.data);
+      }
+    });
+  }
 
   submit(): void {
     if (this.form.invalid) return;

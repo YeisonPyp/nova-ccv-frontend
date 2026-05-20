@@ -33,7 +33,7 @@ export class UsersDashboardComponent implements OnInit {
   totalPages = signal(0);
   loading = signal(false);
 
-  columns: TableColumn<UserResponse>[] = [
+  columns: TableColumn[] = [
     { key: "username", label: "Usuario" },
     { key: "firstName", label: "Nombre" },
     { key: "lastName", label: "Apellido" },
@@ -70,5 +70,9 @@ export class UsersDashboardComponent implements OnInit {
 
   manage(user: UserResponse) {
     this.router.navigate(["/conf/users", user.id]);
+  }
+
+  onCreateClicked() {
+    this.router.navigate(["/security/users/new"]);
   }
 }

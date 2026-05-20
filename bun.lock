@@ -12,6 +12,8 @@
         "@angular/platform-browser": "^19.2.0",
         "@angular/platform-browser-dynamic": "^19.2.0",
         "@angular/router": "^19.2.0",
+        "@rsql/builder": "^1.6.0",
+        "@rsql/emitter": "^1.6.0",
         "@tailwindcss/postcss": "^4.2.1",
         "dhtmlx-gantt": "^9.1.4",
         "ngx-color-picker": "^20.1.1",
@@ -561,6 +563,12 @@
     "@rollup/rollup-win32-x64-gnu": ["@rollup/rollup-win32-x64-gnu@4.57.1", "", { "os": "win32", "cpu": "x64" }, "sha512-VMBH2eOOaKGtIJYleXsi2B8CPVADrh+TyNxJ4mWPnKfLB/DBUmzW+5m1xUrcwWoMfSLagIRpjUFeW5CO5hyciQ=="],
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.34.8", "", { "os": "win32", "cpu": "x64" }, "sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g=="],
+
+    "@rsql/ast": ["@rsql/ast@1.6.0", "", {}, "sha512-ClciA8jxCCekVx53DEg5sNQLYFHZgq9KR4rbPLLzxStnvWh+Mym9W8wFoRLwMpGemXT+c+Sl0TwumLJ5ysw0Dg=="],
+
+    "@rsql/builder": ["@rsql/builder@1.6.0", "", { "dependencies": { "@rsql/ast": "^1.6.0" } }, "sha512-AL64U3dEUiBFNEc//g9U8mXI4fmL0qFA1mTK7Z5vPJ6ck78/ztDkoqnuZgTPBW//yfPaN/l28gUy9SHffWDQ8w=="],
+
+    "@rsql/emitter": ["@rsql/emitter@1.6.0", "", { "dependencies": { "@rsql/ast": "^1.6.0" } }, "sha512-lp76FEHh8Y3ughjtFHM0SOTpXwhAJRXj87KZaDqgJofYPdE+aD46WKku+fCXGNzWFxWcU8ieY+1Cnati2gvz6w=="],
 
     "@schematics/angular": ["@schematics/angular@19.2.19", "", { "dependencies": { "@angular-devkit/core": "19.2.19", "@angular-devkit/schematics": "19.2.19", "jsonc-parser": "3.3.1" } }, "sha512-6/0pvbPCY4UHeB4lnM/5r250QX5gcLgOYbR5FdhFu+22mOPHfWpRc5tNuY9kCephDHzAHjo6fTW1vefOOmA4jw=="],
 

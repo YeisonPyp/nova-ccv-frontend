@@ -1,5 +1,5 @@
 @if (contract()) {
-  <div class="p-6 max-w-7xl mx-auto">
+  <div class="p-6 max-w mx-auto">
     <!-- Header -->
     <div class="flex justify-between items-start mb-6">
       <div class="flex items-center gap-3">
@@ -219,7 +219,7 @@
     >
       <!-- Tabs bar -->
       <div
-        class="flex border-b border-gray-200 bg-gray-50 flex-wrap px-2 pt-2 gap-2"
+        class="flex border-b border-gray-200 bg-gray-50 flex-wrap px-2 pt-2 gap-2 justify-between"
       >
         @for (tab of tabs; track tab.key) {
           <button
@@ -243,44 +243,22 @@
             Registro de {{ activeTabLabel() }}
           </h2>
 
-          @if (activeTab() !== "mutations" && activeTab() !== "filing" && activeTab() !== "assignments") {
+          @if (
+            activeTab() !== "mutations" &&
+            activeTab() !== "filing" &&
+            activeTab() !== "assignments" &&
+            activeTab() !== "pending"
+          ) {
             <button class="btn btn-primary text-sm" (click)="handleCreate()">
               + Crear {{ activeTabLabel() }}
             </button>
           }
         </div>
 
-        @if (activeTab() === "mutations") {
-          <app-mutations-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "additions") {
-          <app-additions-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "cessions") {
-          <app-cessions-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "suspensions") {
-          <app-suspensions-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "cancellations") {
-          <app-cancellations-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "othersi") {
-          <app-othersi-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "assignments") {
-          <app-assignments-tab [contractId]="contractId()" />
-        } @else if (activeTab() === "filing") {
-          @if (!filingLoaded()) {
-            <div class="flex items-center gap-3 text-tertiary text-sm">
-              <span>Cargando radicado...</span>
-            </div>
-          } @else if (contractFiling()) {
-            <app-filing-card [filing]="contractFiling()!" />
-          } @else {
-            <div
-              class="p-8 text-center bg-gray-50 rounded-lg border border-dashed border-gray-300"
-            >
-              <p class="text-gray-500 text-sm">
-                Este contrato no tiene un radicado asociado.
-              </p>
-            </div>
-          }
-        }
+        <ng-container
+          [ngComponentOutlet]="activeTabComponent()"
+          [ngComponentOutletInputs]="activeTabInputs()"
+        />
       </div>
     </div>
   </div>

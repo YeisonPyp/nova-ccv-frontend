@@ -43,7 +43,7 @@ export class ControlEntityParamComponent {
     name: new FormControl("", [Validators.required, Validators.maxLength(255)]),
   });
 
-  ceColumns: TableColumn<ControlEntity>[] = [{ key: "name", label: "Nombre" }];
+  ceColumns: TableColumn[] = [{ key: "name", label: "Nombre" }];
 
   get canReadCe() {
     return this.auth.hasPermission("CONTROL_ENTITY_READ");

@@ -9,6 +9,7 @@ import { ImprovementPlanService } from "@/app/core/services/improvement-plan/imp
 import { ImprovementPlan } from "@/app/core/models/improvement-plan/improvement-plan.model";
 import { ImprovementPlanMetricsCardsComponent } from "../components/improvement-plan-metrics-cards/improvement-plan-metrics-cards.component";
 import { Router } from "@angular/router";
+import { HasPermissionDirective } from "@/app/shared/directives/has-permission.directive";
 
 @Component({
   selector: "app-improvement-plan-list",
@@ -18,6 +19,7 @@ import { Router } from "@angular/router";
     DynamicTableComponent,
     PaginatorComponent,
     ImprovementPlanMetricsCardsComponent,
+    HasPermissionDirective,
   ],
   templateUrl: "./improvement-plan-list.component.html",
   styleUrls: ["./improvement-plan-list.component.scss"],
@@ -34,7 +36,7 @@ export class ImprovementPlanListComponent implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
 
-  columns: TableColumn<ImprovementPlan>[] = [
+  columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "name", label: "Nombre" },
     { key: "controlEntityName", label: "Entidad de Control" },
