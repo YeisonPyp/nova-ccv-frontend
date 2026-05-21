@@ -23,7 +23,7 @@
                   "
                 ></ng-container>
               } @else {
-                {{ getNestedValue(item, col.key) }}
+                {{ item | nestedValue: col.key }}
               }
             </td>
           }

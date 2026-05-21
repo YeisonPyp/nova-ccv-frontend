@@ -17,6 +17,7 @@
         "@tailwindcss/postcss": "^4.2.1",
         "dhtmlx-gantt": "^9.1.4",
         "ngx-color-picker": "^20.1.1",
+        "ngx-json-viewer": "^3.2.1",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0",
         "zone.js": "~0.15.0",
@@ -1343,6 +1344,8 @@
     "neo-async": ["neo-async@2.6.2", "", {}, "sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw=="],
 
     "ngx-color-picker": ["ngx-color-picker@20.1.1", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": ">=19.0.0", "@angular/core": ">=19.0.0", "@angular/forms": ">=19.0.0" } }, "sha512-wFk1L9F3JBd1Th+auYexN4uyynaT2dhxVRn0Dd55HrhfVcxfylExITDJ+Bhrcl0W+QHtX6gVbfZuX2hBXeVMFA=="],
+
+    "ngx-json-viewer": ["ngx-json-viewer@3.2.1", "", { "dependencies": { "tslib": "^2.3.0" } }, "sha512-TTHtXsrBX+IXPqqAIsxklHPqSNmyGeQaziFZbCDJq1PnPOQmTrEHfwNrzN3LnWGhf7UxeM1cK0njegVPChwEcg=="],
 
     "node-addon-api": ["node-addon-api@6.1.0", "", {}, "sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA=="],
 

@@ -3,10 +3,18 @@ export interface AuditLog {
   op: string;
   userAgent: string;
   sessionId: string;
-  userId: number;
   ipAddress: string;
   entityName: string;
+  user?: AuditLogUser;
   oldRegistry: string | null;
   newRegistry: string | null;
   createdAt: string;
+}
+
+export interface AuditLogUser {
+  id: number;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }

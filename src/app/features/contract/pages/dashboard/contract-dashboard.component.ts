@@ -19,12 +19,6 @@ export class ContractDashboardComponent {
   service = inject(ContractService);
   private readonly router = inject(Router);
 
-  items = signal<Contract[]>([]);
-  currentPage = signal(1);
-  totalPages = signal(0);
-  loading = signal(false);
-  pageSize = 10;
-
   columns: TableColumn[] = [
     { key: "contractId", label: "ID Contrato" },
     { key: "contractType", label: "Tipo" },

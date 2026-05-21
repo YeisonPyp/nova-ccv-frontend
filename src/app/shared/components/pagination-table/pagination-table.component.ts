@@ -1,6 +1,7 @@
 import {
   Component,
   ContentChild,
+  effect,
   input,
   OnInit,
   signal,
@@ -62,8 +63,21 @@ export class PaginationTableComponent<T = any> implements OnInit {
   rsqlQuery = signal("");
 
   ngOnInit(): void {
-    this.load();
+    const baseFilters = this.tableColumns().reduce((acc, r) => {
+      if (r.filterSet?.filters) {
+        acc.push(...r.filterSet.filters);
+      }
+      return acc;
+    }, [] as FilterRow[]);
+    this.filterRows.set(baseFilters);
+    // no cargar cuando hay filtros iniciales
+    // pues en caso de hacerlo, se harían dos peticiones
+    // una que sería ésta y la otra en `onFilterChange`
+    if (!baseFilters.length) {
+      this.load();
+    }
   }
+
   load(page = 1) {
     this.loading.set(true);
 
@@ -87,7 +101,6 @@ export class PaginationTableComponent<T = any> implements OnInit {
   }
 
   onFilterChange(query: string) {
-    console.log("juputica");
     if (query) {
       this.rsqlQuery.set(query);
       this.load(this.currentPage());

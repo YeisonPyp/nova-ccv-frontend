@@ -3,11 +3,11 @@ import {
   computed,
   ContentChild,
   input,
-  output,
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FilterSectionComponent } from "./filter-section/filter-section.component";
+import { FilterRow } from "./filter-section/filter-section.component";
+import { NestedValuePipe } from "../../pipes/nested-value.pipe";
 
 export type FilterOperator = "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "lk";
 
@@ -35,13 +35,17 @@ export interface TableColumn {
      * The available operators
      */
     operators?: FilterOperator[];
+    /**
+     * filters to be applied
+     */
+    filters?: FilterRow[];
   };
 }
 
 @Component({
   selector: "app-dynamic-table",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NestedValuePipe],
   templateUrl: "./dynamic-table.component.html",
   styleUrl: "./dynamic-table.component.scss",
 })
@@ -54,9 +58,4 @@ export class DynamicTableComponent<T> {
 
   @ContentChild("actions") actionsTemplate?: TemplateRef<any>;
   @ContentChild("customCell") customCellTemplate?: TemplateRef<any>;
-
-  getNestedValue(obj: any, path: string | number | symbol): any {
-    if (typeof path !== "string") return obj[path];
-    return path.split(".").reduce((acc, part) => acc && acc[part], obj) || "-";
-  }
 }

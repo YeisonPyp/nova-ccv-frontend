@@ -23,6 +23,7 @@
     "@tailwindcss/postcss": "^4.2.1",
     "dhtmlx-gantt": "^9.1.4",
     "ngx-color-picker": "^20.1.1",
+    "ngx-json-viewer": "^3.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

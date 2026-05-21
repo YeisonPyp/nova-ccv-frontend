@@ -123,7 +123,7 @@ export class EditAssessmentModalComponent implements OnInit {
         id: this.assessment()!.id,
       };
       this.assessmentService.updateAssessment(payload).subscribe({
-        next: () => this.router.navigate(["/assessment/dashboard"]),
+        // next: () => this.router.navigate(["/assessment/dashboard"]),
         error: (err) => console.error(err),
       });
     } else {
