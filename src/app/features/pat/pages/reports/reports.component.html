@@ -1,0 +1,436 @@
+<!-- reports.component.html -->
+<div class="reports-page">
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="flex items-center justify-between gap-4 mb-7 flex-wrap">
+    <div class="flex items-center gap-4">
+      <div class="reports-header-icon">
+        <span class="material-icons text-2xl text-white">summarize</span>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-secondary m-0 leading-tight">
+          Generación de Reportes
+        </h1>
+        <p class="text-sm text-tertiary mt-1 m-0">
+          Informes estandarizados para Junta Directiva y entes externos
+        </p>
+      </div>
+    </div>
+
+    @if (isConfigView()) {
+      <button
+        class="btn btn-secondary gap-2"
+        (click)="cancelSelection()"
+        aria-label="Volver a la lista de reportes">
+        <span class="material-icons text-lg">arrow_back</span>
+        Volver
+      </button>
+    }
+  </header>
+
+  <!-- ─── Mensajes globales ──────────────────────────────── -->
+  @if (error()) {
+    <div class="rpt-alert rpt-alert--danger" role="alert">
+      <span class="material-icons rpt-alert__icon">error_outline</span>
+      <span class="flex-1 leading-snug">{{ error() }}</span>
+      <button
+        class="rpt-alert__close"
+        (click)="error.set(null)"
+        aria-label="Cerrar alerta">
+        <span class="material-icons text-lg">close</span>
+      </button>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="rpt-alert rpt-alert--success" role="status">
+      <span class="material-icons rpt-alert__icon">check_circle</span>
+      <span class="flex-1 leading-snug">{{ successMessage() }}</span>
+      <button
+        class="rpt-alert__close"
+        (click)="successMessage.set(null)"
+        aria-label="Cerrar mensaje">
+        <span class="material-icons text-lg">close</span>
+      </button>
+    </div>
+  }
+
+  <!-- ─── Carga inicial (skeleton) ───────────────────────── -->
+  @if (loadingInitial()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 animate-pulse">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="bg-white rounded-xl p-6 border border-border-primary">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-gray-200 shrink-0"></div>
+            <div class="flex-1 space-y-3">
+              <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div class="h-3 bg-gray-200 rounded w-full"></div>
+              <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  VISTA: Selección de plantilla                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (!loadingInitial() && !isConfigView()) {
+    <section aria-label="Plantillas de reportes" class="mb-10">
+      <!-- Section header -->
+      <div class="flex items-center justify-between gap-3 mb-5 flex-wrap">
+        <h2 class="flex items-center gap-2 text-base font-semibold text-secondary m-0">
+          <span class="material-icons text-xl text-primary">description</span>
+          Selecciona un tipo de reporte
+        </h2>
+        <span class="rpt-count-badge">
+          {{ reportTemplates.length }} disponibles
+        </span>
+      </div>
+
+      <!-- Grid de templates -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+        role="list">
+        @for (tpl of reportTemplates; track trackByType($index, tpl)) {
+          <article
+            class="rpt-card rpt-card--{{ tpl.colorClass }}"
+            [class.rpt-card--generating]="isGenerating(tpl.type)"
+            (click)="!isGenerating(tpl.type) && selectTemplate(tpl)"
+            (keydown.enter)="!isGenerating(tpl.type) && selectTemplate(tpl)"
+            role="listitem"
+            [attr.aria-label]="'Generar ' + tpl.title"
+            tabindex="0">
+
+            <!-- Icono -->
+            <div class="rpt-card__icon-wrap">
+              <span class="material-icons text-2xl">{{ tpl.icon }}</span>
+            </div>
+
+            <!-- Contenido -->
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-semibold text-secondary m-0 mb-1.5 leading-snug">
+                {{ tpl.title }}
+              </h3>
+              <p class="text-xs text-tertiary m-0 mb-3 leading-relaxed line-clamp-3">
+                {{ tpl.description }}
+              </p>
+
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <span class="rpt-audience-badge">
+                  <span class="material-icons text-xs">groups</span>
+                  {{ tpl.audience }}
+                </span>
+                <div class="flex gap-1.5 flex-wrap">
+                  @for (fmt of tpl.formats; track fmt) {
+                    <span class="rpt-format-chip rpt-format-chip--{{ getFormatColorClass(fmt) }}">
+                      <span class="material-icons !text-[11px]">{{ getFormatIcon(fmt) }}</span>
+                      {{ fmt }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Overlay de generación -->
+            @if (isGenerating(tpl.type)) {
+              <div class="rpt-card__overlay">
+                <span class="material-icons text-3xl animate-spin">hourglass_empty</span>
+                <span class="text-sm font-semibold">Generando...</span>
+              </div>
+            }
+
+            <!-- Flecha hover -->
+            <div class="rpt-card__arrow">
+              <span class="material-icons">chevron_right</span>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <!-- ─── Reportes recientes ───────────────────────────── -->
+    @if (hasRecentReports()) {
+      <section aria-label="Reportes recientes" class="rpt-recent-section">
+        <div class="flex items-center justify-between gap-3 mb-5 flex-wrap">
+          <h2 class="flex items-center gap-2 text-base font-semibold text-secondary m-0">
+            <span class="material-icons text-xl text-primary">history</span>
+            Reportes Recientes
+          </h2>
+          <button
+            class="btn btn-secondary gap-2 !py-1.5 !px-3 !text-xs"
+            (click)="loadRecentReports()"
+            [disabled]="loadingRecent()"
+            aria-label="Actualizar reportes recientes">
+            <span
+              class="material-icons !text-base"
+              [class.animate-spin]="loadingRecent()">
+              refresh
+            </span>
+            Actualizar
+          </button>
+        </div>
+
+        <div class="table-container !p-0 overflow-x-auto">
+          <table class="base-table" aria-label="Tabla de reportes recientes">
+            <thead>
+              <tr>
+                <th class="table-header-cell">Reporte</th>
+                <th class="table-header-cell">Generado</th>
+                <th class="table-header-cell">Formato</th>
+                <th class="table-header-cell text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of recentReports(); track trackByReportId($index, r)) {
+                <tr class="table-row group">
+                  <td class="table-cell">
+                    <div class="flex items-center gap-3">
+                      <span class="material-icons text-xl text-tertiary">description</span>
+                      <div>
+                        <strong class="block text-sm text-secondary leading-snug">
+                          {{ getReportTypeLabel(r.type) }}
+                        </strong>
+                        <span class="block text-xs text-tertiary mt-0.5">
+                          {{ r.fileName }}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="table-cell">
+                    <span class="block text-sm font-medium">
+                      {{ r.generatedAt | date:'dd/MM/yyyy' }}
+                    </span>
+                    <span class="block text-xs text-tertiary">
+                      {{ r.generatedAt | date:'HH:mm' }}
+                    </span>
+                  </td>
+                  <td class="table-cell">
+                    <span class="rpt-format-chip rpt-format-chip--{{ getFormatColorClass(r.format) }}">
+                      <span class="material-icons !text-[11px]">{{ getFormatIcon(r.format) }}</span>
+                      {{ r.format }}
+                    </span>
+                  </td>
+                  <td class="table-cell text-right">
+                    <button
+                      class="btn btn-secondary gap-1.5 !py-1.5 !px-3 !text-xs
+                             group-hover:border-primary group-hover:text-primary
+                             transition-colors"
+                      (click)="downloadReport(r)"
+                      [attr.aria-label]="'Descargar ' + r.fileName">
+                      <span class="material-icons !text-base">download</span>
+                      Descargar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <!-- Sin reportes recientes -->
+    @if (!hasRecentReports() && !loadingInitial()) {
+      <div class="flex flex-col items-center justify-center py-12 text-tertiary">
+        <span class="material-icons text-5xl opacity-30 mb-3">inbox</span>
+        <p class="text-sm font-medium text-secondary m-0">
+          No hay reportes generados recientemente
+        </p>
+        <span class="text-xs mt-1">
+          Selecciona una plantilla arriba para generar tu primer reporte
+        </span>
+      </div>
+    }
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  VISTA: Configuración del reporte                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (!loadingInitial() && isConfigView()) {
+    <section
+      class="rpt-config-section"
+      aria-label="Configuración de reporte">
+
+      <!-- Header del tipo seleccionado -->
+      <div class="rpt-config-header rpt-config-header--{{ selectedTemplate()!.colorClass }}">
+        <div class="rpt-config-header__icon">
+          <span class="material-icons text-3xl">{{ selectedTemplate()!.icon }}</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-lg font-bold text-secondary m-0 mb-1">
+            {{ selectedTemplate()!.title }}
+          </h2>
+          <p class="text-sm text-tertiary m-0 leading-relaxed mb-2">
+            {{ selectedTemplate()!.description }}
+          </p>
+          <span class="rpt-audience-badge rpt-audience-badge--lg">
+            <span class="material-icons text-sm">groups</span>
+            {{ selectedTemplate()!.audience }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="rpt-config-form-wrap">
+        <form
+          [formGroup]="configForm"
+          (ngSubmit)="generateReport()"
+          aria-label="Configuración del reporte">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Año -->
+            <div class="form-group">
+              <label for="report-year">
+                <span class="flex items-center gap-1.5">
+                  <span class="material-icons text-base text-tertiary">calendar_today</span>
+                  Año del reporte
+                  <span class="required">*</span>
+                </span>
+              </label>
+              <select
+                id="report-year"
+                formControlName="year"
+                class="form-control"
+                aria-required="true">
+                @for (y of yearOptions; track y) {
+                  <option [value]="y">{{ y }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Formato -->
+            <div class="form-group">
+              <label>
+                <span class="flex items-center gap-1.5">
+                  <span class="material-icons text-base text-tertiary">file_present</span>
+                  Formato de salida
+                  <span class="required">*</span>
+                </span>
+              </label>
+              <div
+                class="flex gap-3 flex-wrap mt-1"
+                role="radiogroup"
+                aria-label="Formato de salida">
+                @for (fmt of selectedTemplate()!.formats; track fmt) {
+                  <label class="rpt-format-option"
+                    [class.rpt-format-option--selected]="configForm.get('format')?.value === fmt"
+                    [attr.data-format]="fmt">
+                    <input
+                      type="radio"
+                      formControlName="format"
+                      [value]="fmt"
+                      class="sr-only">
+                    <span class="material-icons text-2xl">{{ getFormatIcon(fmt) }}</span>
+                    <span class="text-xs font-semibold tracking-wide">{{ fmt }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <!-- Filtro por área -->
+            @if (selectedTemplate()!.type !== 'SUPERSOCIEDADES') {
+              <div class="form-group">
+                <label for="report-area">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-icons text-base text-tertiary">corporate_fare</span>
+                    Filtrar por área
+                    <span class="text-muted">(opcional)</span>
+                  </span>
+                </label>
+                <select
+                  id="report-area"
+                  formControlName="areaId"
+                  class="form-control">
+                  <option [ngValue]="null">— Todas las áreas —</option>
+                  @for (area of consolidations(); track area.areaId) {
+                    <option [ngValue]="area.areaId">{{ area.areaName }}</option>
+                  }
+                </select>
+              </div>
+            }
+
+            <!-- Checkbox: incluir gráficas -->
+            <div class="form-group md:col-span-2">
+              <label class="rpt-checkbox" for="include-charts">
+                <input
+                  type="checkbox"
+                  id="include-charts"
+                  formControlName="includeCharts"
+                  class="rpt-checkbox__input">
+                <span class="rpt-checkbox__box">
+                  <span class="material-icons text-sm text-white">check</span>
+                </span>
+                <span>
+                  <strong class="block text-sm text-secondary">
+                    Incluir gráficas y visualizaciones
+                  </strong>
+                  <small class="block text-xs text-tertiary mt-0.5">
+                    Añade diagramas y gráficos al reporte generado
+                  </small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Preview / Resumen -->
+          <div class="rpt-preview">
+            <h4 class="flex items-center gap-2 text-sm font-semibold text-secondary m-0 mb-3">
+              <span class="material-icons text-lg text-tertiary">preview</span>
+              Resumen de configuración
+            </h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div class="rpt-preview__item">
+                <span class="rpt-preview__label">Tipo</span>
+                <span class="rpt-preview__value">{{ selectedTemplate()!.title }}</span>
+              </div>
+              <div class="rpt-preview__item">
+                <span class="rpt-preview__label">Año</span>
+                <span class="rpt-preview__value">{{ configForm.get('year')?.value }}</span>
+              </div>
+              <div class="rpt-preview__item">
+                <span class="rpt-preview__label">Formato</span>
+                <span class="rpt-format-chip rpt-format-chip--{{ getFormatColorClass(configForm.get('format')?.value ?? '') }}">
+                  <span class="material-icons !text-[11px]">
+                    {{ getFormatIcon(configForm.get('format')?.value ?? '') }}
+                  </span>
+                  {{ configForm.get('format')?.value }}
+                </span>
+              </div>
+              <div class="rpt-preview__item">
+                <span class="rpt-preview__label">Gráficas</span>
+                <span class="rpt-preview__value">
+                  {{ configForm.get('includeCharts')?.value ? 'Sí' : 'No' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex justify-end gap-3 pt-5 border-t border-border-primary mt-6">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="cancelSelection()"
+              [disabled]="generating() !== null">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary gap-2 !px-7"
+              [disabled]="!canGenerate()"
+              [class.opacity-70]="generating() !== null">
+              @if (generating() !== null) {
+                <span class="material-icons text-lg animate-spin">hourglass_empty</span>
+                <span>Generando reporte...</span>
+              } @else {
+                <span class="material-icons text-lg">download</span>
+                <span>Generar y Descargar</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  }
+</div>

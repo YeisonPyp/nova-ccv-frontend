@@ -1,0 +1,184 @@
+<!-- strategic-goals-panel.component.html -->
+<section class="sgp">
+  <div class="sgp__header">
+    <h3 class="sgp__title">
+      <span class="material-icons">flag</span>
+      Metas Estratégicas Vinculadas
+    </h3>
+    @if (!readonly()) {
+      <div class="sgp__actions">
+        <button class="btn btn--outline-sm" (click)="toggleLinkForm()">
+          <span class="material-icons">link</span> Vincular Meta
+        </button>
+        <button class="btn btn--outline-sm" (click)="toggleIndicatorForm()">
+          <span class="material-icons">analytics</span> Nuevo Indicador
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert--danger">{{ error() }}</div>
+  }
+
+  <!-- Formulario: Vincular Meta -->
+  @if (showLinkForm()) {
+    <div class="sgp__form-panel">
+      <h4>Vincular Meta Estratégica</h4>
+      <form [formGroup]="linkForm" (ngSubmit)="submitLink()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Meta Estratégica *</label>
+            <select formControlName="strategicGoalId" class="form-control">
+              <option [ngValue]="null">-- Seleccionar --</option>
+              @for (goal of availableGoals(); track goal.id) {
+                <option [ngValue]="goal.id">{{ goal.code }} - {{ goal.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Vínculo *</label>
+            <select formControlName="linkType" class="form-control">
+              @for (type of linkTypes; track type.value) {
+                <option [value]="type.value">{{ type.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group form-group--sm">
+            <label>Peso (%) *</label>
+            <input type="number" formControlName="weight"
+              class="form-control" min="1" max="100">
+          </div>
+        </div>
+        @if (!weightValid()) {
+          <p class="form-hint form-hint--danger">
+            ⚠ La suma de pesos supera 100%
+          </p>
+        }
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" (click)="toggleLinkForm()">Cancelar</button>
+          <button type="submit" class="btn btn--primary"
+            [disabled]="submitting() || !weightValid()">
+            {{ submitting() ? 'Guardando...' : 'Vincular' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Lista de metas vinculadas -->
+  @if (loading()) {
+    <div class="sgp__loading">Cargando...</div>
+  } @else {
+    <div class="sgp__goals-list">
+      @for (link of linkedGoals(); track link.id) {
+        <div class="goal-card">
+          <div class="goal-card__header">
+            <div>
+              <span class="goal-card__type-badge">{{ link.linkType }}</span>
+              <strong>{{ link.strategicGoalName }}</strong>
+            </div>
+            <div class="goal-card__meta">
+              <span class="goal-card__weight">Peso: {{ link.weight }}%</span>
+              @if (!readonly()) {
+                <button class="btn-icon btn-icon--danger"
+                  (click)="removeLink(link.id)"
+                  title="Desvincular">
+                  <span class="material-icons">link_off</span>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <p class="sgp__empty">No hay metas estratégicas vinculadas aún.</p>
+      }
+    </div>
+
+    <!-- Indicadores de Desempeño -->
+    <div class="sgp__indicators">
+      <h4 class="sgp__subtitle">
+        <span class="material-icons">speed</span>
+        Indicadores de Desempeño
+      </h4>
+
+      @if (showIndicatorForm()) {
+        <div class="sgp__form-panel">
+          <h4>Nuevo Indicador</h4>
+          <form [formGroup]="indicatorForm" (ngSubmit)="submitIndicator()">
+            <div class="form-row">
+              <div class="form-group form-group--sm">
+                <label>Código *</label>
+                <input formControlName="code" class="form-control" placeholder="IND-001">
+              </div>
+              <div class="form-group">
+                <label>Nombre *</label>
+                <input formControlName="name" class="form-control">
+              </div>
+              <div class="form-group form-group--sm">
+                <label>Tipo *</label>
+                <select formControlName="type" class="form-control">
+                  <option value="QUANTITY">Cantidad</option>
+                  <option value="PERCENTAGE">Porcentaje</option>
+                  <option value="BINARY">Binario</option>
+                  <option value="CURRENCY">Monetario</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group form-group--sm">
+                <label>Unidad *</label>
+                <input formControlName="unit" class="form-control" placeholder="%">
+              </div>
+              <div class="form-group form-group--sm">
+                <label>Línea Base</label>
+                <input type="number" formControlName="baseline" class="form-control">
+              </div>
+              <div class="form-group form-group--sm">
+                <label>Meta *</label>
+                <input type="number" formControlName="target" class="form-control">
+              </div>
+              <div class="form-group form-group--sm">
+                <label>Peso (%)</label>
+                <input type="number" formControlName="weight" class="form-control" min="1" max="100">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea formControlName="description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn--ghost" (click)="toggleIndicatorForm()">Cancelar</button>
+              <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+                {{ submitting() ? 'Guardando...' : 'Crear Indicador' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <div class="indicators-grid">
+        @for (ind of indicators(); track ind.id) {
+          <div class="indicator-card">
+            <div class="indicator-card__header">
+              <span class="indicator-card__code">{{ ind.code }}</span>
+              <span class="indicator-card__type">{{ ind.type }}</span>
+            </div>
+            <p class="indicator-card__name">{{ ind.name }}</p>
+            <div class="indicator-card__values">
+              <span>LB: {{ ind.baseline }}{{ ind.unit }}</span>
+              <span>Actual: <strong>{{ ind.currentValue }}{{ ind.unit }}</strong></span>
+              <span>Meta: {{ ind.target }}{{ ind.unit }}</span>
+            </div>
+            <app-pat-progress-bar
+              [value]="getAchievedPct(ind)"
+              [label]="'Avance'"
+            />
+          </div>
+        } @empty {
+          <p class="sgp__empty">No hay indicadores registrados.</p>
+        }
+      </div>
+    </div>
+  }
+</section>

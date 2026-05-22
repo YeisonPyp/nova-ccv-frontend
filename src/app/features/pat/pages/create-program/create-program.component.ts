@@ -1,35 +1,22 @@
-import { Component, OnInit, inject, signal } from "@angular/core";
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+// pat/pages/create-program/create-program.component.ts
+import { Component, inject, signal } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { PatApiService } from "@/app/core/services/pat-api.service";
-import { AreaService } from "@/app/core/services/assessment/area.service";
-import { EmployeeService } from "@/app/core/services/assessment/employee.service";
-import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
-import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
-import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
-import { Area } from "@/app/core/models/assessment/area.model";
-import { Employee } from "@/app/core/models/assessment/employee.model";
-import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
+import { PatApiService } from "../../../../core/services/pat-api.service";
+import { AreaService } from "../../../../core/services/assessment/area.service";
+import { EmployeeService } from "../../../../core/services/assessment/employee.service";
+import { CostCenterService } from "../../../../core/services/cost-center/cost-center.service";
+import { SearchSelectComponent } from "../../../../shared/components/search-select/search-select.component";
+import { SearchSelectContextFactory } from "../../../../shared/components/search-select/on-search-select.interface";
+import { Area } from "../../../../core/models/assessment/area.model";
+import { Employee } from "../../../../core/models/assessment/employee.model";
+import { CostCenter } from "../../../../core/models/cost-center/cost-center.models";
 import { ProgramStatus } from "../../models/pat.models";
-
-const currentYear = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from(
-  { length: currentYear - 2019 },
-  (_, i) => currentYear + 1 - i,
-);
-
-const STATUS_OPTIONS: { value: ProgramStatus; label: string }[] = [
-  { value: "DRAFT", label: "Borrador" },
-  { value: "APPROVED", label: "Aprobado" },
-  { value: "IN_PROGRESS", label: "En Ejecución" },
-  { value: "CLOSED", label: "Cerrado" },
-];
+import {
+  YEAR_OPTIONS,
+  PROGRAM_STATUS_CONFIG,
+} from "../../utils/pat-status.utils";
 
 @Component({
   selector: "app-create-program",
@@ -38,7 +25,7 @@ const STATUS_OPTIONS: { value: ProgramStatus; label: string }[] = [
   templateUrl: "./create-program.component.html",
   styleUrl: "./create-program.component.scss",
 })
-export class CreateProgramComponent implements OnInit {
+export class CreateProgramComponent {
   private readonly patApi = inject(PatApiService);
   private readonly areaService = inject(AreaService);
   private readonly employeeService = inject(EmployeeService);
@@ -46,50 +33,55 @@ export class CreateProgramComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
-  readonly statusOptions = STATUS_OPTIONS;
+  // ── Opciones desde utils (sin duplicación) ────────────────
   readonly yearOptions = YEAR_OPTIONS;
+  readonly statusOptions = Object.entries(PROGRAM_STATUS_CONFIG).map(
+    ([value, cfg]) => ({ value: value as ProgramStatus, label: cfg.label }),
+  );
 
   submitting = signal(false);
   error = signal<string | null>(null);
 
-  form: FormGroup;
-  areaCtx: SearchSelectContextFactory<Area>;
-  employeeCtx: SearchSelectContextFactory<Employee>;
-  costCenterCtx: SearchSelectContextFactory<CostCenter>;
-
-  constructor() {
-    this.form = this.fb.group({
-      code: [
-        "",
-        [
-          Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(/^PRG-\d{4}-\d{3}$/),
-        ],
+  form = this.fb.group({
+    code: [
+      "",
+      [
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^PRG-\d{4}-\d{3}$/),
       ],
-      name: ["", [Validators.required, Validators.maxLength(255)]],
-      areaId: [null, Validators.required],
-      employeeId: [null, Validators.required],
-      costCenterId: [null, Validators.required],
-      status: ["DRAFT", Validators.required],
-      objective: ["", Validators.maxLength(1000)],
-      pillar: ["", Validators.maxLength(150)],
-      beneficiaries: ["", Validators.maxLength(1000)],
-      year: [currentYear, [Validators.required, Validators.min(2020)]],
-    });
+    ],
+    name: ["", [Validators.required, Validators.maxLength(255)]],
+    areaId: [null as number | null, Validators.required],
+    employeeId: [null as number | null, Validators.required],
+    costCenterId: [null as number | null, Validators.required],
+    status: ["DRAFT" as ProgramStatus, Validators.required],
+    objective: ["", Validators.maxLength(1000)],
+    pillar: ["", Validators.maxLength(150)],
+    beneficiaries: ["", Validators.maxLength(1000)],
+    year: [
+      new Date().getFullYear(),
+      [Validators.required, Validators.min(2020)],
+    ],
+    budgetRubric: ["", Validators.maxLength(100)],
+    accountingPlan: ["", Validators.maxLength(100)],
+  });
 
-    this.areaCtx = this.areaService.newSearchSelectAreaContext((area) =>
+  // ── Search-select contexts ────────────────────────────────
+  areaCtx: SearchSelectContextFactory<Area> =
+    this.areaService.newSearchSelectAreaContext((area) =>
       this.form.patchValue({ areaId: area.id }),
     );
-    this.employeeCtx = this.employeeService.newSearchSelectEmployeeContext(
-      (emp) => this.form.patchValue({ employeeId: emp.id }),
+
+  employeeCtx: SearchSelectContextFactory<Employee> =
+    this.employeeService.newSearchSelectEmployeeContext((emp) =>
+      this.form.patchValue({ employeeId: emp.id }),
     );
-    this.costCenterCtx = this.costCenterService.newSearchSelectContext((cc) =>
+
+  costCenterCtx: SearchSelectContextFactory<CostCenter> =
+    this.costCenterService.newSearchSelectContext((cc) =>
       this.form.patchValue({ costCenterId: cc.id }),
     );
-  }
-
-  ngOnInit(): void {}
 
   isFieldInvalid(field: string): boolean {
     const c = this.form.get(field);
@@ -100,14 +92,14 @@ export class CreateProgramComponent implements OnInit {
     field: string,
     ctx: SearchSelectContextFactory<any>,
     item: any,
-  ) {
+  ): void {
     ctx.remove(item);
     this.form.patchValue({ [field]: null });
     this.form.get(field)?.markAsTouched();
   }
 
   goBack(): void {
-    this.router.navigate(["/pat/dashboard"]);
+    this.router.navigate(["/pat/programs"]);
   }
 
   submit(): void {
@@ -115,7 +107,6 @@ export class CreateProgramComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
-
     this.submitting.set(true);
     this.error.set(null);
 
@@ -123,16 +114,18 @@ export class CreateProgramComponent implements OnInit {
 
     this.patApi
       .createProgram({
-        code: v.code,
-        name: v.name,
-        areaId: v.areaId,
-        employeeId: v.employeeId,
-        costCenterId: v.costCenterId,
-        status: v.status,
+        code: v.code!,
+        name: v.name!,
+        areaId: v.areaId!,
+        employeeId: v.employeeId!,
+        costCenterId: v.costCenterId!,
+        status: v.status!,
         objective: v.objective || null,
         pillar: v.pillar || null,
         beneficiaries: v.beneficiaries || null,
-        year: v.year,
+        year: v.year!,
+        budgetRubric: v.budgetRubric || null,
+        accountingPlan: v.accountingPlan || null,
       })
       .subscribe({
         next: (program) => {

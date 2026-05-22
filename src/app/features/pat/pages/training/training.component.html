@@ -1,0 +1,614 @@
+<!-- training.component.html -->
+<div class="trn-page">
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="flex items-start justify-between gap-4 mb-6 flex-wrap">
+    <div class="flex items-center gap-4">
+      <div class="trn-header-icon">
+        <span class="material-icons text-2xl text-white">school</span>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-secondary m-0 leading-tight">
+          Plan de Capacitaciones
+        </h1>
+        <p class="text-sm text-tertiary mt-1 m-0">
+          Gestión y seguimiento del plan formativo —
+          {{ totalTrainings() }} capacitaciones en {{ selectedYear() }}
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <select
+        class="form-control !py-2 !w-auto"
+        [value]="selectedYear()"
+        (change)="changeYear(+$any($event.target).value)"
+        aria-label="Seleccionar año">
+        @for (y of yearOptions; track y) {
+          <option [value]="y">{{ y }}</option>
+        }
+      </select>
+      <button
+        class="btn btn-primary gap-2"
+        (click)="setView('add')"
+        aria-label="Registrar nueva capacitación">
+        <span class="material-icons text-lg">add</span>
+        Nueva Capacitación
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Mensajes globales ──────────────────────────────── -->
+  @if (loadError()) {
+    <div class="trn-alert trn-alert--danger" role="alert">
+      <span class="material-icons text-xl">error_outline</span>
+      <span class="flex-1 text-sm">{{ loadError() }}</span>
+      <button
+        class="trn-alert__retry"
+        (click)="loadData()"
+        aria-label="Reintentar">
+        <span class="material-icons text-lg">refresh</span>
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (uploadError()) {
+    <div class="trn-alert trn-alert--danger" role="alert">
+      <span class="material-icons text-xl">error_outline</span>
+      <span class="flex-1 text-sm">{{ uploadError() }}</span>
+      <button
+        class="trn-alert__close"
+        (click)="uploadError.set(null)"
+        aria-label="Cerrar">
+        <span class="material-icons text-lg">close</span>
+      </button>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="trn-alert trn-alert--success" role="status">
+      <span class="material-icons text-xl">check_circle</span>
+      <span class="flex-1 text-sm">{{ successMessage() }}</span>
+      <button
+        class="trn-alert__close"
+        (click)="successMessage.set(null)"
+        aria-label="Cerrar">
+        <span class="material-icons text-lg">close</span>
+      </button>
+    </div>
+  }
+
+  <!-- ─── KPIs ───────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-pulse">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="bg-white rounded-xl p-5 border border-border-primary">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gray-200"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+              <div class="h-6 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (kpis().length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      @for (kpi of kpis(); track kpi.title) {
+        <app-kpi-card [config]="kpi" />
+      }
+    </div>
+  }
+
+  <!-- ─── Tabs ───────────────────────────────────────────── -->
+  <nav class="trn-tabs" role="tablist" aria-label="Vistas de capacitación">
+    <button
+      class="trn-tab"
+      [class.trn-tab--active]="activeView() === 'calendar'"
+      (click)="setView('calendar')"
+      role="tab"
+      [attr.aria-selected]="activeView() === 'calendar'">
+      <span class="material-icons text-lg">calendar_month</span>
+      <span>Capacitaciones</span>
+      <span class="trn-tab__count">{{ trainings().length }}</span>
+    </button>
+
+    <button
+      class="trn-tab"
+      [class.trn-tab--active]="activeView() === 'employees'"
+      (click)="setView('employees')"
+      role="tab"
+      [attr.aria-selected]="activeView() === 'employees'">
+      <span class="material-icons text-lg">people</span>
+      <span>Por Empleado</span>
+      <span class="trn-tab__count">{{ employeeStats().length }}</span>
+    </button>
+
+    @if (activeView() === 'add') {
+      <button class="trn-tab trn-tab--active" role="tab" aria-selected="true">
+        <span class="material-icons text-lg">add_circle</span>
+        <span>Nueva Capacitación</span>
+      </button>
+    }
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  VISTA: Capacitaciones                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (activeView() === 'calendar') {
+    @if (loading()) {
+      <div class="space-y-3 animate-pulse">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="bg-white rounded-xl p-5 border border-border-primary h-28"></div>
+        }
+      </div>
+    } @else if (hasTrainings()) {
+      <div class="space-y-3">
+        @for (training of trainings(); track trackByTrainingId($index, training)) {
+          <article
+            class="trn-card"
+            [class.trn-card--past]="isTrainingPast(training.scheduledDate)"
+            (click)="selectTraining(training)"
+            (keydown.enter)="selectTraining(training)"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'Ver detalle de ' + training.name">
+
+            <div class="trn-card__left">
+              <span class="trn-card__category">
+                <span class="material-icons !text-sm">category</span>
+                {{ training.category }}
+              </span>
+              <h3 class="trn-card__name">{{ training.name }}</h3>
+              <div class="trn-card__meta">
+                <span class="trn-card__meta-item">
+                  <span class="material-icons !text-base">event</span>
+                  {{ training.scheduledDate | date:'dd MMM yyyy' }}
+                </span>
+                <span class="trn-card__meta-item">
+                  <span class="material-icons !text-base">timer</span>
+                  {{ training.durationHours }}h
+                </span>
+                @if (training.provider) {
+                  <span class="trn-card__meta-item">
+                    <span class="material-icons !text-base">business</span>
+                    {{ training.provider }}
+                  </span>
+                }
+              </div>
+            </div>
+
+            <div class="trn-card__right">
+              <div class="trn-card__participants">
+                <span class="material-icons text-tertiary">group</span>
+                <span class="text-sm font-medium text-secondary">
+                  {{ training.participants.length }}
+                  <span class="text-tertiary font-normal">
+                    participante{{ training.participants.length !== 1 ? 's' : '' }}
+                  </span>
+                </span>
+              </div>
+
+              <div class="trn-card__dots">
+                @for (p of training.participants.slice(0, 6); track p.id) {
+                  <span
+                    class="trn-dot trn-dot--{{ getStatusClass(p.status) }}"
+                    [title]="p.employeeName + ': ' + getStatusLabel(p.status)">
+                  </span>
+                }
+                @if (training.participants.length > 6) {
+                  <span class="trn-dot-more">
+                    +{{ training.participants.length - 6 }}
+                  </span>
+                }
+              </div>
+
+              <span class="trn-card__arrow material-icons">chevron_right</span>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="trn-empty">
+        <span class="material-icons trn-empty__icon">school</span>
+        <p class="trn-empty__title">
+          No hay capacitaciones registradas para {{ selectedYear() }}
+        </p>
+        <button class="btn btn-primary gap-2 mt-3" (click)="setView('add')">
+          <span class="material-icons text-base">add</span>
+          Registrar primera capacitación
+        </button>
+      </div>
+    }
+
+    <!-- ─── Modal de detalle ─────────────────────────────── -->
+    @if (selectedTraining()) {
+      <div
+        class="trn-modal-overlay"
+        (click)="closeDetail()"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-label]="'Detalle de ' + selectedTraining()!.name">
+        <div class="trn-modal" (click)="$event.stopPropagation()">
+          <!-- Header -->
+          <header class="trn-modal__header">
+            <div class="flex items-start gap-3 min-w-0 flex-1">
+              <span class="material-icons text-2xl text-primary mt-0.5">school</span>
+              <div class="min-w-0 flex-1">
+                <span class="trn-modal__category">
+                  {{ selectedTraining()!.category }}
+                </span>
+                <h2 class="trn-modal__title">
+                  {{ selectedTraining()!.name }}
+                </h2>
+              </div>
+            </div>
+            <button
+              class="trn-modal__close"
+              (click)="closeDetail()"
+              aria-label="Cerrar detalle">
+              <span class="material-icons">close</span>
+            </button>
+          </header>
+
+          <!-- Info -->
+          <section class="trn-modal__info">
+            <div class="trn-info-item">
+              <span class="material-icons text-tertiary">event</span>
+              <div>
+                <span class="trn-info-item__label">Fecha programada</span>
+                <span class="trn-info-item__value">
+                  {{ selectedTraining()!.scheduledDate | date:'dd \'de\' MMMM, yyyy' }}
+                </span>
+              </div>
+            </div>
+            <div class="trn-info-item">
+              <span class="material-icons text-tertiary">timer</span>
+              <div>
+                <span class="trn-info-item__label">Duración</span>
+                <span class="trn-info-item__value">
+                  {{ selectedTraining()!.durationHours }} horas
+                </span>
+              </div>
+            </div>
+            <div class="trn-info-item">
+              <span class="material-icons text-tertiary">business</span>
+              <div>
+                <span class="trn-info-item__label">Proveedor</span>
+                <span class="trn-info-item__value">
+                  {{ selectedTraining()!.provider ?? 'Capacitación interna' }}
+                </span>
+              </div>
+            </div>
+            <div class="trn-info-item">
+              <span class="material-icons text-tertiary">group</span>
+              <div>
+                <span class="trn-info-item__label">Participantes</span>
+                <span class="trn-info-item__value">
+                  {{ selectedTraining()!.participants.length }} inscritos
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Participantes -->
+          <section class="trn-modal__participants">
+            <h3 class="trn-modal__subtitle">
+              <span class="material-icons text-lg text-primary">groups</span>
+              Participantes
+            </h3>
+
+            <div class="table-container !p-0 overflow-x-auto">
+              <table class="base-table trn-participants-table">
+                <thead>
+                  <tr>
+                    <th class="table-header-cell" scope="col">Empleado</th>
+                    <th class="table-header-cell" scope="col">Estado</th>
+                    <th class="table-header-cell hidden md:table-cell" scope="col">
+                      Fecha
+                    </th>
+                    <th class="table-header-cell" scope="col">Evidencia</th>
+                    <th class="table-header-cell text-right" scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of selectedTraining()!.participants;
+                        track trackByParticipantId($index, p)) {
+                    <tr class="table-row">
+                      <td class="table-cell">
+                        <div class="flex items-center gap-2">
+                          <div class="trn-avatar">{{ getInitials(p.employeeName) }}</div>
+                          <span class="text-sm font-medium text-secondary">
+                            {{ p.employeeName }}
+                          </span>
+                        </div>
+                      </td>
+                      <td class="table-cell">
+                        <span class="trn-status-chip trn-status-chip--{{ getStatusClass(p.status) }}">
+                          {{ getStatusLabel(p.status) }}
+                        </span>
+                      </td>
+                      <td class="table-cell hidden md:table-cell">
+                        <span class="text-sm text-tertiary">
+                          {{ p.completionDate ? (p.completionDate | date:'dd/MM/yyyy') : '—' }}
+                        </span>
+                      </td>
+                      <td class="table-cell">
+                        @if (p.evidenceUrl) {
+                          <a
+                            [href]="p.evidenceUrl"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="trn-evidence-link"
+                            [attr.aria-label]="'Descargar ' + p.evidenceFileName">
+                            <span class="material-icons text-base">attach_file</span>
+                            <span class="truncate max-w-[120px]">
+                              {{ p.evidenceFileName }}
+                            </span>
+                          </a>
+                        } @else {
+                          <label
+                            class="trn-upload-btn"
+                            [class.trn-upload-btn--uploading]="uploadingFor() === p.id">
+                            <span class="material-icons text-base">
+                              {{ uploadingFor() === p.id ? 'hourglass_empty' : 'upload_file' }}
+                            </span>
+                            {{ uploadingFor() === p.id ? 'Subiendo...' : 'Cargar' }}
+                            <input
+                              type="file"
+                              hidden
+                              [disabled]="uploadingFor() === p.id"
+                              [accept]="'.pdf,.jpg,.jpeg,.png,.docx'"
+                              (change)="onFileSelected($event, p)">
+                          </label>
+                        }
+                      </td>
+                      <td class="table-cell text-right">
+                        <select
+                          class="form-control !py-1 !px-2 !text-xs !w-auto inline-block"
+                          [value]="p.status"
+                          (change)="updateParticipantStatus(p.id, $any($event.target).value)"
+                          [attr.aria-label]="'Cambiar estado de ' + p.employeeName">
+                          @for (opt of statusOptions; track trackByStatusValue($index, opt)) {
+                            <option [value]="opt.value">{{ opt.label }}</option>
+                          }
+                        </select>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  VISTA: Por Empleado                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (activeView() === 'employees') {
+    @if (loading()) {
+      <div class="bg-white rounded-xl border border-border-primary overflow-hidden animate-pulse">
+        <div class="h-12 bg-gray-100 border-b border-border-primary"></div>
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="h-14 border-b border-gray-100"></div>
+        }
+      </div>
+    } @else if (hasEmployeeStats()) {
+      <div class="table-container !p-0 overflow-x-auto">
+        <table class="base-table trn-employees-table" aria-label="Empleados">
+          <thead>
+            <tr>
+              <th class="table-header-cell" scope="col">Empleado</th>
+              <th class="table-header-cell hidden md:table-cell" scope="col">Área</th>
+              <th class="table-header-cell" scope="col">Capacitaciones</th>
+              <th class="table-header-cell hidden lg:table-cell" scope="col">Horas</th>
+              <th class="table-header-cell" scope="col">% Cumplimiento</th>
+              <th class="table-header-cell text-center" scope="col">Pendientes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of employeeStats(); track trackByEmployeeId($index, emp)) {
+              <tr
+                class="table-row trn-row"
+                [class]="getCompletionRowClass(emp.completionPct)">
+                <td class="table-cell">
+                  <div class="flex items-center gap-2">
+                    <div class="trn-avatar">{{ getInitials(emp.employeeName) }}</div>
+                    <div>
+                      <span class="block text-sm font-medium text-secondary">
+                        {{ emp.employeeName }}
+                      </span>
+                      <span class="block text-xs text-tertiary md:hidden">
+                        {{ emp.areaName }}
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td class="table-cell hidden md:table-cell">
+                  <span class="text-sm text-tertiary">{{ emp.areaName }}</span>
+                </td>
+                <td class="table-cell">
+                  <span class="trn-fraction">
+                    <strong>{{ emp.completedTrainings }}</strong>
+                    <span class="text-tertiary">/{{ emp.plannedTrainings }}</span>
+                  </span>
+                </td>
+                <td class="table-cell hidden lg:table-cell">
+                  <span class="trn-fraction">
+                    <strong>{{ emp.totalHoursCompleted }}</strong>
+                    <span class="text-tertiary">/{{ emp.totalHoursPlanned }}h</span>
+                  </span>
+                </td>
+                <td class="table-cell" style="min-width: 180px;">
+                  <app-pat-progress-bar [value]="emp.completionPct" [height]="6" />
+                </td>
+                <td class="table-cell text-center">
+                  @if (emp.pendingEvidences > 0) {
+                    <span class="trn-badge trn-badge--warning">
+                      {{ emp.pendingEvidences }}
+                    </span>
+                  } @else {
+                    <span class="material-icons text-success-600" style="color: #198754">
+                      check_circle
+                    </span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="trn-empty">
+        <span class="material-icons trn-empty__icon">people_outline</span>
+        <p class="trn-empty__title">
+          No hay estadísticas de empleados disponibles
+        </p>
+      </div>
+    }
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  VISTA: Nueva Capacitación                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (activeView() === 'add') {
+    <div class="trn-form-wrap">
+      <div class="trn-form-header">
+        <span class="material-icons text-2xl text-primary">add_circle</span>
+        <div>
+          <h2 class="text-lg font-bold text-secondary m-0">
+            Registrar Nueva Capacitación
+          </h2>
+          <p class="text-sm text-tertiary m-0 mt-1">
+            Año: <strong>{{ selectedYear() }}</strong>
+          </p>
+        </div>
+      </div>
+
+      @if (submitError()) {
+        <div class="trn-alert trn-alert--danger mb-4" role="alert">
+          <span class="material-icons text-xl">error_outline</span>
+          <span class="flex-1 text-sm">{{ submitError() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="trainingForm" (ngSubmit)="submitTraining()" novalidate>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- Nombre -->
+          <div class="form-group md:col-span-2">
+            <label for="trn-name">
+              Nombre de la Capacitación <span class="required">*</span>
+            </label>
+            <input
+              id="trn-name"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('name')"
+              placeholder="Ej: Gestión de Proyectos con metodología PMI"
+              aria-required="true">
+            @if (isFieldInvalid('name')) {
+              <span class="invalid-feedback">
+                Este campo es requerido (máx. 200 caracteres)
+              </span>
+            }
+          </div>
+
+          <!-- Categoría -->
+          <div class="form-group">
+            <label for="trn-category">
+              Categoría <span class="required">*</span>
+            </label>
+            <select
+              id="trn-category"
+              formControlName="category"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('category')"
+              aria-required="true">
+              <option value="">— Seleccionar categoría —</option>
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+            @if (isFieldInvalid('category')) {
+              <span class="invalid-feedback">Selecciona una categoría</span>
+            }
+          </div>
+
+          <!-- Proveedor -->
+          <div class="form-group">
+            <label for="trn-provider">
+              Proveedor / Instructor
+              <span class="text-muted">(opcional)</span>
+            </label>
+            <input
+              id="trn-provider"
+              formControlName="provider"
+              class="form-control"
+              placeholder="Ej: SENA, consultor externo">
+          </div>
+
+          <!-- Fecha -->
+          <div class="form-group">
+            <label for="trn-date">
+              Fecha Programada <span class="required">*</span>
+            </label>
+            <input
+              id="trn-date"
+              type="date"
+              formControlName="scheduledDate"
+              class="form-control input-date-lc"
+              [class.is-invalid]="isFieldInvalid('scheduledDate')"
+              aria-required="true">
+            @if (isFieldInvalid('scheduledDate')) {
+              <span class="invalid-feedback">Selecciona una fecha</span>
+            }
+          </div>
+
+          <!-- Duración -->
+          <div class="form-group">
+            <label for="trn-duration">
+              Duración (horas) <span class="required">*</span>
+            </label>
+            <input
+              id="trn-duration"
+              type="number"
+              formControlName="durationHours"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('durationHours')"
+              min="1"
+              aria-required="true">
+            @if (isFieldInvalid('durationHours')) {
+              <span class="invalid-feedback">Debe ser al menos 1 hora</span>
+            }
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-border-primary">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancelForm()"
+            [disabled]="submitting()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary gap-2"
+            [disabled]="submitting()">
+            @if (submitting()) {
+              <span class="material-icons text-lg animate-spin">hourglass_empty</span>
+              Guardando...
+            } @else {
+              <span class="material-icons text-lg">save</span>
+              Registrar Capacitación
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>
