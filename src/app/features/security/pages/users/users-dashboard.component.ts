@@ -69,7 +69,7 @@ export class UsersDashboardComponent implements OnInit {
   }
 
   manage(user: UserResponse) {
-    this.router.navigate(["/conf/users", user.id]);
+    this.router.navigate(["/security/users/", user.id]);
   }
 
   onCreateClicked() {

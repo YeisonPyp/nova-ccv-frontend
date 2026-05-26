@@ -1,17 +1,20 @@
-export type StepStatus = "pending" | "approved" | "rejected";
+import { Employee } from "../assessment/employee.model";
+import { WorkflowStep } from "./workflow.model";
+
+export type StepStatus = "onhold" | "pending" | "approved" | "rejected";
 
 export interface FilingStepApproval {
   id: number;
   filingWorkflowId: number;
   stepId: number;
-  reviewerId: number | null;
-  publisherId: number | null;
   status: StepStatus;
   review: string | null;
   stepOrder: number;
   approvedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  publisher: Employee | null;
+  step: WorkflowStep;
 }
 
 export interface FilingWorkflow {

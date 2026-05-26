@@ -52,7 +52,6 @@ export class WorkflowListParamComponent {
   workflowColumns: TableColumn[] = [
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
-    { key: "stepsCount", label: "Pasos" },
   ];
 
   get canRead() {

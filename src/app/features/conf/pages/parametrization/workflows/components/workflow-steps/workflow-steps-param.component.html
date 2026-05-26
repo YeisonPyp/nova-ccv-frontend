@@ -1,53 +1,39 @@
 @if (workflow()) {
-  <details
-    class="border rounded-lg border-primary/30"
-    (toggle)="onStepsToggle($event)"
-  >
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Pasos — {{ workflow()!.name }}
-    </summary>
-
-    <div class="p-4 space-y-3">
-      @if (!stepsLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateStep) {
-          <div class="flex justify-end">
-            <button class="btn btn-primary btn-sm" (click)="openCreateStep()">
-              + Nuevo paso
-            </button>
-          </div>
-        }
-
-        <app-dynamic-table
-          [data]="steps()"
-          [columns]="stepColumns"
-          emptyMessage="No hay pasos para este flujo."
-        >
-          <ng-template #actions let-step>
-            @if (canUpdateStep) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditStep(step)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteStep) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteStep(step)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
+  <div class="p-4 space-y-3">
+    @if (!stepsLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      @if (canCreateStep) {
+        <div class="flex justify-end">
+          <button class="btn btn-primary btn-sm" (click)="openCreateStep()">
+            + Nuevo paso
+          </button>
+        </div>
       }
-    </div>
-  </details>
+
+      <app-dynamic-table
+        [data]="steps()"
+        [columns]="stepColumns"
+        emptyMessage="No hay pasos para este flujo."
+      >
+        <ng-template #actions let-step>
+          @if (canUpdateStep) {
+            <button class="btn btn-sm btn-outline" (click)="openEditStep(step)">
+              Editar
+            </button>
+          }
+          @if (canDeleteStep) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteStep(step)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </div>
 }
 
 @if (stepModalMode()) {
@@ -87,17 +73,17 @@
           />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1"
-            >ID Cargo (opcional)</label
-          >
-          <input
-            formControlName="positionId"
-            type="number"
-            class="form-control w-full"
-            placeholder="ID del cargo asociado"
-          />
-        </div>
+        <app-search-select
+          label="Empleado"
+          [required]="true"
+          [items]="employeeCtx.options()"
+          [selectedItems]="employeeCtx.selectedOptions()"
+          [isInvalid]="isFieldInvalid('employeeId')"
+          errorMessage="Empleado requerido"
+          (onSearch)="employeeCtx.search($event)"
+          (onSelect)="employeeCtx.select($event)"
+          (onRemove)="onFieldRemove('employeeId', employeeCtx, $event)"
+        />
 
         <div class="modal-footer">
           <button

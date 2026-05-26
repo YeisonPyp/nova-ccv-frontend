@@ -1,3 +1,5 @@
+import { Employee } from "../assessment/employee.model";
+
 export interface Workflow {
   id: number;
   name: string;
@@ -14,7 +16,8 @@ export interface WorkflowStep {
   name: string;
   description: string | null;
   stepOrder: number;
-  positionId: number | null;
+  employeeId: number | null;
+  employee: Employee | null;
 }
 
 export interface CreateWorkflowDto {
@@ -32,12 +35,12 @@ export interface CreateWorkflowStepDto {
   name: string;
   description?: string;
   stepOrder: number;
-  positionId?: number | null;
+  employeeId?: number | null;
 }
 
 export interface UpdateWorkflowStepDto {
   name: string;
   description?: string;
   stepOrder: number;
-  positionId?: number | null;
+  employeeId?: number | null;
 }

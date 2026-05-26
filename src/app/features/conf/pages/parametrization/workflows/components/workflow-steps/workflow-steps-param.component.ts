@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, signal } from "@angular/core";
+import { Component, effect, inject, input, signal } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -16,16 +16,26 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { EmployeeService } from "@/app/core/services/assessment/employee.service";
+import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
+import { Employee } from "@/app/core/models/assessment/employee.model";
+import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
 
 @Component({
   selector: "app-workflow-steps-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    SearchSelectComponent,
+  ],
   templateUrl: "./workflow-steps-param.component.html",
 })
 export class WorkflowStepsParamComponent {
   private readonly auth = inject(AuthService);
   private readonly service = inject(WorkflowService);
+  private readonly employeeService = inject(EmployeeService);
 
   workflow = input<Workflow | null>(null);
 
@@ -43,15 +53,45 @@ export class WorkflowStepsParamComponent {
       Validators.required,
       Validators.min(1),
     ]),
-    positionId: new FormControl<number | null>(null),
+    employeeId: new FormControl<number | null>(null, [Validators.required]),
   });
 
   stepColumns: TableColumn[] = [
     { key: "stepOrder", label: "Orden" },
     { key: "name", label: "Nombre" },
     { key: "description", label: "Descripción" },
-    { key: "positionId", label: "ID Cargo" },
+    { key: "employee.email", label: "Empleado" },
   ];
+
+  employeeCtx: SearchSelectContextFactory<Employee>;
+
+  constructor() {
+    this.employeeCtx = this.employeeService.newSearchSelectEmployeeContext(
+      (emp) => this.stepForm.patchValue({ employeeId: emp.id }),
+    );
+
+    effect(() => {
+      const w = this.workflow();
+      if (w) {
+        this.loadSteps(w.id);
+      }
+    });
+  }
+
+  onFieldRemove(
+    field: string,
+    ctx: SearchSelectContextFactory<any>,
+    item: any,
+  ) {
+    ctx.remove(item);
+    this.stepForm.patchValue({ [field]: null });
+    this.stepForm.get(field)?.markAsTouched();
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const c = this.stepForm.get(field);
+    return !!(c?.touched && c?.invalid);
+  }
 
   get canReadStep() {
     return this.auth.hasPermission("WORKFLOW_STEP_READ");
@@ -64,17 +104,6 @@ export class WorkflowStepsParamComponent {
   }
   get canDeleteStep() {
     return this.auth.hasPermission("WORKFLOW_STEP_DELETE");
-  }
-
-  onStepsToggle(event: Event) {
-    const wf = this.workflow();
-    if (
-      (event.target as HTMLDetailsElement).open &&
-      wf &&
-      !this.stepsLoaded()
-    ) {
-      this.loadSteps(wf.id);
-    }
   }
 
   loadSteps(workflowId: number) {
@@ -92,7 +121,7 @@ export class WorkflowStepsParamComponent {
       name: "",
       description: "",
       stepOrder: 1,
-      positionId: null,
+      employeeId: null,
     });
     this.editingStep.set(null);
     this.stepModalMode.set("create");
@@ -103,19 +132,21 @@ export class WorkflowStepsParamComponent {
       name: step.name,
       description: step.description ?? "",
       stepOrder: step.stepOrder,
-      positionId: step.positionId,
+      employeeId: step.employeeId,
     });
+    if (step.employee) this.employeeCtx.selectResults([step.employee]);
     this.editingStep.set(step);
     this.stepModalMode.set("update");
   }
 
   closeStepModal() {
     this.stepModalMode.set(null);
+    this.employeeCtx.clear();
   }
 
   submitStep() {
     if (this.stepForm.invalid) return;
-    const { name, description, stepOrder, positionId } = this.stepForm.value;
+    const { name, description, stepOrder, employeeId } = this.stepForm.value;
     const mode = this.stepModalMode();
     const wf = this.workflow()!;
 
@@ -126,7 +157,7 @@ export class WorkflowStepsParamComponent {
           name: name!,
           description: description ?? undefined,
           stepOrder: stepOrder!,
-          positionId: positionId ?? null,
+          employeeId: employeeId ?? null,
         })
         .subscribe({
           next: () => {
@@ -141,7 +172,7 @@ export class WorkflowStepsParamComponent {
           name: name!,
           description: description ?? undefined,
           stepOrder: stepOrder!,
-          positionId: positionId ?? null,
+          employeeId: employeeId ?? null,
         })
         .subscribe({
           next: () => {

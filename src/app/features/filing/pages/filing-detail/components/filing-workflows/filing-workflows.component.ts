@@ -21,20 +21,12 @@ import { Workflow } from "@/app/core/models/filing/workflow.model";
 import { AuthService } from "@/app/core/services/auth.service";
 import { FilingWorkflowService } from "@/app/core/services/filing/filing-workflow.service";
 import { WorkflowService } from "@/app/core/services/filing/workflow.service";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { FilingStepCardComponent } from "../filing-step-card/filing-step-card.component";
-
-const PAGE_SIZE = 3;
 
 @Component({
   selector: "app-filing-workflows",
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    PaginationComponent,
-    FilingStepCardComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, FilingStepCardComponent],
   templateUrl: "./filing-workflows.component.html",
 })
 export class FilingWorkflowsComponent implements OnInit {
@@ -49,18 +41,6 @@ export class FilingWorkflowsComponent implements OnInit {
   loading = signal(false);
   showAddModal = signal(false);
   saving = signal(false);
-
-  page = signal(1);
-
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.workflows().length / PAGE_SIZE)),
-  );
-
-  paginatedWorkflows = computed(() => {
-    const p = this.page();
-    const start = (p - 1) * PAGE_SIZE;
-    return this.workflows().slice(start, start + PAGE_SIZE);
-  });
 
   addForm = new FormGroup({
     workflowId: new FormControl<number | null>(null, Validators.required),
@@ -81,7 +61,6 @@ export class FilingWorkflowsComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.workflows.set(res.data);
-          if (this.page() > this.totalPages()) this.page.set(1);
         }
         this.loading.set(false);
       },
@@ -89,10 +68,19 @@ export class FilingWorkflowsComponent implements OnInit {
     });
   }
 
-  canEditStep(step: FilingStepApproval): boolean {
+  canEditStep(
+    steps: FilingStepApproval[],
+    index: number,
+    step: FilingStepApproval,
+  ): boolean {
+    if (index > 0) {
+      const previousStep = steps[index - 1];
+      if (previousStep.status != "approved") return false;
+    }
+
     const user = this.auth.currentUser();
     if (!user) return false;
-    return user.isAdmin || user.employeeId === step.reviewerId;
+    return user.isAdmin || user.employeeId === step.step.employeeId;
   }
 
   onStepUpdated(workflowId: number, updated: FilingStepApproval) {
@@ -130,7 +118,6 @@ export class FilingWorkflowsComponent implements OnInit {
         next: (res) => {
           if (res.success && res.data) {
             this.workflows.update((wfs) => [...wfs, res.data]);
-            this.page.set(this.totalPages());
           }
           this.closeAddModal();
           this.saving.set(false);

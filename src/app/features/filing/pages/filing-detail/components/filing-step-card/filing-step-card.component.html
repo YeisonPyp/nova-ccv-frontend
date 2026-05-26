@@ -1,72 +1,77 @@
-<div class="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-sm">
+<div
+  class="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-sm h-full"
+>
   <!-- Header -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <span class="w-7 h-7 rounded-full bg-gray-100 text-xs font-bold text-secondary flex items-center justify-center">
+      <span
+        class="w-7 h-7 rounded-full bg-gray-100 text-xs font-bold text-secondary flex items-center justify-center"
+      >
         {{ step().stepOrder }}
       </span>
-      <span class="text-xs font-semibold text-tertiary">Paso #{{ step().stepOrder }}</span>
+      <span class="text-xs font-semibold text-tertiary"
+        >Paso #{{ step().stepOrder }}</span
+      >
     </div>
-    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full" [class]="statusClass">
+    <span
+      class="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+      [class]="statusClass"
+    >
       {{ statusLabel }}
     </span>
   </div>
 
-  <!-- Reviewer -->
-  <div class="text-xs text-tertiary">
-    <span class="font-medium text-secondary">Revisor:</span>
-    {{ step().reviewerId ? 'Empleado #' + step().reviewerId : '—' }}
-  </div>
+  @if (step().step.employee; as employee) {
+    <!-- Reviewer -->
+    <div class="text-xs text-tertiary">
+      <span class="font-medium text-secondary">Revisor:</span>
 
-  <!-- Review text -->
-  @if (step().review) {
-    <p class="text-xs text-secondary bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
-      {{ step().review }}
-    </p>
-  }
-
-  <!-- Approved at -->
-  @if (step().approvedAt) {
-    <div class="text-[10px] text-tertiary">
-      Aprobado: {{ step().approvedAt | date:'dd/MM/yyyy HH:mm' }}
+      <app-employee-card [employee]="employee"></app-employee-card>
     </div>
   }
 
+  <!-- Approved at -->
+  <div class="text-[10px] text-tertiary">
+    Fecha de aprobación:
+    {{
+      !step().approvedAt ? "-" : (step().approvedAt | date: "dd/MM/yyyy HH:mm")
+    }}
+  </div>
+
   <!-- Edit form -->
-  @if (editing()) {
-    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-2 pt-2 border-t border-gray-100">
-      <div>
-        <label class="block text-[10px] font-bold text-tertiary uppercase mb-1">Estado</label>
-        <select formControlName="status" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-500">
-          <option value="pending">Pendiente</option>
-          <option value="approved">Aprobado</option>
-          <option value="rejected">Rechazado</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-[10px] font-bold text-tertiary uppercase mb-1">Observación</label>
-        <textarea
-          formControlName="review"
-          rows="2"
-          class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-500 resize-none"
-          placeholder="Escribe una observación..."
-        ></textarea>
-      </div>
-      <div class="flex gap-2 justify-end">
-        <button type="button" (click)="cancelEdit()" class="text-xs px-2 py-1 rounded-lg border border-gray-200 text-tertiary hover:bg-gray-50">
-          Cancelar
-        </button>
-        <button type="submit" [disabled]="saving()" class="text-xs px-2 py-1 rounded-lg bg-primary text-white font-semibold hover:opacity-90 disabled:opacity-50">
-          {{ saving() ? 'Guardando...' : 'Guardar' }}
-        </button>
-      </div>
-    </form>
-  } @else if (canEdit() && step().status !== 'approved') {
-    <button
-      (click)="openEdit()"
-      class="text-xs font-semibold text-primary hover:underline"
-    >
-      Actualizar paso
-    </button>
+  <form [formGroup]="form" class="space-y-2 pt-2 border-t border-gray-100">
+    <div>
+      <label class="block text-[10px] font-bold text-tertiary uppercase mb-1"
+        >Observación</label
+      >
+      <textarea
+        formControlName="review"
+        class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-500 resize-none h-full"
+        placeholder="Escribe una observación..."
+      ></textarea>
+    </div>
+  </form>
+  @if (!step().approvedAt && canEdit()) {
+    <div class="flex justify-between h-9">
+      <button
+        type="submit"
+        [disabled]="saving()"
+        (click)="onStatusChange('rejected')"
+        class="text-[14px] cursor-pointer px-2 py-1 rounded-lg bg-primary text-white font-semibold hover:opacity-90 disabled:opacity-50"
+      >
+        Rechazar
+      </button>
+      <button
+        type="button"
+        (click)="onStatusChange('approved')"
+        class="text-[14px] cursor-pointer px-2 py-1 rounded-lg border border-gray-200 font-semibold bg-green-500 hover:opacity-90 text-white disabled:opacity-50"
+      >
+        Aprobar
+      </button>
+    </div>
+  }
+
+  @if (step().approvedAt && step().status === "approved") {
+    <div class="text-[10px] text-tertiary"></div>
   }
 </div>

@@ -1,36 +1,27 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, output, signal } from "@angular/core";
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import {
   FilingStepApproval,
   StepStatus,
 } from "@/app/core/models/filing/filing-workflow.model";
 import { FilingWorkflowService } from "@/app/core/services/filing/filing-workflow.service";
+import { EmployeeCardComponent } from "@/app/features/contract/pages/employees/employee-card/employee-card.component";
+import { debounceTime, distinctUntilChanged } from "rxjs";
 
 @Component({
   selector: "app-filing-step-card",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, EmployeeCardComponent, ReactiveFormsModule],
   templateUrl: "./filing-step-card.component.html",
-  styles: [
-    `
-      .status-pending {
-        background: #fef9c3;
-        color: #92400e;
-        border: 1px solid #fde68a;
-      }
-      .status-approved {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-      }
-      .status-rejected {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-      }
-    `,
-  ],
+  styleUrl: "./filing-step-card.component.css",
 })
 export class FilingStepCardComponent {
   private readonly service = inject(FilingWorkflowService);
@@ -54,7 +45,50 @@ export class FilingStepCardComponent {
     pending: "Pendiente",
     approved: "Aprobado",
     rejected: "Rechazado",
+    onhold: "En Espera",
   };
+
+  constructor() {
+    effect(() => {
+      const step = this.step();
+      this.form.patchValue(
+        {
+          status: step.status == "approved" ? null : step.status,
+          review: step.review,
+        },
+        { emitEvent: false },
+      );
+
+      const canEdit = this.canEdit();
+      if (!canEdit) {
+        this.form.get("review")?.disable();
+      }
+
+      this.form.valueChanges
+        .pipe(distinctUntilChanged(), debounceTime(500))
+        .subscribe((value) => {
+          if (this.saving()) return;
+          const { status, review } = value;
+          const dto = {
+            status: status ?? undefined,
+            review: review ?? undefined,
+          };
+          this.saving.set(true);
+          this.service
+            .updateStep(this.filingId(), this.workflowId(), this.step().id, dto)
+            .subscribe({
+              next: (res) => {
+                if (res.success && res.data) {
+                  this.updated.emit(res.data);
+                  this.editing.set(false);
+                }
+                this.saving.set(false);
+              },
+              error: () => this.saving.set(false),
+            });
+        });
+    });
+  }
 
   get statusClass() {
     return `status-${this.step().status}`;
@@ -64,34 +98,7 @@ export class FilingStepCardComponent {
     return this.STATUS_LABELS[this.step().status] ?? this.step().status;
   }
 
-  openEdit() {
-    this.form.reset({
-      status: this.step().status,
-      review: this.step().review ?? "",
-    });
-    this.editing.set(true);
-  }
-
-  cancelEdit() {
-    this.editing.set(false);
-  }
-
-  save() {
-    if (this.saving()) return;
-    const { status, review } = this.form.value;
-    const dto = { status: status ?? undefined, review: review ?? undefined };
-    this.saving.set(true);
-    this.service
-      .updateStep(this.filingId(), this.workflowId(), this.step().id, dto)
-      .subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.updated.emit(res.data);
-            this.editing.set(false);
-          }
-          this.saving.set(false);
-        },
-        error: () => this.saving.set(false),
-      });
+  onStatusChange(status: StepStatus) {
+    this.form.patchValue({ status });
   }
 }

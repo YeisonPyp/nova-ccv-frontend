@@ -44,7 +44,7 @@
     } @else {
       <!-- Workflow cards -->
       <div class="space-y-6">
-        @for (wf of paginatedWorkflows(); track wf.id) {
+        @for (wf of workflows(); track wf.id) {
           <div class="border border-gray-200 rounded-xl overflow-hidden">
             <!-- Workflow header -->
             <div
@@ -79,12 +79,12 @@
                 <div
                   class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
                 >
-                  @for (step of wf.steps; track step.id) {
+                  @for (step of wf.steps; track step.id; let index = $index) {
                     <app-filing-step-card
                       [step]="step"
                       [filingId]="filingId()"
                       [workflowId]="wf.id"
-                      [canEdit]="canEditStep(step)"
+                      [canEdit]="canEditStep(wf.steps, index, step)"
                       (updated)="onStepUpdated(wf.id, $event)"
                     />
                   }
@@ -94,15 +94,6 @@
           </div>
         }
       </div>
-
-      <!-- Pagination -->
-      @if (totalPages() > 1) {
-        <app-pagination
-          [pages]="totalPages()"
-          [currentPage]="page()"
-          (pageChange)="page.set($event)"
-        />
-      }
     }
   </div>
 </details>
