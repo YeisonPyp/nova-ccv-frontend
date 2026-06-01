@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-areas-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./areas-param.component.html",
 })
@@ -59,8 +61,8 @@ export class AreasParamComponent {
     return this.auth.hasPermission("AREA_DELETE");
   }
 
-  onAreasToggle(event: Event) {
-    if ((event.target as HTMLDetailsElement).open && !this.areasLoaded()) {
+  onAreasToggle(open: boolean) {
+    if (open && !this.areasLoaded()) {
       this.loadAreas(1);
     }
   }

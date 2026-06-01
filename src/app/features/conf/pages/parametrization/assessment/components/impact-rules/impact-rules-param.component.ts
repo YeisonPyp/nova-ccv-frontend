@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-impact-rules-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./impact-rules-param.component.html",
 })

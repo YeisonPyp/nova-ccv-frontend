@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { ColorPickerComponent } from "@/app/shared/components/color-picker/color-picker.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-assignment-status-param",
@@ -23,6 +24,7 @@ import { ColorPickerComponent } from "@/app/shared/components/color-picker/color
     ReactiveFormsModule,
     DynamicTableComponent,
     ColorPickerComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./assignment-status-param.component.html",
 })
@@ -60,9 +62,8 @@ export class AssignmentStatusParamComponent {
     return this.auth.hasPermission("CONTRACT_ASSIGNMENT_STATUS_DELETE");
   }
 
-  onAssignmentStatusToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.assignmentStatusLoaded())
-      this.loadAssignmentStatus();
+  onAssignmentStatusToggle(open: boolean) {
+    if (open && !this.assignmentStatusLoaded()) this.loadAssignmentStatus();
   }
 
   loadAssignmentStatus() {

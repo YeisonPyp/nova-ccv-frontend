@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-control-entity-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./control-entity-param.component.html",
 })
@@ -58,9 +60,8 @@ export class ControlEntityParamComponent {
     return this.auth.hasPermission("CONTROL_ENTITY_DELETE");
   }
 
-  onCeToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.ceLoaded())
-      this.loadCe(1);
+  onCeToggle(open: boolean) {
+    if (open && !this.ceLoaded()) this.loadCe(1);
   }
 
   loadCe(page: number) {

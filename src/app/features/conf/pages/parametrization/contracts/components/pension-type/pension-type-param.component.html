@@ -1,51 +1,40 @@
 @if (canReadPensionType) {
-  <details class="border rounded-lg" (toggle)="onPensionTypeToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Tipos de pensión
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!pensionTypeLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreatePensionType) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Tipos de pensión"
+    createLabel="+ Nuevo tipo"
+    [canCreate]="canCreatePensionType"
+    (onOpen)="onPensionTypeToggle($event)"
+    (onCreate)="openCreatePensionType()"
+  >
+    @if (!pensionTypeLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="pensionTypeItems()"
+        [columns]="pensionTypeColumns"
+        emptyMessage="No hay tipos de pensión."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdatePensionType) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreatePensionType()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditPensionType(item)"
             >
-              + Nuevo tipo
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="pensionTypeItems()"
-          [columns]="pensionTypeColumns"
-          emptyMessage="No hay tipos de pensión."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdatePensionType) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditPensionType(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeletePensionType) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeletePensionType(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeletePensionType) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeletePensionType(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (pensionTypeModalMode()) {
   <div class="modal-overlay" (click)="closePensionTypeModal()">

@@ -14,6 +14,7 @@ export type FilterOperator = "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "lk";
 export interface TableColumn {
   key: string;
   label: string;
+  valueCallBack?: (item: any) => any;
 
   filterSet?: {
     /**

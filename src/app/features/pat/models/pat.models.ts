@@ -1,8 +1,12 @@
 // pat/models/pat.models.ts
-export type ProgramStatus = 'DRAFT' | 'APPROVED' | 'IN_PROGRESS' | 'CLOSED';
-export type GoalLinkType = 'OBJECTIVE' | 'PROJECT' | 'SUBACTIVITY';
-export type IndicatorType = 'QUANTITY' | 'PERCENTAGE' | 'BINARY' | 'CURRENCY';
-export type TrainingStatus = 'REGISTERED' | 'IN_PROGRESS' | 'COMPLETED' | 'ABSENT';
+export type ProgramStatus = "DRAFT" | "APPROVED" | "IN_PROGRESS" | "CLOSED";
+export type GoalLinkType = "OBJECTIVE" | "PROJECT" | "SUBACTIVITY";
+export type IndicatorType = "QUANTITY" | "PERCENTAGE" | "BINARY" | "CURRENCY";
+export type TrainingStatus =
+  | "REGISTERED"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "ABSENT";
 
 // ─── Programa / PAT ───────────────────────────────────────────
 export interface Program {
@@ -22,8 +26,8 @@ export interface Program {
   year: number;
   plannedBudget: number;
   executedBudget: number;
-  budgetRubric: string | null;      // rubro presupuestal
-  accountingPlan: string | null;    // plan contable
+  budgetRubric: string | null;
+  accountingPlan: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -301,19 +305,19 @@ export interface DashboardStats {
 
 // ─── Reportes ─────────────────────────────────────────────────
 export type ReportType =
-  | 'BOARD_SUMMARY'
-  | 'SUPERSOCIEDADES'
-  | 'BUDGET_EXECUTION'
-  | 'TRAINING_COMPLIANCE'
-  | 'AREA_CONSOLIDATION'
-  | 'STRATEGIC_GOALS';
+  | "BOARD_SUMMARY"
+  | "SUPERSOCIEDADES"
+  | "BUDGET_EXECUTION"
+  | "TRAINING_COMPLIANCE"
+  | "AREA_CONSOLIDATION"
+  | "STRATEGIC_GOALS";
 
 export interface ReportConfig {
   type: ReportType;
   year: number;
   areaId?: number;
   programId?: number;
-  format: 'PDF' | 'EXCEL' | 'CSV';
+  format: "PDF" | "EXCEL" | "CSV";
   includeCharts?: boolean;
 }
 
@@ -323,5 +327,5 @@ export interface ReportResult {
   generatedAt: string;
   downloadUrl: string;
   fileName: string;
-  format: 'PDF' | 'EXCEL' | 'CSV';
+  format: "PDF" | "EXCEL" | "CSV";
 }

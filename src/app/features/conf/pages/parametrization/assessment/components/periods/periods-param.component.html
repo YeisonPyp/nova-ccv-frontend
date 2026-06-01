@@ -1,23 +1,14 @@
-<!-- ── Periodos de evaluación ─────────────────────────────────────────────── -->
-<details class="border rounded-lg" (toggle)="onPeriodsToggle($event)">
-  <summary
-    class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-  >
-    Periodos de evaluación
-  </summary>
-
-  <div class="p-4 space-y-3">
-    @if (!periodsLoaded()) {
-      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-    } @else {
-      @if (canCreatePeriod) {
-        <div class="flex justify-end">
-          <button class="btn btn-primary btn-sm" (click)="openCreatePeriod()">
-            + Nuevo periodo
-          </button>
-        </div>
-      }
-
+<app-parametrization-section
+  title="Periodos de evaluación"
+  createLabel="+ Nuevo periodo"
+  [canCreate]="canCreatePeriod"
+  (onOpen)="onPeriodsToggle($event)"
+  (onCreate)="openCreatePeriod()"
+>
+  @if (!periodsLoaded()) {
+    <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+  } @else {
+    <div class="space-y-3">
       <app-dynamic-table
         [data]="periods()"
         [columns]="periodColumns"
@@ -48,9 +39,9 @@
         [currentPage]="periodPage()"
         (pageChange)="loadPeriods($event)"
       />
-    }
-  </div>
-</details>
+    </div>
+  }
+</app-parametrization-section>
 
 <!-- ── Period create/update modal ────────────────────────────────────────────── -->
 @if (periodModalMode()) {

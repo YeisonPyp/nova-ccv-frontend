@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-project-priority-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./project-priority-param.component.html",
 })
 export class ProjectPriorityParamComponent {
@@ -53,11 +59,8 @@ export class ProjectPriorityParamComponent {
     return this.auth.hasPermission("PROJECT_PRIORITY_DELETE");
   }
 
-  onProjectPriorityToggle(e: Event) {
-    if (
-      (e.target as HTMLDetailsElement).open &&
-      !this.projectPriorityLoaded()
-    ) {
+  onProjectPriorityToggle(open: boolean) {
+    if (open && !this.projectPriorityLoaded()) {
       this.loadProjectPriority();
     }
   }

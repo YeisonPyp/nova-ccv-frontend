@@ -13,11 +13,17 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-agency-param",
   standalone: true,
-  imports: [ReactiveFormsModule, DynamicTableComponent, PaginationComponent],
+  imports: [
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    PaginationComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./agency-param.component.html",
 })
 export class AgencyParamComponent {
@@ -64,9 +70,8 @@ export class AgencyParamComponent {
     return this.auth.hasPermission("AGENCY_DELETE");
   }
 
-  onAgencyToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.agencyLoaded())
-      this.loadAgency(1);
+  onAgencyToggle(open: boolean) {
+    if (open && !this.agencyLoaded()) this.loadAgency(1);
   }
 
   loadAgency(page: number) {

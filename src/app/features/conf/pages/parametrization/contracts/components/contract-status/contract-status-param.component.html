@@ -1,51 +1,40 @@
 @if (canReadContractStatus) {
-  <details class="border rounded-lg" (toggle)="onContractStatusToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Estados de contrato
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!contractStatusLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateContractStatus) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Estados de contrato"
+    createLabel="+ Nuevo estado"
+    [canCreate]="canCreateContractStatus"
+    (onOpen)="onContractStatusToggle($event)"
+    (onCreate)="openCreateContractStatus()"
+  >
+    @if (!contractStatusLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="contractStatusItems()"
+        [columns]="contractStatusColumns"
+        emptyMessage="No hay estados de contrato."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateContractStatus) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateContractStatus()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditContractStatus(item)"
             >
-              + Nuevo estado
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="contractStatusItems()"
-          [columns]="contractStatusColumns"
-          emptyMessage="No hay estados de contrato."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateContractStatus) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditContractStatus(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteContractStatus) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteContractStatus(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteContractStatus) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteContractStatus(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (contractStatusModalMode()) {
   <div class="modal-overlay" (click)="closeContractStatusModal()">

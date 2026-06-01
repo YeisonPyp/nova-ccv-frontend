@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-compensation-entity-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./compensation-entity-param.component.html",
 })
 export class CompensationEntityParamComponent {
@@ -53,12 +59,8 @@ export class CompensationEntityParamComponent {
     return this.auth.hasPermission("COMPENSATION_ENTITY_DELETE");
   }
 
-  onCompensationEntityToggle(e: Event) {
-    if (
-      (e.target as HTMLDetailsElement).open &&
-      !this.compensationEntityLoaded()
-    )
-      this.loadCompensationEntity();
+  onCompensationEntityToggle(open: boolean) {
+    if (open && !this.compensationEntityLoaded()) this.loadCompensationEntity();
   }
 
   loadCompensationEntity() {

@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-cancellation-type-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./cancellation-type-param.component.html",
 })
 export class CancellationTypeParamComponent {
@@ -53,9 +59,8 @@ export class CancellationTypeParamComponent {
     return this.auth.hasPermission("CONTRACT_CANCELLATION_TYPE_DELETE");
   }
 
-  onCancellationTypeToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.cancellationTypeLoaded())
-      this.loadCancellationType();
+  onCancellationTypeToggle(open: boolean) {
+    if (open && !this.cancellationTypeLoaded()) this.loadCancellationType();
   }
 
   loadCancellationType() {

@@ -1,0 +1,36 @@
+<app-pagination-table [service]="service" [tableColumns]="columns">
+  <ng-template #customCell let-item let-col>
+    @if (col == "budget") {
+      <app-pat-progress-bar
+        [value]="pctValue(item.plannedBudget, item.executedBudget)"
+        [planned]="item.plannedBudget"
+        [executed]="item.executedBudget"
+        [showLegend]="true"
+      ></app-pat-progress-bar>
+    } @else if (col == "measurement") {
+      <app-pat-progress-bar
+        [value]="
+          pctValue(item.plannedMeasurementGoal, item.executedMeasurementGoal)
+        "
+        [planned]="item.plannedMeasurementGoal"
+        [executed]="item.executedMeasurementGoal"
+      ></app-pat-progress-bar>
+    } @else if (col == "indicator") {
+      <app-pat-progress-bar
+        [value]="
+          pctValue(item.plannedIndicatorGoal, item.executedBudgetIndicatorGoal)
+        "
+        [planned]="item.plannedIndicatorGoal"
+        [executed]="item.executedBudgetIndicatorGoal"
+      ></app-pat-progress-bar>
+    } @else if (col == "benefit") {
+      <app-pat-progress-bar
+        [value]="pctValue(item.plannedBenefitGoal, item.executedBenefitGoal)"
+        [planned]="item.plannedBenefitGoal"
+        [executed]="item.executedBenefitGoal"
+      ></app-pat-progress-bar>
+    } @else {
+      {{ item | nestedValue: col.key }}
+    }
+  </ng-template>
+</app-pagination-table>

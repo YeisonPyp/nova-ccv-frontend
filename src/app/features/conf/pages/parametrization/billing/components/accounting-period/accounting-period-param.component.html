@@ -1,29 +1,15 @@
 @if (canReadAccountingPeriod) {
-  <details
-    class="border rounded-lg"
-    (toggle)="onAccountingPeriodToggle($event)"
+  <app-parametrization-section
+    title="Períodos contables"
+    createLabel="+ Nuevo período"
+    [canCreate]="canCreateAccountingPeriod"
+    (onOpen)="onAccountingPeriodToggle($event)"
+    (onCreate)="openCreateAccountingPeriod()"
   >
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Períodos contables
-    </summary>
-
-    <div class="p-4 space-y-3">
-      @if (!accountingPeriodLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateAccountingPeriod) {
-          <div class="flex justify-end">
-            <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateAccountingPeriod()"
-            >
-              + Nuevo período
-            </button>
-          </div>
-        }
-
+    @if (!accountingPeriodLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
         <app-dynamic-table
           [data]="accountingPeriodItems()"
           [columns]="accountingPeriodColumns"
@@ -46,9 +32,9 @@
           [currentPage]="accountingPeriodPage()"
           (pageChange)="loadAccountingPeriod($event)"
         />
-      }
-    </div>
-  </details>
+      </div>
+    }
+  </app-parametrization-section>
 }
 
 @if (accountingPeriodModalMode()) {

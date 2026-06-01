@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-activity-status-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./activity-status-param.component.html",
 })
@@ -58,8 +60,8 @@ export class ActivityStatusParamComponent {
     return this.auth.hasPermission("ACTIVITY_STATUS_DELETE");
   }
 
-  onActivityStatusToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.activityStatusLoaded()) {
+  onActivityStatusToggle(open: boolean) {
+    if (open && !this.activityStatusLoaded()) {
       this.loadActivityStatus(1);
     }
   }

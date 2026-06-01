@@ -1,26 +1,15 @@
 @if (canRead) {
-  <details class="border rounded-lg" (toggle)="onWorkflowsToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Flujos de trabajo
-    </summary>
-
-    <div class="p-4 space-y-3">
-      @if (!workflowsLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreate) {
-          <div class="flex justify-end">
-            <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateWorkflow()"
-            >
-              + Nuevo flujo
-            </button>
-          </div>
-        }
-
+  <app-parametrization-section
+    title="Flujos de trabajo"
+    createLabel="+ Nuevo flujo"
+    [canCreate]="canCreate"
+    (onOpen)="onWorkflowsToggle($event)"
+    (onCreate)="openCreateWorkflow()"
+  >
+    @if (!workflowsLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
         <app-dynamic-table
           [data]="workflows()"
           [columns]="workflowColumns"
@@ -60,9 +49,9 @@
           [currentPage]="workflowPage()"
           (pageChange)="loadWorkflows($event)"
         />
-      }
-    </div>
-  </details>
+      </div>
+    }
+  </app-parametrization-section>
 }
 
 <!-- ── Workflow create/update modal ──────────────────────────────────────────── -->

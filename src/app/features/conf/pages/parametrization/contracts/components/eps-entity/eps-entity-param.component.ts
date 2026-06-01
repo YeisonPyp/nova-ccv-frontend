@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-eps-entity-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./eps-entity-param.component.html",
 })
 export class EpsEntityParamComponent {
@@ -53,9 +59,8 @@ export class EpsEntityParamComponent {
     return this.auth.hasPermission("EPS_ENTITY_DELETE");
   }
 
-  onEpsEntityToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.epsEntityLoaded())
-      this.loadEpsEntity();
+  onEpsEntityToggle(open: boolean) {
+    if (open && !this.epsEntityLoaded()) this.loadEpsEntity();
   }
 
   loadEpsEntity() {

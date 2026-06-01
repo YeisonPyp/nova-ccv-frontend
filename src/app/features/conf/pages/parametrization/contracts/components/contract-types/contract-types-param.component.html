@@ -1,42 +1,34 @@
 @if (canRead) {
-  <details class="border rounded-lg" (toggle)="onToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Tipos de contrato
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!loaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreate) {
-          <div class="flex justify-end">
-            <button class="btn btn-primary btn-sm" (click)="openCreate()">
-              + Nuevo tipo
+  <app-parametrization-section
+    title="Tipos de contrato"
+    createLabel="+ Nuevo tipo"
+    [canCreate]="canCreate"
+    (onOpen)="onToggle($event)"
+    (onCreate)="openCreate()"
+  >
+    @if (!loaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="items()"
+        [columns]="columns"
+        emptyMessage="No hay tipos de contrato."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdate) {
+            <button class="btn btn-sm btn-outline" (click)="openEdit(item)">
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="items()"
-          [columns]="columns"
-          emptyMessage="No hay tipos de contrato."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdate) {
-              <button class="btn btn-sm btn-outline" (click)="openEdit(item)">
-                Editar
-              </button>
-            }
-            @if (canDelete) {
-              <button class="btn btn-sm btn-danger" (click)="openDelete(item)">
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDelete) {
+            <button class="btn btn-sm btn-danger" (click)="openDelete(item)">
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (modalMode()) {
   <div class="modal-overlay" (click)="closeModal()">

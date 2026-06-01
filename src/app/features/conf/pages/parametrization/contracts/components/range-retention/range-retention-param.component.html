@@ -1,51 +1,40 @@
 @if (canReadRangeRetention) {
-  <details class="border rounded-lg" (toggle)="onRangeRetentionToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Rangos de retención
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!rangeRetentionLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateRangeRetention) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Rangos de retención"
+    createLabel="+ Nuevo rango"
+    [canCreate]="canCreateRangeRetention"
+    (onOpen)="onRangeRetentionToggle($event)"
+    (onCreate)="openCreateRangeRetention()"
+  >
+    @if (!rangeRetentionLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="rangeRetentionItems()"
+        [columns]="rangeRetentionColumns"
+        emptyMessage="No hay rangos de retención."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateRangeRetention) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateRangeRetention()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditRangeRetention(item)"
             >
-              + Nuevo rango
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="rangeRetentionItems()"
-          [columns]="rangeRetentionColumns"
-          emptyMessage="No hay rangos de retención."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateRangeRetention) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditRangeRetention(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteRangeRetention) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteRangeRetention(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteRangeRetention) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteRangeRetention(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (rangeRetentionModalMode()) {
   <div class="modal-overlay" (click)="closeRangeRetentionModal()">

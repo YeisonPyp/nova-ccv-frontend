@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-periods-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./periods-param.component.html",
 })
@@ -66,8 +68,8 @@ export class PeriodsParamComponent {
     return this.auth.hasPermission("EVALUATION_PERIOD_DELETE");
   }
 
-  onPeriodsToggle(event: Event) {
-    if ((event.target as HTMLDetailsElement).open && !this.periodsLoaded()) {
+  onPeriodsToggle(open: boolean) {
+    if (open && !this.periodsLoaded()) {
       this.loadPeriods(1);
     }
   }

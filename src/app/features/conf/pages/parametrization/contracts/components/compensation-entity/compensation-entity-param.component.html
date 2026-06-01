@@ -1,54 +1,40 @@
 @if (canReadCompensationEntity) {
-  <details
-    class="border rounded-lg"
-    (toggle)="onCompensationEntityToggle($event)"
+  <app-parametrization-section
+    title="Entidades de compensación"
+    createLabel="+ Nueva entidad"
+    [canCreate]="canCreateCompensationEntity"
+    (onOpen)="onCompensationEntityToggle($event)"
+    (onCreate)="openCreateCompensationEntity()"
   >
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Entidades de compensación
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!compensationEntityLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateCompensationEntity) {
-          <div class="flex justify-end">
+    @if (!compensationEntityLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="compensationEntityItems()"
+        [columns]="compensationEntityColumns"
+        emptyMessage="No hay entidades de compensación."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateCompensationEntity) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateCompensationEntity()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditCompensationEntity(item)"
             >
-              + Nueva entidad
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="compensationEntityItems()"
-          [columns]="compensationEntityColumns"
-          emptyMessage="No hay entidades de compensación."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateCompensationEntity) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditCompensationEntity(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteCompensationEntity) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteCompensationEntity(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteCompensationEntity) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteCompensationEntity(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (compensationEntityModalMode()) {
   <div class="modal-overlay" (click)="closeCompensationEntityModal()">

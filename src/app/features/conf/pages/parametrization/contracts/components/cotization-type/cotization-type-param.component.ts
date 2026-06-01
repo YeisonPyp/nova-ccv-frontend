@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-cotization-type-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./cotization-type-param.component.html",
 })
 export class CotizationTypeParamComponent {
@@ -54,9 +60,8 @@ export class CotizationTypeParamComponent {
     return this.auth.hasPermission("COTIZATION_TYPE_DELETE");
   }
 
-  onCotizationTypeToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.cotizationTypeLoaded())
-      this.loadCotizationType();
+  onCotizationTypeToggle(open: boolean) {
+    if (open && !this.cotizationTypeLoaded()) this.loadCotizationType();
   }
 
   loadCotizationType() {

@@ -1,69 +1,55 @@
 @if (canReadAssignmentStatus) {
-  <details
-    class="border rounded-lg"
-    (toggle)="onAssignmentStatusToggle($event)"
+  <app-parametrization-section
+    title="Estados de asignación de contrato"
+    createLabel="+ Nuevo estado"
+    [canCreate]="canCreateAssignmentStatus"
+    (onOpen)="onAssignmentStatusToggle($event)"
+    (onCreate)="openCreateAssignmentStatus()"
   >
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Estados de asignación de contrato
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!assignmentStatusLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateAssignmentStatus) {
-          <div class="flex justify-end">
+    @if (!assignmentStatusLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="assignmentStatusItems()"
+        [columns]="assignmentStatusColumns"
+        emptyMessage="No hay estados de asignación."
+      >
+        <ng-template #customCell let-item let-col="column">
+          @if (col.key === "color") {
+            <div class="flex items-center gap-2">
+              <div
+                class="w-5 h-5 rounded border border-gray-300 shrink-0"
+                [style.background]="'#' + item.color"
+              ></div>
+              <span class="font-mono text-xs text-gray-600"
+                >#{{ item.color }}</span
+              >
+            </div>
+          } @else {
+            {{ item[col.key] }}
+          }
+        </ng-template>
+        <ng-template #actions let-item>
+          @if (canUpdateAssignmentStatus) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateAssignmentStatus()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditAssignmentStatus(item)"
             >
-              + Nuevo estado
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="assignmentStatusItems()"
-          [columns]="assignmentStatusColumns"
-          emptyMessage="No hay estados de asignación."
-        >
-          <ng-template #customCell let-item let-col="column">
-            @if (col.key === "color") {
-              <div class="flex items-center gap-2">
-                <div
-                  class="w-5 h-5 rounded border border-gray-300 shrink-0"
-                  [style.background]="'#' + item.color"
-                ></div>
-                <span class="font-mono text-xs text-gray-600"
-                  >#{{ item.color }}</span
-                >
-              </div>
-            } @else {
-              {{ item[col.key] }}
-            }
-          </ng-template>
-          <ng-template #actions let-item>
-            @if (canUpdateAssignmentStatus) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditAssignmentStatus(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteAssignmentStatus) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteAssignmentStatus(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteAssignmentStatus) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteAssignmentStatus(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (assignmentStatusModalMode()) {
   <div class="modal-overlay" (click)="closeAssignmentStatusModal()">

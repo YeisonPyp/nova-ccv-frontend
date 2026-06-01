@@ -70,6 +70,7 @@ export class EmployeeService {
   newSearchSelectEmployeeContext(
     onSelectCallback?: OnSelectCallback<Employee>,
     op?: SearchSelectContextFactoryOptions,
+    onRemoveCallback?: OnSelectCallback<Employee>,
   ) {
     return new SearchSelectContextFactory<Employee>(
       (term) => {
@@ -80,6 +81,7 @@ export class EmployeeService {
       (e) => ({ id: e.id, title: `${e.name ?? ""} ${e.lastName ?? ""}` }),
       onSelectCallback,
       op,
+      onRemoveCallback,
     );
   }
 }

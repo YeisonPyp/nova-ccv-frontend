@@ -51,6 +51,11 @@ export const PARAMETRIZATION_ROUTES: Routes = [
       ),
   },
   {
+    path: "pat",
+    loadComponent: () =>
+      import("./pat/pat-param.component").then((m) => m.PatParamComponent),
+  },
+  {
     path: "",
     loadComponent: () =>
       import("../../../cost-center/pages/cost-center-dashboard.component").then(

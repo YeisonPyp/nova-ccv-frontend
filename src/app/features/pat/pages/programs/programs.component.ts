@@ -136,7 +136,7 @@ export class ProgramsComponent implements OnInit, OnDestroy {
         finalize(() => this.loading.set(false)),
       )
       .subscribe({
-        next: (programs) => this.programs.set(programs),
+        next: (res) => this.programs.set(res.data),
         error: (err) =>
           this.error.set(err.error?.message ?? "Error al cargar los programas"),
       });

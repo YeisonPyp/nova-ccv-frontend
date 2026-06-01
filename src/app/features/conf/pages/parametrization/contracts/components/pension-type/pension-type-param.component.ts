@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-pension-type-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./pension-type-param.component.html",
 })
 export class PensionTypeParamComponent {
@@ -53,9 +59,8 @@ export class PensionTypeParamComponent {
     return this.auth.hasPermission("PENSION_TYPE_DELETE");
   }
 
-  onPensionTypeToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.pensionTypeLoaded())
-      this.loadPensionType();
+  onPensionTypeToggle(open: boolean) {
+    if (open && !this.pensionTypeLoaded()) this.loadPensionType();
   }
 
   loadPensionType() {

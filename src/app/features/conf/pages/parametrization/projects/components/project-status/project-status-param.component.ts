@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-project-status-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./project-status-param.component.html",
 })
@@ -58,8 +60,8 @@ export class ProjectStatusParamComponent {
     return this.auth.hasPermission("PROJECT_STATUS_DELETE");
   }
 
-  onProjectStatusToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.projectStatusLoaded()) {
+  onProjectStatusToggle(open: boolean) {
+    if (open && !this.projectStatusLoaded()) {
       this.loadProjectStatus(1);
     }
   }

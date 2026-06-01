@@ -1,22 +1,14 @@
-<details class="border rounded-lg" (toggle)="onAreasToggle($event)">
-  <summary
-    class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-  >
-    Áreas
-  </summary>
-
-  <div class="p-4 space-y-3">
-    @if (!areasLoaded()) {
-      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-    } @else {
-      @if (canCreateArea) {
-        <div class="flex justify-end">
-          <button class="btn btn-primary btn-sm" (click)="openCreateArea()">
-            + Nueva área
-          </button>
-        </div>
-      }
-
+<app-parametrization-section
+  title="Áreas"
+  createLabel="+ Nueva área"
+  [canCreate]="canCreateArea"
+  (onOpen)="onAreasToggle($event)"
+  (onCreate)="openCreateArea()"
+>
+  @if (!areasLoaded()) {
+    <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+  } @else {
+    <div class="space-y-3">
       <app-dynamic-table
         [data]="areas()"
         [columns]="areaColumns"
@@ -44,9 +36,9 @@
         [currentPage]="areaPage()"
         (pageChange)="loadAreas($event)"
       />
-    }
-  </div>
-</details>
+    </div>
+  }
+</app-parametrization-section>
 
 @if (areaModalMode()) {
   <div class="modal-overlay" (click)="closeAreaModal()">

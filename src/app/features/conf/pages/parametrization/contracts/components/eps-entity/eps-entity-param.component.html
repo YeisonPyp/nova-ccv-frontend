@@ -1,51 +1,40 @@
 @if (canReadEpsEntity) {
-  <details class="border rounded-lg" (toggle)="onEpsEntityToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Entidades EPS
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!epsEntityLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateEpsEntity) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Entidades EPS"
+    createLabel="+ Nueva entidad EPS"
+    [canCreate]="canCreateEpsEntity"
+    (onOpen)="onEpsEntityToggle($event)"
+    (onCreate)="openCreateEpsEntity()"
+  >
+    @if (!epsEntityLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="epsEntityItems()"
+        [columns]="epsEntityColumns"
+        emptyMessage="No hay entidades EPS."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateEpsEntity) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateEpsEntity()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditEpsEntity(item)"
             >
-              + Nueva entidad EPS
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="epsEntityItems()"
-          [columns]="epsEntityColumns"
-          emptyMessage="No hay entidades EPS."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateEpsEntity) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditEpsEntity(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteEpsEntity) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteEpsEntity(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteEpsEntity) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteEpsEntity(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (epsEntityModalMode()) {
   <div class="modal-overlay" (click)="closeEpsEntityModal()">

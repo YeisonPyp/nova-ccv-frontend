@@ -3,6 +3,7 @@ import {
   ContentChild,
   effect,
   input,
+  OnDestroy,
   OnInit,
   signal,
   TemplateRef,
@@ -14,13 +15,14 @@ import {
 } from "../dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "../pagination/pagination.component";
 import { PageableQuery } from "../../pageable-query";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { ApiResponse } from "@/app/core/models/api-response.model";
 import { APIPage } from "@/app/core/models/api-page.model";
 import {
   FilterRow,
   FilterSectionComponent,
 } from "../dynamic-table/filter-section/filter-section.component";
+import { FilterServiceSpecImpl } from "../../services/filter-service-spec.service";
 
 export interface PageableQueryWithRsql extends PageableQuery {
   rsqlQuery?: string;
@@ -47,10 +49,11 @@ export interface FilterServiceSpec {
   ],
   templateUrl: "./pagination-table.component.html",
 })
-export class PaginationTableComponent<T = any> implements OnInit {
+export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   service = input.required<FilterServiceSpec>();
   tableColumns = input.required<TableColumn[]>();
   filterRows = signal<FilterRow[]>([]);
+  executeLoad = input<boolean | null>(null);
 
   @ContentChild("actions") actionsTemplate?: TemplateRef<any>;
   @ContentChild("customCell") customCellTemplate?: TemplateRef<any>;
@@ -59,6 +62,21 @@ export class PaginationTableComponent<T = any> implements OnInit {
   currentPage = signal(1);
   totalPages = signal(0);
   loading = signal(false);
+
+  onSaveSubscription?: Subscription;
+
+  constructor() {
+    effect(() => {
+      if (this.executeLoad()) {
+        console.log("execute loading from executeLoad signal");
+        this.load(this.currentPage());
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.onSaveSubscription?.unsubscribe();
+  }
 
   rsqlQuery = signal("");
 
@@ -73,7 +91,7 @@ export class PaginationTableComponent<T = any> implements OnInit {
     // no cargar cuando hay filtros iniciales
     // pues en caso de hacerlo, se harían dos peticiones
     // una que sería ésta y la otra en `onFilterChange`
-    if (!baseFilters.length) {
+    if (!baseFilters.length && this.executeLoad()) {
       this.load();
     }
   }

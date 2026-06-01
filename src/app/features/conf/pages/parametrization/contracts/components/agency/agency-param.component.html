@@ -1,21 +1,15 @@
 @if (canReadAgency) {
-  <details class="border rounded-lg" (toggle)="onAgencyToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Agencias
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!agencyLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateAgency) {
-          <div class="flex justify-end">
-            <button class="btn btn-primary btn-sm" (click)="openCreateAgency()">
-              + Nueva agencia
-            </button>
-          </div>
-        }
+  <app-parametrization-section
+    title="Agencias"
+    createLabel="+ Nueva agencia"
+    [canCreate]="canCreateAgency"
+    (onOpen)="onAgencyToggle($event)"
+    (onCreate)="openCreateAgency()"
+  >
+    @if (!agencyLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
         <app-dynamic-table
           [data]="agencyItems()"
           [columns]="agencyColumns"
@@ -45,9 +39,9 @@
           [currentPage]="agencyPage()"
           (pageChange)="loadAgency($event)"
         />
-      }
-    </div>
-  </details>
+      </div>
+    }
+  </app-parametrization-section>
 }
 
 <!-- Agency create/update -->

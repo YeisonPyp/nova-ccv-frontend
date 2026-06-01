@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-eps-affiliation-type-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./eps-affiliation-type-param.component.html",
 })
 export class EpsAffiliationTypeParamComponent {
@@ -53,12 +59,8 @@ export class EpsAffiliationTypeParamComponent {
     return this.auth.hasPermission("EPS_AFFILIATION_TYPE_DELETE");
   }
 
-  onEpsAffiliationTypeToggle(e: Event) {
-    if (
-      (e.target as HTMLDetailsElement).open &&
-      !this.epsAffiliationTypeLoaded()
-    )
-      this.loadEpsAffiliationType();
+  onEpsAffiliationTypeToggle(open: boolean) {
+    if (open && !this.epsAffiliationTypeLoaded()) this.loadEpsAffiliationType();
   }
 
   loadEpsAffiliationType() {

@@ -13,11 +13,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-contract-status-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./contract-status-param.component.html",
 })
 export class ContractStatusParamComponent {
@@ -53,8 +59,8 @@ export class ContractStatusParamComponent {
     return this.auth.hasPermission("CONTRACT_STATUS_DELETE");
   }
 
-  onContractStatusToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.contractStatusLoaded()) {
+  onContractStatusToggle(open: boolean) {
+    if (open && !this.contractStatusLoaded()) {
       this.loadContractStatus();
     }
   }

@@ -15,7 +15,9 @@
         <tr class="table-row">
           @for (col of columns(); track col.key) {
             <td class="table-cell">
-              @if (customCellTemplate) {
+              @if (col.valueCallBack) {
+                {{ col.valueCallBack(item) }}
+              } @else if (customCellTemplate) {
                 <ng-container
                   *ngTemplateOutlet="
                     customCellTemplate;

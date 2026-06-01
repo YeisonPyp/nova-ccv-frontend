@@ -1,51 +1,40 @@
 @if (canReadCotizationType) {
-  <details class="border rounded-lg" (toggle)="onCotizationTypeToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Tipos de cotización
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!cotizationTypeLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateCotizationType) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Tipos de cotización"
+    createLabel="+ Nuevo tipo"
+    [canCreate]="canCreateCotizationType"
+    (onOpen)="onCotizationTypeToggle($event)"
+    (onCreate)="openCreateCotizationType()"
+  >
+    @if (!cotizationTypeLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="cotizationTypeItems()"
+        [columns]="cotizationTypeColumns"
+        emptyMessage="No hay tipos de cotización."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateCotizationType) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateCotizationType()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditCotizationType(item)"
             >
-              + Nuevo tipo
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="cotizationTypeItems()"
-          [columns]="cotizationTypeColumns"
-          emptyMessage="No hay tipos de cotización."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateCotizationType) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditCotizationType(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteCotizationType) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteCotizationType(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteCotizationType) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteCotizationType(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (cotizationTypeModalMode()) {
   <div class="modal-overlay" (click)="closeCotizationTypeModal()">

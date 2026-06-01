@@ -58,6 +58,7 @@ export class CostCenterService {
   newSearchSelectContext(
     onSelectCallback?: OnSelectCallback<CostCenter>,
     op?: SearchSelectContextFactoryOptions,
+    onRemoveCallback?: OnSelectCallback<CostCenter>,
   ) {
     return new SearchSelectContextFactory<CostCenter>(
       (term) =>
@@ -71,6 +72,7 @@ export class CostCenterService {
       (cc) => ({ id: cc.id, title: cc.name }),
       onSelectCallback,
       op,
+      onRemoveCallback,
     );
   }
 }

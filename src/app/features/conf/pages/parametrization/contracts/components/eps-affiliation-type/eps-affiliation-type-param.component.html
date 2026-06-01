@@ -1,54 +1,40 @@
 @if (canReadEpsAffiliationType) {
-  <details
-    class="border rounded-lg"
-    (toggle)="onEpsAffiliationTypeToggle($event)"
+  <app-parametrization-section
+    title="Tipos de afiliación EPS"
+    createLabel="+ Nuevo tipo"
+    [canCreate]="canCreateEpsAffiliationType"
+    (onOpen)="onEpsAffiliationTypeToggle($event)"
+    (onCreate)="openCreateEpsAffiliationType()"
   >
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Tipos de afiliación EPS
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!epsAffiliationTypeLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateEpsAffiliationType) {
-          <div class="flex justify-end">
+    @if (!epsAffiliationTypeLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="epsAffiliationTypeItems()"
+        [columns]="epsAffiliationTypeColumns"
+        emptyMessage="No hay tipos de afiliación EPS."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateEpsAffiliationType) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateEpsAffiliationType()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditEpsAffiliationType(item)"
             >
-              + Nuevo tipo
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="epsAffiliationTypeItems()"
-          [columns]="epsAffiliationTypeColumns"
-          emptyMessage="No hay tipos de afiliación EPS."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateEpsAffiliationType) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditEpsAffiliationType(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteEpsAffiliationType) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteEpsAffiliationType(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteEpsAffiliationType) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteEpsAffiliationType(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (epsAffiliationTypeModalMode()) {
   <div class="modal-overlay" (click)="closeEpsAffiliationTypeModal()">

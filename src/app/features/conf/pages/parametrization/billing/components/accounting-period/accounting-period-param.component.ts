@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-accounting-period-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./accounting-period-param.component.html",
 })
@@ -65,11 +67,8 @@ export class AccountingPeriodParamComponent {
     return this.auth.hasPermission("ACCOUNTING_PERIOD_DELETE");
   }
 
-  onAccountingPeriodToggle(e: Event) {
-    if (
-      (e.target as HTMLDetailsElement).open &&
-      !this.accountingPeriodLoaded()
-    ) {
+  onAccountingPeriodToggle(open: boolean) {
+    if (open && !this.accountingPeriodLoaded()) {
       this.loadAccountingPeriod(1);
     }
   }

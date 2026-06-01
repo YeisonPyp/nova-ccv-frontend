@@ -3,60 +3,70 @@ import { Routes } from "@angular/router";
 
 export const PAT_ROUTES: Routes = [
   {
-    path: "dashboard",
+    path: ":year",
     loadComponent: () =>
-      import("./pages/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
-      ),
-    title: "PAT — Tablero de Control",
-    canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
-  },
-  {
-    path: "programs",
-    loadComponent: () =>
-      import("./pages/programs/programs.component").then(
-        (m) => m.ProgramsComponent,
-      ),
-    title: "PAT — Programas",
-    canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
-  },
-  {
-    path: "programs/create",
-    loadComponent: () =>
-      import("./pages/create-program/create-program.component").then(
-        (m) => m.CreateProgramComponent,
-      ),
-    title: "PAT — Crear Programa",
-    canActivate: [hasPermissionGuard(["PAT_PROGRAMS_CREATE"])],
-  },
-  {
-    path: "programs/:id",
-    loadComponent: () =>
-      import("./pages/program-detail/program-detail.component").then(
-        (m) => m.ProgramDetailComponent,
-      ),
-    title: "PAT — Detalle de Programa",
-    canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
-  },
-  {
-    path: "training",
-    loadComponent: () =>
-      import("./pages/training/training.component").then(
-        (m) => m.TrainingComponent,
-      ),
-    title: "PAT — Capacitaciones",
-  },
-  {
-    path: "reports",
-    loadComponent: () =>
-      import("./pages/reports/reports.component").then(
-        (m) => m.ReportsComponent,
-      ),
-    title: "PAT — Reportes",
+      import("./layout/pat-layout.component").then((m) => m.PatLayoutComponent),
+    children: [
+      {
+        path: "dashboard",
+        loadComponent: () =>
+          import("./pages/dashboard/dashboard.component").then(
+            (m) => m.DashboardComponent,
+          ),
+        title: "PAT — Tablero de Control",
+        canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
+      },
+      {
+        path: "programs",
+        loadComponent: () =>
+          import("./pages/programs/programs.component").then(
+            (m) => m.ProgramsComponent,
+          ),
+        title: "PAT — Programas",
+        canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
+      },
+      {
+        path: "programs/:id",
+        loadComponent: () =>
+          import("./pages/program-detail/program-detail.component").then(
+            (m) => m.ProgramDetailComponent,
+          ),
+        title: "PAT — Detalle de Programa",
+        canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
+      },
+      {
+        path: "activities/create",
+        loadComponent: () =>
+          import("./pages/create-activity/create-activity.component").then(
+            (m) => m.CreatePatActivityComponent,
+          ),
+        title: "PAT — Crear Actividad",
+        canActivate: [hasPermissionGuard(["PAT_ACTIVITY_CREATE"])],
+      },
+      {
+        path: "training",
+        loadComponent: () =>
+          import("./pages/training/training.component").then(
+            (m) => m.TrainingComponent,
+          ),
+        title: "PAT — Capacitaciones",
+      },
+      {
+        path: "reports",
+        loadComponent: () =>
+          import("./pages/reports/reports.component").then(
+            (m) => m.ReportsComponent,
+          ),
+        title: "PAT — Reportes",
+      },
+      { path: "", redirectTo: "dashboard", pathMatch: "full" },
+    ],
   },
   {
     path: "",
-    redirectTo: "dashboard",
+    redirectTo: () => {
+      return new Date().getFullYear().toString();
+    },
     pathMatch: "full",
   },
 ];

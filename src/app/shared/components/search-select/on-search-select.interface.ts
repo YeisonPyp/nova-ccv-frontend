@@ -29,7 +29,9 @@ export interface SearchSelectContextFactoryOptions {
 export type OnSelectCallback<T> = (item: T) => void;
 export type SelectOptionMapper<T> = (item: T) => SearchSelectOption;
 
-export class SearchSelectContextFactory<T extends SearchOptionWithId> implements SearchSelectContext<T> {
+export class SearchSelectContextFactory<
+  T extends SearchOptionWithId,
+> implements SearchSelectContext<T> {
   options = signal<SearchSelectOption[]>([]);
   selectedOptions = signal<SearchSelectOption[]>([]);
   results = signal<T[]>([]);
@@ -38,29 +40,31 @@ export class SearchSelectContextFactory<T extends SearchOptionWithId> implements
     private fetchFn: (term: string) => Observable<T[]>,
     private mapper: SelectOptionMapper<T>,
     private onSelectCallback?: OnSelectCallback<T>,
-    public op?: SearchSelectContextFactoryOptions
-  ) { }
+    public op?: SearchSelectContextFactoryOptions,
+    private onRemoveCallback?: OnSelectCallback<T>,
+  ) {}
 
   search(term: string) {
-    this.fetchFn(term).pipe(
-      map(items => {
-        this.results.set(items);
-        return items.map(this.mapper);
-      })
-    ).subscribe(o => this.options.set(o));
+    this.fetchFn(term)
+      .pipe(
+        map((items) => {
+          this.results.set(items);
+          return items.map(this.mapper);
+        }),
+      )
+      .subscribe((o) => this.options.set(o));
   }
 
   select(option: SearchSelectOption) {
-    if (!this.selectedOptions().some(i => i.id === option.id)) {
-      this.selectedOptions.update(items => [...items, option]);
+    if (!this.selectedOptions().some((i) => i.id === option.id)) {
+      this.selectedOptions.update((items) => [...items, option]);
       if (this.onSelectCallback) {
         const original = this.results().find((v) => v.id === option.id);
-        if (original)
-          this.onSelectCallback(original);
+        if (original) this.onSelectCallback(original);
       }
     }
   }
-  
+
   clear() {
     this.selectedOptions.set([]);
     this.results.set([]);
@@ -72,6 +76,12 @@ export class SearchSelectContextFactory<T extends SearchOptionWithId> implements
   }
 
   remove(option: SearchSelectOption) {
-    this.selectedOptions.update(items => items.filter(i => i.id !== option.id));
+    this.selectedOptions.update((items) =>
+      items.filter((i) => i.id !== option.id),
+    );
+    if (this.onRemoveCallback) {
+      const original = this.results().find((v) => v.id === option.id);
+      if (original) this.onRemoveCallback(original);
+    }
   }
 }

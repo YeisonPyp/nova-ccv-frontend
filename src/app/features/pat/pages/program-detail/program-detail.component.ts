@@ -160,8 +160,8 @@ export class ProgramDetailComponent implements OnInit, OnDestroy {
       .getProgramById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (program) => {
-          this.program.set(program);
+        next: (res) => {
+          this.program.set(res.data);
 
           forkJoin({
             activities: this.patApi.getActivitiesWithMetrics(id),
@@ -171,7 +171,7 @@ export class ProgramDetailComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: ({ activities, budget, schedule }) => {
-                this.activities.set(activities);
+                this.activities.set(activities.data);
                 this.budgetItems.set(budget);
                 this.schedule.set(schedule);
                 this.loading.set(false);

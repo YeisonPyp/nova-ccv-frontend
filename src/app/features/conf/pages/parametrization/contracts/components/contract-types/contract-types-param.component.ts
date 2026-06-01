@@ -16,11 +16,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-contract-types-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./contract-types-param.component.html",
 })
 export class ContractTypesParamComponent {
@@ -58,8 +64,8 @@ export class ContractTypesParamComponent {
     return this.auth.hasPermission("CONTRACT_TYPE_DELETE");
   }
 
-  onToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.loaded()) this.load();
+  onToggle(open: boolean) {
+    if (open && !this.loaded()) this.load();
   }
 
   load() {

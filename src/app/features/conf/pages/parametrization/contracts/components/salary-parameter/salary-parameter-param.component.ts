@@ -16,11 +16,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-salary-parameter-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./salary-parameter-param.component.html",
 })
 export class SalaryParameterParamComponent {
@@ -78,9 +84,8 @@ export class SalaryParameterParamComponent {
     return this.auth.hasPermission("SALARY_PARAMETER_DELETE");
   }
 
-  onSalaryParameterToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.salaryParameterLoaded())
-      this.loadSalaryParameter();
+  onSalaryParameterToggle(open: boolean) {
+    if (open && !this.salaryParameterLoaded()) this.loadSalaryParameter();
   }
 
   loadSalaryParameter() {

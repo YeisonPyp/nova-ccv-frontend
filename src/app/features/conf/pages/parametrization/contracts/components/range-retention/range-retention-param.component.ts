@@ -16,11 +16,17 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-range-retention-param",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicTableComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DynamicTableComponent,
+    ParametrizationSectionComponent,
+  ],
   templateUrl: "./range-retention-param.component.html",
 })
 export class RangeRetentionParamComponent {
@@ -62,9 +68,8 @@ export class RangeRetentionParamComponent {
     return this.auth.hasPermission("RANGE_RETENTION_DELETE");
   }
 
-  onRangeRetentionToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.rangeRetentionLoaded())
-      this.loadRangeRetention();
+  onRangeRetentionToggle(open: boolean) {
+    if (open && !this.rangeRetentionLoaded()) this.loadRangeRetention();
   }
 
   loadRangeRetention() {

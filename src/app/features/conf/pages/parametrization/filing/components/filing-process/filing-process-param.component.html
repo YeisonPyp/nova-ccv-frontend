@@ -1,21 +1,15 @@
 @if (canReadFp) {
-  <details class="border rounded-lg" (toggle)="onFpToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Procesos de radicación
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!fpLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateFp) {
-          <div class="flex justify-end">
-            <button class="btn btn-primary btn-sm" (click)="openCreateFp()">
-              + Nuevo proceso
-            </button>
-          </div>
-        }
+  <app-parametrization-section
+    title="Procesos de radicación"
+    createLabel="+ Nuevo proceso"
+    [canCreate]="canCreateFp"
+    (onOpen)="onFpToggle($event)"
+    (onCreate)="openCreateFp()"
+  >
+    @if (!fpLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
         <app-dynamic-table
           [data]="fpItems()"
           [columns]="fpColumns"
@@ -39,9 +33,9 @@
           [currentPage]="fpPage()"
           (pageChange)="loadFp($event)"
         />
-      }
-    </div>
-  </details>
+      </div>
+    }
+  </app-parametrization-section>
 }
 
 @if (fpModalMode()) {

@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-workflow-list-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./workflow-list-param.component.html",
 })
@@ -70,8 +72,8 @@ export class WorkflowListParamComponent {
     return this.auth.hasPermission("WORKFLOW_STEP_READ");
   }
 
-  onWorkflowsToggle(event: Event) {
-    if ((event.target as HTMLDetailsElement).open && !this.workflowsLoaded()) {
+  onWorkflowsToggle(open: boolean) {
+    if (open && !this.workflowsLoaded()) {
       this.loadWorkflows(1);
     }
   }

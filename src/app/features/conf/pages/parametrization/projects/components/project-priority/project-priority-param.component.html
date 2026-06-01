@@ -1,53 +1,40 @@
 @if (canReadProjectPriority) {
-  <details class="border rounded-lg" (toggle)="onProjectPriorityToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Prioridades de proyecto
-    </summary>
-
-    <div class="p-4 space-y-3">
-      @if (!projectPriorityLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateProjectPriority) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Prioridades de proyecto"
+    createLabel="+ Nueva prioridad"
+    [canCreate]="canCreateProjectPriority"
+    (onOpen)="onProjectPriorityToggle($event)"
+    (onCreate)="openCreateProjectPriority()"
+  >
+    @if (!projectPriorityLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="projectPriorityItems()"
+        [columns]="projectPriorityColumns"
+        emptyMessage="No hay prioridades de proyecto."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateProjectPriority) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateProjectPriority()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditProjectPriority(item)"
             >
-              + Nueva prioridad
+              Editar
             </button>
-          </div>
-        }
-
-        <app-dynamic-table
-          [data]="projectPriorityItems()"
-          [columns]="projectPriorityColumns"
-          emptyMessage="No hay prioridades de proyecto."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateProjectPriority) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditProjectPriority(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteProjectPriority) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteProjectPriority(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteProjectPriority) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteProjectPriority(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 
 @if (projectPriorityModalMode()) {

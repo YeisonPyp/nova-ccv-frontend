@@ -10,9 +10,11 @@
 @if (loading()) {
   <div class="text-center py-4">
     <div
-      class="spinner-border spinner-border-sm text-primary"
+      class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent text-primary motion-reduce:animate-[spin_1.5s_linear_infinite]"
       role="status"
-    ></div>
+    >
+      <span class="sr-only">Loading...</span>
+    </div>
   </div>
 } @else {
   <app-dynamic-table [data]="items()" [columns]="tableColumns()">

@@ -1,26 +1,15 @@
 @if (canReadProjectStatus) {
-  <details class="border rounded-lg" (toggle)="onProjectStatusToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Estados de proyecto
-    </summary>
-
-    <div class="p-4 space-y-3">
-      @if (!projectStatusLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateProjectStatus) {
-          <div class="flex justify-end">
-            <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateProjectStatus()"
-            >
-              + Nuevo estado de proyecto
-            </button>
-          </div>
-        }
-
+  <app-parametrization-section
+    title="Estados de proyecto"
+    createLabel="+ Nuevo estado de proyecto"
+    [canCreate]="canCreateProjectStatus"
+    (onOpen)="onProjectStatusToggle($event)"
+    (onCreate)="openCreateProjectStatus()"
+  >
+    @if (!projectStatusLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
         <app-dynamic-table
           [data]="projectStatusItems()"
           [columns]="projectStatusColumns"
@@ -51,9 +40,9 @@
           [currentPage]="projectStatusPage()"
           (pageChange)="loadProjectStatus($event)"
         />
-      }
-    </div>
-  </details>
+      </div>
+    }
+  </app-parametrization-section>
 }
 
 @if (projectStatusModalMode()) {

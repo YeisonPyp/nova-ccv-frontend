@@ -1,26 +1,15 @@
 @if (canReadActivityStatus) {
-  <details class="border rounded-lg" (toggle)="onActivityStatusToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Estados de actividad
-    </summary>
-
-    <div class="p-4 space-y-3">
-      @if (!activityStatusLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateActivityStatus) {
-          <div class="flex justify-end">
-            <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateActivityStatus()"
-            >
-              + Nuevo estado de actividad
-            </button>
-          </div>
-        }
-
+  <app-parametrization-section
+    title="Estados de actividad"
+    createLabel="+ Nuevo estado de actividad"
+    [canCreate]="canCreateActivityStatus"
+    (onOpen)="onActivityStatusToggle($event)"
+    (onCreate)="openCreateActivityStatus()"
+  >
+    @if (!activityStatusLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
         <app-dynamic-table
           [data]="activityStatusItems()"
           [columns]="activityStatusColumns"
@@ -51,9 +40,9 @@
           [currentPage]="activityStatusPage()"
           (pageChange)="loadActivityStatus($event)"
         />
-      }
-    </div>
-  </details>
+      </div>
+    }
+  </app-parametrization-section>
 }
 
 @if (activityStatusModalMode()) {

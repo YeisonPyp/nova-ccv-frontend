@@ -1,51 +1,40 @@
 @if (canReadSalaryParameter) {
-  <details class="border rounded-lg" (toggle)="onSalaryParameterToggle($event)">
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Parámetros salariales
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!salaryParameterLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateSalaryParameter) {
-          <div class="flex justify-end">
+  <app-parametrization-section
+    title="Parámetros salariales"
+    createLabel="+ Nuevo parámetro"
+    [canCreate]="canCreateSalaryParameter"
+    (onOpen)="onSalaryParameterToggle($event)"
+    (onCreate)="openCreateSalaryParameter()"
+  >
+    @if (!salaryParameterLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="salaryParameterItems()"
+        [columns]="salaryParameterColumns"
+        emptyMessage="No hay parámetros salariales."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateSalaryParameter) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateSalaryParameter()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditSalaryParameter(item)"
             >
-              + Nuevo parámetro
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="salaryParameterItems()"
-          [columns]="salaryParameterColumns"
-          emptyMessage="No hay parámetros salariales."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateSalaryParameter) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditSalaryParameter(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteSalaryParameter) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteSalaryParameter(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteSalaryParameter) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteSalaryParameter(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (salaryParameterModalMode()) {
   <div class="modal-overlay" (click)="closeSalaryParameterModal()">

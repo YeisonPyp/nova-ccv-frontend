@@ -14,6 +14,7 @@ import {
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
 
 @Component({
   selector: "app-filing-process-param",
@@ -23,6 +24,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
+    ParametrizationSectionComponent,
   ],
   templateUrl: "./filing-process-param.component.html",
 })
@@ -64,9 +66,8 @@ export class FilingProcessParamComponent {
     return this.auth.hasPermission("FILING_PROCESS_DELETE");
   }
 
-  onFpToggle(e: Event) {
-    if ((e.target as HTMLDetailsElement).open && !this.fpLoaded())
-      this.loadFp(1);
+  onFpToggle(open: boolean) {
+    if (open && !this.fpLoaded()) this.loadFp(1);
   }
 
   loadFp(page: number) {

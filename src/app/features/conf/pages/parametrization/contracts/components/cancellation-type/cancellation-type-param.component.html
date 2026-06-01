@@ -1,54 +1,40 @@
 @if (canReadCancellationType) {
-  <details
-    class="border rounded-lg"
-    (toggle)="onCancellationTypeToggle($event)"
+  <app-parametrization-section
+    title="Tipos de cancelación de contrato"
+    createLabel="+ Nuevo tipo"
+    [canCreate]="canCreateCancellationType"
+    (onOpen)="onCancellationTypeToggle($event)"
+    (onCreate)="openCreateCancellationType()"
   >
-    <summary
-      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-    >
-      Tipos de cancelación de contrato
-    </summary>
-    <div class="p-4 space-y-3">
-      @if (!cancellationTypeLoaded()) {
-        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
-      } @else {
-        @if (canCreateCancellationType) {
-          <div class="flex justify-end">
+    @if (!cancellationTypeLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="cancellationTypeItems()"
+        [columns]="cancellationTypeColumns"
+        emptyMessage="No hay tipos de cancelación."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateCancellationType) {
             <button
-              class="btn btn-primary btn-sm"
-              (click)="openCreateCancellationType()"
+              class="btn btn-sm btn-outline"
+              (click)="openEditCancellationType(item)"
             >
-              + Nuevo tipo
+              Editar
             </button>
-          </div>
-        }
-        <app-dynamic-table
-          [data]="cancellationTypeItems()"
-          [columns]="cancellationTypeColumns"
-          emptyMessage="No hay tipos de cancelación."
-        >
-          <ng-template #actions let-item>
-            @if (canUpdateCancellationType) {
-              <button
-                class="btn btn-sm btn-outline"
-                (click)="openEditCancellationType(item)"
-              >
-                Editar
-              </button>
-            }
-            @if (canDeleteCancellationType) {
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="openDeleteCancellationType(item)"
-              >
-                Eliminar
-              </button>
-            }
-          </ng-template>
-        </app-dynamic-table>
-      }
-    </div>
-  </details>
+          }
+          @if (canDeleteCancellationType) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteCancellationType(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
 }
 @if (cancellationTypeModalMode()) {
   <div class="modal-overlay" (click)="closeCancellationTypeModal()">
