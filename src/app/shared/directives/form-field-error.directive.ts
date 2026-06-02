@@ -31,6 +31,8 @@ export class FormFieldErrorDirective implements OnInit, OnDestroy {
     required: "Este campo es requerido.",
     email: "El formato del correo no es válido.",
     minlength: "El campo no cumple con el mínimo de caracteres.",
+    maxlength: "El campo no cumple con el máximo de caracteres.",
+    max: "El campo no cumple con el máximo permitido.",
   };
 
   ngOnInit(): void {

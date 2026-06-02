@@ -3,6 +3,7 @@ import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
 import {
   PatActivity,
   PatBenefitType,
+  PatCuantitativeIndicator,
   PatMeasurement,
   PatPolicy,
   PatTacticalActivity,
@@ -10,6 +11,7 @@ import {
 import { EmployeeService } from "@/app/core/services/assessment/employee.service";
 import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
 import { BenefitTypeService } from "@/app/core/services/pat/benefit-type.service";
+import { CuantitativeIndicatorService } from "@/app/core/services/pat/cuantitative-indicator.service";
 import { MeasurementService } from "@/app/core/services/pat/measurement.service";
 import { PatActivityService } from "@/app/core/services/pat/pat-activity.service";
 import { PatProgramService } from "@/app/core/services/pat/pat-program.service";
@@ -22,6 +24,7 @@ import { CommonModule } from "@angular/common";
 import {
   Component,
   computed,
+  effect,
   inject,
   input,
   output,
@@ -45,6 +48,9 @@ export class CreatePatActivityComponent {
   private readonly employeeService = inject(EmployeeService);
   private readonly costCenterService = inject(CostCenterService);
   private readonly measurementService = inject(MeasurementService);
+  private readonly cuantitativeIndicatorService = inject(
+    CuantitativeIndicatorService,
+  );
   private readonly benefitTypeService = inject(BenefitTypeService);
   private readonly policyService = inject(PolicyService);
   private readonly tacticalActivityService = inject(PatTacticalActivityService);
@@ -58,14 +64,7 @@ export class CreatePatActivityComponent {
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.maxLength(255)]],
-    code: [
-      "",
-      [
-        Validators.required,
-        Validators.maxLength(50),
-        Validators.pattern(/^PRG-\d{4}-\d{3}$/),
-      ],
-    ],
+    code: ["", [Validators.required, Validators.maxLength(50)]],
     employeeId: [null as number | null, Validators.required],
     tacticalActivityId: [null as number | null, Validators.required],
     costCenterId: [null as number | null, Validators.required],
@@ -109,6 +108,13 @@ export class CreatePatActivityComponent {
       (measurement) => this.form.patchValue({ measurementId: measurement.id }),
       { isRequired: true, maxItems: 1 },
       () => this.form.patchValue({ measurementId: null }),
+    );
+
+  cuantitativeIndicatorCtx: SearchSelectContextFactory<PatCuantitativeIndicator> =
+    this.cuantitativeIndicatorService.newSearchSelectContext(
+      (indicator) => this.form.patchValue({ indicatorId: indicator.id }),
+      { isRequired: true, maxItems: 1 },
+      () => this.form.patchValue({ indicatorId: null }),
     );
 
   benefitCtx: SearchSelectContextFactory<PatBenefitType> =
@@ -162,11 +168,15 @@ export class CreatePatActivityComponent {
         indicatorBaseLine: v.indicatorBaseLine!,
         indicatorGoal: v.indicatorGoal!,
         benefitAmount: v.benefitAmount!,
+        year: this.year(),
       })
       .subscribe({
         next: (res) => {
           this.submitting.set(false);
           this.onSaved.emit(res.data);
+        },
+        error: (_) => {
+          this.submitting.set(false);
         },
       });
   }

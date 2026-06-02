@@ -24,7 +24,6 @@ import { ParametrizationSectionComponent } from "@/app/features/conf/components/
     ReactiveFormsModule,
     DynamicTableComponent,
     PaginationComponent,
-    ParametrizationSectionComponent,
   ],
   templateUrl: "./impact-rules-param.component.html",
 })

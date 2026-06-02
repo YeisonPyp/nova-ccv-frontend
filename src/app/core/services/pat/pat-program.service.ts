@@ -62,7 +62,7 @@ export class PatProgramByYearService implements FilterServiceSpec {
   ) {
     return new SearchSelectContextFactory<PatStrategicProgram>(
       (term) => {
-        const b = builder.or(builder.eq("name", term));
+        const b = builder.or(builder.eq("name", `*${term}*`));
         return this.findAll({ rsqlQuery: emit(b) }).pipe(
           map((res) => res?.data?.content ?? []),
         );

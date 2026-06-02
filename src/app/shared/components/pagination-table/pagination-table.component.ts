@@ -22,7 +22,6 @@ import {
   FilterRow,
   FilterSectionComponent,
 } from "../dynamic-table/filter-section/filter-section.component";
-import { FilterServiceSpecImpl } from "../../services/filter-service-spec.service";
 
 export interface PageableQueryWithRsql extends PageableQuery {
   rsqlQuery?: string;
@@ -53,7 +52,6 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   service = input.required<FilterServiceSpec>();
   tableColumns = input.required<TableColumn[]>();
   filterRows = signal<FilterRow[]>([]);
-  executeLoad = input<boolean | null>(null);
 
   @ContentChild("actions") actionsTemplate?: TemplateRef<any>;
   @ContentChild("customCell") customCellTemplate?: TemplateRef<any>;
@@ -64,15 +62,6 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   loading = signal(false);
 
   onSaveSubscription?: Subscription;
-
-  constructor() {
-    effect(() => {
-      if (this.executeLoad()) {
-        console.log("execute loading from executeLoad signal");
-        this.load(this.currentPage());
-      }
-    });
-  }
 
   ngOnDestroy(): void {
     this.onSaveSubscription?.unsubscribe();
@@ -91,7 +80,7 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
     // no cargar cuando hay filtros iniciales
     // pues en caso de hacerlo, se harían dos peticiones
     // una que sería ésta y la otra en `onFilterChange`
-    if (!baseFilters.length && this.executeLoad()) {
+    if (!baseFilters.length) {
       this.load();
     }
   }

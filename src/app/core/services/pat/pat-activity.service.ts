@@ -21,6 +21,7 @@ export interface CreatePatActivity {
   startsAt: string;
   endsAt: string;
   description: string;
+  year: number;
 
   strategicProgramId: number | null;
   policyId: number | null;
@@ -28,6 +29,29 @@ export interface CreatePatActivity {
   indicatorBaseLine: number | null;
   indicatorGoal: number | null;
   benefitAmount: number | null;
+}
+
+export interface BudgetCategory {
+  id: number;
+  code: string;
+  name: string;
+  amount: number;
+  plannedBudget: number;
+  unplannedBudget: number;
+  resourceType: "public" | "private";
+  description: string;
+}
+
+export interface PatActivityBudget {
+  id: number;
+  publicBudget: number;
+  privateBudget: number;
+  totalBudget: number;
+}
+
+export interface PatActivityBudgetMatrix {
+  budgetCategory: BudgetCategory;
+  patActivityBudget?: PatActivityBudget;
 }
 
 @Injectable({
@@ -39,6 +63,25 @@ export class PatActivityService extends FilterServiceSpecImpl<
 > {
   constructor() {
     super("pat/v2/activities");
+  }
+
+  findPresupuestalMatrix(
+    id: number,
+  ): Observable<ApiResponse<PatActivityBudgetMatrix[]>> {
+    return this.http.get<ApiResponse<PatActivityBudgetMatrix[]>>(
+      `${this.baseUrl}/${id}/presupuestal-matrix`,
+    );
+  }
+
+  saveBudgetMatrix(
+    activityId: number,
+    budgetCategoryId: number,
+    amount: number,
+  ): Observable<ApiResponse<PatActivityBudgetMatrix>> {
+    return this.http.post<ApiResponse<PatActivityBudgetMatrix>>(
+      `${this.baseUrl}/${activityId}/presupuestal-matrix`,
+      { budgetCategoryId, amount },
+    );
   }
 }
 

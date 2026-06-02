@@ -1,0 +1,29 @@
+<td class="table-cell font-medium">{{ row().budgetCategory.code }}</td>
+<td class="table-cell">{{ row().budgetCategory.name }}</td>
+<td class="table-cell">{{ row().budgetCategory.resourceType }}</td>
+<td class="table-cell">
+  {{ row().budgetCategory.amount | currency: "$ " : "symbol" : "1.2-2" }}
+</td>
+<td class="table-cell">
+  {{ plannedBudget() | currency: "$ " : "symbol" : "1.2-2" }}
+</td>
+<td class="table-cell text-green-600 font-medium">
+  {{ unplannedBudget() | currency: "$ " : "symbol" : "1.2-2" }}
+</td>
+
+<td class="table-cell">
+  <div class="relative" [formGroup]="formGroup">
+    <input
+      type="text"
+      class="form-control pl-7 w-full sm:text-sm text-right"
+      appCurrencyFormat
+      [appFormFieldError]="{
+        max: 'El presupuesto supera el disponible.',
+      }"
+      formControlName="amount"
+      min="0"
+      max="row().budgetCategory.unplannedBudget || 0"
+      placeholder="0.00"
+    />
+  </div>
+</td>

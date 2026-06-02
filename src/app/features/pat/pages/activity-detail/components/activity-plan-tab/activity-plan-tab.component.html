@@ -1,0 +1,87 @@
+<div class="flex flex-col gap-6">
+  <!-- Create Form -->
+  <section
+    class="bg-background rounded-xl border border-border-primary shadow-sm overflow-hidden"
+  >
+    <div class="px-6 py-4 border-b border-border-primary">
+      <h3
+        class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+      >
+        Registrar Plan
+      </h3>
+    </div>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
+      <div class="form-group">
+        <label>Mes (1-12)</label>
+        <input
+          type="number"
+          formControlName="month"
+          min="1"
+          max="12"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label>Presupuesto Planeado</label>
+        <input
+          type="text"
+          appCurrencyFormat
+          formControlName="plannedBudget"
+          step="0.01"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label>Beneficio Planeado</label>
+        <input
+          type="text"
+          appCurrencyFormat
+          formControlName="plannedBenefit"
+          step="0.01"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label>Meta de Medición Planeada</label>
+        <input
+          type="text"
+          appCurrencyFormat
+          formControlName="plannedMeasurementGoal"
+          step="0.01"
+          class="form-control"
+        />
+      </div>
+      <div class="form-group">
+        <label>Meta de Indicador Planeada</label>
+        <input
+          type="text"
+          appCurrencyFormat
+          formControlName="plannedIndicatorGoal"
+          step="0.00001"
+          class="form-control"
+        />
+      </div>
+      <div class="md:col-span-2 lg:col-span-3 flex justify-end">
+        <button
+          type="submit"
+          [disabled]="form.invalid || submitting"
+          class="btn btn-primary"
+        >
+          Guardar Plan
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Table -->
+  <section
+    class="bg-background rounded-xl border border-border-primary shadow-sm p-4"
+  >
+    <app-pagination-table [service]="service" [tableColumns]="columns" />
+  </section>
+</div>

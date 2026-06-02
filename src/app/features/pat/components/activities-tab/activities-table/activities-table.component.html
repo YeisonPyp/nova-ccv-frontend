@@ -1,36 +1,69 @@
 <app-pagination-table [service]="service" [tableColumns]="columns">
-  <ng-template #customCell let-item let-col>
-    @if (col == "budget") {
+  <ng-template #customCell let-item let-col="column">
+    @if (col.key == "budget") {
       <app-pat-progress-bar
-        [value]="pctValue(item.plannedBudget, item.executedBudget)"
-        [planned]="item.plannedBudget"
-        [executed]="item.executedBudget"
+        [value]="
+          pctValue(
+            item.consolidation.plannedBudget,
+            item.consolidation.executedBudget
+          )
+        "
+        [planned]="item.consolidation.plannedBudget"
+        [executed]="item.consolidation.executedBudget"
         [showLegend]="true"
       ></app-pat-progress-bar>
-    } @else if (col == "measurement") {
+    } @else if (col.key == "measurement") {
       <app-pat-progress-bar
         [value]="
-          pctValue(item.plannedMeasurementGoal, item.executedMeasurementGoal)
+          pctValue(
+            item.consolidation.plannedMeasurementGoal,
+            item.consolidation.executedMeasurementGoal
+          )
         "
-        [planned]="item.plannedMeasurementGoal"
-        [executed]="item.executedMeasurementGoal"
+        [planned]="item.consolidation.plannedMeasurementGoal"
+        [executed]="item.consolidation.executedMeasurementGoal"
       ></app-pat-progress-bar>
-    } @else if (col == "indicator") {
+    } @else if (col.key == "indicator") {
       <app-pat-progress-bar
         [value]="
-          pctValue(item.plannedIndicatorGoal, item.executedBudgetIndicatorGoal)
+          pctValue(
+            item.consolidation.plannedIndicatorGoal,
+            item.consolidation.executedIndicatorGoal
+          )
         "
-        [planned]="item.plannedIndicatorGoal"
-        [executed]="item.executedBudgetIndicatorGoal"
+        [planned]="item.consolidation.plannedIndicatorGoal"
+        [executed]="item.consolidation.executedIndicatorGoal"
       ></app-pat-progress-bar>
-    } @else if (col == "benefit") {
+    } @else if (col.key == "benefit") {
       <app-pat-progress-bar
-        [value]="pctValue(item.plannedBenefitGoal, item.executedBenefitGoal)"
-        [planned]="item.plannedBenefitGoal"
+        [value]="
+          pctValue(
+            item.consolidation.plannedBenefitGoal,
+            item.consolidation.executedBenefitGoal
+          )
+        "
+        [planned]="item.consolidation.plannedBenefitGoal"
         [executed]="item.executedBenefitGoal"
       ></app-pat-progress-bar>
     } @else {
       {{ item | nestedValue: col.key }}
     }
+  </ng-template>
+
+  <ng-template #actions let-item>
+    <button
+      class="btn btn-sm btn-outline-primary"
+      title="Ver detalle"
+      (click)="openDetail(item)"
+    >
+      Ver →
+    </button>
+    <!--<button
+      class="btn btn-sm btn-outline-primary"
+      title="Eliminar"
+      (click)="openDetail(item)"
+    >
+      Ver →
+    </button>-->
   </ng-template>
 </app-pagination-table>

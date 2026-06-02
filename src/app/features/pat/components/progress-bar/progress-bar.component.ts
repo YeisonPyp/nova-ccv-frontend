@@ -25,7 +25,9 @@ import { getProgressColor } from "../../utils/pat-status.utils";
           role="progressbar"
           aria-valuemin="0"
           aria-valuemax="100"
-        ></div>
+        >
+          {{ value() }}
+        </div>
       </div>
       @if (showLegend()) {
         <div class="pat-progress__legend">
@@ -45,7 +47,7 @@ import { getProgressColor } from "../../utils/pat-status.utils";
 export class PatProgressBarComponent {
   value = input.required<number>();
   label = input<string>("");
-  height = input<number>(8);
+  height = input<number>(18);
   planned = input<number>(0);
   executed = input<number>(0);
   showLegend = input<boolean>(false);

@@ -2,10 +2,7 @@ import { PatTacticalActivity } from "../../models/pat/pat-models";
 import { Injectable, inject } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
-import {
-  PageableQuery,
-  PageableQueryParams,
-} from "@/app/shared/pageable-query";
+import { PageableQuery } from "@/app/shared/pageable-query";
 import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec.service";
 import { APIPage } from "../../models/api-page.model";
 import { PageableQueryWithRsql } from "@/app/shared/components/pagination-table/pagination-table.component";
@@ -22,12 +19,31 @@ export interface PatTacticalActivityQueryParams extends PageableQuery {
   code?: string;
 }
 
+export interface CreatePatTacticalActivityDto {
+  name: string;
+  code?: string;
+  year?: number;
+  description?: string;
+  specificObjectiveId: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
-export class PatTacticalActivityService extends FilterServiceSpecImpl<PatTacticalActivity> {
+export class PatTacticalActivityService extends FilterServiceSpecImpl<
+  PatTacticalActivity,
+  CreatePatTacticalActivityDto
+> {
   constructor() {
     super("pat/v2/tactical-activities");
+  }
+
+  findAllBySpecificObjectiveId(
+    specificObjectiveId: number,
+  ): Observable<ApiResponse<PatTacticalActivity[]>> {
+    return this.http.get<ApiResponse<PatTacticalActivity[]>>(
+      `${this.baseUrl}/specific-objective/${specificObjectiveId}`,
+    );
   }
 
   findByQueryParams(
@@ -48,8 +64,8 @@ export class PatTacticalActivityService extends FilterServiceSpecImpl<PatTactica
     return new SearchSelectContextFactory<PatTacticalActivity>(
       (term) => {
         const b = builder.or(
-          builder.eq("name", term),
-          builder.eq("description", term),
+          builder.eq("name", `*${term}*`),
+          builder.eq("description", `*${term}*`),
           builder.eq("year", year),
         );
         return this.findAll({ rsqlQuery: emit(b) }).pipe(

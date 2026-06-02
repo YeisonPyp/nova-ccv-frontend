@@ -8,6 +8,8 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, input } from "@angular/core";
 import { NestedValuePipe } from "@/app/shared/pipes/nested-value.pipe";
 import { PatProgressBarComponent } from "../../progress-bar/progress-bar.component";
+import { PatActivity } from "@/app/core/models/pat/pat-models";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-activities-table",
@@ -22,6 +24,7 @@ import { PatProgressBarComponent } from "../../progress-bar/progress-bar.compone
 })
 export class ActivitiesTableComponent {
   #service = inject(PatActivityService);
+  router = inject(Router);
   year = input<number | undefined>(undefined);
   service = new PatActivityServiceByYear(this.#service, this.year());
 
@@ -77,5 +80,9 @@ export class ActivitiesTableComponent {
   pctValue(planned: number, executed: number): number {
     if (planned === 0) return 0;
     return (executed / planned) * 100;
+  }
+
+  openDetail(item: PatActivity) {
+    this.router.navigate([`/pat/${this.year()}/activities`, item.id]);
   }
 }

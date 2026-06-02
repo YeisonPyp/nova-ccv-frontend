@@ -1,0 +1,31 @@
+<div class="table-container">
+  <div class="table-header">
+    <h2>Presupuesto de la Actividad</h2>
+    <p>Asignación de presupuesto por rubro</p>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="base-table min-w-full">
+      <thead>
+        <tr>
+          <th class="table-header-cell">Código</th>
+          <th class="table-header-cell">Rubro</th>
+          <th class="table-header-cell">Tipo</th>
+          <th class="table-header-cell">Total presupuesto</th>
+          <th class="table-header-cell">Presupuesto planeado</th>
+          <th class="table-header-cell">Presupuesto disponible</th>
+          <th class="table-header-cell w-48">Monto</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of matrix(); track row) {
+          <tr
+            app-budget-matrix-row
+            [row]="row"
+            (onSave)="$onSave($event)"
+            class="hover:bg-gray-50 transition-colors"
+          ></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

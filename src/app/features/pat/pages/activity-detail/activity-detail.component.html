@@ -1,0 +1,325 @@
+<div class="p-6">
+  @if (loading()) {
+    <div class="flex justify-center items-center h-64">
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
+      ></div>
+    </div>
+  }
+
+  @if (!loading() && activity(); as activity) {
+    <div class="max-w-7xl mx-auto flex flex-col gap-6">
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a
+            routerLink=".."
+            class="text-tertiary hover:text-primary transition-colors"
+          >
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+          </a>
+          <h1 class="text-2xl font-bold text-secondary m-0">
+            {{ activity.code }} — {{ activity.name }}
+          </h1>
+        </div>
+      </div>
+
+      <!-- Details Section -->
+      <section
+        class="bg-background rounded-xl border border-border-primary shadow-sm overflow-hidden"
+      >
+        <div class="px-6 py-4 border-b border-border-primary">
+          <h3
+            class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+          >
+            Detalles de la Actividad
+          </h3>
+        </div>
+
+        <div class="p-6 flex flex-col gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Descripción
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.description || "—" }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Programa Estratégico
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.program?.name || "—" }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Política
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.policy?.name || "—" }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Pilar
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.pillar?.name || "—" }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Actividad Táctica
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.tacticalActivity?.name || "—" }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Área
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.area?.name || "—" }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+              >
+                Centro de Costo
+              </span>
+              <span class="text-sm text-secondary">
+                {{ activity.costCenter?.name || "—" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="border-t border-border-primary pt-6">
+            <h4
+              class="text-sm font-semibold text-secondary uppercase tracking-wider mb-4 m-0"
+            >
+              Metas e Indicadores
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div class="flex flex-col gap-1">
+                <span
+                  class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                >
+                  Medición
+                </span>
+                <span class="text-sm text-secondary">
+                  {{ activity.measurement?.name || "—" }}
+                </span>
+                <span class="text-sm font-semibold text-primary">
+                  {{ activity.measurementGoal }}
+                </span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span
+                  class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                >
+                  Indicador
+                </span>
+                <span class="text-sm text-secondary">
+                  {{ activity.indicator?.name || "—" }}
+                </span>
+                <span class="text-xs text-tertiary">
+                  Meta:
+                  <span class="font-semibold text-secondary">{{
+                    activity.indicatorGoal
+                  }}</span>
+                  · Base:
+                  <span class="font-semibold text-secondary">{{
+                    activity.indicatorBaseLine
+                  }}</span>
+                </span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span
+                  class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                >
+                  Beneficio
+                </span>
+                <span class="text-sm text-secondary">
+                  {{ activity.benefitType?.name || "—" }}
+                </span>
+                <span class="text-sm font-semibold text-primary">
+                  {{ activity.benefitAmount }}
+                </span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span
+                  class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                >
+                  Fechas
+                </span>
+                <span class="text-sm text-secondary">
+                  Inicio: {{ activity.startsAt | date }}
+                </span>
+                <span class="text-sm text-secondary">
+                  Fin: {{ activity.endsAt | date }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Consolidation info -->
+          @if (activity.consolidation) {
+            <div class="border-t border-border-primary pt-6">
+              <h4
+                class="text-sm font-semibold text-secondary uppercase tracking-wider mb-4 m-0"
+              >
+                Consolidación
+              </h4>
+              <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-background border border-border-primary p-4 rounded-lg"
+              >
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                  >
+                    Presupuesto Ejecutado / Aprobado
+                  </span>
+                  <span class="text-base font-semibold text-secondary">
+                    {{ activity.consolidation.executedBudget | currency }} /
+                    {{ activity.consolidation.approvedBudget | currency }}
+                  </span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                  >
+                    Meta de Medición Ejecutada / Planeada
+                  </span>
+                  <span class="text-base font-semibold text-secondary">
+                    {{ activity.consolidation.executedMeasurementGoal }} /
+                    {{ activity.consolidation.plannedMeasurementGoal }}
+                  </span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-[0.65rem] font-semibold text-tertiary uppercase tracking-widest"
+                  >
+                    Beneficio Ejecutado / Planeado
+                  </span>
+                  <span class="text-base font-semibold text-secondary">
+                    {{ activity.consolidation.executedBenefitGoal }} /
+                    {{ activity.consolidation.plannedBenefitGoal }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Tabs Section -->
+      <div class="flex flex-col gap-4">
+        <div class="sm:hidden">
+          <select [(ngModel)]="activeTab" class="form-control">
+            <option value="execution">Ejecuciones</option>
+            <option value="plan">Planificación</option>
+          </select>
+        </div>
+        <div class="hidden sm:block">
+          <nav
+            class="flex gap-2 border-b border-border-primary"
+            aria-label="Tabs"
+          >
+            <button
+              type="button"
+              (click)="activeTab.set('execution')"
+              class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
+              [class]="
+                activeTab() === 'execution'
+                  ? 'text-primary border-primary'
+                  : 'text-tertiary border-transparent hover:text-primary'
+              "
+            >
+              Ejecuciones
+            </button>
+            <button
+              type="button"
+              (click)="activeTab.set('plan')"
+              class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
+              [class]="
+                activeTab() === 'plan'
+                  ? 'text-primary border-primary'
+                  : 'text-tertiary border-transparent hover:text-primary'
+              "
+            >
+              Planificación
+            </button>
+            <button
+              type="button"
+              (click)="activeTab.set('budget')"
+              class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
+              [class]="
+                activeTab() === 'budget'
+                  ? 'text-primary border-primary'
+                  : 'text-tertiary border-transparent hover:text-primary'
+              "
+            >
+              Presupuesto
+            </button>
+          </nav>
+        </div>
+
+        <div>
+          @if (activeTab() === "execution") {
+            <app-activity-execution-tab [activityId]="activity.id" />
+          }
+          @if (activeTab() === "plan") {
+            <app-activity-plan-tab [activityId]="activity.id" />
+          }
+          @if (activeTab() === "budget") {
+            <app-budget-tab
+              [activityId]="activity.id"
+              (onSave)="onSaveBudget($event)"
+            />
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!loading() && !activity()) {
+    <div class="text-center py-12">
+      <p class="text-tertiary">Actividad no encontrada.</p>
+    </div>
+  }
+</div>

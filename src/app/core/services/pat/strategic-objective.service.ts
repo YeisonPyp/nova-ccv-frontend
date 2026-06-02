@@ -62,8 +62,8 @@ export class PatStrategicObjectiveByYearService implements FilterServiceSpec {
     return new SearchSelectContextFactory<PatStrategicObjective>(
       (term) => {
         const b = builder.or(
-          builder.eq("name", term),
-          builder.eq("code", term),
+          builder.eq("name", `*${term}*`),
+          builder.eq("code", `*${term}*`),
         );
         return this.findAll({ rsqlQuery: emit(b) }).pipe(
           map((res) => res?.data?.content ?? []),

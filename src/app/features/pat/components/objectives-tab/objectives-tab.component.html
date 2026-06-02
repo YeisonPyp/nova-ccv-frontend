@@ -3,9 +3,25 @@
     <h3
       class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
     >
-      Objetivos estratégicos {{ year() }}
+      Objetivos estratégicos
     </h3>
+
+    <button
+      type="button"
+      class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+      (click)="openCreate()"
+    >
+      + Nuevo objetivo
+    </button>
   </div>
 
-  <app-objectives-table [year]="year()" />
+  <app-objectives-table [year]="year()" (onEdit)="openEdit($event)" />
+
+  <app-upsert-objective
+    [isOpen]="upsertOpen()"
+    [year]="year()"
+    [objective]="editing()"
+    (onClose)="closeUpsert()"
+    (onSaved)="onSaved()"
+  />
 </div>

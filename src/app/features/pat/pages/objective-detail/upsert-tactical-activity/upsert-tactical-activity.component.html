@@ -4,7 +4,7 @@
     (click)="close()"
   >
     <div
-      class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 m-4"
+      class="bg-white rounded-lg shadow-xl w-full max-w-xl p-6 m-4"
       (click)="$event.stopPropagation()"
     >
       <div class="flex items-center justify-between mb-4">
@@ -33,25 +33,36 @@
         (ngSubmit)="submit()"
         class="flex flex-col gap-3"
       >
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
-          >
-            Nombre <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="name"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-            [appFormFieldError]
-          />
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="flex flex-col gap-1 md:col-span-2">
+            <label
+              class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+            >
+              Nombre <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="name"
+              [appFormFieldError]="{}"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
 
-        <app-context-search-select
-          label="Pilar"
-          [required]="true"
-          [ctx]="pillarCtx"
-        />
+          <div class="flex flex-col gap-1">
+            <label
+              class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+            >
+              Código
+            </label>
+            <input
+              type="text"
+              formControlName="code"
+              maxlength="10"
+              [appFormFieldError]="{}"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        </div>
 
         <div class="flex flex-col gap-1">
           <label
@@ -62,6 +73,7 @@
           <textarea
             formControlName="description"
             rows="3"
+            [appFormFieldError]="{}"
             class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
           ></textarea>
         </div>

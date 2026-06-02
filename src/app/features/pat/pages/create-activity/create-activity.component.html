@@ -7,14 +7,14 @@
     <!-- ── IDENTIFICACIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Identificación
       </h5>
       <div class="grid grid-cols-4 gap-x-6 gap-y-4">
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
           >
             Código <span class="text-red-500">*</span>
           </label>
@@ -22,18 +22,15 @@
             type="text"
             formControlName="code"
             [appFormFieldError]="{
-              pattern: 'Formato: PRG-YYYY-###',
               maxlength: 'Máximo 50 caracteres',
             }"
-            placeholder="PRG-2025-001"
             class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
           />
-          <span class="text-xs text-gray-400">Formato: PRG-YYYY-###</span>
         </div>
 
         <div class="col-span-2 flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
           >
             Nombre <span class="text-red-500">*</span>
           </label>
@@ -51,7 +48,7 @@
     <!-- ── RESPONSABLE Y ORGANIZACIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Responsable y Organización
       </h5>
@@ -79,7 +76,7 @@
     <!-- ── CLASIFICACIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Clasificación
       </h5>
@@ -101,7 +98,7 @@
     <!-- ── INDICADORES Y MEDICIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Indicadores y Medición
       </h5>
@@ -112,24 +109,15 @@
           [ctx]="measurementCtx"
         />
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-          >
-            Indicador (ID) <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            formControlName="indicatorId"
-            formFieldError
-            placeholder="ID del indicador cuantitativo"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
+        <app-context-search-select
+          [label]="'Indicador de gestión'"
+          [required]="true"
+          [ctx]="cuantitativeIndicatorCtx"
+        />
 
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
             >Meta de Medición</label
           >
           <input
@@ -142,7 +130,7 @@
 
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
             >Línea Base del Indicador</label
           >
           <input
@@ -155,7 +143,7 @@
 
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
             >Meta del Indicador</label
           >
           <input
@@ -170,7 +158,7 @@
 
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Beneficiarios
       </h5>
@@ -183,7 +171,7 @@
 
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
             >Total de beneficiarios</label
           >
           <input
@@ -199,14 +187,14 @@
     <!-- ── VIGENCIA ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Vigencia
       </h5>
       <div class="grid grid-cols-3 gap-x-6 gap-y-4">
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
           >
             Fecha de Inicio <span class="text-red-500">*</span>
           </label>
@@ -220,7 +208,7 @@
 
         <div class="flex flex-col gap-1">
           <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
           >
             Fecha de Fin <span class="text-red-500">*</span>
           </label>
@@ -237,13 +225,13 @@
     <!-- ── DESCRIPCIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
         Descripción
       </h5>
       <div class="flex flex-col gap-1">
         <label
-          class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
           >Descripción</label
         >
         <textarea

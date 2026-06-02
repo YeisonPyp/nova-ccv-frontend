@@ -29,7 +29,6 @@ import { ParametrizationSectionComponent } from "@/app/features/conf/components/
           #table
           [service]="service()"
           [tableColumns]="columns()"
-          [executeLoad]="isOpen()"
         >
           <ng-template #actions let-item>
             <button

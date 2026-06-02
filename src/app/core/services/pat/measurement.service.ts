@@ -24,8 +24,8 @@ export class MeasurementService extends FilterServiceSpecImpl<PatMeasurement> {
     return new SearchSelectContextFactory<PatMeasurement>(
       (term) => {
         const b = builder.or(
-          builder.eq("name", term),
-          builder.eq("description", term),
+          builder.eq("name", `*${term}*`),
+          builder.eq("description", `*${term}*`),
         );
         return this.findAll({ rsqlQuery: emit(b) }).pipe(
           map((res) => res?.data?.content ?? []),

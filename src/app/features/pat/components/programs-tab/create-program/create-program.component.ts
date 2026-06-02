@@ -35,7 +35,7 @@ import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-erro
 })
 export class CreatePatProgramComponent {
   readonly isOpen = input<boolean>(false);
-  readonly year = input<number | undefined>(undefined);
+  readonly year = input.required<number>();
   readonly program = input<PatStrategicProgram | null>(null);
 
   readonly onClose = output<void>();
@@ -50,7 +50,9 @@ export class CreatePatProgramComponent {
 
   readonly editing = computed(() => this.program() != null);
   readonly title = computed(() =>
-    this.editing() ? "Editar programa estratégico" : "Nuevo programa estratégico",
+    this.editing()
+      ? "Editar programa estratégico"
+      : "Nuevo programa estratégico",
   );
   readonly submitLabel = computed(() =>
     this.editing() ? "Guardar cambios" : "Crear programa",
@@ -59,7 +61,6 @@ export class CreatePatProgramComponent {
   form = this.fb.group({
     name: ["", [Validators.required, Validators.maxLength(300)]],
     description: ["", Validators.maxLength(1000)],
-    year: [null as number | null],
     pillarId: [null as number | null, Validators.required],
   });
 
@@ -79,7 +80,6 @@ export class CreatePatProgramComponent {
         this.form.reset({
           name: p.name,
           description: p.description ?? "",
-          year: p.year ?? null,
           pillarId: p.pillar?.id ?? null,
         });
         if (p.pillar) {
@@ -91,7 +91,6 @@ export class CreatePatProgramComponent {
         this.form.reset({
           name: "",
           description: "",
-          year: this.year() ?? null,
           pillarId: null,
         });
         this.pillarCtx.clear();
@@ -115,14 +114,12 @@ export class CreatePatProgramComponent {
     const dto: CreatePatProgramDto = {
       name: v.name!,
       description: v.description ?? undefined,
-      year: v.year ?? undefined,
+      year: this.year(),
       pillarId: v.pillarId!,
     };
 
     const p = this.program();
-    const req$ = p
-      ? this.service.update(p.id, dto)
-      : this.service.create(dto);
+    const req$ = p ? this.service.update(p.id, dto) : this.service.create(dto);
 
     req$.subscribe({
       next: (res) => {

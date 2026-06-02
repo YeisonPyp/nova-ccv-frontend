@@ -1,0 +1,198 @@
+<div class="p-6 max-w-7xl mx-auto flex flex-col gap-6">
+  <!-- Back -->
+  <button
+    type="button"
+    class="text-sm text-gray-500 hover:text-gray-700 self-start"
+    (click)="goBack()"
+  >
+    ← Volver al tablero
+  </button>
+
+  <!-- Strategic objective header -->
+  @if (loadingStrategic()) {
+    <div class="text-center py-6 text-tertiary text-sm">
+      Cargando objetivo...
+    </div>
+  }
+  @if (strategic(); as s) {
+    <section
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-3"
+    >
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <span
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Objetivo estratégico
+          </span>
+          <h1 class="text-2xl font-bold text-secondary m-0">
+            {{ s.code }} — {{ s.name }}
+          </h1>
+        </div>
+        <span
+          class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800"
+        >
+          Año {{ s.year }}
+        </span>
+      </div>
+      <p class="text-sm text-gray-600 m-0">{{ s.description }}</p>
+    </section>
+  }
+
+  <!-- Split panel -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <!-- LEFT: specific objectives -->
+    <aside
+      class="lg:col-span-4 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col"
+    >
+      <div
+        class="px-4 py-3 border-b border-gray-100 flex items-center justify-between w-full"
+      >
+        <div
+          class="px-4 py-3 border-b border-gray-100 flex items-center justify-between w-full"
+        >
+          <h3
+            class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+          >
+            Objetivos específicos
+          </h3>
+          <span class="text-xs text-gray-400">{{ specifics().length }}</span>
+        </div>
+        <button
+          type="button"
+          class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+          (click)="openUpsertSpecific(null)"
+        >
+          +
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto">
+        @if (loadingSpecifics()) {
+          <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+        } @else if (specifics().length === 0) {
+          <div class="text-center py-6 text-tertiary text-sm">
+            Sin objetivos específicos.
+          </div>
+        } @else {
+          <ul class="flex flex-col">
+            @for (s of specifics(); track s.id) {
+              <li>
+                <button
+                  type="button"
+                  class="w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors flex flex-col gap-1"
+                  [class.bg-blue-50]="selectedSpecificId() === s.id"
+                  [class.border-l-4]="selectedSpecificId() === s.id"
+                  [class.border-l-primary]="selectedSpecificId() === s.id"
+                  (click)="selectSpecific(s)"
+                >
+                  <span class="text-xs font-mono text-gray-500">
+                    {{ s.code }}
+                  </span>
+                  <span class="text-sm font-medium text-secondary">
+                    {{ s.name }}
+                  </span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </aside>
+
+    <!-- RIGHT: tactical activities -->
+    <section
+      class="lg:col-span-8 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col"
+    >
+      <div
+        class="px-4 py-3 border-b border-gray-100 flex items-center justify-between"
+      >
+        <div
+          class="px-4 py-3 border-b border-gray-100 flex items-center justify-between w-full"
+        >
+          <div class="flex flex-col">
+            <h3
+              class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+            >
+              Actividades tácticas
+            </h3>
+            @if (selectedSpecific(); as sel) {
+              <span class="text-xs text-gray-500">
+                {{ sel.code }} — {{ sel.name }}
+              </span>
+            }
+          </div>
+          <span class="text-xs text-gray-400">{{ tacticals().length }}</span>
+        </div>
+        <button
+          type="button"
+          class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+          (click)="openUpsertTacticalActivity(null)"
+          [disabled]="!selectedSpecificId()"
+        >
+          +
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4">
+        @if (!selectedSpecificId()) {
+          <div class="text-center py-10 text-tertiary text-sm">
+            Selecciona un objetivo específico para ver sus actividades.
+          </div>
+        } @else if (loadingTacticals()) {
+          <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+        } @else if (tacticals().length === 0) {
+          <div class="text-center py-10 text-tertiary text-sm">
+            Sin actividades tácticas.
+          </div>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (t of tacticals(); track t.id) {
+              <li
+                class="border border-gray-200 rounded-md p-3 hover:border-primary transition-colors"
+              >
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex flex-col">
+                    <span class="text-xs font-mono text-gray-500">
+                      {{ t.code }}
+                    </span>
+                    <span class="text-sm font-medium text-secondary">
+                      {{ t.name }}
+                    </span>
+                  </div>
+                  <span class="text-xs text-gray-400">Año {{ t.year }}</span>
+                </div>
+                @if (t.description) {
+                  <p class="text-xs text-gray-600 mt-2 m-0">
+                    {{ t.description }}
+                  </p>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+  </div>
+</div>
+
+@if (specificObjectiveModalIsOpen()) {
+  <app-upsert-specific-objective
+    [isOpen]="specificObjectiveModalIsOpen()"
+    [year]="year()"
+    [specific]="specificObjectiveToEdit()"
+    [strategicObjectiveId]="id()"
+    (onClose)="closeUpsertSpecific()"
+    (onSaved)="onSpecificSaved($event)"
+  />
+}
+
+@if (tacticalActivityModalIsOpen() && selectedSpecificId()) {
+  <app-upsert-tactical-activity
+    [isOpen]="tacticalActivityModalIsOpen()"
+    [year]="year()"
+    [objectiveId]="selectedSpecificId()!"
+    (onClose)="closeUpsertTacticalActivity()"
+    (onSaved)="onTacticalSaved($event)"
+  />
+}

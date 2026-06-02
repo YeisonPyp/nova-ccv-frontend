@@ -1,3 +1,7 @@
+import { Area } from "../assessment/area.model";
+import { Employee } from "../assessment/employee.model";
+import { CostCenter } from "../cost-center/cost-center.models";
+
 export interface PatPillar {
   id: number;
   name: string;
@@ -53,13 +57,27 @@ export interface PatActivity {
   code: string;
   name: string;
   description: string;
-  program: PatStrategicProgram;
-  policy: PatPolicy;
+  program?: PatStrategicProgram;
+  policy?: PatPolicy;
   startsAt: string;
   endsAt: string;
   createdAt: string;
   updatedAt: string;
   consolidation?: PatActivityConsolidation;
+  pillar?: PatPillar;
+  area?: Area;
+  measurement?: PatMeasurement;
+  measurementGoal: number;
+  indicatorGoal: number;
+  indicator?: PatCuantitativeIndicator;
+  benefitGoal: number;
+  indicatorBaseLine: number;
+  benefitType?: PatBenefitType;
+  benefitAmount: number;
+
+  employee?: Employee;
+  costCenter?: CostCenter;
+  tacticalActivity?: PatTacticalActivity;
 }
 
 export interface PatMeasurement {
@@ -96,6 +114,7 @@ export interface PatStrategicObjective {
   code: string;
   year: number;
   description?: string;
+  specificObjectives?: PatSpecificObjective[];
 }
 
 export interface PatProduct {

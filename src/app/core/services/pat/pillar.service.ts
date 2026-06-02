@@ -23,7 +23,7 @@ export class PillarService extends FilterServiceSpecImpl<PatPillar> {
   ) {
     return new SearchSelectContextFactory<PatPillar>(
       (term) => {
-        const b = builder.or(builder.eq("name", term));
+        const b = builder.or(builder.eq("name", `${term}*`));
         return this.findAll({ rsqlQuery: emit(b) }).pipe(
           map((res) => res?.data?.content ?? []),
         );
