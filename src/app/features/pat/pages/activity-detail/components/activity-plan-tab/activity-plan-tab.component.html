@@ -1,87 +1,123 @@
-<div class="flex flex-col gap-6">
-  <!-- Create Form -->
-  <section
-    class="bg-background rounded-xl border border-border-primary shadow-sm overflow-hidden"
-  >
-    <div class="px-6 py-4 border-b border-border-primary">
-      <h3
-        class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
-      >
-        Registrar Plan
-      </h3>
-    </div>
-
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-      class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <h3
+      class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
     >
-      <div class="form-group">
-        <label>Mes (1-12)</label>
-        <input
-          type="number"
-          formControlName="month"
-          min="1"
-          max="12"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label>Presupuesto Planeado</label>
-        <input
-          type="text"
-          appCurrencyFormat
-          formControlName="plannedBudget"
-          step="0.01"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label>Beneficio Planeado</label>
-        <input
-          type="text"
-          appCurrencyFormat
-          formControlName="plannedBenefit"
-          step="0.01"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label>Meta de Medición Planeada</label>
-        <input
-          type="text"
-          appCurrencyFormat
-          formControlName="plannedMeasurementGoal"
-          step="0.01"
-          class="form-control"
-        />
-      </div>
-      <div class="form-group">
-        <label>Meta de Indicador Planeada</label>
-        <input
-          type="text"
-          appCurrencyFormat
-          formControlName="plannedIndicatorGoal"
-          step="0.00001"
-          class="form-control"
-        />
-      </div>
-      <div class="md:col-span-2 lg:col-span-3 flex justify-end">
+      Planeación mensual
+    </h3>
+    @if (loading()) {
+      <span class="text-xs text-tertiary">Cargando...</span>
+    }
+  </div>
+
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+  >
+    @for (card of cards(); track card.month) {
+      <app-month-metric-card
+        [label]="card.label"
+        [registered]="!!card.plan"
+        [metrics]="cardMetrics(card)"
+        (cardClick)="openMonth(card)"
+      />
+    }
+  </div>
+</div>
+
+<!-- Upsert modal -->
+@if (modalOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+    (click)="closeModal()"
+  >
+    <div
+      class="bg-background rounded-xl shadow-xl w-full max-w-lg m-4 overflow-hidden"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-border-primary"
+      >
+        <h3 class="text-base font-semibold text-secondary m-0">
+          {{ modalTitle() }}
+        </h3>
         <button
-          type="submit"
-          [disabled]="form.invalid || submitting"
-          class="btn btn-primary"
+          type="button"
+          class="text-tertiary hover:text-primary text-xl leading-none"
+          (click)="closeModal()"
         >
-          Guardar Plan
+          ×
         </button>
       </div>
-    </form>
-  </section>
 
-  <!-- Table -->
-  <section
-    class="bg-background rounded-xl border border-border-primary shadow-sm p-4"
-  >
-    <app-pagination-table [service]="service" [tableColumns]="columns" />
-  </section>
-</div>
+      @if (error()) {
+        <div
+          class="mx-6 mt-4 px-3 py-2 rounded bg-red-50 text-red-700 text-xs border border-red-200"
+        >
+          {{ error() }}
+        </div>
+      }
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
+        <div class="form-group">
+          <label>Presupuesto Planeado</label>
+          <input
+            type="text"
+            appCurrencyFormat
+            formControlName="plannedBudget"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label>Beneficio Planeado</label>
+          <input
+            type="text"
+            appCurrencyFormat
+            formControlName="plannedBenefit"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label>Meta de Medición</label>
+          <input
+            type="text"
+            appCurrencyFormat
+            formControlName="plannedMeasurementGoal"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label>Meta de Indicador</label>
+          <input
+            type="text"
+            appCurrencyFormat
+            formControlName="plannedIndicatorGoal"
+            class="form-control"
+          />
+        </div>
+
+        <div
+          class="md:col-span-2 flex justify-end gap-2 pt-2 border-t border-border-primary"
+        >
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid || submitting()"
+          >
+            {{ submitting() ? "Guardando..." : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

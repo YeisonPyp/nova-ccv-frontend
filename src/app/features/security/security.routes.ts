@@ -3,6 +3,16 @@ import { Routes } from "@angular/router";
 
 export const SECURITY_ROUTES: Routes = [
   {
+    path: "audit-candidates",
+    loadComponent: () =>
+      import("./pages/audit-candidates/audit-candidates.component").then(
+        (m) => m.AuditCandidatesComponent,
+      ),
+    canActivate: [
+      hasPermissionGuard(["AUDIT_ENTITIES_CANDIDATES_READ", "AUDIT_LOGS_READ"]),
+    ],
+  },
+  {
     path: "roles",
     loadComponent: () =>
       import("./pages/roles/roles-dashboard/roles-dashboard.component").then(

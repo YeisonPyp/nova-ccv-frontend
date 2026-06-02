@@ -11,7 +11,7 @@ import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
   templateUrl: "./programs-tab.component.html",
 })
 export class ProgramsTabComponent {
-  year = input<number | undefined>(undefined);
+  year = input.required<number>();
   modalOpen = signal(false);
   editing = signal<PatStrategicProgram | null>(null);
 

@@ -77,9 +77,10 @@ export class ActivitiesTableComponent {
     },
   ];
 
-  pctValue(planned: number, executed: number): number {
+  pctValue(planned: number, executed: number) {
     if (planned === 0) return 0;
-    return (executed / planned) * 100;
+    const pct = (executed / planned) * 100;
+    return Number(pct.toFixed(2));
   }
 
   openDetail(item: PatActivity) {

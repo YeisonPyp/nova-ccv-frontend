@@ -1,1 +1,43 @@
-<p>performance-indicators-panel works!</p>
+@if (loading()) {
+  <div class="flex justify-center items-center h-64">
+    <div
+      class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
+    ></div>
+  </div>
+} @else {
+  <div class="space-y-8 p-4">
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+      <div class="h-80">
+        <canvas
+          baseChart
+          [data]="executionTrendData"
+          [options]="executionTrendOptions"
+          type="line"
+        >
+        </canvas>
+      </div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+      <div class="h-80">
+        <canvas
+          baseChart
+          [data]="areaPerformanceData"
+          [options]="areaPerformanceOptions"
+          type="bar"
+        >
+        </canvas>
+      </div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+      <div class="h-80">
+        <canvas
+          baseChart
+          [data]="budgetTrendData"
+          [options]="budgetTrendOptions"
+          type="line"
+        >
+        </canvas>
+      </div>
+    </div>
+  </div>
+}

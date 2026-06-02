@@ -301,7 +301,10 @@
 
         <div>
           @if (activeTab() === "execution") {
-            <app-activity-execution-tab [activityId]="activity.id" />
+            <app-activity-execution-tab
+              [activityId]="activity.id"
+              [consolidation]="activity.consolidation!"
+            />
           }
           @if (activeTab() === "plan") {
             <app-activity-plan-tab [activityId]="activity.id" />

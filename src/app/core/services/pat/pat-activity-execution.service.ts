@@ -18,15 +18,14 @@ export interface PatActivityExecution {
   month: number;
   description: string;
   createdAt: string;
-  user: any; // User type
 }
 
 export interface CreatePatActivityExecutionDto {
   activityId: number;
   executedBudget: number;
   executedBenefit: number;
-  executedMeasurementGoal: number;
-  executedIndicatorGoal: number;
+  executedIndicator: number;
+  executedMeasurement: number;
   month: number;
   description?: string;
 }

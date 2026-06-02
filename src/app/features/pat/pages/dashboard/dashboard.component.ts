@@ -4,6 +4,7 @@ import { AuthService } from "../../../../core/services/auth.service";
 import { ProgramsTabComponent } from "../../components/programs-tab/programs-tab.component";
 import { ActivitiesTabComponent } from "../../components/activities-tab/activities-tab.component";
 import { ObjectivesTabComponent } from "../../components/objectives-tab/objectives-tab.component";
+import { PerformanceIndicatorsPanelComponent } from "../../components/performance-indicators-panel/performance-indicators-panel.component";
 
 type TabKey = "programs" | "activities" | "objectives";
 
@@ -15,6 +16,7 @@ type TabKey = "programs" | "activities" | "objectives";
     ProgramsTabComponent,
     ActivitiesTabComponent,
     ObjectivesTabComponent,
+    PerformanceIndicatorsPanelComponent,
   ],
   templateUrl: "./dashboard.component.html",
 })
