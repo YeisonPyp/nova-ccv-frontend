@@ -4,11 +4,11 @@
       <app-pat-progress-bar
         [value]="
           pctValue(
-            item.consolidation.executedBudget,
-            item.consolidation.plannedBudget
+            item.consolidation.approvedBudget,
+            item.consolidation.executedBudget
           )
         "
-        [planned]="item.consolidation.plannedBudget"
+        [planned]="item.consolidation.approvedBudget"
         [executed]="item.consolidation.executedBudget"
         [showLegend]="true"
       ></app-pat-progress-bar>
