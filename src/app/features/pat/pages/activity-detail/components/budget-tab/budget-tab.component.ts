@@ -4,21 +4,16 @@ import {
   effect,
   inject,
   input,
-  OnInit,
   output,
   signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import {
-  BudgetCategory,
-  PatActivityBudgetMatrix,
-  PatActivityService,
-} from "@/app/core/services/pat/pat-activity.service";
 import {
   BudgetMatrixRowComponent,
   OnSaveBudgetMatrix,
 } from "./budget-matrix-row/budget-matrix-row.component";
+import { PatActivityService } from "@/app/core/services/pat/pat-activity.service";
+import { PatActivityBudgetMatrix } from "@/app/core/models/pat/pat-models";
 
 export interface budgetCalculation {
   totalPrivate: number;
@@ -35,9 +30,9 @@ export interface budgetCalculation {
 export class BudgetTabComponent {
   service = inject(PatActivityService);
   activityId = input.required<number>();
-  matrix = signal<PatActivityBudgetMatrix[]>([]);
+  matrix = input.required<PatActivityBudgetMatrix[]>();
 
-  onSave = output<number>();
+  onSave = output<PatActivityBudgetMatrix>();
 
   budgetCalculation = computed<budgetCalculation>(() =>
     this.matrix().reduce(
@@ -51,39 +46,22 @@ export class BudgetTabComponent {
     ),
   );
 
-  isLoading = signal(false);
-
-  constructor() {
-    effect(() => {
-      this.isLoading.set(true);
-      this.service.findPresupuestalMatrix(this.activityId()).subscribe({
-        next: (res) => {
-          this.matrix.set(res.data);
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.isLoading.set(false);
-        },
-      });
-    });
-  }
-
   $onSave(c: OnSaveBudgetMatrix) {
     this.service
       .saveBudgetMatrix(this.activityId(), c.budgetCategory.id, c.budget)
       .subscribe({
         next: (res) => {
           if (res.data) {
-            this.matrix.update((matrix) => {
-              const index = matrix.findIndex(
-                (m) => m.budgetCategory.id === c.budgetCategory.id,
-              );
-              if (index !== -1) {
-                matrix[index] = res.data;
-              }
-              return matrix;
-            });
-            this.onSave.emit(this.budgetCalculation().totalBudget);
+            // this.matrix.update((matrix) => {
+            //   const index = matrix.findIndex(
+            //     (m) => m.budgetCategory.id === c.budgetCategory.id,
+            //   );
+            //   if (index !== -1) {
+            //     matrix[index] = res.data;
+            //   }
+            //   return matrix;
+            // });
+            this.onSave.emit(res.data);
           }
         },
         error: () => {},

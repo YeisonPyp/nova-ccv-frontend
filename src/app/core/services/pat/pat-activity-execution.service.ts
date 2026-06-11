@@ -7,27 +7,25 @@ import {
 import { Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
-
-export interface PatActivityExecution {
-  id: number;
-  activityId: number;
-  executedBudget: number;
-  executedBenefit: number;
-  executedMeasurementGoal: number;
-  executedIndicatorGoal: number;
-  month: number;
-  description: string;
-  createdAt: string;
-}
+import {
+  ActivityBudgetExecution,
+  PatActivityExecution,
+} from "../../models/pat/pat-models";
 
 export interface CreatePatActivityExecutionDto {
   activityId: number;
-  executedBudget: number;
   executedBenefit: number;
   executedIndicator: number;
   executedMeasurement: number;
   month: number;
   description?: string;
+}
+
+export interface SaveActivityBudgetExecution {
+  amount: number;
+  activityId: number;
+  month: number;
+  budgetCategoryId: number;
 }
 
 @Injectable({
@@ -39,6 +37,13 @@ export class PatActivityExecutionService extends FilterServiceSpecImpl<
 > {
   constructor() {
     super("pat/v2/activity/executions");
+  }
+
+  saveBudgetExecution(e: SaveActivityBudgetExecution) {
+    return this.http.post<ApiResponse<ActivityBudgetExecution>>(
+      `${this.baseUrl}/budget`,
+      e,
+    );
   }
 }
 

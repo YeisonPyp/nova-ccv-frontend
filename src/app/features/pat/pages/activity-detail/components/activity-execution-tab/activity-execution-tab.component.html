@@ -5,9 +5,6 @@
     >
       Ejecución mensual
     </h3>
-    @if (loading()) {
-      <span class="text-xs text-tertiary">Cargando...</span>
-    }
   </div>
 
   <div
@@ -24,113 +21,16 @@
   </div>
 </div>
 
-<!-- Upsert modal -->
-@if (modalOpen()) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-    (click)="closeModal()"
-  >
-    <div
-      class="bg-background rounded-xl shadow-xl w-full max-w-lg m-4 overflow-hidden"
-      (click)="$event.stopPropagation()"
-    >
-      <div
-        class="flex items-center justify-between px-6 py-4 border-b border-border-primary"
-      >
-        <h3 class="text-base font-semibold text-secondary m-0">
-          {{ modalTitle() }}
-        </h3>
-        <button
-          type="button"
-          class="text-tertiary hover:text-primary text-xl leading-none"
-          (click)="closeModal()"
-        >
-          ×
-        </button>
-      </div>
-
-      @if (error()) {
-        <div
-          class="mx-6 mt-4 px-3 py-2 rounded bg-red-50 text-red-700 text-xs border border-red-200"
-        >
-          {{ error() }}
-        </div>
-      }
-
-      <form
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()"
-        class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
-      >
-        <div class="form-group">
-          <label>Presupuesto Ejecutado</label>
-          <input
-            type="text"
-            appCurrencyFormat
-            [appFormFieldError]="{}"
-            formControlName="executedBudget"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label>Beneficio Ejecutado</label>
-          <input
-            type="text"
-            appCurrencyFormat
-            [appFormFieldError]="{}"
-            formControlName="executedBenefit"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label>Meta de Medición</label>
-          <input
-            type="text"
-            appCurrencyFormat
-            [appFormFieldError]="{}"
-            formControlName="executedMeasurementGoal"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label>Meta de Indicador</label>
-          <input
-            type="text"
-            appCurrencyFormat
-            [appFormFieldError]="{}"
-            formControlName="executedIndicatorGoal"
-            class="form-control"
-          />
-        </div>
-
-        <div class="form-group md:col-span-2">
-          <label>Descripción</label>
-          <textarea
-            formControlName="description"
-            rows="2"
-            class="form-control"
-          ></textarea>
-        </div>
-
-        <div
-          class="md:col-span-2 flex justify-end gap-2 pt-2 border-t border-border-primary"
-        >
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="closeModal()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="form.invalid || submitting()"
-          >
-            {{ submitting() ? "Guardando..." : "Guardar" }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+@if (editingMonth(); as month) {
+  <app-activity-modal-component
+    [isOpen]="modalOpen()"
+    [consolidation]="consolidation()"
+    [month]="month.month"
+    [activityId]="activityId()"
+    [execution]="month.execution"
+    [plan]="month.plan"
+    [budgetMatrix]="budgetMatrix()"
+    (onSave)="onSaveExecution.emit($event)"
+    (onClose)="closeModal()"
+  ></app-activity-modal-component>
 }

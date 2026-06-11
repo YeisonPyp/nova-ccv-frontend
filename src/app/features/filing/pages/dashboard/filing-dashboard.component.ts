@@ -8,6 +8,7 @@ import { PaginationComponent } from "@/app/shared/components/pagination/paginati
 import { FilingService } from "@/app/core/services/filing/filing.service";
 import { Filing } from "@/app/core/models/filing/filing.models";
 import { Router } from "@angular/router";
+import { EditIconComponent } from "@/app/shared/components/edit-icon/edit-icon.component";
 
 interface BreadcrumbEntry {
   id: number | null;
@@ -17,7 +18,12 @@ interface BreadcrumbEntry {
 @Component({
   selector: "app-filing-dashboard",
   standalone: true,
-  imports: [CommonModule, DynamicTableComponent, PaginationComponent],
+  imports: [
+    CommonModule,
+    DynamicTableComponent,
+    PaginationComponent,
+    EditIconComponent,
+  ],
   templateUrl: "./filing-dashboard.component.html",
 })
 export class FilingDashboardComponent implements OnInit {

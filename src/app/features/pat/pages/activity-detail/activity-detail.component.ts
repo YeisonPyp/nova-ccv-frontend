@@ -1,13 +1,39 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { PatActivityService } from "@/app/core/services/pat/pat-activity.service";
 import { ActivityExecutionTabComponent } from "./components/activity-execution-tab/activity-execution-tab.component";
 import { ActivityPlanTabComponent } from "./components/activity-plan-tab/activity-plan-tab.component";
-import { NestedValuePipe } from "@/app/shared/pipes/nested-value.pipe";
-import { PatActivity } from "@/app/core/models/pat/pat-models";
+import {
+  PatActivity,
+  PatActivityBudgetMatrix,
+  PatActivityExecution,
+} from "@/app/core/models/pat/pat-models";
 import { BudgetTabComponent } from "./components/budget-tab/budget-tab.component";
+import { PatActivityPlan } from "@/app/core/services/pat/pat-activity-plan.service";
+
+export interface MonthCard {
+  month: number;
+  label: string;
+  execution: PatActivityExecution | null;
+  plan: PatActivityPlan | null;
+}
+
+const MONTH_NAMES = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
 
 @Component({
   selector: "app-activity-detail",
@@ -26,7 +52,32 @@ export class ActivityDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private activityService = inject(PatActivityService);
 
+  executionsByMonth = computed<Record<number, PatActivityExecution>>(() => {
+    const executionsByMonth: Record<number, PatActivityExecution> = {};
+    for (const e of this.executions()) executionsByMonth[e.month] = e;
+    return executionsByMonth;
+  });
+
+  plansByMonth = computed<Record<number, PatActivityPlan>>(() => {
+    const plansByMonth: Record<number, PatActivityPlan> = {};
+    for (const p of this.plans()) plansByMonth[p.month] = p;
+    return plansByMonth;
+  });
+
+  readonly cards = computed<MonthCard[]>(() => {
+    return Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      label: MONTH_NAMES[i],
+      execution: this.executionsByMonth()[i + 1] ?? null,
+      plan: this.plansByMonth()[i + 1] ?? null,
+    }));
+  });
+
   activity = signal<PatActivity | null>(null);
+  executions = signal<PatActivityExecution[]>([]);
+  budgetMatrix = signal<PatActivityBudgetMatrix[]>([]);
+  plans = signal<PatActivityPlan[]>([]);
+
   loading = signal(true);
   activeTab = signal<"execution" | "plan" | "budget">("execution");
 
@@ -47,6 +98,9 @@ export class ActivityDetailComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.activity.set(res.data);
+          this.executions.set(res.data.executions ?? []);
+          this.plans.set(res.data.plans ?? []);
+          this.budgetMatrix.set(res.data.budgetMatrix ?? []);
         }
         this.loading.set(false);
       },
@@ -56,14 +110,14 @@ export class ActivityDetailComponent implements OnInit {
     });
   }
 
-  onSaveBudget(totalBudget: number) {
-    const consolidation = this.activity()?.consolidation;
-    if (consolidation) {
-      consolidation.approvedBudget = totalBudget;
-      this.activity.set({
-        ...this.activity()!,
-        consolidation: { ...consolidation },
-      });
-    }
+  onSaveBudget(m: PatActivityBudgetMatrix) {
+    // const consolidation = this.activity()?.consolidation;
+    // if (consolidation) {
+    //   consolidation.approvedBudget = totalBudget;
+    //   this.activity.set({
+    //     ...this.activity()!,
+    //     consolidation: { ...consolidation },
+    //   });
+    // }
   }
 }

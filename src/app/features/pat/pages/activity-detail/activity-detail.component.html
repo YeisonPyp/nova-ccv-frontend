@@ -302,16 +302,22 @@
         <div>
           @if (activeTab() === "execution") {
             <app-activity-execution-tab
+              [cards]="cards()"
               [activityId]="activity.id"
               [consolidation]="activity.consolidation!"
+              [budgetMatrix]="budgetMatrix()"
             />
           }
           @if (activeTab() === "plan") {
-            <app-activity-plan-tab [activityId]="activity.id" />
+            <app-activity-plan-tab
+              [cards]="cards()"
+              [activityId]="activity.id"
+            />
           }
           @if (activeTab() === "budget") {
             <app-budget-tab
               [activityId]="activity.id"
+              [matrix]="budgetMatrix()"
               (onSave)="onSaveBudget($event)"
             />
           }

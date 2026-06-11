@@ -1,0 +1,111 @@
+<div
+  class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+>
+  <!-- Component Header -->
+  <div
+    class="bg-gray-50 px-4 py-3 flex justify-between items-start border-b border-gray-200"
+  >
+    <div>
+      <h4 class="text-md font-bold text-gray-900">{{ comp().name }}</h4>
+      <p class="text-xs text-gray-500">{{ comp().description }}</p>
+      <div
+        class="mt-1 flex items-center gap-2 text-xs font-medium text-gray-600"
+      >
+        <span class="bg-white px-2 py-0.5 rounded border"
+          >Mín: {{ comp().minValue }}</span
+        >
+        <span class="bg-white px-2 py-0.5 rounded border"
+          >Máx: {{ comp().maxValue }}</span
+        >
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button
+        class="icon-btn text-primary hover:text-indigo-900"
+        (click)="openComponentModal(comp())"
+        title="Editar"
+      >
+        <i class="fi fi-rr-edit">Editar</i>
+      </button>
+      <button
+        class="icon-btn text-red-600 hover:text-red-900"
+        (click)="deleteComponent(comp())"
+        title="Eliminar"
+      >
+        <i class="fi fi-rr-trash">Eliminar</i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Requirements List -->
+  <div class="p-4 space-y-4">
+    <div class="flex items-center justify-between">
+      <h5 class="text-sm font-semibold text-gray-700">Requerimientos</h5>
+      <button
+        class="text-xs text-indigo-600 font-medium hover:underline"
+        (click)="openRequirementModal(null, comp().id)"
+      >
+        + Agregar Requerimiento
+      </button>
+    </div>
+
+    @if (!comp().requirements?.length) {
+      <p class="text-xs text-gray-500 italic">
+        No hay requerimientos configurados para este componente.
+      </p>
+    }
+
+    @for (req of comp().requirements; track req.id) {
+      <div class="ml-4 border-l-2 border-indigo-100 pl-4 py-2">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <p class="text-sm font-medium text-gray-800">
+              {{ req.name }}
+            </p>
+            <p class="text-xs text-gray-500">{{ req.description }}</p>
+            <p class="text-xs text-gray-400 mt-1">
+              Archivos máximos: {{ req.maxFiles }}
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button
+              class="icon-btn text-gray-500 hover:text-indigo-600 text-xs"
+              (click)="openRequirementModal(req, comp().id)"
+              title="Editar"
+            >
+              <i class="fi fi-rr-edit"></i>
+            </button>
+            <button
+              class="icon-btn text-gray-500 hover:text-red-600 text-xs"
+              (click)="deleteRequirement(req)"
+              title="Eliminar"
+            >
+              <i class="fi fi-rr-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Files -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          @for (file of req.files; track file.id) {
+            <app-file-item
+              [file]="file"
+              [label]="file.fileName"
+              (deleteRequested)="deleteFile(file.id)"
+            ></app-file-item>
+          }
+
+          @if (
+            !req.files || req.files.length < req.maxFiles || req.maxFiles === 0
+          ) {
+            <app-file-item
+              [file]="null"
+              label="Agregar Archivo"
+              (fileSelected)="uploadFile($event, req.id)"
+            ></app-file-item>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,5 +1,8 @@
 import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec.service";
-import { PatActivity } from "../../models/pat/pat-models";
+import {
+  PatActivity,
+  PatActivityBudgetMatrix,
+} from "../../models/pat/pat-models";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
@@ -29,29 +32,6 @@ export interface CreatePatActivity {
   indicatorBaseLine: number | null;
   indicatorGoal: number | null;
   benefitAmount: number | null;
-}
-
-export interface BudgetCategory {
-  id: number;
-  code: string;
-  name: string;
-  amount: number;
-  plannedBudget: number;
-  unplannedBudget: number;
-  resourceType: "public" | "private";
-  description: string;
-}
-
-export interface PatActivityBudget {
-  id: number;
-  publicBudget: number;
-  privateBudget: number;
-  totalBudget: number;
-}
-
-export interface PatActivityBudgetMatrix {
-  budgetCategory: BudgetCategory;
-  patActivityBudget?: PatActivityBudget;
 }
 
 @Injectable({

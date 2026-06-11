@@ -48,6 +48,10 @@ export class PositionService {
     });
   }
 
+  findById(id: number): Observable<ApiResponse<Position>> {
+    return this.http.get<ApiResponse<Position>>(`${this.API_URL}/${id}`);
+  }
+
   createPosition(
     position: CreatePositionDto,
   ): Observable<ApiResponse<Position>> {

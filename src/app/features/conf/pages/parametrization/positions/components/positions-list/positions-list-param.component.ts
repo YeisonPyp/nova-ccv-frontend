@@ -13,6 +13,8 @@ import {
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 import { JobModalComponent } from "../../job-modal/job-modal.component";
+import { Router } from "@angular/router";
+import { EditIconComponent } from "@/app/shared/components/edit-icon/edit-icon.component";
 
 @Component({
   selector: "app-positions-list-param",
@@ -22,11 +24,13 @@ import { JobModalComponent } from "../../job-modal/job-modal.component";
     DynamicTableComponent,
     PaginationComponent,
     JobModalComponent,
+    EditIconComponent,
   ],
   templateUrl: "./positions-list-param.component.html",
 })
 export class PositionsListParamComponent {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly positionService = inject(PositionService);
 
   positions = signal<Position[]>([]);
@@ -93,6 +97,10 @@ export class PositionsListParamComponent {
     this.editingPosition.set(position);
     this.isEditPosition.set(true);
     this.jobModalOpen.set(true);
+  }
+
+  onPositionDetail(position: Position) {
+    this.router.navigate([`/assessment/positions/${position.id}`]);
   }
 
   closeJobModal() {

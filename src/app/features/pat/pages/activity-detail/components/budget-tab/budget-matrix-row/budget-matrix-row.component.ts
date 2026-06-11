@@ -10,13 +10,13 @@ import {
 } from "@angular/core";
 import { CommonModule, CurrencyPipe } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import {
-  BudgetCategory,
-  PatActivityBudgetMatrix,
-} from "@/app/core/services/pat/pat-activity.service";
 import { debounceTime, distinctUntilChanged, filter } from "rxjs";
 import { CurrencyFormatDirective } from "@/app/shared/directives/currency-format.directive";
 import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
+import {
+  BudgetCategory,
+  PatActivityBudgetMatrix,
+} from "@/app/core/models/pat/pat-models";
 
 export interface OnSaveBudgetMatrix {
   budgetCategory: BudgetCategory;

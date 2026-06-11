@@ -28,7 +28,7 @@
               class="btn btn-sm btn-outline"
               (click)="openEditPosition(item)"
             >
-              Editar
+              <app-edit-icon />
             </button>
           }
           @if (canDeletePosition) {
@@ -39,6 +39,12 @@
               Eliminar
             </button>
           }
+          <button
+            class="btn btn-sm btn-outline"
+            (click)="onPositionDetail(item)"
+          >
+            Ver
+          </button>
         </ng-template>
       </app-dynamic-table>
 

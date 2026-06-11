@@ -15,7 +15,6 @@ export interface PatActivityPlan {
   plannedIndicatorGoal: number;
   month: number;
   createdAt: string;
-  user: any;
 }
 
 export interface CreatePatActivityPlanDto {
