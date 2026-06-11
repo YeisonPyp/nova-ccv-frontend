@@ -54,7 +54,7 @@ export class FilterSectionComponent {
     toObservable(this.rows)
       .pipe(
         distinctUntilChanged(),
-        debounceTime(300),
+        debounceTime(700),
         tap((rows) => {
           rows = this.rows().filter((r) => r.value !== "" && r.value != null);
           if (rows.length === 0) {

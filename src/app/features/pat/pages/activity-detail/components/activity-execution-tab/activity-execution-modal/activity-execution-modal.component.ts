@@ -1,14 +1,20 @@
 import {
+  ActivityBudgetExecution,
   BudgetCategory,
   PatActivityBudgetMatrix,
   PatActivityConsolidation,
   PatActivityExecution,
 } from "@/app/core/models/pat/pat-models";
 import { PatActivityExecutionService } from "@/app/core/services/pat/pat-activity-execution.service";
-import { CurrencyFormatDirective } from "@/app/shared/directives/currency-format.directive";
-import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, input, output } from "@angular/core";
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  OnInit,
+  output,
+} from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, filter } from "rxjs";
 import { BudgetExecutionComponent } from "./bugdet-execution/budget-execution.component";
@@ -17,16 +23,10 @@ import { PatActivityPlan } from "@/app/core/services/pat/pat-activity-plan.servi
 @Component({
   selector: "app-activity-modal-component",
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    CurrencyFormatDirective,
-    FormFieldErrorDirective,
-    BudgetExecutionComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, BudgetExecutionComponent],
   templateUrl: "./activity-execution-modal.component.html",
 })
-export class ActivityExecutionModalComponent {
+export class ActivityExecutionModalComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatActivityExecutionService);
 
@@ -114,32 +114,69 @@ export class ActivityExecutionModalComponent {
           { emitEvent: false },
         );
       }
-
-      this.form.valueChanges
-        .pipe(
-          distinctUntilChanged(),
-          debounceTime(300),
-          filter(() => this.form.valid),
-        )
-        .subscribe((value) => {
-          this.service
-            .create({
-              activityId: this.activityId(),
-              month: this.month(),
-              executedBenefit: value.executedBenefit || 0,
-              executedMeasurement: value.executedMeasurementGoal || 0,
-              executedIndicator: value.executedIndicatorGoal || 0,
-              description: value.description || undefined,
-            })
-            .subscribe((res) => {
-              this.onSave.emit(res.data);
-            });
-        });
     });
   }
+
+  ngOnInit(): void {
+    this.form.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(700),
+        filter(() => this.form.valid),
+      )
+      .subscribe((value) => {
+        this.service
+          .create({
+            activityId: this.activityId(),
+            month: this.month(),
+            executedBenefit: value.executedBenefit || 0,
+            executedMeasurement: value.executedMeasurementGoal || 0,
+            executedIndicator: value.executedIndicatorGoal || 0,
+            description: value.description || undefined,
+          })
+          .subscribe((res) => {
+            this.onSave.emit(res.data);
+          });
+      });
+  }
+
   getBudgetExecutionByBudgetCategory(c: BudgetCategory) {
     return this.execution()?.budgetExecutions?.find(
       (e) => e.budgetCategory?.id === c.id,
     );
+  }
+
+  onSaveBudgetExecution(budgetExecution: ActivityBudgetExecution) {
+    const e = this.execution();
+    if (e) {
+      const budgetEx = e.budgetExecutions ?? [];
+      const budgetExMap = budgetEx.reduce(
+        (acc, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {} as Record<number, ActivityBudgetExecution>,
+      );
+      budgetExMap[budgetExecution.id] = budgetExecution;
+      e.budgetExecutions = Object.values(budgetExMap);
+      e.executedBudget = e.budgetExecutions.reduce(
+        (acc, curr) => acc + curr.amount,
+        0,
+      );
+      this.onSave.emit(e);
+    } else {
+      this.onSave.emit({
+        activityId: this.activityId(),
+        createdAt: "",
+        description: "",
+        executedBenefit: 0,
+        executedBudget: budgetExecution.amount,
+        executedIndicatorGoal: 0,
+        executedMeasurementGoal: 0,
+        id: budgetExecution.executionId,
+        month: this.month(),
+        budgetExecutions: [budgetExecution],
+      });
+    }
   }
 }

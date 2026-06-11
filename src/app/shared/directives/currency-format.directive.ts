@@ -1,4 +1,10 @@
-import { Directive, ElementRef, HostListener, inject } from "@angular/core";
+import {
+  Directive,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+} from "@angular/core";
 import { NgControl } from "@angular/forms";
 
 @Directive({
@@ -15,6 +21,14 @@ export class CurrencyFormatDirective {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
+
+  constructor() {
+    effect(() => {
+      const cleanValue = this.el.nativeElement.value.replace(/\D/g, "");
+      const numericValue = parseInt(cleanValue, 10);
+      this.el.nativeElement.value = this.formatter.format(numericValue);
+    });
+  }
 
   @HostListener("input", ["$event.target.value"])
   onInput(value: string) {

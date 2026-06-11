@@ -6,6 +6,7 @@ import {
   output,
   effect,
   signal,
+  OnInit,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -29,7 +30,7 @@ export interface MonthCardModalData {
   imports: [CommonModule, ReactiveFormsModule, CurrencyFormatDirective],
   templateUrl: "./activity-plan-modal.component.html",
 })
-export class ActivityPlanModalComponent {
+export class ActivityPlanModalComponent implements OnInit {
   activityId = input.required<number>();
   card = input.required<MonthCardModalData>();
   isOpen = input<boolean>(false);
@@ -76,38 +77,35 @@ export class ActivityPlanModalComponent {
           });
         }
       }
-
-      this.form.valueChanges
-        .pipe(
-          distinctUntilChanged(),
-          debounceTime(300),
-          filter(() => this.form.valid),
-        )
-        .subscribe((value) => {
-          const dto: CreatePatActivityPlanDto = {
-            activityId: this.activityId(),
-            month: c.month,
-            plannedBudget: value.plannedBudget!,
-            plannedBenefit: value.plannedBenefit!,
-            plannedMeasurementGoal: value.plannedMeasurementGoal!,
-            plannedIndicatorGoal: value.plannedIndicatorGoal!,
-          };
-
-          const req$ = c.plan
-            ? this.baseService.update(c.plan.id, dto)
-            : this.baseService.create(dto);
-
-          req$.subscribe({
-            next: (res) => {
-              this.submitting.set(false);
-              if (res.success && res.data) {
-                this.onSave.emit(res.data);
-                this.closeModal();
-              }
-            },
-          });
-        });
     });
+  }
+  ngOnInit(): void {
+    this.form.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(700),
+        filter(() => this.form.valid),
+      )
+      .subscribe((value) => {
+        const c = this.card();
+        const dto: CreatePatActivityPlanDto = {
+          activityId: this.activityId(),
+          month: c.month,
+          plannedBudget: value.plannedBudget!,
+          plannedBenefit: value.plannedBenefit!,
+          plannedMeasurementGoal: value.plannedMeasurementGoal!,
+          plannedIndicatorGoal: value.plannedIndicatorGoal!,
+        };
+        // this uses upsert HTTP resource
+        this.baseService.create(dto).subscribe({
+          next: (res) => {
+            this.submitting.set(false);
+            if (res.success && res.data) {
+              this.onSave.emit(res.data);
+            }
+          },
+        });
+      });
   }
 
   closeModal() {

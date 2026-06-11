@@ -30,7 +30,7 @@
     [execution]="month.execution"
     [plan]="month.plan"
     [budgetMatrix]="budgetMatrix()"
-    (onSave)="onSaveExecution.emit($event)"
+    (onSave)="onSave.emit($event)"
     (onClose)="closeModal()"
   ></app-activity-modal-component>
 }

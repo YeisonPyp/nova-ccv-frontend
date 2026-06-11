@@ -29,7 +29,7 @@ export class ActivityExecutionTabComponent {
   consolidation = input.required<PatActivityConsolidation>();
   cards = input.required<MonthCard[]>();
   modalOpen = signal(false);
-  onSaveExecution = output<PatActivityExecution>();
+  onSave = output<PatActivityExecution>();
   budgetMatrix = input.required<PatActivityBudgetMatrix[]>();
 
   editingMonth = signal<MonthCard | null>(null);

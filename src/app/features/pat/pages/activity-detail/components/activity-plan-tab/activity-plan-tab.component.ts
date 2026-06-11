@@ -23,7 +23,7 @@ export class ActivityPlanTabComponent {
   modalOpen = signal(false);
   editingCardData = signal<MonthCardModalData | null>(null);
 
-  onSaved = output<PatActivityPlan>();
+  onSave = output<PatActivityPlan>();
 
   cardMetrics(card: MonthCard): MonthCardMetric[] {
     return [

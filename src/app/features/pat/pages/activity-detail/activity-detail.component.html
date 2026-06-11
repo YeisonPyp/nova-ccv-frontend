@@ -306,12 +306,14 @@
               [activityId]="activity.id"
               [consolidation]="activity.consolidation!"
               [budgetMatrix]="budgetMatrix()"
+              (onSave)="onSaveExecution($event)"
             />
           }
           @if (activeTab() === "plan") {
             <app-activity-plan-tab
               [cards]="cards()"
               [activityId]="activity.id"
+              (onSave)="onSavePlan($event)"
             />
           }
           @if (activeTab() === "budget") {

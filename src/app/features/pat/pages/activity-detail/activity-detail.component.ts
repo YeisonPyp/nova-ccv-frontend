@@ -6,7 +6,9 @@ import { PatActivityService } from "@/app/core/services/pat/pat-activity.service
 import { ActivityExecutionTabComponent } from "./components/activity-execution-tab/activity-execution-tab.component";
 import { ActivityPlanTabComponent } from "./components/activity-plan-tab/activity-plan-tab.component";
 import {
+  ActivityBudgetExecution,
   PatActivity,
+  PatActivityBudget,
   PatActivityBudgetMatrix,
   PatActivityExecution,
 } from "@/app/core/models/pat/pat-models";
@@ -111,13 +113,58 @@ export class ActivityDetailComponent implements OnInit {
   }
 
   onSaveBudget(m: PatActivityBudgetMatrix) {
-    // const consolidation = this.activity()?.consolidation;
-    // if (consolidation) {
-    //   consolidation.approvedBudget = totalBudget;
-    //   this.activity.set({
-    //     ...this.activity()!,
-    //     consolidation: { ...consolidation },
-    //   });
-    // }
+    const consolidation = this.activity()?.consolidation;
+
+    if (consolidation) {
+      const matrix = this.budgetMatrix().reduce(
+        (acc, curr) => {
+          acc[curr.budgetCategory.id] = curr.patActivityBudget!;
+          return acc;
+        },
+        {} as Record<number, PatActivityBudget>,
+      );
+
+      matrix[m.budgetCategory.id] = m.patActivityBudget!;
+      const totalBudget = Object.values(matrix).reduce(
+        (acc, curr) => acc + curr.totalBudget,
+        0,
+      );
+
+      consolidation.approvedBudget = totalBudget;
+      this.activity.set({
+        ...this.activity()!,
+        consolidation: { ...consolidation },
+      });
+    }
+  }
+
+  onSaveExecution(ex: PatActivityExecution) {
+    this.executions.update((e) => {
+      const executionsMap = e.reduce(
+        (acc, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {} as Record<number, PatActivityExecution>,
+      );
+
+      executionsMap[ex.id] = ex;
+
+      return Object.values(executionsMap);
+    });
+  }
+
+  onSavePlan(p: PatActivityPlan) {
+    this.plans.update((i) => {
+      const plansMap = i.reduce(
+        (acc, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {} as Record<number, PatActivityPlan>,
+      );
+      plansMap[p.id] = p;
+      return Object.values(plansMap);
+    });
   }
 }

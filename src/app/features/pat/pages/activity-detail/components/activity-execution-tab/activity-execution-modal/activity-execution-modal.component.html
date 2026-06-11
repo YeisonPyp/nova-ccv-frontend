@@ -38,6 +38,7 @@
                 getBudgetExecutionByBudgetCategory(m.budgetCategory) || null
               "
               [matrix]="m"
+              (onSave)="onSaveBudgetExecution($event)"
             ></app-budget-execution>
           }
         </div>
