@@ -1,0 +1,72 @@
+<div class="p-4 space-y-4">
+  <div class="flex items-center justify-between">
+    <h5 class="text-sm font-semibold text-gray-700">Requisitos</h5>
+    <button
+      class="text-xs text-primary font-medium hover:underline"
+      (click)="openModal(null)"
+    >
+      + Agregar Requisito
+    </button>
+  </div>
+
+  @for (req of requirements(); track req.id) {
+    <div class="ml-4 border-l-2 border-indigo-100 pl-4 py-2">
+      <div class="flex justify-between items-start mb-2">
+        <div>
+          <p class="text-sm font-medium text-secondary">
+            {{ req.name }}
+          </p>
+          <p class="text-xs text-secondary">{{ req.description }}</p>
+          <p class="text-xs text-secondary mt-1">
+            Archivos máximos: {{ req.maxFiles }}
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button
+            class="icon-btn text-gray-500 hover:text-primary text-xs"
+            (click)="openModal(req)"
+            title="Editar"
+          >
+            <app-edit-icon />
+          </button>
+          <button
+            class="icon-btn text-gray-500 hover:text-primary text-xs"
+            (click)="deleteRequirement(req)"
+            title="Eliminar"
+          >
+            <app-trash-icon />
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-5">
+        @for (file of req.files; track file.id) {
+          <app-file-item
+            [file]="file"
+            [label]="file.fileName"
+            (fileSelected)="uploadFile($event, req)"
+            (deleteRequested)="deleteFile(req, file)"
+          ></app-file-item>
+        }
+
+        @if (
+          !req.files || req.files.length < req.maxFiles || req.maxFiles === 0
+        ) {
+          <app-file-item
+            [file]="null"
+            label="Agregar Archivo"
+            (fileSelected)="uploadFile($event, req)"
+          ></app-file-item>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<app-component-requirement-modal
+  [componentId]="componentId()!"
+  [selectedRequirement]="selectedRequirement()"
+  [isOpen]="isModalOpen()"
+  (onSubmit)="onSaveRequirement.emit($event)"
+  (onClose)="closeModal()"
+></app-component-requirement-modal>

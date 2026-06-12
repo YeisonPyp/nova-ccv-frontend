@@ -2,7 +2,10 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { PositionService } from "@/app/core/services/assessment/position.service";
-import { Position } from "@/app/core/models/assessment/position.model";
+import {
+  Position,
+  PositionAssessmentComponent,
+} from "@/app/core/models/assessment/position.model";
 import { PositionAssessmentComponentsComponent } from "./components/position-assessment-component/position-assessment-components.component";
 
 @Component({
@@ -17,6 +20,7 @@ export class PositionDetailComponent implements OnInit {
 
   loading = signal(true);
   position = signal<Position | null>(null);
+  assessmentComponents = signal<Array<PositionAssessmentComponent>>([]);
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
@@ -35,6 +39,7 @@ export class PositionDetailComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.position.set(res.data);
+          this.assessmentComponents.set(res.data.assessmentComponent || []);
         }
         this.loading.set(false);
       },

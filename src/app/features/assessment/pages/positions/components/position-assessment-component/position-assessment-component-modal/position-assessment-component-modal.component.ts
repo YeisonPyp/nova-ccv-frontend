@@ -1,7 +1,5 @@
-import {
-  PositionAssessmentComponent,
-  PositionAssessmentComponentService,
-} from "@/app/core/services/assessment/position-assessment-component.service";
+import { PositionAssessmentComponent } from "@/app/core/models/assessment/position.model";
+import { PositionAssessmentComponentService } from "@/app/core/services/assessment/position-assessment-component.service";
 import { CommonModule } from "@angular/common";
 import {
   Component,
@@ -25,7 +23,7 @@ export class PositionAssessmentComponentModalComponent {
 
   positionId = input.required<number>();
   selectedComponent = input<PositionAssessmentComponent | null>(null);
-  isComponentModalOpen = input<boolean>(false);
+  isOpen = input.required<boolean>();
 
   onSubmit = output<PositionAssessmentComponent>();
   onClose = output<void>();

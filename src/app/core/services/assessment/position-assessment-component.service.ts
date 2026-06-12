@@ -3,32 +3,10 @@ import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-
-export interface AssessmentComponentRequirementFile {
-  id: number;
-  fileName: string;
-  bucketName: string;
-}
-
-export interface AssessmentComponentRequirement {
-  id: number;
-  componentId: number;
-  name: string;
-  description: string;
-  maxFiles: number;
-  files?: AssessmentComponentRequirementFile[];
-}
-
-export interface PositionAssessmentComponent {
-  id: number;
-  positionId: number;
-  name: string;
-  description: string;
-  minValue: number;
-  maxValue: number;
-  createdAt: string;
-  requirements?: AssessmentComponentRequirement[];
-}
+import {
+  AssessmentComponentRequirement,
+  PositionAssessmentComponent,
+} from "../../models/assessment/position.model";
 
 export interface CreatePositionAssessmentComponentDto {
   positionId: number;

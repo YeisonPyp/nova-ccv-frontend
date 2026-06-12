@@ -1,5 +1,5 @@
+import { AssessmentComponentRequirement } from "@/app/core/models/assessment/position.model";
 import {
-  AssessmentComponentRequirement,
   AssessmentComponentRequirementService,
   CreateAssessmentComponentRequirementDto,
 } from "@/app/core/services/assessment/position-assessment-component.service";
@@ -24,13 +24,12 @@ export class ComponentRequirementModalComponent {
   private fb = inject(FormBuilder);
   private service = inject(AssessmentComponentRequirementService);
 
-  currentParentComponentId = input.required<number>();
   selectedRequirement = input.required<AssessmentComponentRequirement | null>();
   isOpen = input(false);
+  componentId = input.required<number>();
 
   onSubmit = output<AssessmentComponentRequirement>();
   onClose = output<void>();
-  loading = signal(false);
   submitting = signal(false);
 
   requirementForm = this.fb.group({
@@ -66,7 +65,7 @@ export class ComponentRequirementModalComponent {
       name: this.requirementForm.value.name!,
       description: this.requirementForm.value.description || undefined,
       maxFiles: this.requirementForm.value.maxFiles!,
-      componentId: this.currentParentComponentId(),
+      componentId: this.componentId(),
     };
 
     const req$ = this.selectedRequirement()
