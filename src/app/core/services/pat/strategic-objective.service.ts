@@ -19,7 +19,7 @@ import {
 export interface CreatePatStrategicObjectiveDto {
   name: string;
   code?: string;
-  year: number;
+  processId: number;
   description?: string;
 }
 
@@ -31,25 +31,21 @@ export class PatStrategicObjectiveService extends FilterServiceSpecImpl<
   constructor() {
     super("pat/v2/strategic-objectives");
   }
-
-  getServiceByYear(year: number) {
-    return new PatStrategicObjectiveByYearService(this, year);
-  }
 }
 
 export class PatStrategicObjectiveByYearService implements FilterServiceSpec {
   constructor(
     private service: PatStrategicObjectiveService,
-    private year?: number,
+    private planName?: string,
   ) {}
 
   findAll(
     pageable: PageableQueryWithRsql,
   ): Observable<ApiResponse<APIPage<PatStrategicObjective>>> {
-    if (this.year) {
+    if (this.planName) {
       pageable.rsqlQuery = pageable.rsqlQuery
-        ? `${pageable.rsqlQuery} and year==${this.year}`
-        : `year==${this.year}`;
+        ? `${pageable.rsqlQuery} and planName==${this.planName}`
+        : `planName==${this.planName}`;
     }
     return this.service.findAll(pageable);
   }

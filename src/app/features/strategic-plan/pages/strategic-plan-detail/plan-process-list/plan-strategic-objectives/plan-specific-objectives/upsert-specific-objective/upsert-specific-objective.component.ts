@@ -9,41 +9,39 @@ import {
   signal,
 } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { PatTacticalActivity } from "@/app/core/models/pat/pat-models";
-import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
+import { PatSpecificObjective } from "@/app/core/models/pat/pat-models";
 import {
-  CreatePatTacticalActivityDto,
-  PatTacticalActivityService,
-} from "@/app/core/services/pat/tactical-activity.service";
+  CreatePatSpecificObjectiveDto,
+  PatSpecificObjectiveService,
+} from "@/app/core/services/pat/pat-specific-objective.service";
+import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
 
 @Component({
-  selector: "app-upsert-tactical-activity",
+  selector: "app-upsert-specific-objective",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormFieldErrorDirective],
-  templateUrl: "./upsert-tactical-activity.component.html",
+  templateUrl: "./upsert-specific-objective.component.html",
 })
-export class UpsertTacticalActivityComponent {
+export class UpsertSpecificObjectiveComponent {
   readonly isOpen = input<boolean>(false);
-  readonly year = input.required<number>();
-  readonly objectiveId = input.required<number>();
+  readonly strategicObjectiveId = input.required<number>();
+  readonly specific = input<PatSpecificObjective | null>(null);
 
   readonly onClose = output<void>();
-  readonly onSaved = output<PatTacticalActivity>();
-
-  tacticalActivity = input<PatTacticalActivity | null>(null);
+  readonly onSaved = output<PatSpecificObjective>();
 
   private readonly fb = inject(FormBuilder);
-  private readonly service = inject(PatTacticalActivityService);
+  private readonly service = inject(PatSpecificObjectiveService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
 
-  readonly editing = computed(() => this.tacticalActivity() != null);
+  readonly editing = computed(() => this.specific() != null);
   readonly title = computed(() =>
-    this.editing() ? "Editar actividad táctica" : "Nueva actividad táctica",
+    this.editing() ? "Editar objetivo específico" : "Nuevo objetivo específico",
   );
   readonly submitLabel = computed(() =>
-    this.editing() ? "Guardar cambios" : "Crear actividad táctica",
+    this.editing() ? "Guardar cambios" : "Crear objetivo específico",
   );
 
   form = this.fb.group({
@@ -56,7 +54,7 @@ export class UpsertTacticalActivityComponent {
     effect(() => {
       if (!this.isOpen()) return;
       this.error.set(null);
-      const s = this.tacticalActivity();
+      const s = this.specific();
       if (s) {
         this.form.reset({
           name: s.name,
@@ -82,15 +80,14 @@ export class UpsertTacticalActivityComponent {
     this.error.set(null);
 
     const v = this.form.value;
-    const dto: CreatePatTacticalActivityDto = {
+    const dto: CreatePatSpecificObjectiveDto = {
       name: v.name!,
       code: v.code || undefined,
       description: v.description || undefined,
-      year: this.year(),
-      specificObjectiveId: this.objectiveId(),
+      strategicObjectiveId: this.strategicObjectiveId(),
     };
 
-    const s = this.tacticalActivity();
+    const s = this.specific();
     const req$ = s ? this.service.update(s.id, dto) : this.service.create(dto);
 
     req$.subscribe({

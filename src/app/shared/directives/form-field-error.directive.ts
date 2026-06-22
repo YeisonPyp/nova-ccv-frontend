@@ -22,7 +22,7 @@ export class FormFieldErrorDirective implements OnInit, OnDestroy {
   private readonly el = inject(ElementRef);
   private readonly renderer = inject(Renderer2);
 
-  appFormFieldError = input<Record<string, string> | undefined>({});
+  appFormFieldError = input<Record<string, string> | null>({});
 
   private errorElement: HTMLElement | null = null;
   private statusSub?: Subscription;

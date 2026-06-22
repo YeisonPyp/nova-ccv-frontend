@@ -52,16 +52,6 @@ export const PAT_ROUTES: Routes = [
         title: "PAT — Detalle de Actividad",
         canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
-
-      {
-        path: "objectives/:id",
-        loadComponent: () =>
-          import("./pages/objective-detail/objective-detail.component").then(
-            (m) => m.ObjectiveDetailComponent,
-          ),
-        title: "PAT — Detalle de Objetivo",
-        canActivate: [hasPermissionGuard(["PAT_STRATEGIC_OBJECTIVE_READ"])],
-      },
       {
         path: "training",
         loadComponent: () =>

@@ -9,46 +9,45 @@ import {
   signal,
 } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { PatStrategicObjective } from "@/app/core/models/pat/pat-models";
-import {
-  CreatePatStrategicObjectiveDto,
-  PatStrategicObjectiveService,
-} from "@/app/core/services/pat/strategic-objective.service";
+import { PatTacticalActivity } from "@/app/core/models/pat/pat-models";
 import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
+import {
+  CreatePatTacticalActivityDto,
+  PatTacticalActivityService,
+} from "@/app/core/services/pat/tactical-activity.service";
 
 @Component({
-  selector: "app-upsert-objective",
+  selector: "app-upsert-tactical-activity",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormFieldErrorDirective],
-  templateUrl: "./upsert-objective.component.html",
+  templateUrl: "./upsert-tactical-activity.component.html",
 })
-export class UpsertObjectiveComponent {
+export class UpsertTacticalActivityComponent {
   readonly isOpen = input<boolean>(false);
-  readonly year = input.required<number>();
-  readonly objective = input<PatStrategicObjective | null>(null);
+  readonly objectiveId = input.required<number>();
 
   readonly onClose = output<void>();
-  readonly onSaved = output<PatStrategicObjective>();
+  readonly onSaved = output<PatTacticalActivity>();
+
+  tacticalActivity = input<PatTacticalActivity | null>(null);
 
   private readonly fb = inject(FormBuilder);
-  private readonly service = inject(PatStrategicObjectiveService);
+  private readonly service = inject(PatTacticalActivityService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
 
-  readonly editing = computed(() => this.objective() != null);
+  readonly editing = computed(() => this.tacticalActivity() != null);
   readonly title = computed(() =>
-    this.editing()
-      ? "Editar objetivo estratégico"
-      : "Nuevo objetivo estratégico",
+    this.editing() ? "Editar actividad táctica" : "Nueva actividad táctica",
   );
   readonly submitLabel = computed(() =>
-    this.editing() ? "Guardar cambios" : "Crear objetivo",
+    this.editing() ? "Guardar cambios" : "Crear actividad táctica",
   );
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.maxLength(300)]],
-    code: ["", Validators.maxLength(10)],
+    code: ["", Validators.maxLength(15)],
     description: ["", Validators.maxLength(1000)],
   });
 
@@ -56,19 +55,15 @@ export class UpsertObjectiveComponent {
     effect(() => {
       if (!this.isOpen()) return;
       this.error.set(null);
-      const o = this.objective();
-      if (o) {
+      const s = this.tacticalActivity();
+      if (s) {
         this.form.reset({
-          name: o.name,
-          code: o.code ?? "",
-          description: o.description ?? "",
+          name: s.name,
+          code: s.code ?? "",
+          description: s.description ?? "",
         });
       } else {
-        this.form.reset({
-          name: "",
-          code: "",
-          description: "",
-        });
+        this.form.reset({ name: "", code: "", description: "" });
       }
     });
   }
@@ -86,15 +81,15 @@ export class UpsertObjectiveComponent {
     this.error.set(null);
 
     const v = this.form.value;
-    const dto: CreatePatStrategicObjectiveDto = {
+    const dto: CreatePatTacticalActivityDto = {
       name: v.name!,
       code: v.code || undefined,
-      year: this.year(),
       description: v.description || undefined,
+      specificObjectiveId: this.objectiveId(),
     };
 
-    const o = this.objective();
-    const req$ = o ? this.service.update(o.id, dto) : this.service.create(dto);
+    const s = this.tacticalActivity();
+    const req$ = s ? this.service.update(s.id, dto) : this.service.create(dto);
 
     req$.subscribe({
       next: (res) => {
@@ -103,7 +98,7 @@ export class UpsertObjectiveComponent {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.error.set(err?.error?.message ?? "Error al guardar el objetivo");
+        this.error.set(err?.error?.message ?? "Error al guardar");
       },
     });
   }

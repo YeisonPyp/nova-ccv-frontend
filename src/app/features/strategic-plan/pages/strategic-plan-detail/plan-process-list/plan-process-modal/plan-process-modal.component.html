@@ -1,0 +1,37 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5>Nuevo Proceso</h5>
+      <button type="button" class="btn btn-link" (click)="close()">✕</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="modal-body flex flex-col gap-4">
+        <div class="form-group">
+          <label class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide">
+            Nombre <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control"
+            [appFormFieldError]="{ required: 'El nombre es obligatorio' }"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          @if (submitting()) {
+            Creando...
+          } @else {
+            Crear Proceso
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

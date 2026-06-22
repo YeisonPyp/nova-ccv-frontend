@@ -15,14 +15,23 @@ import {
 } from "./competency-score-card/competency-score-card.component";
 import { Router } from "@angular/router";
 import { AssessmentService } from "@/app/core/services/assessment/assessment.service";
+import { ReportScoreChange } from "./assessment-component-report/assessment-component-report.component";
 
 export interface CompetencyAssessmentDto {
   [competencyId: number]: number | null;
 }
 
+export interface ComponentAssessmentDto {
+  [reportId: number]: {
+    score: number;
+    observations?: string;
+  };
+}
+
 export interface EditAssesmentDto {
   id: number;
   competencyScores: CompetencyAssessmentDto;
+  componentScores: ComponentAssessmentDto;
   observations?: string;
   agreements?: string;
   aspectsToImprove?: string;
@@ -43,12 +52,29 @@ export class EditAssessmentModalComponent implements OnInit {
   assessmentForm: FormGroup;
   competencyScores = signal<CompetencyAssessmentDto>({});
   competencyWeightedScore = signal<CompetencyAssessmentDto>({});
+  componentWeightedScore = signal<ComponentAssessmentDto>({});
 
-  matrixTotalScore = computed(() => {
-    const scores = this.competencyWeightedScore();
+  private calculateMatrixScore(scores: CompetencyAssessmentDto) {
     return (
       Object.values(scores).reduce((a, b) => a + (b ?? 0), 0) /
       (Object.keys(scores).length || 1)
+    );
+  }
+
+  private calculateComponentScore(scores: ComponentAssessmentDto) {
+    return (
+      Object.values(scores).reduce((a, b) => a + (b?.score ?? 0), 0) /
+      (Object.keys(scores).length || 1)
+    );
+  }
+
+  matrixTotalScore = computed(() => {
+    const scores = this.competencyWeightedScore();
+    const componentScore = this.componentWeightedScore();
+    return (
+      (this.calculateMatrixScore(scores) +
+        this.calculateComponentScore(componentScore)) /
+      2
     );
   });
 
@@ -65,6 +91,15 @@ export class EditAssessmentModalComponent implements OnInit {
       this.competencyWeightedScore.set(
         a.competencyScores?.reduce<CompetencyAssessmentDto>((acc, score) => {
           acc[score.competency?.id ?? 0] = score.weightedScore;
+          return acc;
+        }, {}) ?? {},
+      );
+      this.componentWeightedScore.set(
+        a.components?.reduce<ComponentAssessmentDto>((acc, reports) => {
+          acc[reports.id] = {
+            score: reports.score,
+            observations: reports.observations,
+          };
           return acc;
         }, {}) ?? {},
       );
@@ -117,6 +152,7 @@ export class EditAssessmentModalComponent implements OnInit {
       const formValue = this.assessmentForm.value;
       const payload: EditAssesmentDto = {
         competencyScores: this.competencyScores(),
+        componentScores: this.componentWeightedScore(),
         observations: formValue.observations,
         agreements: formValue.agreements,
         aspectsToImprove: formValue.aspectsToImprove,
@@ -139,6 +175,17 @@ export class EditAssessmentModalComponent implements OnInit {
     this.competencyWeightedScore.set({
       ...this.competencyWeightedScore(),
       [change.id]: change.weightedScore,
+    });
+  }
+
+  onChangeComponentScore(change: ReportScoreChange) {
+    const { observations, reportId, score } = change;
+    this.componentWeightedScore.set({
+      ...this.componentWeightedScore(),
+      [reportId]: {
+        score: score,
+        observations: observations,
+      },
     });
   }
 

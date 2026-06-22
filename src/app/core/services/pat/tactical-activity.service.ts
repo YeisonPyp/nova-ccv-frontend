@@ -22,7 +22,6 @@ export interface PatTacticalActivityQueryParams extends PageableQuery {
 export interface CreatePatTacticalActivityDto {
   name: string;
   code?: string;
-  year?: number;
   description?: string;
   specificObjectiveId: number;
 }

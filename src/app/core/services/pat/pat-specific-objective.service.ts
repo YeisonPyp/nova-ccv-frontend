@@ -6,7 +6,6 @@ export interface CreatePatSpecificObjectiveDto {
   name: string;
   code?: string;
   description?: string;
-  year: number;
   strategicObjectiveId: number;
 }
 

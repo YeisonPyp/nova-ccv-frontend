@@ -4,18 +4,13 @@ import {
   effect,
   EventEmitter,
   input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
+  signal,
 } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
 import { CompetencyScore } from "@/app/core/models/assessment/competency-score.model";
+import { ScoreSliderComponent } from "../score-slider/score-slider.component";
+import { FormControl } from "@angular/forms";
 
 export interface ChangeCompetencyScore {
   id: number;
@@ -25,7 +20,8 @@ export interface ChangeCompetencyScore {
 
 @Component({
   selector: "app-competency-score-card",
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, ScoreSliderComponent],
   templateUrl: "./competency-score-card.component.html",
   styleUrl: "./competency-score-card.component.scss",
 })
@@ -33,6 +29,10 @@ export class CompetencyScoreCardComponent implements OnInit {
   competencyScore = input.required<CompetencyScore>();
 
   @Output() scoreChange = new EventEmitter<ChangeCompetencyScore>();
+  min = signal(0);
+  max = signal(5);
+  currentScore = signal(0);
+  scoreControl = new FormControl(0);
 
   get competencyName() {
     return this.competencyScore().competency?.name ?? "Competencia Técnica";
@@ -45,41 +45,25 @@ export class CompetencyScoreCardComponent implements OnInit {
     );
   }
 
-  form = new FormGroup({
-    score: new FormControl(0, {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-  });
-
   constructor() {
     effect(() => {
-      const { minScore, maxScore } = this.competencyScore();
-
-      const scoreControl = this.form.controls.score;
-
-      scoreControl.setValidators([
-        Validators.required,
-        Validators.min(minScore ?? 0),
-        Validators.max(maxScore ?? 5),
-      ]);
-
-      scoreControl.updateValueAndValidity();
+      this.currentScore.set(this.competencyScore().score);
     });
   }
   ngOnInit(): void {
-    this.form.patchValue({ score: this.competencyScore().score });
+    this.scoreControl.valueChanges.subscribe((value) => {
+      this.onScoreChange(value || 0);
+    });
+  }
 
-    this.form.get("score")?.valueChanges.subscribe((value) => {
-      const weightedScore =
-        ((Number(value) - this.competencyScore().minScore) /
-          (this.competencyScore().maxScore - this.competencyScore().minScore)) *
-        100;
-      this.scoreChange.emit({
-        id: this.competencyScore().competency?.id ?? 0,
-        score: Number(value),
-        weightedScore,
-      });
+  onScoreChange(value: number): void {
+    this.currentScore.set(value);
+    const { minScore, maxScore } = this.competencyScore();
+    const weightedScore = ((value - minScore) / (maxScore - minScore)) * 100;
+    this.scoreChange.emit({
+      id: this.competencyScore().competency?.id ?? 0,
+      score: value,
+      weightedScore,
     });
   }
 }

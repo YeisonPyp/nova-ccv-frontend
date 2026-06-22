@@ -1,40 +1,15 @@
 <div class="competency-score-card">
-  <form class="competency-score-form" [formGroup]="form">
-    <div class="competency-info">
-      <strong>{{ competencyName }}</strong>
-      <p>{{ competencyDescription }}</p>
-    </div>
+  <div class="competency-info">
+    <strong>{{ competencyName }}</strong>
+    <p>{{ competencyDescription }}</p>
+  </div>
 
-    <section>
-      <div class="score-container">
-        <span style="font-weight: 600; color: black; font-size: 14px"
-          >Calificación</span
-        >
-        <strong class="score-range"
-          >{{ form.get("score")?.value }}/{{
-            competencyScore().maxScore
-          }}</strong
-        >
-      </div>
-      <input
-        type="range"
-        class="competency-range"
-        formControlName="score"
-        min="{{ competencyScore().minScore }}"
-        max="{{ competencyScore().maxScore }}"
-        (input)="form.get('score')?.setValue($any($event.target).value)"
-        [style.background]="
-          'linear-gradient(to right, #0056b3 0%, #0056b3 ' +
-          form.get('score')?.value +
-          '%, #e0e0e0 ' +
-          form.get('score')?.value +
-          '%, #e0e0e0 100%)'
-        "
-      />
-      <div class="score-container">
-        <span>Deficiente ({{ competencyScore().minScore }})</span>
-        <span>Excelente ({{ competencyScore().maxScore }})</span>
-      </div>
-    </section>
-  </form>
+  <section>
+    <app-score-slider
+      formControl="scoreControl"
+      [min]="min()"
+      [max]="max()"
+      label="Puntaje de Evaluación"
+    />
+  </section>
 </div>

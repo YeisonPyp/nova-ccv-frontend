@@ -28,7 +28,6 @@ export interface PatTacticalActivity {
   name: string;
   code: string;
   description: string;
-  year: number;
 }
 
 export interface PatActivityConsolidation {
@@ -161,7 +160,7 @@ export interface PatStrategicObjective {
   id: number;
   name: string;
   code: string;
-  year: number;
+  planName: string;
   description?: string;
   specificObjectives?: PatSpecificObjective[];
 }

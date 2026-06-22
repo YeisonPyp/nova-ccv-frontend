@@ -1,0 +1,65 @@
+<div class="p-6 max-w-full mx-auto flex flex-col gap-6 min-h-screen">
+  <!-- Plan header -->
+  @if (isLoading()) {
+    <div class="text-center py-6 text-tertiary text-sm">Cargando plan...</div>
+  }
+  @if (plan(); as p) {
+    <section
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 flex items-center justify-between flex-wrap gap-3"
+    >
+      <div>
+        <span
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+        >
+          Plan estratégico
+        </span>
+        <h1 class="text-2xl font-bold text-secondary m-0">{{ p.name }}</h1>
+      </div>
+      <span
+        class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800"
+      >
+        {{ p.startsYear }} — {{ p.endsYear }}
+      </span>
+    </section>
+
+    <!-- Miller columns -->
+    <div
+      class="grid grid-cols-1 lg:grid-cols-12 gap-4"
+      style="min-height: 600px"
+    >
+      <!-- Col 1: Processes -->
+      <div class="lg:col-span-3 flex flex-col">
+        <app-plan-process-list
+          [plan]="p"
+          [processes]="processes()"
+          (processSelected)="onProcessSelected($event)"
+          (onSave)="onProcessSaved($event)"
+          (onDelete)="onProcessDeleted($event)"
+        />
+      </div>
+
+      <!-- Col 2: Strategic objectives (visible once process selected) -->
+      <div class="lg:col-span-3 flex flex-col">
+        <app-plan-strategic-objectives
+          [process]="selectedProcess()"
+          (objectiveSelected)="onObjectiveSelected($event)"
+        />
+      </div>
+
+      <!-- Col 3: Specific objectives -->
+      <div class="lg:col-span-3 flex flex-col">
+        <app-plan-specific-objectives
+          [strategicObjective]="selectedObjective()"
+          (specificSelected)="onSpecificSelected($event)"
+        />
+      </div>
+
+      <!-- Col 4: Tactical activities -->
+      <div class="lg:col-span-3 flex flex-col">
+        <app-plan-tactical-activities
+          [specificObjective]="selectedSpecific()"
+        />
+      </div>
+    </div>
+  }
+</div>

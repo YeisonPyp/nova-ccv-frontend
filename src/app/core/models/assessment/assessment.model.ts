@@ -2,7 +2,32 @@ import { Area } from "./area.model";
 import { CompetencyScore } from "./competency-score.model";
 import { Employee } from "./employee.model";
 import { Period } from "./period.model";
-import { Position } from "./position.model";
+import { Position, PositionAssessmentComponent } from "./position.model";
+
+export interface AssessmentComponentReportSupportFile {
+  id: number;
+  fileName: string;
+  bucketName: string;
+}
+
+export interface AssessmentComponentReportSupport {
+  id: number;
+  reportId: number;
+  requirementId: number;
+  description: string;
+  createdAt: string;
+  files: AssessmentComponentReportSupportFile[];
+}
+
+export interface AssessmentComponentReport {
+  id: number;
+  score: number;
+  observations: string;
+  createdAt: string;
+  updatedAt: string;
+  component: PositionAssessmentComponent;
+  supports?: AssessmentComponentReportSupport[];
+}
 
 export interface Assessment {
   id: number;
@@ -23,4 +48,5 @@ export interface Assessment {
   evaluator?: Employee | undefined;
   evaluatee?: Employee | undefined;
   permissions?: string[];
+  components?: AssessmentComponentReport[];
 }

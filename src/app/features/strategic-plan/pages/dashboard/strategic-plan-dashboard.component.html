@@ -1,0 +1,43 @@
+<div class="w-full p-6 flex flex-col gap-6 min-h-screen">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-bold text-secondary m-0">Planes Estratégicos</h2>
+    <button class="btn btn-primary text-sm" (click)="showModal.set(true)">
+      + Nuevo Plan
+    </button>
+  </div>
+
+  @if (showModal()) {
+    <app-strategic-plan-modal
+      (created)="onPlanCreated($event)"
+      (closed)="showModal.set(false)"
+    />
+  }
+
+  <div
+    app-loading-spinner
+    [isLoading]="isLoading()"
+    class="flex justify-center items-center p-4"
+  ></div>
+
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+  >
+    @for (plan of plans(); track plan.id) {
+      <app-strategic-plan-card [plan]="plan" />
+    } @empty {
+      <div class="flex justify-center items-center py-16">
+        <span class="text-sm text-gray-400"
+          >No hay planes estratégicos registrados.</span
+        >
+      </div>
+    }
+  </div>
+
+  <div class="mt-auto pt-4 flex justify-center">
+    <app-pagination
+      [pages]="totalPages()"
+      [currentPage]="currentPage()"
+      (pageChange)="load($event)"
+    />
+  </div>
+</div>

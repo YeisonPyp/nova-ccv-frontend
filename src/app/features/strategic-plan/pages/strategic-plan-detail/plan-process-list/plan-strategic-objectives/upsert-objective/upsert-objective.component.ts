@@ -9,45 +9,47 @@ import {
   signal,
 } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { PatSpecificObjective } from "@/app/core/models/pat/pat-models";
+import { PatStrategicObjective } from "@/app/core/models/pat/pat-models";
 import {
-  CreatePatSpecificObjectiveDto,
-  PatSpecificObjectiveService,
-} from "@/app/core/services/pat/pat-specific-objective.service";
+  CreatePatStrategicObjectiveDto,
+  PatStrategicObjectiveService,
+} from "@/app/core/services/pat/strategic-objective.service";
 import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
+import { PatPlanProcess } from "@/app/core/models/strategic-plan/strategic-plan.models";
 
 @Component({
-  selector: "app-upsert-specific-objective",
+  selector: "app-upsert-objective",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormFieldErrorDirective],
-  templateUrl: "./upsert-specific-objective.component.html",
+  templateUrl: "./upsert-objective.component.html",
 })
-export class UpsertSpecificObjectiveComponent {
-  readonly isOpen = input<boolean>(false);
-  readonly year = input.required<number>();
-  readonly strategicObjectiveId = input.required<number>();
-  readonly specific = input<PatSpecificObjective | null>(null);
+export class UpsertObjectiveComponent {
+  readonly isOpen = input.required<boolean>();
+  readonly process = input.required<PatPlanProcess>();
+  readonly objective = input<PatStrategicObjective | null>(null);
 
   readonly onClose = output<void>();
-  readonly onSaved = output<PatSpecificObjective>();
+  readonly onSaved = output<PatStrategicObjective>();
 
   private readonly fb = inject(FormBuilder);
-  private readonly service = inject(PatSpecificObjectiveService);
+  private readonly service = inject(PatStrategicObjectiveService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
 
-  readonly editing = computed(() => this.specific() != null);
+  readonly editing = computed(() => this.objective() != null);
   readonly title = computed(() =>
-    this.editing() ? "Editar objetivo específico" : "Nuevo objetivo específico",
+    this.editing()
+      ? "Editar objetivo estratégico"
+      : "Nuevo objetivo estratégico",
   );
   readonly submitLabel = computed(() =>
-    this.editing() ? "Guardar cambios" : "Crear objetivo específico",
+    this.editing() ? "Guardar cambios" : "Crear objetivo",
   );
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.maxLength(300)]],
-    code: ["", Validators.maxLength(15)],
+    code: ["", Validators.maxLength(10)],
     description: ["", Validators.maxLength(1000)],
   });
 
@@ -55,15 +57,19 @@ export class UpsertSpecificObjectiveComponent {
     effect(() => {
       if (!this.isOpen()) return;
       this.error.set(null);
-      const s = this.specific();
-      if (s) {
+      const o = this.objective();
+      if (o) {
         this.form.reset({
-          name: s.name,
-          code: s.code ?? "",
-          description: s.description ?? "",
+          name: o.name,
+          code: o.code ?? "",
+          description: o.description ?? "",
         });
       } else {
-        this.form.reset({ name: "", code: "", description: "" });
+        this.form.reset({
+          name: "",
+          code: "",
+          description: "",
+        });
       }
     });
   }
@@ -81,16 +87,15 @@ export class UpsertSpecificObjectiveComponent {
     this.error.set(null);
 
     const v = this.form.value;
-    const dto: CreatePatSpecificObjectiveDto = {
+    const dto: CreatePatStrategicObjectiveDto = {
       name: v.name!,
       code: v.code || undefined,
+      processId: this.process().id,
       description: v.description || undefined,
-      year: this.year(),
-      strategicObjectiveId: this.strategicObjectiveId(),
     };
 
-    const s = this.specific();
-    const req$ = s ? this.service.update(s.id, dto) : this.service.create(dto);
+    const o = this.objective();
+    const req$ = o ? this.service.update(o.id, dto) : this.service.create(dto);
 
     req$.subscribe({
       next: (res) => {
@@ -99,7 +104,7 @@ export class UpsertSpecificObjectiveComponent {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.error.set(err?.error?.message ?? "Error al guardar");
+        this.error.set(err?.error?.message ?? "Error al guardar el objetivo");
       },
     });
   }

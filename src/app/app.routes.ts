@@ -27,6 +27,13 @@ export const routes: Routes = [
           import("./features/home/home.component").then((m) => m.HomeComponent),
       },
       {
+        path: "strategic-plan",
+        loadChildren: () =>
+          import("./features/strategic-plan/strategic-plan.routes").then(
+            (m) => m.STRATEGIC_PLAN_ROUTES,
+          ),
+      },
+      {
         path: "pat",
         loadChildren: () =>
           import("./features/pat/pat.routes").then((m) => m.PAT_ROUTES),

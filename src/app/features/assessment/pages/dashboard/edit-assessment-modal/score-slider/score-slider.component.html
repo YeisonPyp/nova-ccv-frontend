@@ -1,0 +1,27 @@
+<div
+  class="score-container"
+  style="font-weight: 600; color: black; font-size: 14px"
+>
+  <span>{{ label() }}</span>
+  <strong class="score-range">{{ val() }}/{{ max() }}</strong>
+</div>
+<input
+  type="range"
+  [min]="min()"
+  [max]="max()"
+  [value]="val()"
+  [disabled]="isDisabled()"
+  (input)="onInput($event)"
+  (blur)="onBlur()"
+  [style.background]="
+    'linear-gradient(to right, #0056b3 0%, #0056b3 ' +
+    fillPercent +
+    '%, #e0e0e0 ' +
+    fillPercent +
+    '%, #e0e0e0 100%)'
+  "
+/>
+<div class="score-container">
+  <span>Deficiente ({{ min() }})</span>
+  <span>Excelente ({{ max() }})</span>
+</div>

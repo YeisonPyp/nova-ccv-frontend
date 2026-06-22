@@ -1,0 +1,86 @@
+<div
+  class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full"
+>
+  <div
+    class="px-4 py-3 border-b border-gray-100 flex items-center justify-between"
+  >
+    <div class="flex flex-col">
+      <h3
+        class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+      >
+        Objetivos estratégicos
+      </h3>
+      <span class="text-xs text-gray-500 mt-0.5">{{
+        process()?.name || ""
+      }}</span>
+    </div>
+    @if (process()?.name) {
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-400">{{ objectives().length }}</span>
+        <button
+          type="button"
+          class="px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+          (click)="openUpsert(null)"
+        >
+          +
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="flex-1 overflow-y-auto">
+    @if (!process()) {
+      <div class="text-center py-10 text-tertiary text-sm">
+        Selecciona un plan.
+      </div>
+    } @else if (isLoading()) {
+      <div app-loading-spinner [isLoading]="isLoading()"></div>
+    } @else if (objectives().length === 0) {
+      <div class="text-center py-6 text-tertiary text-sm">Sin objetivos</div>
+    } @else {
+      <ul class="flex flex-col">
+        @for (s of objectives(); track s.id) {
+          <li class="flex gap-3">
+            <button
+              type="button"
+              class="w-[80%] px-4 py-3 text-left border-b border-gray-100 hover:bg-gray-50 transition-colors flex flex-col gap-1"
+              [class.bg-blue-50]="selectedId() === s.id"
+              [class.border-l-4]="selectedId() === s.id"
+              [class.border-l-primary]="selectedId() === s.id"
+              (click)="select(s)"
+            >
+              <span class="text-xs font-mono text-gray-500">{{ s.code }}</span>
+              <span class="text-sm font-medium text-secondary">{{
+                s.name
+              }}</span>
+              <p class="text-xs text-gray-500">{{ s.description }}</p>
+            </button>
+            <button
+              type="button"
+              class="w-[10%] border-b border-gray-100 hover:bg-gray-50 transition-colors flex flex-row gap-1 items-center"
+              (click)="openUpsert(s)"
+            >
+              <app-edit-icon />
+            </button>
+            <button
+              type="button"
+              class="w-[10%] border-b border-gray-100 hover:bg-gray-50 transition-colors flex flex-row gap-1 text-red-500 items-center"
+              (click)="deleteObjective(s, $event)"
+            >
+              <app-trash-icon />
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+  @if (process(); as p) {
+    <app-upsert-objective
+      [isOpen]="upsertOpen()"
+      [process]="p"
+      [objective]="objectiveToUpsert()"
+      (onClose)="upsertOpen.set(false)"
+      (onSaved)="onSaved($event)"
+    />
+  }
+</div>
