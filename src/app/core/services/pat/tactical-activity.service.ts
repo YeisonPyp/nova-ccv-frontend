@@ -62,10 +62,14 @@ export class PatTacticalActivityService extends FilterServiceSpecImpl<
   ) {
     return new SearchSelectContextFactory<PatTacticalActivity>(
       (term) => {
-        const b = builder.or(
-          builder.eq("name", `*${term}*`),
-          builder.eq("description", `*${term}*`),
-          builder.eq("year", year),
+        const b = builder.and(
+          builder.or(
+            builder.eq("name", `*${term}*`),
+            builder.eq("description", `*${term}*`),
+            builder.eq("code", `*${term}*`),
+          ),
+          builder.le("plan.yearStarts", year),
+          builder.ge("plan.yearEnds", year),
         );
         return this.findAll({ rsqlQuery: emit(b) }).pipe(
           map((res) => res?.data?.content ?? []),
