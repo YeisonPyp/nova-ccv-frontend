@@ -1,28 +1,41 @@
 <section class="p-4">
-  <details class="group" (toggle)="onToggle($event)">
-    <summary
-      class="text-sm font-bold text-tertiary uppercase tracking-wider cursor-pointer list-none mb-4 hover:text-secondary transition-colors">
-      Acciones correctivas
-    </summary>
+  <div class="group">
+    <span
+      class="text-sm font-bold text-tertiary uppercase tracking-wider cursor-pointer mb-4 hover:text-secondary transition-colors"
+    >
+      Acciones de mejora
+    </span>
 
-    <div class="space-y-2">
-      @if(childActions() >= 0) {
-        @for (action of actions(); track action.id) {
-          <app-corrective-action-details
-          [action]="action"
-          [planId]="planId()"
+    <div app-loading-spinner [isLoading]="isLoading()"></div>
 
-          (onDelete)="onDeleteCorrectiveAction($event)"
-          ></app-corrective-action-details>
+    @if (!isLoading()) {
+      <div class="space-y-2">
+        @if (childActions() >= 0) {
+          @for (action of pagedActions(); track action.id) {
+            <app-corrective-action-details
+              [action]="action"
+              [planId]="planId()"
+              (onDelete)="onDeleteCorrectiveAction($event)"
+            ></app-corrective-action-details>
+          }
         }
+      </div>
+
+      @if (actions().length > 0) {
+        <app-paginator
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (onSelectPage)="onSelectPage($event)"
+          (pageSizeChange)="onPageSizeChange($event)"
+        ></app-paginator>
       }
-    </div>
 
-    <app-new-corrective-action
-      [planId]="planId()"
-      [parentId]="parentId()"
-
-      (onCreated)="onCreated($event)"
-    ></app-new-corrective-action>
-  </details>
+      <app-new-corrective-action
+        [planId]="planId()"
+        [parentId]="parentId()"
+        (onCreated)="onCreated($event)"
+      ></app-new-corrective-action>
+    }
+  </div>
 </section>

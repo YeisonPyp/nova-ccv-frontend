@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
-  forwardRef,
   inject,
   input,
   OnInit,
@@ -9,7 +8,6 @@ import {
   signal,
 } from "@angular/core";
 import { EvidenceItemComponent } from "../../../components/evidence-item/evidence-item.component";
-import { CorrectiveActionSectionComponent } from "../corrective-action-section.component";
 import { CorrectiveActionDto } from "@/app/core/models/improvement-plan/corrective-action.model";
 import {
   FormBuilder,
@@ -30,12 +28,7 @@ import { toObservable } from "@angular/core/rxjs-interop";
 @Component({
   selector: "app-corrective-action-details",
   standalone: true,
-  imports: [
-    CommonModule,
-    EvidenceItemComponent,
-    forwardRef(() => CorrectiveActionSectionComponent),
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, EvidenceItemComponent, ReactiveFormsModule],
   templateUrl: "./corrective-action-details.component.html",
   styleUrl: "./corrective-action-details.component.scss",
 })
