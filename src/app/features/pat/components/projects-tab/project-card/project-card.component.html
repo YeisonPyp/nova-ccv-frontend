@@ -1,0 +1,25 @@
+<div
+  class="rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer p-5 flex flex-col gap-3"
+  (click)="onClick()"
+>
+  <div class="flex items-center justify-between">
+    <span class="text-xs">{{ project().code }}</span>
+    <span class="text-sm"> {{ project().status.name }}</span>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <span class="text-sm font-semibold">{{ project().name }}</span>
+    @if (project().description) {
+      <p class="text-xs m-0 line-clamp-2">
+        {{ project().description }}
+      </p>
+    }
+  </div>
+
+  <div class="flex items-center justify-between mt-1">
+    <span class="text-xs">{{ project().areaName }}</span>
+    <span class="text-xs">
+      {{ project().startDate }} — {{ project().endDate }}
+    </span>
+  </div>
+</div>

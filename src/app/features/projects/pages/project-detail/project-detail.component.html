@@ -26,9 +26,9 @@
             class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded"
             >{{ p.code }}</span
           >
-          <span class="badge {{ getStatusClass(p.status) }}">{{
+          <!--<span class="badge {{ getStatusClass(p.status) }}">{{
             p.status
-          }}</span>
+          }}</span>-->
           <span class="badge badge-outline text-xs">{{ p.priority }}</span>
         </div>
         <h1 class="text-2xl font-bold text-secondary m-0">{{ p.name }}</h1>
@@ -68,9 +68,6 @@
         >
           Presupuesto Total
         </p>
-        <p class="text-sm font-semibold text-gray-800">
-          {{ p.totalBudget | currency: "COP" : "symbol-narrow" : "1.0-0" }}
-        </p>
       </div>
 
       <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
@@ -92,17 +89,6 @@
         </p>
         <p class="text-sm font-medium text-gray-700">
           {{ p.endDate | date: "dd/MM/yyyy" }}
-        </p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <p
-          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
-        >
-          Creado por
-        </p>
-        <p class="text-sm font-medium text-gray-700">
-          {{ p.createdByUsername ?? "—" }}
         </p>
       </div>
 

@@ -68,31 +68,40 @@
     <!-- ── PARTES ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4">Partes del Proyecto</h5>
-      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
 
-        <app-search-select
+        <app-context-search-select
+          [ctx]="areaCtx"
           label="Área"
           [required]="true"
-          [items]="areaCtx.options()"
-          [selectedItems]="areaCtx.selectedOptions()"
-          [isInvalid]="isFieldInvalid('areaId')"
-          errorMessage="Área requerida"
-          (onSearch)="areaCtx.search($event)"
-          (onSelect)="areaCtx.select($event)"
-          (onRemove)="onAreaRemove($event)"
         />
 
-        <app-search-select
-          label="Centro de Costo"
+        <app-context-search-select
+          [ctx]="tacticalActivityCtx"
+          label="Actividad táctica"
           [required]="true"
-          [items]="costCenterCtx.options()"
-          [selectedItems]="costCenterCtx.selectedOptions()"
-          [isInvalid]="isFieldInvalid('costCenterName')"
-          errorMessage="Centro de costo requerido"
-          (onSearch)="costCenterCtx.search($event)"
-          (onSelect)="costCenterCtx.select($event)"
-          (onRemove)="onCostCenterRemove($event)"
         />
+
+        <div class="flex flex-col gap-1">
+          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
+            Empleado responsable <span class="text-red-500">*</span>
+          </label>
+          <input type="number" formControlName="employeeId" placeholder="ID de empleado"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+            [class.border-red-400]="isFieldInvalid('employeeId')" />
+          @if (isFieldInvalid("employeeId")) {
+            <span class="text-xs text-red-500">Empleado requerido</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
+            Programa
+          </label>
+          <input type="number" formControlName="programId" placeholder="ID de programa"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+            [class.border-red-400]="isFieldInvalid('programId')" />
+        </div>
 
       </div>
     </section>
@@ -100,7 +109,7 @@
     <!-- ── PLANIFICACIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4">Planificación</h5>
-      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
 
         <div class="flex flex-col gap-1">
           <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
@@ -123,18 +132,6 @@
             [class.border-red-400]="isFieldInvalid('ends')" />
           @if (isFieldInvalid("ends")) {
             <span class="text-xs text-red-500">Fecha requerida</span>
-          }
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
-            Presupuesto total <span class="text-red-500">*</span>
-          </label>
-          <input type="number" formControlName="budgetAmount" placeholder="0.00" min="0" step="0.01"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-            [class.border-red-400]="isFieldInvalid('budgetAmount')" />
-          @if (isFieldInvalid("budgetAmount")) {
-            <span class="text-xs text-red-500">Presupuesto requerido</span>
           }
         </div>
 

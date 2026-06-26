@@ -51,6 +51,7 @@ export class AreaService {
   newSearchSelectAreaContext(
     onSelectCallback?: OnSelectCallback<Area>,
     op?: SearchSelectContextFactoryOptions,
+    onRemoveCallback?: OnSelectCallback<Area>,
   ) {
     return new SearchSelectContextFactory<Area>(
       (term) =>
@@ -60,6 +61,7 @@ export class AreaService {
       (a) => ({ id: a.id, title: a.name }),
       onSelectCallback,
       op,
+      onRemoveCallback,
     );
   }
 }

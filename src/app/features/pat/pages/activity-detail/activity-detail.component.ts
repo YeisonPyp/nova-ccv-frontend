@@ -6,7 +6,6 @@ import { PatActivityService } from "@/app/core/services/pat/pat-activity.service
 import { ActivityExecutionTabComponent } from "./components/activity-execution-tab/activity-execution-tab.component";
 import { ActivityPlanTabComponent } from "./components/activity-plan-tab/activity-plan-tab.component";
 import {
-  ActivityBudgetExecution,
   PatActivity,
   PatActivityBudget,
   PatActivityBudgetMatrix,

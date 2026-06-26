@@ -22,14 +22,10 @@
     </div>
 
     <div class="p-6 min-h-100">
-      @switch (activeTab()) {
-        @case ("programs") {
-          <app-programs-tab [year]="year()" />
-        }
-        @case ("activities") {
-          <app-activities-tab [year]="year()" />
-        }
-      }
+      <ng-container
+        [ngComponentOutlet]="activeTabComponent()"
+        [ngComponentOutletInputs]="activeTabInputs()"
+      ></ng-container>
     </div>
   </div>
 </div>

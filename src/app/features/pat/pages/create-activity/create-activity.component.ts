@@ -1,5 +1,5 @@
-import { Employee } from "@/app/core/models/assessment/employee.model";
-import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
+import { Employee } from '@/app/core/models/assessment/employee.model';
+import { CostCenter } from '@/app/core/models/cost-center/cost-center.models';
 import {
   PatActivity,
   PatBenefitType,
@@ -7,20 +7,20 @@ import {
   PatMeasurement,
   PatPolicy,
   PatTacticalActivity,
-} from "@/app/core/models/pat/pat-models";
-import { EmployeeService } from "@/app/core/services/assessment/employee.service";
-import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
-import { BenefitTypeService } from "@/app/core/services/pat/benefit-type.service";
-import { CuantitativeIndicatorService } from "@/app/core/services/pat/cuantitative-indicator.service";
-import { MeasurementService } from "@/app/core/services/pat/measurement.service";
-import { PatActivityService } from "@/app/core/services/pat/pat-activity.service";
-import { PatProgramService } from "@/app/core/services/pat/pat-program.service";
-import { PolicyService } from "@/app/core/services/pat/policy.service";
-import { PatTacticalActivityService } from "@/app/core/services/pat/tactical-activity.service";
-import { ContextSearchSelectComponent } from "@/app/shared/components/context-search-select/context-search-select.component";
-import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
-import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
-import { CommonModule } from "@angular/common";
+} from '@/app/core/models/pat/pat-models';
+import { EmployeeService } from '@/app/core/services/assessment/employee.service';
+import { CostCenterService } from '@/app/core/services/cost-center/cost-center.service';
+import { BenefitTypeService } from '@/app/core/services/pat/benefit-type.service';
+import { CuantitativeIndicatorService } from '@/app/core/services/pat/cuantitative-indicator.service';
+import { MeasurementService } from '@/app/core/services/pat/measurement.service';
+import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
+import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
+import { PolicyService } from '@/app/core/services/pat/policy.service';
+import { PatTacticalActivityService } from '@/app/core/services/pat/tactical-activity.service';
+import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
+import { SearchSelectContextFactory } from '@/app/shared/components/search-select/on-search-select.interface';
+import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
@@ -29,11 +29,11 @@ import {
   input,
   output,
   signal,
-} from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+} from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
-  selector: "app-create-pat-activity",
+  selector: 'app-create-pat-activity',
   standalone: true,
   imports: [
     CommonModule,
@@ -41,7 +41,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
     ContextSearchSelectComponent,
     FormFieldErrorDirective,
   ],
-  templateUrl: "./create-activity.component.html",
+  templateUrl: './create-activity.component.html',
 })
 export class CreatePatActivityComponent {
   private readonly patApi = inject(PatActivityService);
@@ -63,17 +63,17 @@ export class CreatePatActivityComponent {
   submitting = signal(false);
 
   form = this.fb.group({
-    name: ["", [Validators.required, Validators.maxLength(255)]],
-    code: ["", [Validators.required, Validators.maxLength(50)]],
+    name: ['', [Validators.required, Validators.maxLength(255)]],
+    code: ['', [Validators.required, Validators.maxLength(50)]],
     employeeId: [null as number | null, Validators.required],
     tacticalActivityId: [null as number | null, Validators.required],
     costCenterId: [null as number | null, Validators.required],
     measurementId: [null as number | null, Validators.required],
     indicatorId: [null as number | null, Validators.required],
     benefitTypeId: [null as number | null, Validators.required],
-    startsAt: ["", Validators.required],
-    endsAt: ["", Validators.required],
-    description: ["", Validators.maxLength(1000)],
+    startsAt: ['', Validators.required],
+    endsAt: ['', Validators.required],
+    description: ['', Validators.maxLength(1000)],
     strategicProgramId: [null as number | null],
     policyId: [null as number | null],
     measurementGoal: [null as number | null],

@@ -1,21 +1,25 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { environment } from "../../../../environments/environment";
-import { ApiResponse } from "../../models/api-response.model";
-import { APIPage } from "../../models/api-page.model";
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../../models/api-response.model';
+import { APIPage } from '../../models/api-page.model';
 import {
   Project,
   ProjectActivity,
   ProjectRisk,
-} from "../../models/projects/project.model";
-import { GanttData } from "./project-activites.service";
+} from '../../models/projects/project.model';
+import { GanttData } from './project-activites.service';
+import {
+  PageableQuery,
+  PageableQueryParams,
+} from '@/app/shared/pageable-query';
 
 export const RISK_SCALE_OPTIONS = [
-  { value: "low", label: "Baja" },
-  { value: "medium", label: "Media" },
-  { value: "high", label: "Alta" },
-  { value: "extreme", label: "Extrema" },
+  { value: 'low', label: 'Baja' },
+  { value: 'medium', label: 'Media' },
+  { value: 'high', label: 'Alta' },
+  { value: 'extreme', label: 'Extrema' },
 ] as const;
 
 export interface CreateProjectObjectiveDto {
@@ -26,14 +30,15 @@ export interface CreateProjectObjectiveDto {
 export interface CreateProjectDto {
   code: string;
   name: string;
-  description?: string;
   areaId: number;
-  costCenterName: string;
   generalObjective: string;
   starts: string;
   ends: string;
   priorityId: number;
-  budgetAmount: number;
+  employeeId: number;
+  tacticalActivityCode: string;
+  description?: string;
+  programId?: number;
   objectives: CreateProjectObjectiveDto[];
 }
 
@@ -48,24 +53,21 @@ export interface CreateRiskDto {
   priority?: string;
 }
 
-@Injectable({ providedIn: "root" })
+export interface ProjectQueryParams extends PageableQuery {
+  status?: string | null;
+  year?: number;
+  areaId?: number;
+}
+
+@Injectable({ providedIn: 'root' })
 export class ProjectService {
   private readonly http = inject(HttpClient);
   private readonly base = environment.apiUrl;
 
   findAll(
-    params: {
-      status?: string;
-      areaId?: number;
-      page?: number;
-      size?: number;
-    } = {},
+    params: ProjectQueryParams,
   ): Observable<ApiResponse<APIPage<Project>>> {
-    const p: Record<string, any> = {};
-    if (params.status) p["status"] = params.status;
-    if (params.areaId != null) p["areaId"] = params.areaId;
-    if (params.page != null) p["page"] = params.page;
-    if (params.size != null) p["size"] = params.size;
+    const p = new PageableQueryParams(params).getParams();
     return this.http.get<ApiResponse<APIPage<Project>>>(
       `${this.base}/projects`,
       { params: p },

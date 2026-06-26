@@ -1,23 +1,25 @@
-import { Area } from "../assessment/area.model";
-import { CostCenter } from "../cost-center/cost-center.models";
+import { Area } from '../assessment/area.model';
+import { CostCenter } from '../cost-center/cost-center.models';
+
+export interface ProjectStatus {
+  name: string;
+  color: string;
+}
 
 export interface Project {
   id: number;
   code: string;
   name: string;
-  description?: string;
-  generalObjective: string;
+  areaName: string;
   area?: Area;
   costCenter?: CostCenter;
   startDate: string;
   endDate: string;
-  totalBudget: number;
-  status: string;
+  status: ProjectStatus;
   priority: string;
-  priorityScale: number;
   createdAt: string;
-  createdById?: number;
-  createdByUsername?: string;
+  description?: string;
+  generalObjective?: string;
 
   activities?: ProjectActivity[];
   risks?: ProjectRisk[];
