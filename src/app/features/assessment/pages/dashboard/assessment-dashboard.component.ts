@@ -1,20 +1,20 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
-import { AssessmentService } from "@/app/core/services/assessment/assessment.service";
-import { CommonModule } from "@angular/common";
-import { Period } from "@/app/core/models/assessment/period.model";
-import { AssessmentTableComponent } from "./assessment-table/assessment-table.component";
-import { AuthService } from "@/app/core/services/auth.service";
-import { Assessment } from "@/app/core/models/assessment/assessment.model";
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { AssessmentService } from '@/app/core/services/assessment/assessment.service';
+import { CommonModule } from '@angular/common';
+import { Period } from '@/app/core/models/assessment/period.model';
+import { AssessmentTableComponent } from './assessment-table/assessment-table.component';
+import { AuthService } from '@/app/core/services/auth.service';
+import { Assessment } from '@/app/core/models/assessment/assessment.model';
 import {
   CreateAssessmentDto,
   CreateAssessmentModalComponent,
-} from "./create-assessment-modal/create-assessment-modal.component";
-import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
-import { PeriodSelectorComponent } from "./period-selector/period-selector.component";
-import { Router } from "@angular/router";
+} from './create-assessment-modal/create-assessment-modal.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
+import { PeriodSelectorComponent } from './period-selector/period-selector.component';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-assessment-dashboard",
+  selector: 'app-assessment-dashboard',
   imports: [
     CommonModule,
     AssessmentTableComponent,
@@ -22,8 +22,8 @@ import { Router } from "@angular/router";
     PaginatorComponent,
     PeriodSelectorComponent,
   ],
-  templateUrl: "./assessment-dashboard.component.html",
-  styleUrl: "./assessment-dashboard.component.scss",
+  templateUrl: './assessment-dashboard.component.html',
+  styleUrl: './assessment-dashboard.component.scss',
 })
 export class AssessmentDashboardComponent implements OnInit {
   assesmentService = inject(AssessmentService);
@@ -42,17 +42,12 @@ export class AssessmentDashboardComponent implements OnInit {
     this.fetchPage(1);
   }
 
-  get canCreate(): boolean {
-    return (
-      this.authService.hasRole("ROLE_ADMIN") ||
-      this.authService.hasRole("ROLE_HR")
-    );
+  openEditModal(a: Assessment) {
+    this.router.navigate(['/assessment/edit', a.id]);
   }
 
-  openEditModal(a: Assessment) {
-    this.router.navigate(["/assessment/edit", a.id], {
-      state: { assessment: a },
-    });
+  goToSurveys() {
+    this.router.navigate(['/assessment/surveys']);
   }
 
   ngOnInit(): void {

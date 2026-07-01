@@ -3,68 +3,21 @@
   addLabel="+ Nueva actividad"
   (onAdd)="openCreateActivity()"
 >
-  <app-dynamic-table
-    [data]="activities()"
-    [columns]="activityColumns"
-    emptyMessage="Sin actividades"
-  >
-    <ng-template #customCell let-item let-col="column">
-      @switch (col.key) {
-        @case ("displayOrder") {
-          <span class="text-gray-400 text-xs">{{ item.displayOrder }}</span>
+  <div class="w-full">
+    <div app-loading-spinner [isLoading]="isLoading()"></div>
+    @if (!isLoading()) {
+      <div class="flex flex-col gap-4 py-4 px-4">
+        @for (activity of activities(); track activity.id) {
+          <app-activity-card [activity]="activity" />
         }
-        @case ("name") {
-          <div class="font-medium text-sm text-gray-800">{{ item.name }}</div>
-          @if (item.parentName) {
-            <div class="text-xs text-gray-400">↳ {{ item.parentName }}</div>
-          }
-        }
-        @case ("startsAt") {
-          {{ item.startsAt ? (item.startsAt | date: "dd/MM/yy") : "—" }}
-        }
-        @case ("endsAt") {
-          {{ item.endsAt ? (item.endsAt | date: "dd/MM/yy") : "—" }}
-        }
-        @case ("priority") {
-          {{ item.priority | priorityLabel }}
-        }
-        @case ("status") {
-          <span class="badge badge-outline text-xs">{{ item.status }}</span>
-        }
-        @case ("progressPercentage") {
-          <div class="flex items-center gap-2">
-            <div
-              class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden"
-              style="min-width: 60px"
-            >
-              <div
-                class="h-full bg-primary rounded-full"
-                [style.width.%]="item.progressPercentage"
-              ></div>
-            </div>
-            <span class="text-xs text-gray-400"
-              >{{ item.progressPercentage }}%</span
-            >
-          </div>
-        }
-      }
-    </ng-template>
-    <ng-template #actions let-item>
-      <button
-        class="btn btn-sm btn-outline text-xs"
-        (click)="openEditActivity(item)"
-      >
-        Editar
-      </button>
-    </ng-template>
-  </app-dynamic-table>
+      </div>
+    }
+    <app-paginator
+      [pageSize]="pageSize()"
+      [currentPage]="page()"
+      [totalPages]="totalPages()"
+      (onSelectPage)="page.set($event)"
+      (pageSizeChange)="pageSize.set($event)"
+    />
+  </div>
 </app-project-section-card>
-
-<app-activity-upsert-modal
-  [isOpen]="activityModalOpen()"
-  [projectId]="projectId()"
-  [activity]="editingActivity()"
-  [activities]="activities()"
-  (onClose)="closeActivityModal()"
-  (onSaved)="onActivitySaved($event)"
-/>

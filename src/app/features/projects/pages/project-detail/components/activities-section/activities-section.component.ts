@@ -1,62 +1,70 @@
-import { Component, input, output, signal } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { ProjectActivity } from "@/app/core/models/projects/project.model";
-import { ActivityUpsertModalComponent } from "../activity-upsert-modal/activity-upsert-modal.component";
-import { ProjectSectionCardComponent } from "../project-section-card/project-section-card.component";
-import { PriorityLabelPipe } from "../pipes/priority";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { ProjectActivity } from '@/app/core/models/projects/project.model';
+import { PriorityLabelPipe } from '../pipes/priority';
+import { Router } from '@angular/router';
+import { ProjectActivitiesService } from '@/app/core/services/projects/project-activites.service';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
+import { ProjectService } from '@/app/core/services/projects/project.service';
+import { ActivityCardComponent } from './activity-card.component/activity-card.component';
+import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { ProjectSectionCardComponent } from '../project-section-card/project-section-card.component';
 
 @Component({
-  selector: "app-activities-section",
+  selector: 'app-activities-section',
   standalone: true,
   imports: [
     CommonModule,
-    DynamicTableComponent,
-    ActivityUpsertModalComponent,
     ProjectSectionCardComponent,
-    PriorityLabelPipe,
+    PaginatorComponent,
+    ActivityCardComponent,
+    LoadingSpinnerComponent,
   ],
-  templateUrl: "./activities-section.component.html",
+  templateUrl: './activities-section.component.html',
 })
 export class ActivitesSectionComponent {
+  private readonly router = inject(Router);
+  private readonly service = inject(ProjectService);
   projectId = input.required<number>();
-  activityModalOpen = signal(false);
-  editingActivity = signal<ProjectActivity | null>(null);
 
-  activities = input.required<ProjectActivity[]>();
+  pageSize = signal<number>(10);
+  page = signal<number>(1);
+  totalPages = signal<number>(1);
 
-  onSaved = output<ProjectActivity>();
+  activities = signal<ProjectActivity[]>([]);
 
-  readonly activityColumns: TableColumn[] = [
-    { key: "displayOrder", label: "#" },
-    { key: "name", label: "Nombre" },
-    { key: "startsAt", label: "Inicio" },
-    { key: "endsAt", label: "Fin" },
-    { key: "priority", label: "Prioridad" },
-    { key: "status", label: "Estado" },
-    { key: "progressPercentage", label: "Avance" },
-  ];
+  isLoading = signal<boolean>(false);
 
-  openCreateActivity(): void {
-    this.editingActivity.set(null);
-    this.activityModalOpen.set(true);
+  constructor() {
+    effect(() => {
+      const [projectId, page, size] = [
+        this.projectId(),
+        this.page(),
+        this.pageSize(),
+      ];
+      this.isLoading.set(true);
+      this.service
+        .findActivities({ page, projectId, size })
+        .subscribe((res) => {
+          this.isLoading.set(false);
+          this.totalPages.set(res.data.totalPages);
+          this.activities.set(res.data.content);
+        });
+    });
   }
 
-  openEditActivity(activity: ProjectActivity): void {
-    this.editingActivity.set(activity);
-    this.activityModalOpen.set(true);
-  }
-
-  closeActivityModal(): void {
-    this.activityModalOpen.set(false);
-    this.editingActivity.set(null);
-  }
-
-  onActivitySaved(_activity: ProjectActivity): void {
-    this.closeActivityModal();
-    this.onSaved.emit(_activity);
+  openCreateActivity() {
+    // this.router.navigate([])
   }
 }

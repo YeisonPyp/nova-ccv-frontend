@@ -36,11 +36,10 @@ export interface ProjectActivity {
   displayOrder: number;
   startsAt?: string;
   endsAt?: string;
+  approvedBudget: number;
+  executedBudget: number;
   progressPercentage: number;
-  status: string;
-  priority?: string;
   colorHex: string;
-  budgetAmount?: number;
 }
 
 export interface ProjectRisk {

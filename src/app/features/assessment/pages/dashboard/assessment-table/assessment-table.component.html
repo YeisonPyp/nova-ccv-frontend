@@ -55,15 +55,14 @@
     </ng-template>
 
     <ng-template #actions let-assessment>
-      @if (assessment.permissions?.includes('UPDATE')) {
-        <span
-          class="icon-btn"
-          style="cursor: pointer"
-          (click)="onEdit(assessment)"
-          title="Editar"
-          >✏️</span
-        >
-      }
+      <button
+        class="icon-btn text-tertiary hover:text-primary"
+        *appHasPermission="['ASSESSMENTS_UPDATE']"
+        (click)="onEdit(assessment)"
+        title="Editar"
+      >
+        <app-edit-icon />
+      </button>
     </ng-template>
   </app-dynamic-table>
 </div>

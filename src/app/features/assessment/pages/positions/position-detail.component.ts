@@ -7,11 +7,17 @@ import {
   PositionAssessmentComponent,
 } from "@/app/core/models/assessment/position.model";
 import { PositionAssessmentComponentsComponent } from "./components/position-assessment-component/position-assessment-components.component";
+import { PositionEvaluationsComponent } from "./components/position-evaluations/position-evaluations.component";
 
 @Component({
   selector: "app-position-detail",
   standalone: true,
-  imports: [CommonModule, RouterLink, PositionAssessmentComponentsComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    PositionAssessmentComponentsComponent,
+    PositionEvaluationsComponent,
+  ],
   templateUrl: "./position-detail.component.html",
 })
 export class PositionDetailComponent implements OnInit {

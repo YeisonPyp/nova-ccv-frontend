@@ -1,13 +1,13 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable } from '@angular/core';
 import {
   ProjectActivity,
   ProjectRisk,
-} from "@/app/core/models/projects/project.model";
-import { Observable, Subject, tap } from "rxjs";
-import { ApiResponse } from "../../models/api-response.model";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "@/environments/environment";
-import { Task } from "dhtmlx-gantt";
+} from '@/app/core/models/projects/project.model';
+import { Observable, Subject, tap } from 'rxjs';
+import { ApiResponse } from '../../models/api-response.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@/environments/environment';
+import { Task } from 'dhtmlx-gantt';
 
 export interface GanttLink {
   id: number;
@@ -36,13 +36,13 @@ export interface CreateActivityDto {
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
-  low: "#22c55e",
-  medium: "#f59e0b",
-  high: "#f97316",
-  extreme: "#ef4444",
+  low: '#22c55e',
+  medium: '#f59e0b',
+  high: '#f97316',
+  extreme: '#ef4444',
 };
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ProjectActivitiesService {
   private readonly http = inject(HttpClient);
   private readonly base = environment.apiUrl;
@@ -76,7 +76,7 @@ export class ProjectActivitiesService {
 
   parseActivityToGantt(a: ProjectActivity): Task {
     const rawColor = a.colorHex?.trim();
-    const color = rawColor ? "#" + rawColor.replace("#", "") : undefined;
+    const color = rawColor ? '#' + rawColor.replace('#', '') : undefined;
 
     return {
       id: a.id,
@@ -86,8 +86,6 @@ export class ProjectActivitiesService {
       parent: a.parentId ?? 0,
       open: true,
       color,
-      status: a.status,
-      budget_amount: a.budgetAmount,
       end_date: a.endsAt ? new Date(a.endsAt) : undefined,
     };
   }
@@ -102,7 +100,7 @@ export class ProjectActivitiesService {
         id: i + 1,
         source: a.parentId!,
         target: a.id,
-        type: "0",
+        type: '0',
         lag: 0,
       }));
 
@@ -115,7 +113,7 @@ export class ProjectActivitiesService {
         ? Math.max(1, Math.ceil(r.estimatedHours / 8))
         : 1;
 
-      const color = PRIORITY_COLORS[r.priority] ?? PRIORITY_COLORS["medium"];
+      const color = PRIORITY_COLORS[r.priority] ?? PRIORITY_COLORS['medium'];
 
       return {
         id: r.id,

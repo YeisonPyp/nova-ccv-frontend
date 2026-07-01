@@ -1,4 +1,11 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -6,7 +13,6 @@ import {
   FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,15 +25,74 @@ import { ProjectPriorityService } from '@/app/core/services/projects/project-pri
 import { AreaService } from '@/app/core/services/assessment/area.service';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
 import { SearchSelectContextFactory } from '@/app/shared/components/search-select/on-search-select.interface';
-import { ProjectPriority } from '@/app/core/models/projects/project-params.model';
+import {
+  ProjectPriority,
+  ProjectStatus,
+} from '@/app/core/models/projects/project-params.model';
 import { Area } from '@/app/core/models/assessment/area.model';
-import { PatTacticalActivity } from '@/app/core/models/pat/pat-models';
 import { PatTacticalActivityService } from '@/app/core/services/pat/tactical-activity.service';
+import { Observable, of } from 'rxjs';
+import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
+import { EmployeeService } from '@/app/core/services/assessment/employee.service';
+import {
+  PatProgramByYearService,
+  PatProgramService,
+} from '@/app/core/services/pat/pat-program.service';
+import { ProjectStatusService } from '@/app/core/services/projects/project-status.service';
+
+function endsShouldBeAfterStarts(
+  starts: string,
+  control: AbstractControl,
+): Observable<ValidationErrors | null> {
+  const ends = control.value;
+  if (!ends) {
+    return of(null);
+  }
+
+  const startDate = new Date(starts);
+  const endDate = new Date(ends);
+
+  if (endDate <= startDate) {
+    return of({ endsBeforeStarts: true });
+  }
+
+  return of(null);
+}
+
+function matchesYear(
+  targetYear: number,
+  control: AbstractControl,
+): Observable<ValidationErrors | null> {
+  if (!control.value) {
+    return of(null);
+  }
+
+  const date = new Date(control.value);
+
+  if (isNaN(date.getTime())) {
+    return of({ invalidDate: true });
+  }
+
+  const selectedYear = date.getUTCFullYear();
+
+  if (selectedYear !== targetYear) {
+    return of({
+      yearMismatch: { expected: targetYear, actual: selectedYear },
+    });
+  }
+
+  return of(null);
+}
 
 @Component({
   selector: 'app-create-project',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ContextSearchSelectComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ContextSearchSelectComponent,
+    FormFieldErrorDirective,
+  ],
   templateUrl: './create-project.component.html',
 })
 export class CreateProjectComponent {
@@ -36,9 +101,18 @@ export class CreateProjectComponent {
   private readonly projectService = inject(ProjectService);
   private readonly priorityService = inject(ProjectPriorityService);
   private readonly areaService = inject(AreaService);
+  private readonly employeeService = inject(EmployeeService);
   private readonly patTacticalActivityService = inject(
     PatTacticalActivityService,
   );
+  private readonly strategicProgramService = inject(PatProgramService);
+  private readonly projectStatusService = inject(ProjectStatusService);
+
+  formErrors = {
+    endsBeforeStarts:
+      'La fecha de finalización debe ser posterior a la fecha de inicio',
+    yearMismatch: 'El año debe coincidir con el año del PAT',
+  };
 
   year = input.required<number>();
 
@@ -46,9 +120,34 @@ export class CreateProjectComponent {
   error = signal<string | null>(null);
   priorities = signal<ProjectPriority[]>([]);
 
-  areaCtx: SearchSelectContextFactory<Area>;
-  tacticalActivityCtx: SearchSelectContextFactory<PatTacticalActivity>;
+  statuses = signal<ProjectStatus[]>([]);
 
+  areaCtx: SearchSelectContextFactory<Area>;
+
+  tacticalActivityCtx = computed(() =>
+    this.patTacticalActivityService.newSearchSelectContext(
+      this.year(),
+      (ta) => this.form.patchValue({ tacticalActivityCode: ta.code }),
+      undefined,
+      () => this.form.patchValue({ tacticalActivityCode: '' }),
+    ),
+  );
+  employeeCtx = this.employeeService.newSearchSelectEmployeeContext(
+    (e) => this.form.patchValue({ employeeId: e.id }),
+    { isRequired: true, label: 'Employee' },
+    (_) => this.form.patchValue({ employeeId: null }),
+  );
+
+  strategicProgramCtx = computed(() => {
+    return new PatProgramByYearService(
+      this.strategicProgramService,
+      this.year(),
+    ).newSearchSelectContext(
+      (p) => this.form.patchValue({ programId: p.id }),
+      undefined,
+      (_) => this.form.patchValue({ programId: null }),
+    );
+  });
   form: FormGroup<Record<keyof CreateProjectDto, any>>;
 
   constructor() {
@@ -56,14 +155,27 @@ export class CreateProjectComponent {
       code: ['', [Validators.required, Validators.maxLength(20)]],
       name: ['', [Validators.required]],
       areaId: [null, Validators.required],
-      starts: ['', Validators.required, this.matchesYear.bind(this)],
-      ends: ['', Validators.required, this.endsShouldBeAfterStarts.bind(this)],
+      starts: [
+        '',
+        Validators.required,
+        (control: AbstractControl) => matchesYear(Number(this.year()), control),
+      ],
+      ends: [
+        '',
+        Validators.required,
+        (control: AbstractControl) =>
+          endsShouldBeAfterStarts(
+            this.form.get('starts')?.value as string,
+            control,
+          ),
+      ],
       priorityId: [null, Validators.required],
       employeeId: [null, Validators.required],
       generalObjective: ['', Validators.required],
       tacticalActivityCode: ['', Validators.required],
       description: [''],
-      programId: [null, Validators.required],
+      programId: [null],
+      status: ['', Validators.required],
       objectives: this.fb.array([]),
     });
 
@@ -72,70 +184,17 @@ export class CreateProjectComponent {
       undefined,
       () => this.form.patchValue({ areaId: null }),
     );
-    this.tacticalActivityCtx =
-      this.patTacticalActivityService.newSearchSelectContext(
-        this.year(),
-        (ta) => this.form.patchValue({ tacticalActivityCode: ta.code }),
-        undefined,
-        () => this.form.patchValue({ tacticalActivityCode: '' }),
-      );
 
     effect(() => {
+      this.projectStatusService.findAll().subscribe((res) => {
+        if (res.success && res.data) this.statuses.set(res.data);
+      });
       this.priorityService.findAll().subscribe({
         next: (res) => {
           if (res.success && res.data) this.priorities.set(res.data);
         },
       });
-      const date = new Date();
-      date.setFullYear(this.year());
-      this.form.get('starts')?.setValue(date.toString());
     });
-  }
-
-  endsShouldBeAfterStarts(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const starts = this.form.get('starts')?.value as string;
-      if (!starts) {
-        return null;
-      }
-
-      const ends = control.value;
-      if (!ends) {
-        return null;
-      }
-
-      const startDate = new Date(starts);
-      const endDate = new Date(ends);
-
-      if (endDate < startDate) {
-        return { endsBeforeStarts: true };
-      }
-
-      return null;
-    };
-  }
-
-  matchesYear(): ValidatorFn {
-    const targetYear = this.year();
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) {
-        return null;
-      }
-
-      const date = new Date(control.value);
-
-      if (isNaN(date.getTime())) {
-        return { invalidDate: true };
-      }
-
-      const selectedYear = date.getUTCFullYear();
-
-      if (selectedYear !== targetYear) {
-        return { yearMismatch: { expected: targetYear, actual: selectedYear } };
-      }
-
-      return null;
-    };
   }
 
   get objectives(): FormArray {

@@ -15,6 +15,7 @@ type TabKey = 'programs' | 'activities' | 'projects';
     CommonModule,
     ProgramsTabComponent,
     ActivitiesTabComponent,
+    ProjectsTabComponent,
     PerformanceIndicatorsPanelComponent,
     NgComponentOutlet,
   ],

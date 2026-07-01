@@ -25,4 +25,28 @@ export const ASSESSMENT_ROUTES: Routes = [
         (m) => m.PositionDetailComponent,
       ),
   },
+  {
+    path: "surveys",
+    loadComponent: () =>
+      import("./pages/surveys/surveys-list.component").then(
+        (m) => m.SurveysListComponent,
+      ),
+    canActivate: [hasPermissionGuard(["SURVEY_READ"])],
+  },
+  {
+    path: "surveys/new",
+    loadComponent: () =>
+      import("./pages/surveys/survey-form/survey-form.component").then(
+        (m) => m.SurveyFormComponent,
+      ),
+    canActivate: [hasPermissionGuard(["SURVEY_CREATE"])],
+  },
+  {
+    path: "surveys/:id",
+    loadComponent: () =>
+      import("./pages/surveys/survey-form/survey-form.component").then(
+        (m) => m.SurveyFormComponent,
+      ),
+    canActivate: [hasPermissionGuard(["SURVEY_UPDATE"])],
+  },
 ];

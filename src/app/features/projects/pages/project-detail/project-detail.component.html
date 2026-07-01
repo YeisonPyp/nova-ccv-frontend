@@ -105,21 +105,5 @@
         </p>
       </div>
     </div>
-
-    <!-- ── ACTIVITIES ── -->
-    <app-activities-section
-      [projectId]="p.id"
-      [activities]="projectActivities"
-      (onSaved)="onActivitySaved($event)"
-    ></app-activities-section>
-    <app-risks-section
-      [projectId]="p.id"
-      [risks]="projectRisks"
-      (onSaved)="onRiskSaved($event)"
-    ></app-risks-section>
-    <app-gannt-section
-      [activities]="projectActivities"
-      [risks]="projectRisks"
-    ></app-gannt-section>
   }
 </div>

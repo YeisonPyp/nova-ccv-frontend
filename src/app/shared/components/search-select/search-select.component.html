@@ -26,23 +26,38 @@
         [placeholder]="selectedItems.length > 0 ? '' : placeholder"
         [value]="searchTerm()"
         (input)="onInput($event)"
+        (keydown)="onKeydown($event)"
         (focus)="isOpen.set(true)"
         autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        [attr.aria-expanded]="isOpen()"
+        [attr.aria-controls]="id + '-listbox'"
+        [attr.aria-activedescendant]="activeOptionId"
       />
     }
-    
+
   </div>
 
   @if (isOpen() && items.length > 0) {
-    <ul class="dropdown-list">
-      @for (item of items; track item.id) {
-        <li class="dropdown-item" (click)="selectItem(item, $event)">
+    <ul class="dropdown-list" [id]="id + '-listbox'" role="listbox">
+      @for (item of items; track item.id; let i = $index) {
+        <li
+          #itemRef
+          [id]="id + '-option-' + i"
+          class="dropdown-item"
+          role="option"
+          [class.active]="i === activeIndex()"
+          [attr.aria-selected]="i === activeIndex()"
+          (mouseenter)="activeIndex.set(i)"
+          (click)="selectItem(item, $event)"
+        >
           {{ item.title }}
         </li>
       }
     </ul>
   } @else if (isOpen() && searchTerm()) {
-    <ul class="dropdown-list">
+    <ul class="dropdown-list" [id]="id + '-listbox'" role="listbox">
        <li class="dropdown-item text-muted">{{ emptyMessage }}</li>
     </ul>
   }

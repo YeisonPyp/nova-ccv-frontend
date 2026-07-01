@@ -74,6 +74,16 @@
         [position]="position()!"
       ></app-position-assessment-components>
     </div>
+
+    <!-- Evaluation surveys section -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">
+        Encuestas de Evaluación
+      </h2>
+      <app-position-evaluations
+        [position]="position()!"
+      ></app-position-evaluations>
+    </div>
   }
 
   @if (!loading() && !position()) {

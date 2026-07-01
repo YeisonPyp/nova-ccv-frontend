@@ -89,7 +89,7 @@ export class FormFieldErrorDirective implements OnInit, OnDestroy {
     }
 
     this.renderer.setProperty(this.errorElement, "textContent", errorMessage);
-    this.renderer.addClass(this.el.nativeElement, "is-invalid-input");
+    this.renderer.addClass(this.el.nativeElement, "border-red-400");
   }
 
   private removeError(): void {
@@ -100,7 +100,7 @@ export class FormFieldErrorDirective implements OnInit, OnDestroy {
       );
       this.errorElement = null;
     }
-    this.renderer.removeClass(this.el.nativeElement, "is-invalid-input");
+    this.renderer.removeClass(this.el.nativeElement, "border-red-400");
   }
 
   ngOnDestroy(): void {

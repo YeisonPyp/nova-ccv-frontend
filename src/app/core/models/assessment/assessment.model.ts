@@ -3,6 +3,7 @@ import { CompetencyScore } from "./competency-score.model";
 import { Employee } from "./employee.model";
 import { Period } from "./period.model";
 import { Position, PositionAssessmentComponent } from "./position.model";
+import { EvaluationType, SurveyQuestion } from "./survey.model";
 
 export interface AssessmentComponentReportSupportFile {
   id: number;
@@ -29,6 +30,14 @@ export interface AssessmentComponentReport {
   supports?: AssessmentComponentReportSupport[];
 }
 
+export interface AssessmentSurveyAnswer {
+  id: number;
+  score: number;
+  question: SurveyQuestion;
+  surveyId: number;
+  surveyName: string;
+}
+
 export interface Assessment {
   id: number;
   finalScoreCompetencies: number;
@@ -40,6 +49,7 @@ export interface Assessment {
   agreements: string;
   createdAt: string;
   score: number;
+  type: EvaluationType;
 
   area?: Area;
   competencyScores?: Array<CompetencyScore>;
@@ -49,4 +59,5 @@ export interface Assessment {
   evaluatee?: Employee | undefined;
   permissions?: string[];
   components?: AssessmentComponentReport[];
+  surveyAnswers?: AssessmentSurveyAnswer[];
 }

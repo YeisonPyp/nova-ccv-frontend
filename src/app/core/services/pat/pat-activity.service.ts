@@ -1,48 +1,43 @@
-import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec.service";
+import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import {
   PatActivity,
   PatActivityBudgetMatrix,
-} from "../../models/pat/pat-models";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { ApiResponse } from "../../models/api-response.model";
+} from '../../models/pat/pat-models';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../../models/api-response.model';
 import {
   FilterServiceSpec,
   PageableQueryWithRsql,
-} from "@/app/shared/components/pagination-table/pagination-table.component";
-import { APIPage } from "../../models/api-page.model";
+} from '@/app/shared/components/pagination-table/pagination-table.component';
+import { APIPage } from '../../models/api-page.model';
 
 export interface CreatePatActivity {
   name: string;
   code: string;
   employeeId: number;
-  tacticalActivityId: number;
-  costCenterId: number;
+  projectId: number;
   measurementId: number;
-  indicatorId: number;
-  benefitTypeId: number;
   startsAt: string;
   endsAt: string;
-  description: string;
-  year: number;
+  displayOrder: number;
 
-  strategicProgramId: number | null;
-  policyId: number | null;
-  measurementGoal: number | null;
-  indicatorBaseLine: number | null;
-  indicatorGoal: number | null;
-  benefitAmount: number | null;
+  description?: string | null;
+  policyId?: number | null;
+  measurementGoal?: number | null;
+  parentId?: number | null;
+  colorHex?: string | null;
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class PatActivityService extends FilterServiceSpecImpl<
   PatActivity,
   CreatePatActivity
 > {
   constructor() {
-    super("pat/v2/activities");
+    super('pat/v2/activities');
   }
 
   findPresupuestalMatrix(

@@ -7,6 +7,6 @@ import { Component, input } from "@angular/core";
 })
 export class LoadingSpinnerComponent {
   isLoading = input.required<boolean>();
-  width = input<string>("6px");
-  height = input<string>("6px");
+  width = input<string>("12px");
+  height = input<string>("12px");
 }

@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { PeriodsParamComponent } from "./components/periods/periods-param.component";
 import { CompetenciesParamComponent } from "./components/competencies/competencies-param.component";
 import { ImpactRulesParamComponent } from "./components/impact-rules/impact-rules-param.component";
@@ -6,7 +7,12 @@ import { ImpactRulesParamComponent } from "./components/impact-rules/impact-rule
 @Component({
   selector: "app-assessment-param",
   standalone: true,
-  imports: [PeriodsParamComponent, CompetenciesParamComponent, ImpactRulesParamComponent],
+  imports: [
+    RouterLink,
+    PeriodsParamComponent,
+    CompetenciesParamComponent,
+    ImpactRulesParamComponent,
+  ],
   templateUrl: "./assessment-param.component.html",
 })
 export class AssessmentParamComponent {}

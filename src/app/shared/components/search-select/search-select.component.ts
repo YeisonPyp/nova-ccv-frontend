@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, Output, signal } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren,
+  effect,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SearchSelectOption } from "./on-search-select.interface";
@@ -12,7 +24,7 @@ import { ChipItemComponent } from "./chip-item/chip-item.component";
   templateUrl: "./search-select.component.html",
   styleUrl: "./search-select.component.scss",
 })
-export class SearchSelectComponent {
+export class SearchSelectComponent implements OnChanges {
   @Input() id = "search-select-" + Math.random().toString(36).substring(2);
   @Input() label = "";
   @Input() placeholder = "Buscar...";
@@ -28,8 +40,11 @@ export class SearchSelectComponent {
   @Output() onSelect = new EventEmitter<SearchSelectOption>();
   @Output() onRemove = new EventEmitter<SearchSelectOption>();
 
+  @ViewChildren("itemRef") private itemRefs!: QueryList<ElementRef<HTMLLIElement>>;
+
   searchTerm = signal("");
   isOpen = signal(false);
+  activeIndex = signal(-1);
 
   private searchSubject = new Subject<string>();
 
@@ -37,11 +52,64 @@ export class SearchSelectComponent {
     this.searchSubject.pipe(debounceTime(400)).subscribe((term) => {
       this.onSearch.emit(term);
       this.isOpen.set(true);
-    })
+      this.activeIndex.set(-1);
+    });
+
+    effect(() => {
+      const idx = this.activeIndex();
+      const refs = this.itemRefs;
+      if (!refs || idx < 0) return;
+      refs.toArray()[idx]?.nativeElement?.scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["items"]) {
+      this.activeIndex.set(-1);
+    }
+  }
+
+  get activeOptionId(): string | null {
+    const idx = this.activeIndex();
+    return idx >= 0 && this.items[idx] ? `${this.id}-option-${idx}` : null;
   }
 
   onInput(event: Event) {
-    this.searchSubject.next((event.target as HTMLInputElement).value);
+    this.searchTerm.set((event.target as HTMLInputElement).value);
+    this.searchSubject.next(this.searchTerm());
+  }
+
+  onKeydown(event: KeyboardEvent) {
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        if (!this.isOpen()) {
+          this.isOpen.set(true);
+          if (this.items.length === 0) this.onSearch.emit(this.searchTerm());
+          return;
+        }
+        if (this.items.length === 0) return;
+        this.activeIndex.set(
+          Math.min(this.activeIndex() + 1, this.items.length - 1),
+        );
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        if (this.items.length === 0) return;
+        this.activeIndex.set(Math.max(this.activeIndex() - 1, 0));
+        break;
+      case "Enter": {
+        if (!this.isOpen()) return;
+        event.preventDefault();
+        const item = this.items[this.activeIndex()];
+        if (item) this.selectItem(item, event);
+        break;
+      }
+      case "Escape":
+        event.preventDefault();
+        this.closeDropdown();
+        break;
+    }
   }
 
   toggleDropdown(event: Event) {
@@ -53,10 +121,9 @@ export class SearchSelectComponent {
   }
 
   selectItem(item: SearchSelectOption, event: Event) {
-    console.log('selected item', item);
-    // event.preventDefault();
     this.onSelect.emit(item);
     this.isOpen.set(false);
+    this.activeIndex.set(-1);
   }
 
   removeItem(item: SearchSelectOption) {
@@ -66,5 +133,6 @@ export class SearchSelectComponent {
 
   closeDropdown() {
     this.isOpen.set(false);
+    this.activeIndex.set(-1);
   }
 }

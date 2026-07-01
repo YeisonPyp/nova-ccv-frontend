@@ -1,0 +1,15 @@
+<div class="border border-gray-200 rounded-lg p-4 bg-white shadow-sm flex flex-col gap-3" [formGroup]="form">
+  <div class="flex justify-between items-start">
+    <p class="text-sm text-gray-800 m-0">{{ answer().question.description }}</p>
+    <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
+      Rango: {{ answer().question.minValue }} - {{ answer().question.maxValue }}
+    </span>
+  </div>
+
+  <app-score-slider
+    formControlName="score"
+    [min]="answer().question.minValue || 0"
+    [max]="answer().question.maxValue || 5"
+    label="Puntuación"
+  />
+</div>

@@ -34,12 +34,6 @@
             }
           </ng-template>
         </app-dynamic-table>
-
-        <app-pagination
-          [pages]="projectStatusTotalPages()"
-          [currentPage]="projectStatusPage()"
-          (pageChange)="loadProjectStatus($event)"
-        />
       </div>
     }
   </app-parametrization-section>

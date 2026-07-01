@@ -1,0 +1,299 @@
+<div class="w-full p-6">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a proyectos
+  </button>
+
+  <div class="flex items-center gap-3 mb-6">
+    <h2 class="text-xl font-bold text-secondary m-0">Nuevo Proyecto</h2>
+  </div>
+
+  @if (error()) {
+    <div
+      class="mb-4 px-4 py-2.5 rounded bg-red-50 text-red-700 text-sm border border-red-200"
+    >
+      {{ error() }}
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-6">
+    <!-- ── IDENTIFICACIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Identificación
+      </h5>
+      <div class="grid grid-cols-4 gap-x-6 gap-y-4">
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Código <span class="text-red-500">*</span>
+          </label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="text"
+            formControlName="code"
+            placeholder="PRY-2025-001"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <div class="col-span-2 flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Nombre <span class="text-red-500">*</span>
+          </label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="text"
+            formControlName="name"
+            placeholder="Nombre del proyecto"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Prioridad <span class="text-red-500">*</span>
+          </label>
+          <select
+            formControlName="priorityId"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+          >
+            <option [value]="null">— Seleccionar —</option>
+            @for (p of priorities(); track p.id) {
+              <option [value]="p.id">{{ p.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Estado <span class="text-red-500">*</span>
+          </label>
+          <select
+            formControlName="status"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+          >
+            <option [value]="null">— Seleccionar —</option>
+            @for (s of statuses(); track s.id) {
+              <option [value]="s.name">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PARTES ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Partes del Proyecto
+      </h5>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <app-context-search-select
+          [ctx]="areaCtx"
+          label="Área"
+          [required]="true"
+        />
+
+        <app-context-search-select
+          [ctx]="tacticalActivityCtx()"
+          label="Actividad táctica"
+          [required]="true"
+        />
+
+        <app-context-search-select
+          [ctx]="employeeCtx"
+          label="Empleado responsable"
+          [required]="true"
+        />
+
+        <app-context-search-select
+          [ctx]="strategicProgramCtx()"
+          label="Programa estratégico"
+          [required]="false"
+        />
+      </div>
+    </section>
+
+    <!-- ── PLANIFICACIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Planificación
+      </h5>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Fecha de inicio <span class="text-red-500">*</span>
+          </label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="date"
+            formControlName="starts"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Fecha de fin <span class="text-red-500">*</span>
+          </label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="date"
+            formControlName="ends"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DESCRIPCIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Descripción
+      </h5>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+          >
+            Objetivo general <span class="text-red-500">*</span>
+          </label>
+          <textarea
+            formControlName="generalObjective"
+            rows="4"
+            placeholder="Descripción del objetivo general del proyecto..."
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+          ></textarea>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+            >Descripción</label
+          >
+          <textarea
+            formControlName="description"
+            rows="4"
+            placeholder="Descripción general del proyecto..."
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── OBJETIVOS ESPECÍFICOS ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest m-0"
+        >
+          Objetivos específicos
+        </h5>
+        <button
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-colors cursor-pointer bg-transparent"
+          (click)="addObjective()"
+        >
+          + Agregar objetivo
+        </button>
+      </div>
+
+      @if (objectives.length === 0) {
+        <p class="text-sm text-gray-400 text-center py-4">
+          Sin objetivos específicos. Use el botón para agregar.
+        </p>
+      }
+
+      <div class="flex flex-col gap-3" formArrayName="objectives">
+        @for (obj of objectives.controls; track $index; let i = $index) {
+          <div
+            [formGroupName]="i"
+            class="relative grid grid-cols-2 gap-x-4 gap-y-2 p-4 rounded-lg border border-gray-100 bg-gray-50"
+          >
+            <button
+              type="button"
+              class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500 rounded cursor-pointer bg-transparent border-none text-lg leading-none"
+              (click)="removeObjective(i)"
+            >
+              ×
+            </button>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >
+                Nombre <span class="text-red-500">*</span>
+              </label>
+              <input
+                [appFormFieldError]="formErrors"
+                type="text"
+                formControlName="name"
+                placeholder="Nombre del objetivo"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label
+                class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
+              >
+                Descripción <span class="text-red-500">*</span>
+              </label>
+              <input
+                [appFormFieldError]="formErrors"
+                type="text"
+                formControlName="description"
+                placeholder="Descripción del objetivo"
+                class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
+              />
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <div class="flex justify-end gap-3 pb-8">
+      <button
+        type="button"
+        class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors cursor-pointer border-none"
+        (click)="goBack()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity cursor-pointer border-none disabled:opacity-50"
+        [disabled]="submitting()"
+      >
+        @if (submitting()) {
+          Creando...
+        } @else {
+          Crear Proyecto
+        }
+      </button>
+    </div>
+  </form>
+</div>

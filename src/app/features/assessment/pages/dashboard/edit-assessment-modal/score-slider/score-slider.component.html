@@ -1,11 +1,12 @@
 <div
-  class="score-container"
+  class="flex flex-row justify-between"
   style="font-weight: 600; color: black; font-size: 14px"
 >
-  <span>{{ label() }}</span>
-  <strong class="score-range">{{ val() }}/{{ max() }}</strong>
+  <span class="text-sm font-semibold text-secondary">{{ label() }}</span>
+  <strong class="text-sm">{{ val() }}/{{ max() }}</strong>
 </div>
 <input
+  class="w-full"
   type="range"
   [min]="min()"
   [max]="max()"
@@ -21,7 +22,11 @@
     '%, #e0e0e0 100%)'
   "
 />
-<div class="score-container">
-  <span>Deficiente ({{ min() }})</span>
-  <span>Excelente ({{ max() }})</span>
+<div class="flex flex-row justify-between">
+  <span class="text-sm font-semibold text-secondary"
+    >Deficiente ({{ min() }})</span
+  >
+  <span class="text-sm font-semibold text-secondary"
+    >Excelente ({{ max() }})</span
+  >
 </div>

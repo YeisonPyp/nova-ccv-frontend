@@ -35,13 +35,12 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
       },
       {
-        path: "activities/create",
+        path: "projects/create",
         loadComponent: () =>
-          import("./pages/create-activity/create-activity.component").then(
-            (m) => m.CreatePatActivityComponent,
+          import("./pages/create-project/create-project.component").then(
+            (m) => m.CreateProjectComponent,
           ),
-        title: "PAT — Crear Actividad",
-        canActivate: [hasPermissionGuard(["PAT_ACTIVITY_CREATE"])],
+        canActivate: [hasPermissionGuard(["PROJECTS_CREATE"])],
       },
       {
         path: "activities/:id",

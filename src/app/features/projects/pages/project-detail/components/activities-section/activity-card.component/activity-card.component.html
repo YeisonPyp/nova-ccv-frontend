@@ -1,0 +1,25 @@
+<div
+  class="rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer p-5 flex flex-col gap-3"
+  (click)="onClick()"
+>
+  <div class="flex flex-col gap-1">
+    <span class="text-xl font-semibold">{{ activity().name }}</span>
+    @if (activity().description) {
+      <p class="text-xs m-0 line-clamp-2">
+        {{ activity().description }}
+      </p>
+    }
+  </div>
+
+  <div class="flex items-center justify-between mt-1">
+    <!--<span class="text-xs">{{ activity().areaName }}</span>
+    <span class="text-xs">
+      {{ activity().startDate }} — {{ activity().endDate }}
+    </span>-->
+  </div>
+  <!-- budget -->
+  <div>
+    <span>Aprobado: {{ activity().approvedBudget }}</span>
+    <span>Ejecutado: {{ activity().executedBudget }}</span>
+  </div>
+</div>

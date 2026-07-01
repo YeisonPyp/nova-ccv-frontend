@@ -14,6 +14,10 @@ import {
   PageableQuery,
   PageableQueryParams,
 } from '@/app/shared/pageable-query';
+import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
+import { PageableQueryWithRsql } from '@/app/shared/components/pagination-table/pagination-table.component';
+import builder from '@rsql/builder';
+import { emit } from '@rsql/emitter';
 
 export const RISK_SCALE_OPTIONS = [
   { value: 'low', label: 'Baja' },
@@ -32,6 +36,7 @@ export interface CreateProjectDto {
   name: string;
   areaId: number;
   generalObjective: string;
+  status: string;
   starts: string;
   ends: string;
   priorityId: number;
@@ -53,66 +58,77 @@ export interface CreateRiskDto {
   priority?: string;
 }
 
-export interface ProjectQueryParams extends PageableQuery {
+export interface ProjectQueryParams extends PageableQueryWithRsql {
   status?: string | null;
   year?: number;
   areaId?: number;
 }
 
-@Injectable({ providedIn: 'root' })
-export class ProjectService {
-  private readonly http = inject(HttpClient);
-  private readonly base = environment.apiUrl;
+export interface ActivityQueryParams extends PageableQuery {
+  projectId?: number;
+}
 
-  findAll(
-    params: ProjectQueryParams,
-  ): Observable<ApiResponse<APIPage<Project>>> {
-    const p = new PageableQueryParams(params).getParams();
-    return this.http.get<ApiResponse<APIPage<Project>>>(
-      `${this.base}/projects`,
-      { params: p },
-    );
+@Injectable({ providedIn: 'root' })
+export class ProjectService extends FilterServiceSpecImpl<
+  Project,
+  CreateProjectDto
+> {
+  constructor() {
+    super('projects');
   }
 
-  findById(id: number): Observable<ApiResponse<Project>> {
-    return this.http.get<ApiResponse<Project>>(`${this.base}/projects/${id}`);
+  override findAll(
+    q: ProjectQueryParams,
+  ): Observable<ApiResponse<APIPage<Project>>> {
+    q.nodes = [];
+    if (q.status) {
+      q.nodes.push(builder.comparison('status', '==', q.status));
+      delete q.status;
+    }
+    if (q.year) {
+      q.nodes.push(builder.comparison('year', '==', q.year));
+      delete q.year;
+    }
+    if (q.areaId) {
+      q.nodes.push(builder.comparison('area.id', '==', q.areaId));
+      delete q.areaId;
+    }
+
+    return this.http.get<ApiResponse<APIPage<Project>>>(`${this.baseUrl}`, {
+      params: new PageableQueryParams(q).getParams(),
+    });
   }
 
   getGanttData(id: number): Observable<ApiResponse<GanttData>> {
-    return this.http.get<ApiResponse<GanttData>>(
-      `${this.base}/projects/${id}/gantt`,
-    );
-  }
-
-  create(dto: CreateProjectDto): Observable<ApiResponse<Project>> {
-    return this.http.post<ApiResponse<Project>>(`${this.base}/projects`, dto);
+    return this.http.get<ApiResponse<GanttData>>(`${this.baseUrl}/${id}/gantt`);
   }
 
   findActivities(
-    projectId: number,
-  ): Observable<ApiResponse<ProjectActivity[]>> {
-    return this.http.get<ApiResponse<ProjectActivity[]>>(
-      `${this.base}/project-activities`,
-      { params: { projectId } },
+    p: ActivityQueryParams,
+  ): Observable<ApiResponse<APIPage<ProjectActivity>>> {
+    const params = new PageableQueryParams(p).getParams();
+    return this.http.get<ApiResponse<APIPage<ProjectActivity>>>(
+      `${this.baseUrl}/project-activities`,
+      { params },
     );
   }
 
   deleteActivity(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
-      `${this.base}/project-activities/${id}`,
+      `${this.baseUrl}/project-activities/${id}`,
     );
   }
 
   findRisks(projectId: number): Observable<ApiResponse<ProjectRisk[]>> {
     return this.http.get<ApiResponse<ProjectRisk[]>>(
-      `${this.base}/project-risks`,
+      `${this.baseUrl}/project-risks`,
       { params: { projectId } },
     );
   }
 
   createRisk(dto: CreateRiskDto): Observable<ApiResponse<ProjectRisk>> {
     return this.http.post<ApiResponse<ProjectRisk>>(
-      `${this.base}/project-risks`,
+      `${this.baseUrl}/project-risks`,
       dto,
     );
   }
@@ -122,14 +138,14 @@ export class ProjectService {
     dto: CreateRiskDto,
   ): Observable<ApiResponse<ProjectRisk>> {
     return this.http.put<ApiResponse<ProjectRisk>>(
-      `${this.base}/project-risks/${id}`,
+      `${this.baseUrl}/project-risks/${id}`,
       dto,
     );
   }
 
   deleteRisk(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
-      `${this.base}/project-risks/${id}`,
+      `${this.baseUrl}/project-risks/${id}`,
     );
   }
 }

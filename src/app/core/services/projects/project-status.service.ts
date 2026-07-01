@@ -1,21 +1,17 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { environment } from "../../../../environments/environment";
-import { ApiResponse } from "../../models/api-response.model";
-import { APIPage } from "../../models/api-page.model";
-import { ProjectStatus } from "../../models/projects/project-params.model";
-import { PageableQuery, PageableQueryParams } from "../../../shared/pageable-query";
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../../models/api-response.model';
+import { ProjectStatus } from '../../models/projects/project-params.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ProjectStatusService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/project-statuses`;
 
-  findAll(p: PageableQuery = {}): Observable<ApiResponse<APIPage<ProjectStatus>>> {
-    return this.http.get<ApiResponse<APIPage<ProjectStatus>>>(this.apiUrl, {
-      params: new PageableQueryParams(p).getParams(),
-    });
+  findAll(): Observable<ApiResponse<Array<ProjectStatus>>> {
+    return this.http.get<ApiResponse<Array<ProjectStatus>>>(this.apiUrl);
   }
 
   create(name: string): Observable<ApiResponse<ProjectStatus>> {
@@ -23,7 +19,9 @@ export class ProjectStatusService {
   }
 
   update(id: number, name: string): Observable<ApiResponse<ProjectStatus>> {
-    return this.http.put<ApiResponse<ProjectStatus>>(`${this.apiUrl}/${id}`, { name });
+    return this.http.put<ApiResponse<ProjectStatus>>(`${this.apiUrl}/${id}`, {
+      name,
+    });
   }
 
   delete(id: number): Observable<ApiResponse<void>> {

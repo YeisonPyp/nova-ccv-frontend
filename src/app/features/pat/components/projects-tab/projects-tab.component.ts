@@ -42,6 +42,6 @@ export class ProjectsTabComponent {
   }
 
   openCreate(): void {
-    this.router.navigate(['/projects/create']);
+    this.router.navigate([`/pat/${this.year()}/projects/create`]);
   }
 }

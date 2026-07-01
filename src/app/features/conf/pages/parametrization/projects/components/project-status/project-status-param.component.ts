@@ -1,23 +1,23 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { AuthService } from "@/app/core/services/auth.service";
-import { ProjectStatusService } from "@/app/core/services/projects/project-status.service";
-import { ProjectStatus } from "@/app/core/models/projects/project-params.model";
+} from '@angular/forms';
+import { AuthService } from '@/app/core/services/auth.service';
+import { ProjectStatusService } from '@/app/core/services/projects/project-status.service';
+import { ProjectStatus } from '@/app/core/models/projects/project-params.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
-import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
 
 @Component({
-  selector: "app-project-status-param",
+  selector: 'app-project-status-param',
   standalone: true,
   imports: [
     CommonModule,
@@ -26,72 +26,65 @@ import { ParametrizationSectionComponent } from "@/app/features/conf/components/
     PaginationComponent,
     ParametrizationSectionComponent,
   ],
-  templateUrl: "./project-status-param.component.html",
+  templateUrl: './project-status-param.component.html',
 })
 export class ProjectStatusParamComponent {
   private readonly auth = inject(AuthService);
   private readonly projectStatusService = inject(ProjectStatusService);
 
   projectStatusItems = signal<ProjectStatus[]>([]);
-  projectStatusPage = signal(1);
-  projectStatusSize = signal(10);
-  projectStatusTotalPages = signal(0);
   projectStatusLoaded = signal(false);
-  projectStatusModalMode = signal<"create" | "update" | null>(null);
+  projectStatusModalMode = signal<'create' | 'update' | null>(null);
   showDeleteProjectStatusModal = signal(false);
   editingProjectStatus = signal<ProjectStatus | null>(null);
 
   projectStatusForm = new FormGroup({
-    name: new FormControl("", [Validators.required, Validators.maxLength(20)]),
+    name: new FormControl('', [Validators.required, Validators.maxLength(20)]),
   });
 
-  projectStatusColumns: TableColumn[] = [{ key: "name", label: "Nombre" }];
+  projectStatusColumns: TableColumn[] = [{ key: 'name', label: 'Nombre' }];
 
   get canReadProjectStatus() {
-    return this.auth.hasPermission("PROJECT_STATUS_READ");
+    return this.auth.hasPermission('PROJECT_STATUS_READ');
   }
   get canCreateProjectStatus() {
-    return this.auth.hasPermission("PROJECT_STATUS_CREATE");
+    return this.auth.hasPermission('PROJECT_STATUS_CREATE');
   }
   get canUpdateProjectStatus() {
-    return this.auth.hasPermission("PROJECT_STATUS_UPDATE");
+    return this.auth.hasPermission('PROJECT_STATUS_UPDATE');
   }
   get canDeleteProjectStatus() {
-    return this.auth.hasPermission("PROJECT_STATUS_DELETE");
+    return this.auth.hasPermission('PROJECT_STATUS_DELETE');
   }
 
   onProjectStatusToggle(open: boolean) {
     if (open && !this.projectStatusLoaded()) {
-      this.loadProjectStatus(1);
+      this.loadProjectStatus();
     }
   }
 
-  loadProjectStatus(page: number) {
-    this.projectStatusPage.set(page);
+  loadProjectStatus() {
     this.projectStatusLoaded.set(true);
-    this.projectStatusService
-      .findAll({ page: page - 1, size: this.projectStatusSize() })
-      .subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.projectStatusItems.set(res.data.content);
-            this.projectStatusTotalPages.set(res.data.totalPages);
-          }
-        },
-        error: () => this.projectStatusLoaded.set(false),
-      });
+    this.projectStatusService.findAll().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.projectStatusItems.set(res.data);
+        }
+      },
+      error: () => this.projectStatusLoaded.set(false),
+    });
   }
 
   openCreateProjectStatus() {
-    this.projectStatusForm.reset({ name: "" });
+    this.projectStatusForm.reset({ name: '' });
     this.editingProjectStatus.set(null);
-    this.projectStatusModalMode.set("create");
+    this.projectStatusModalMode.set('create');
   }
 
   openEditProjectStatus(item: ProjectStatus) {
     this.projectStatusForm.reset({ name: item.name });
     this.editingProjectStatus.set(item);
-    this.projectStatusModalMode.set("update");
+    this.projectStatusModalMode.set('update');
   }
 
   closeProjectStatusModal() {
@@ -102,19 +95,19 @@ export class ProjectStatusParamComponent {
     if (this.projectStatusForm.invalid) return;
     const { name } = this.projectStatusForm.value;
     const mode = this.projectStatusModalMode();
-    if (mode === "create") {
+    if (mode === 'create') {
       this.projectStatusService.create(name!).subscribe({
         next: () => {
           this.closeProjectStatusModal();
-          this.loadProjectStatus(this.projectStatusPage());
+          this.loadProjectStatus();
         },
       });
-    } else if (mode === "update") {
+    } else if (mode === 'update') {
       const item = this.editingProjectStatus()!;
       this.projectStatusService.update(item.id, name!).subscribe({
         next: () => {
           this.closeProjectStatusModal();
-          this.loadProjectStatus(this.projectStatusPage());
+          this.loadProjectStatus();
         },
       });
     }
@@ -136,7 +129,7 @@ export class ProjectStatusParamComponent {
     this.projectStatusService.delete(item.id).subscribe({
       next: () => {
         this.closeDeleteProjectStatusModal();
-        this.loadProjectStatus(this.projectStatusPage());
+        this.loadProjectStatus();
       },
     });
   }
