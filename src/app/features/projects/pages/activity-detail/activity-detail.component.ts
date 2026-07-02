@@ -1,18 +1,18 @@
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { PatActivityService } from "@/app/core/services/pat/pat-activity.service";
-import { ActivityExecutionTabComponent } from "./components/activity-execution-tab/activity-execution-tab.component";
-import { ActivityPlanTabComponent } from "./components/activity-plan-tab/activity-plan-tab.component";
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
+import { ActivityExecutionTabComponent } from './components/activity-execution-tab/activity-execution-tab.component';
+import { ActivityPlanTabComponent } from './components/activity-plan-tab/activity-plan-tab.component';
 import {
   PatActivity,
-  PatActivityBudget,
+  BudgetAmount,
   PatActivityBudgetMatrix,
   PatActivityExecution,
-} from "@/app/core/models/pat/pat-models";
-import { BudgetTabComponent } from "./components/budget-tab/budget-tab.component";
-import { PatActivityPlan } from "@/app/core/services/pat/pat-activity-plan.service";
+} from '@/app/core/models/pat/pat-models';
+import { BudgetTabComponent } from './components/budget-tab/budget-tab.component';
+import { PatActivityPlan } from '@/app/core/services/pat/pat-activity-plan.service';
 
 export interface MonthCard {
   month: number;
@@ -22,22 +22,22 @@ export interface MonthCard {
 }
 
 const MONTH_NAMES = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
 ];
 
 @Component({
-  selector: "app-activity-detail",
+  selector: 'app-activity-detail',
   standalone: true,
   imports: [
     CommonModule,
@@ -47,7 +47,7 @@ const MONTH_NAMES = [
     ActivityExecutionTabComponent,
     ActivityPlanTabComponent,
   ],
-  templateUrl: "./activity-detail.component.html",
+  templateUrl: './activity-detail.component.html',
 })
 export class ActivityDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -80,11 +80,11 @@ export class ActivityDetailComponent implements OnInit {
   plans = signal<PatActivityPlan[]>([]);
 
   loading = signal(true);
-  activeTab = signal<"execution" | "plan" | "budget">("execution");
+  activeTab = signal<'execution' | 'plan' | 'budget'>('execution');
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
-      const id = params.get("id");
+      const id = params.get('id');
       if (id) {
         this.loadActivity(Number(id));
       } else {
@@ -117,15 +117,15 @@ export class ActivityDetailComponent implements OnInit {
     if (consolidation) {
       const matrix = this.budgetMatrix().reduce(
         (acc, curr) => {
-          acc[curr.budgetCategory.id] = curr.patActivityBudget!;
+          acc[curr.budgetCategory.id] = curr.budget!;
           return acc;
         },
-        {} as Record<number, PatActivityBudget>,
+        {} as Record<number, BudgetAmount>,
       );
 
-      matrix[m.budgetCategory.id] = m.patActivityBudget!;
+      matrix[m.budgetCategory.id] = m.budget!;
       const totalBudget = Object.values(matrix).reduce(
-        (acc, curr) => acc + curr.totalBudget,
+        (acc, curr) => acc + curr.amount,
         0,
       );
 

@@ -3,21 +3,42 @@
   addLabel="+ Nueva actividad"
   (onAdd)="openCreateActivity()"
 >
-  <div class="w-full">
-    <div app-loading-spinner [isLoading]="isLoading()"></div>
-    @if (!isLoading()) {
-      <div class="flex flex-col gap-4 py-4 px-4">
-        @for (activity of activities(); track activity.id) {
-          <app-activity-card [activity]="activity" />
-        }
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+  @if (!isLoading()) {
+    <div class="mx-4 my-4">
+      @if (activities().length) {
+        <div class="flex flex-row-reverse">
+          <button class="btn btn-primary self-end" (click)="openGannt()">
+            Ver Gannt
+          </button>
+        </div>
+      }
+
+      <div class="w-full">
+        <div class="flex flex-col gap-4 py-4 px-4">
+          @for (activity of activities(); track activity.id) {
+            <app-activity-card [activity]="activity" />
+          } @empty {
+            <span class="text-sm text-center">No hay actividades</span>
+          }
+        </div>
       </div>
-    }
-    <app-paginator
-      [pageSize]="pageSize()"
-      [currentPage]="page()"
-      [totalPages]="totalPages()"
-      (onSelectPage)="page.set($event)"
-      (pageSizeChange)="pageSize.set($event)"
-    />
-  </div>
+    </div>
+  }
+
+  @if (modalGanntIsOpen()) {
+    <div class="modal-overlay">
+      <div class="modal-container w-full max-w-[90%]!">
+        <div class="modal-header">
+          <h2 class="modal-title">Gantt</h2>
+          <button type="button" class="close-btn" (click)="closeGannt()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-gannt-section [activities]="activities()" [risks]="[]" />
+        </div>
+      </div>
+    </div>
+  }
 </app-project-section-card>

@@ -18,6 +18,7 @@ import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec
 import { PageableQueryWithRsql } from '@/app/shared/components/pagination-table/pagination-table.component';
 import builder from '@rsql/builder';
 import { emit } from '@rsql/emitter';
+import { PatActivityBudgetMatrix } from '../../models/pat/pat-models';
 
 export const RISK_SCALE_OPTIONS = [
   { value: 'low', label: 'Baja' },
@@ -104,12 +105,10 @@ export class ProjectService extends FilterServiceSpecImpl<
   }
 
   findActivities(
-    p: ActivityQueryParams,
-  ): Observable<ApiResponse<APIPage<ProjectActivity>>> {
-    const params = new PageableQueryParams(p).getParams();
-    return this.http.get<ApiResponse<APIPage<ProjectActivity>>>(
-      `${this.baseUrl}/project-activities`,
-      { params },
+    projectId: number,
+  ): Observable<ApiResponse<Array<ProjectActivity>>> {
+    return this.http.get<ApiResponse<Array<ProjectActivity>>>(
+      `${this.baseUrl}/${projectId}/activities`,
     );
   }
 
@@ -146,6 +145,25 @@ export class ProjectService extends FilterServiceSpecImpl<
   deleteRisk(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
       `${this.baseUrl}/project-risks/${id}`,
+    );
+  }
+
+  findBudgetMatrix(
+    projectId: number,
+  ): Observable<ApiResponse<PatActivityBudgetMatrix[]>> {
+    return this.http.get<ApiResponse<PatActivityBudgetMatrix[]>>(
+      `${this.baseUrl}/${projectId}/budget-matrix`,
+    );
+  }
+
+  saveBudgetMatrix(
+    projectId: number,
+    budgetCategoryId: number,
+    amount: number,
+  ): Observable<ApiResponse<PatActivityBudgetMatrix>> {
+    return this.http.post<ApiResponse<PatActivityBudgetMatrix>>(
+      `${this.baseUrl}/${projectId}/budget-matrix`,
+      { budgetCategoryId, amount },
     );
   }
 }

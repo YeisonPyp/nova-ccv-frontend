@@ -11,6 +11,7 @@ import {
   PatActivityService,
 } from '@/app/core/services/pat/pat-activity.service';
 import { PolicyService } from '@/app/core/services/pat/policy.service';
+import { ColorPickerComponent } from '@/app/shared/components/color-picker/color-picker.component';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
 import { SearchSelectContextFactory } from '@/app/shared/components/search-select/on-search-select.interface';
 import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
@@ -31,6 +32,7 @@ import {
     ReactiveFormsModule,
     ContextSearchSelectComponent,
     FormFieldErrorDirective,
+    ColorPickerComponent,
   ],
   templateUrl: './create-activity.component.html',
 })
@@ -40,7 +42,7 @@ export class CreatePatActivityComponent {
   private readonly measurementService = inject(MeasurementService);
   private readonly policyService = inject(PolicyService);
   private readonly fb = inject(FormBuilder);
-  year = input<number>(new Date().getFullYear());
+  projectId = input.required<number>();
 
   onSaved = output<PatActivity>();
 
@@ -77,10 +79,9 @@ export class CreatePatActivityComponent {
       measurementId: [null as number | null, Validators.required],
       startsAt: ['', Validators.required],
       endsAt: ['', Validators.required],
-      displayOrder: [null as number | null],
       description: ['', Validators.maxLength(1000)],
       policyId: [null as number | null],
-      colorHex: [null as string | null],
+      colorHex: ['#FFFFFF'],
       measurementGoal: [null as number | null],
       projectId: [null as number | null],
       parentId: [null as number | null],
@@ -107,9 +108,8 @@ export class CreatePatActivityComponent {
         description: v.description!,
         policyId: v.policyId!,
         measurementGoal: v.measurementGoal!,
-        projectId: v.projectId!,
+        projectId: this.projectId(),
         parentId: v.parentId!,
-        displayOrder: v.displayOrder!,
         colorHex: v.colorHex!,
       })
       .subscribe({

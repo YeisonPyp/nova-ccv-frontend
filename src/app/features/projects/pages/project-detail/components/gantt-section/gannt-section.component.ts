@@ -36,6 +36,7 @@ export class GanntSectionComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     gantt.config.date_format = "%Y-%m-%d";
     gantt.config.auto_scheduling = true;
+    gantt.config.readonly = true;
 
     gantt.config.columns = [
       {
@@ -43,11 +44,6 @@ export class GanntSectionComponent implements AfterViewInit {
         label: "Actividad",
         width: 200,
         tree: true,
-      },
-      {
-        name: "add",
-        label: "",
-        width: 44,
       },
     ];
 

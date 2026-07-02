@@ -27,6 +27,7 @@ export interface Project {
 
 export interface ProjectActivity {
   id: number;
+  activityId: number;
   projectId: number;
   projectCode?: string;
   parentId?: number;

@@ -20,7 +20,6 @@ export interface CreatePatActivity {
   measurementId: number;
   startsAt: string;
   endsAt: string;
-  displayOrder: number;
 
   description?: string | null;
   policyId?: number | null;

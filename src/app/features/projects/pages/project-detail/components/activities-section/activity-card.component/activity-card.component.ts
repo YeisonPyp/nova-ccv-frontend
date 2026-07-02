@@ -9,11 +9,6 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './activity-card.component.html',
-  host: {
-    '[style.background-color]': 'dynamicColor().background',
-    '[style.color]': 'dynamicColor().foreground',
-    '[onclick]': 'onClick()',
-  },
 })
 export class ActivityCardComponent {
   private readonly router = inject(Router);
@@ -22,6 +17,6 @@ export class ActivityCardComponent {
   dynamicColor = computed(() => new DynamicColor(this.activity().colorHex));
 
   onClick() {
-    this.router.navigate(['/pat/activity', this.activity().id]);
+    this.router.navigate(['/projects/activities', this.activity().activityId]);
   }
 }

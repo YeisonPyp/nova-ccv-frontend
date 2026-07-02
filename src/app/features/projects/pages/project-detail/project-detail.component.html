@@ -6,16 +6,7 @@
   >
     ← Volver a proyectos
   </button>
-
-  @if (loading()) {
-    <div class="flex justify-center py-12">
-      <div class="spinner-border text-primary" role="status"></div>
-    </div>
-  }
-
-  @if (error()) {
-    <div class="alert alert-danger">{{ error() }}</div>
-  }
+  <div app-loading-spinner [isLoading]="loading()"></div>
 
   @if (!loading() && project(); as p) {
     <!-- ── HEADER ── -->
@@ -26,9 +17,9 @@
             class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded"
             >{{ p.code }}</span
           >
-          <!--<span class="badge {{ getStatusClass(p.status) }}">{{
+          <span class="badge {{ getStatusClass(p.status) }}">{{
             p.status
-          }}</span>-->
+          }}</span>
           <span class="badge badge-outline text-xs">{{ p.priority }}</span>
         </div>
         <h1 class="text-2xl font-bold text-secondary m-0">{{ p.name }}</h1>
@@ -104,6 +95,32 @@
           {{ p.generalObjective }}
         </p>
       </div>
+    </div>
+
+    <!-- Project Tabs -->
+    <div class="flex gap-2 mb-4">
+      @for (tab of tabs; track tab.key) {
+        <button
+          class="px-5 py-3 text-sm font-medium cursor-pointer border-b-2 transition-colors duration-150 rounded-t-lg -mb-px"
+          [class]="
+            activeTab() === tab.key
+              ? 'text-primary border-primary bg-white'
+              : 'text-gray-500 border-transparent hover:text-primary hover:bg-gray-100'
+          "
+          (click)="activeTab.set(tab.key)"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Tab content -->
+    <div class="flex-1">
+      <ng-container
+        [ngComponentOutlet]="activeTabComponent()"
+        [ngComponentOutletInputs]="activeTabInputs()"
+      >
+      </ng-container>
     </div>
   }
 </div>

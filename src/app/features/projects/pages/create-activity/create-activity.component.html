@@ -42,38 +42,20 @@
             class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
-      </div>
-    </section>
-
-    <!-- ── RESPONSABLE Y ORGANIZACIÓN ── -->
-    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      <h5
-        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
-      >
-        Responsable y Organización
-      </h5>
-      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
         <app-context-search-select
+          class="col-span-1"
           label="Responsable"
           [required]="true"
           [ctx]="employeeCtx"
         />
-
-        <app-context-search-select
-          [label]="'Centro de Costo'"
-          [required]="true"
-          [ctx]="costCenterCtx"
-        />
-
-        <app-context-search-select
-          [label]="'Actividad Táctica'"
-          [required]="true"
-          [ctx]="tacticalActivityCtx"
+        <app-color-picker
+          class="col-span-1 flex flex-col gap-1"
+          formControlName="colorHex"
+          [label]="'Color'"
         />
       </div>
     </section>
 
-    <!-- ── CLASIFICACIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
         class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
@@ -82,37 +64,23 @@
       </h5>
       <div class="grid grid-cols-3 gap-x-6 gap-y-4">
         <app-context-search-select
-          [label]="'Programa estratégico'"
-          [required]="false"
-          [ctx]="programCtx()"
-        />
-
-        <app-context-search-select
           [label]="'Política de reindustrialización'"
           [required]="false"
           [ctx]="policyCtx"
         />
       </div>
     </section>
-
-    <!-- ── INDICADORES Y MEDICIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
         class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
       >
-        Indicadores y Medición
+        Medición
       </h5>
       <div class="grid grid-cols-3 gap-x-6 gap-y-4">
         <app-context-search-select
           [label]="'Unidad de Medida'"
           [required]="true"
           [ctx]="measurementCtx"
-        />
-
-        <app-context-search-select
-          [label]="'Indicador de gestión'"
-          [required]="true"
-          [ctx]="cuantitativeIndicatorCtx"
         />
 
         <div class="flex flex-col gap-1">
@@ -123,60 +91,6 @@
           <input
             type="number"
             formControlName="measurementGoal"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
-            >Línea Base del Indicador</label
-          >
-          <input
-            type="number"
-            formControlName="indicatorBaseLine"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
-            >Meta del Indicador</label
-          >
-          <input
-            type="number"
-            formControlName="indicatorGoal"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-      </div>
-    </section>
-
-    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      <h5
-        class="text-[0.65rem] font-semibold text-secondary uppercase tracking-widest mb-4"
-      >
-        Beneficiarios
-      </h5>
-      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
-        <app-context-search-select
-          label="Tipo de Beneficiarios"
-          [required]="true"
-          [ctx]="benefitCtx"
-        />
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-secondary uppercase tracking-wide"
-            >Total de beneficiarios</label
-          >
-          <input
-            type="number"
-            formControlName="benefitAmount"
             placeholder="0"
             class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
           />

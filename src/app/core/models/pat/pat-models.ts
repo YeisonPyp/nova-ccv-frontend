@@ -1,7 +1,7 @@
-import { PatActivityPlan } from "../../services/pat/pat-activity-plan.service";
-import { Area } from "../assessment/area.model";
-import { Employee } from "../assessment/employee.model";
-import { CostCenter } from "../cost-center/cost-center.models";
+import { PatActivityPlan } from '../../services/pat/pat-activity-plan.service';
+import { Area } from '../assessment/area.model';
+import { Employee } from '../assessment/employee.model';
+import { CostCenter } from '../cost-center/cost-center.models';
 
 export interface PatPillar {
   id: number;
@@ -86,7 +86,7 @@ export interface PatActivity {
 
 export interface PatActivityBudgetMatrix {
   budgetCategory: BudgetCategory;
-  patActivityBudget?: PatActivityBudget;
+  budget?: BudgetAmount;
 }
 
 export interface BudgetCategory {
@@ -96,7 +96,7 @@ export interface BudgetCategory {
   amount: number;
   plannedBudget: number;
   unplannedBudget: number;
-  resourceType: "public" | "private";
+  resourceType: 'public' | 'private';
   description: string;
 }
 
@@ -121,11 +121,9 @@ export interface ActivityBudgetExecution {
   budgetCategory: BudgetCategory;
 }
 
-export interface PatActivityBudget {
+export interface BudgetAmount {
   id: number;
-  publicBudget: number;
-  privateBudget: number;
-  totalBudget: number;
+  amount: number;
 }
 
 export interface PatMeasurement {

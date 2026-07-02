@@ -1,25 +1,12 @@
-import {
-  Component,
-  effect,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  DynamicTableComponent,
-  TableColumn,
-} from '@/app/shared/components/dynamic-table/dynamic-table.component';
 import { ProjectActivity } from '@/app/core/models/projects/project.model';
-import { PriorityLabelPipe } from '../pipes/priority';
 import { Router } from '@angular/router';
-import { ProjectActivitiesService } from '@/app/core/services/projects/project-activites.service';
-import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 import { ProjectService } from '@/app/core/services/projects/project.service';
 import { ActivityCardComponent } from './activity-card.component/activity-card.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { ProjectSectionCardComponent } from '../project-section-card/project-section-card.component';
+import { GanntSectionComponent } from '../gantt-section/gannt-section.component';
 
 @Component({
   selector: 'app-activities-section',
@@ -27,9 +14,9 @@ import { ProjectSectionCardComponent } from '../project-section-card/project-sec
   imports: [
     CommonModule,
     ProjectSectionCardComponent,
-    PaginatorComponent,
     ActivityCardComponent,
     LoadingSpinnerComponent,
+    GanntSectionComponent,
   ],
   templateUrl: './activities-section.component.html',
 })
@@ -38,33 +25,28 @@ export class ActivitesSectionComponent {
   private readonly service = inject(ProjectService);
   projectId = input.required<number>();
 
-  pageSize = signal<number>(10);
-  page = signal<number>(1);
-  totalPages = signal<number>(1);
-
   activities = signal<ProjectActivity[]>([]);
-
+  modalGanntIsOpen = signal(false);
   isLoading = signal<boolean>(false);
-
   constructor() {
     effect(() => {
-      const [projectId, page, size] = [
-        this.projectId(),
-        this.page(),
-        this.pageSize(),
-      ];
       this.isLoading.set(true);
-      this.service
-        .findActivities({ page, projectId, size })
-        .subscribe((res) => {
-          this.isLoading.set(false);
-          this.totalPages.set(res.data.totalPages);
-          this.activities.set(res.data.content);
-        });
+      this.service.findActivities(this.projectId()).subscribe((res) => {
+        this.isLoading.set(false);
+        this.activities.set(res.data);
+      });
     });
   }
 
   openCreateActivity() {
-    // this.router.navigate([])
+    this.router.navigate([`/projects/${this.projectId()}/activities/create`]);
+  }
+
+  openGannt() {
+    this.modalGanntIsOpen.set(true);
+  }
+
+  closeGannt() {
+    this.modalGanntIsOpen.set(false);
   }
 }

@@ -1,6 +1,6 @@
 <div class="table-container">
   <div class="table-header">
-    <h2>Presupuesto de la Actividad</h2>
+    <h2>Presupuesto</h2>
     <p>Asignación de presupuesto por rubro</p>
   </div>
   <div class="overflow-x-auto">
@@ -21,7 +21,7 @@
           <tr
             app-budget-matrix-row
             [row]="row"
-            (onSave)="$onSave($event)"
+            (onSave)="onSave.emit($event)"
             class="hover:bg-gray-50 transition-colors"
           ></tr>
         }

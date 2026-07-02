@@ -7,16 +7,16 @@ import {
   OnInit,
   output,
   signal,
-} from "@angular/core";
-import { CommonModule, CurrencyPipe } from "@angular/common";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { debounceTime, distinctUntilChanged, filter } from "rxjs";
-import { CurrencyFormatDirective } from "@/app/shared/directives/currency-format.directive";
-import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
+} from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { CurrencyFormatDirective } from '@/app/shared/directives/currency-format.directive';
+import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
 import {
   BudgetCategory,
   PatActivityBudgetMatrix,
-} from "@/app/core/models/pat/pat-models";
+} from '@/app/core/models/pat/pat-models';
 
 export interface OnSaveBudgetMatrix {
   budgetCategory: BudgetCategory;
@@ -24,7 +24,7 @@ export interface OnSaveBudgetMatrix {
 }
 
 @Component({
-  selector: "[app-budget-matrix-row]",
+  selector: '[app-budget-matrix-row]',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,7 +33,7 @@ export interface OnSaveBudgetMatrix {
     CurrencyFormatDirective,
     FormFieldErrorDirective,
   ],
-  templateUrl: "./budget-matrix-row.component.html",
+  templateUrl: './budget-matrix-row.component.html',
 })
 export class BudgetMatrixRowComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -43,7 +43,7 @@ export class BudgetMatrixRowComponent implements OnInit {
 
   delta = computed(() => {
     const r = this.row();
-    const originalBudget = r.patActivityBudget?.totalBudget ?? 0;
+    const originalBudget = r.budget?.amount ?? 0;
     return this.newPlannedBudget() - originalBudget;
   });
 
@@ -66,13 +66,13 @@ export class BudgetMatrixRowComponent implements OnInit {
   constructor() {
     effect(() => {
       const row = this.row();
-      const currentTotal = row.patActivityBudget?.totalBudget || 0;
+      const currentTotal = row.budget?.amount || 0;
 
       this.formGroup.patchValue({ amount: currentTotal }, { emitEvent: false });
 
       this.newPlannedBudget.set(currentTotal);
 
-      const amountControl = this.formGroup.get("amount");
+      const amountControl = this.formGroup.get('amount');
       if (amountControl) {
         amountControl.clearValidators();
 
