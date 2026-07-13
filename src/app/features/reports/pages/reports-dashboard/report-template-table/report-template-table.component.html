@@ -1,0 +1,11 @@
+<app-pagination-table
+  [service]="service"
+  [tableColumns]="columns"
+  [showFilterSection]="false"
+>
+  <ng-template #actions let-item>
+    <button class="hover:text-primary" (click)="onEdit(item)">
+      <app-edit-icon />
+    </button>
+  </ng-template>
+</app-pagination-table>

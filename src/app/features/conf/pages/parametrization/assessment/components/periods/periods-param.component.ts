@@ -1,23 +1,23 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { AuthService } from "@/app/core/services/auth.service";
-import { PeriodService } from "@/app/core/services/assessment/period.service";
-import { Period } from "@/app/core/models/assessment/period.model";
+} from '@angular/forms';
+import { AuthService } from '@/app/core/services/auth.service';
+import { PeriodService } from '@/app/core/services/assessment/period.service';
+import { EvaluationPeriod } from '@/app/core/models/assessment/period.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
-import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
 
 @Component({
-  selector: "app-periods-param",
+  selector: 'app-periods-param',
   standalone: true,
   imports: [
     CommonModule,
@@ -26,46 +26,46 @@ import { ParametrizationSectionComponent } from "@/app/features/conf/components/
     PaginationComponent,
     ParametrizationSectionComponent,
   ],
-  templateUrl: "./periods-param.component.html",
+  templateUrl: './periods-param.component.html',
 })
 export class PeriodsParamComponent {
   private readonly auth = inject(AuthService);
   private readonly periodService = inject(PeriodService);
 
-  periods = signal<Period[]>([]);
+  periods = signal<EvaluationPeriod[]>([]);
   periodPage = signal(1);
   periodSize = signal(10);
   periodTotalPages = signal(0);
   periodsLoaded = signal(false);
 
-  periodModalMode = signal<"create" | "update" | null>(null);
+  periodModalMode = signal<'create' | 'update' | null>(null);
   showDeletePeriodModal = signal(false);
-  editingPeriod = signal<Period | null>(null);
+  editingPeriod = signal<EvaluationPeriod | null>(null);
 
   periodForm = new FormGroup({
-    name: new FormControl("", [Validators.required]),
-    startDate: new FormControl("", [Validators.required]),
-    endDate: new FormControl("", [Validators.required]),
+    name: new FormControl('', [Validators.required]),
+    startDate: new FormControl('', [Validators.required]),
+    endDate: new FormControl('', [Validators.required]),
   });
 
   periodColumns: TableColumn[] = [
-    { key: "name", label: "Nombre" },
-    { key: "startDate", label: "Inicio" },
-    { key: "endDate", label: "Fin" },
-    { key: "isActive", label: "Activo" },
+    { key: 'name', label: 'Nombre' },
+    { key: 'startDate', label: 'Inicio' },
+    { key: 'endDate', label: 'Fin' },
+    { key: 'isActive', label: 'Activo' },
   ];
 
   get canReadPeriod() {
-    return this.auth.hasPermission("EVALUATION_PERIOD_READ");
+    return this.auth.hasPermission('EVALUATION_PERIOD_READ');
   }
   get canCreatePeriod() {
-    return this.auth.hasPermission("EVALUATION_PERIOD_CREATE");
+    return this.auth.hasPermission('EVALUATION_PERIOD_CREATE');
   }
   get canUpdatePeriod() {
-    return this.auth.hasPermission("EVALUATION_PERIOD_UPDATE");
+    return this.auth.hasPermission('EVALUATION_PERIOD_UPDATE');
   }
   get canDeletePeriod() {
-    return this.auth.hasPermission("EVALUATION_PERIOD_DELETE");
+    return this.auth.hasPermission('EVALUATION_PERIOD_DELETE');
   }
 
   onPeriodsToggle(open: boolean) {
@@ -78,7 +78,7 @@ export class PeriodsParamComponent {
     this.periodPage.set(page);
     this.periodsLoaded.set(true);
     this.periodService
-      .findCurrentPeriods({ page: page - 1, size: this.periodSize() })
+      .findPeriods({ page: page - 1, size: this.periodSize() })
       .subscribe({
         next: (res) => {
           if (res.success && res.data) {
@@ -91,19 +91,19 @@ export class PeriodsParamComponent {
   }
 
   openCreatePeriod() {
-    this.periodForm.reset({ name: "", startDate: "", endDate: "" });
+    this.periodForm.reset({ name: '', startDate: '', endDate: '' });
     this.editingPeriod.set(null);
-    this.periodModalMode.set("create");
+    this.periodModalMode.set('create');
   }
 
-  openEditPeriod(period: Period) {
+  openEditPeriod(period: EvaluationPeriod) {
     this.periodForm.reset({
       name: period.name,
       startDate: period.startDate,
       endDate: period.endDate,
     });
     this.editingPeriod.set(period);
-    this.periodModalMode.set("update");
+    this.periodModalMode.set('update');
   }
 
   closePeriodModal() {
@@ -116,14 +116,14 @@ export class PeriodsParamComponent {
     const dto = { name: name!, startDate: startDate!, endDate: endDate! };
     const mode = this.periodModalMode();
 
-    if (mode === "create") {
+    if (mode === 'create') {
       this.periodService.createPeriod(dto).subscribe({
         next: () => {
           this.closePeriodModal();
           this.loadPeriods(this.periodPage());
         },
       });
-    } else if (mode === "update") {
+    } else if (mode === 'update') {
       const period = this.editingPeriod()!;
       this.periodService.updatePeriod(period.id, dto).subscribe({
         next: () => {
@@ -134,7 +134,7 @@ export class PeriodsParamComponent {
     }
   }
 
-  openDeletePeriod(period: Period) {
+  openDeletePeriod(period: EvaluationPeriod) {
     this.editingPeriod.set(period);
     this.showDeletePeriodModal.set(true);
   }

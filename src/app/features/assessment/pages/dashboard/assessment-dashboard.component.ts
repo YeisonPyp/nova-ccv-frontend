@@ -1,92 +1,50 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { AssessmentService } from '@/app/core/services/assessment/assessment.service';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Period } from '@/app/core/models/assessment/period.model';
-import { AssessmentTableComponent } from './assessment-table/assessment-table.component';
-import { AuthService } from '@/app/core/services/auth.service';
-import { Assessment } from '@/app/core/models/assessment/assessment.model';
-import {
-  CreateAssessmentDto,
-  CreateAssessmentModalComponent,
-} from './create-assessment-modal/create-assessment-modal.component';
-import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
-import { PeriodSelectorComponent } from './period-selector/period-selector.component';
+import { EvaluationPeriod } from '@/app/core/models/assessment/period.model';
+import { AssessmentTableComponent } from '../period-detail/assessment-table/assessment-table.component';
 import { Router } from '@angular/router';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
+import { PeriodService } from '@/app/core/services/assessment/period.service';
+import { PeriodCardComponent } from './period-card/period-card.component';
+import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-assessment-dashboard',
   imports: [
     CommonModule,
     AssessmentTableComponent,
-    CreateAssessmentModalComponent,
     PaginatorComponent,
-    PeriodSelectorComponent,
+    PeriodCardComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './assessment-dashboard.component.html',
-  styleUrl: './assessment-dashboard.component.scss',
 })
-export class AssessmentDashboardComponent implements OnInit {
-  assesmentService = inject(AssessmentService);
-  authService = inject(AuthService);
+export class AssessmentDashboardComponent {
+  private readonly service = inject(PeriodService);
   private readonly router = inject(Router);
 
-  selectedPeriod = signal<Period | undefined>(undefined);
-  size = signal(20);
-  page = signal(1);
-  pages = signal(0);
-  isCreateModalOpen = signal<boolean>(false);
-  assessments = signal<Assessment[]>([]);
+  periods = signal<EvaluationPeriod[]>([]);
+  size = signal<number>(10);
+  page = signal<number>(1);
+  pages = signal<number>(0);
+  isLoading = signal(false);
 
-  selectPeriod(period: Period) {
-    this.selectedPeriod.set(period);
-    this.fetchPage(1);
-  }
-
-  openEditModal(a: Assessment) {
-    this.router.navigate(['/assessment/edit', a.id]);
+  constructor() {
+    effect(() => {
+      const page = this.page();
+      const size = this.size();
+      this.isLoading.set(true);
+      this.service
+        .findPeriodsWithMetrics({ page: page - 1, size })
+        .subscribe((res) => {
+          this.periods.set(res.data.content);
+          this.pages.set(res.data.totalPages);
+          this.isLoading.set(false);
+        });
+    });
   }
 
   goToSurveys() {
     this.router.navigate(['/assessment/surveys']);
-  }
-
-  ngOnInit(): void {
-    this.fetchPage(this.page());
-  }
-
-  fetchPage(p: number) {
-    this.page.set(p);
-    const period = this.selectedPeriod();
-    if (!period) return;
-    this.assesmentService
-      .findAssessments({ page: p - 1, size: this.size(), periodId: period.id })
-      .subscribe((result) => {
-        if (result.success && result.data && result.data.content) {
-          this.pages.set(result.data.totalPages);
-          this.assessments.set(result.data.content);
-        }
-      });
-  }
-
-  onPageSizeChange(newSize: number) {
-    this.size.set(newSize);
-    this.fetchPage(1);
-  }
-
-  onCreateSubmit(data: CreateAssessmentDto) {
-    this.assesmentService.createAssessment(data).subscribe((result) => {
-      if (result.success && result.data) {
-        this.fetchPage(this.page());
-        this.closeCreateModal();
-      }
-    });
-  }
-
-  openCreateModal() {
-    this.isCreateModalOpen.set(true);
-  }
-
-  closeCreateModal() {
-    this.isCreateModalOpen.set(false);
   }
 }

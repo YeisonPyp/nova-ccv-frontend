@@ -1,0 +1,19 @@
+<div class="flex flex-col items-center gap-y-4">
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-5">
+    @for (element of elements(); track element.id) {
+      <app-file-item
+        [file]="element"
+        [label]="element.name"
+        [canUpdate]="false"
+        [canDelete]="false"
+      />
+    }
+  </div>
+  <app-paginator
+    [pageSize]="size()"
+    [currentPage]="page()"
+    [totalPages]="pages()"
+    (onSelectPage)="page.set($event)"
+    (pageSizeChange)="size.set($event)"
+  />
+</div>

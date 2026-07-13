@@ -111,6 +111,13 @@ export const routes: Routes = [
             (m) => m.SECURITY_ROUTES,
           ),
       },
+      {
+        path: "reports",
+        loadChildren: () =>
+          import("./features/reports/reports.routes").then(
+            (m) => m.REPORT_ROUTES,
+          ),
+      },
     ],
   },
   {

@@ -22,6 +22,7 @@ import {
   FilterRow,
   FilterSectionComponent,
 } from "../dynamic-table/filter-section/filter-section.component";
+import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
 
 export interface PageableQueryWithRsql extends PageableQuery {
   rsqlQuery?: string;
@@ -45,12 +46,14 @@ export interface FilterServiceSpec {
     DynamicTableComponent,
     PaginationComponent,
     FilterSectionComponent,
+    LoadingSpinnerComponent
   ],
   templateUrl: "./pagination-table.component.html",
 })
 export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   service = input.required<FilterServiceSpec>();
   tableColumns = input.required<TableColumn[]>();
+  showFilterSection = input(true);
   filterRows = signal<FilterRow[]>([]);
 
   @ContentChild("actions") actionsTemplate?: TemplateRef<any>;

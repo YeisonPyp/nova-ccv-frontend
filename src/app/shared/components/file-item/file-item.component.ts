@@ -33,6 +33,9 @@ export class FileItemComponent {
   loading = input<boolean>(false);
   uploadProgress = input<number>(0);
 
+  canUpdate = input<boolean>(true);
+  canDelete = input<boolean>(true);
+
   fileSelected = output<File>();
   deleteRequested = output<void>();
 

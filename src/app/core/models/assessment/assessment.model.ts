@@ -1,9 +1,9 @@
-import { Area } from "./area.model";
-import { CompetencyScore } from "./competency-score.model";
-import { Employee } from "./employee.model";
-import { Period } from "./period.model";
-import { Position, PositionAssessmentComponent } from "./position.model";
-import { EvaluationType, SurveyQuestion } from "./survey.model";
+import { Area } from './area.model';
+import { CompetencyScore } from './competency-score.model';
+import { Employee } from './employee.model';
+import { EvaluationPeriod } from './period.model';
+import { Position, PositionAssessmentComponent } from './position.model';
+import { EvaluationType, SurveyQuestion } from './survey.model';
 
 export interface AssessmentComponentReportSupportFile {
   id: number;
@@ -53,7 +53,7 @@ export interface Assessment {
 
   area?: Area;
   competencyScores?: Array<CompetencyScore>;
-  period?: Period | undefined;
+  period?: EvaluationPeriod | undefined;
   position?: Position | undefined;
   evaluator?: Employee | undefined;
   evaluatee?: Employee | undefined;

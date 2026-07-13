@@ -1,0 +1,200 @@
+<div app-loading-spinner [isLoading]="isLoading()"></div>
+
+@if (!isLoading() && template()) {
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-start gap-4 px-6 pt-6 pb-4">
+      <div
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-xl font-semibold text-gray-900 truncate">
+          {{ template()!.name }}
+        </h1>
+        @if (template()!.description) {
+          <p class="mt-1 text-sm text-gray-500">
+            {{ template()!.description }}
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div
+      class="flex flex-wrap gap-2 border-b border-gray-200 bg-gray-50 px-4 pt-2"
+    >
+      @for (tab of tabs; track tab.key) {
+        <button
+          type="button"
+          class="-mb-px rounded-t-lg border-b-2 px-5 py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
+          [class]="
+            activeTab() === tab.key
+              ? 'text-primary border-primary bg-white'
+              : 'text-gray-500 border-transparent hover:text-primary hover:bg-gray-100'
+          "
+          (click)="activeTab.set(tab.key)"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Panels -->
+    <div class="min-h-100 p-6">
+      @switch (activeTab()) {
+        @case ("create") {
+          <div [formGroup]="form" class="space-y-6">
+            @if (variables().length === 0) {
+              <div
+                class="flex flex-col items-center justify-center py-16 text-center"
+              >
+                <p class="text-sm text-gray-500">
+                  Esta plantilla no tiene variables para configurar.
+                </p>
+              </div>
+            } @else {
+              <!-- Progress -->
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm">
+                  <span class="font-medium text-gray-700">Parámetros</span>
+                  <span class="text-gray-500">
+                    {{ selectedCount() }} de {{ variables().length }}
+                    seleccionados
+                  </span>
+                </div>
+                <div
+                  class="h-2 w-full overflow-hidden rounded-full bg-gray-100"
+                >
+                  <div
+                    class="h-full rounded-full bg-primary transition-all duration-300"
+                    [style.width.%]="progress()"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Variables -->
+              <div class="space-y-4">
+                @for (variable of variables(); track variable.id) {
+                  <div class="rounded-lg border border-gray-200">
+                    <div
+                      class="flex items-center justify-between gap-3 border-b border-gray-100 bg-gray-50 px-4 py-3"
+                    >
+                      <span class="text-sm font-medium text-gray-800">
+                        {{ variable.label }}
+                      </span>
+                      @if (variableMap()[variable.id]) {
+                        <span
+                          class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-3.5 w-3.5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          Seleccionado
+                        </span>
+                      }
+                    </div>
+
+                    <div class="p-4">
+                      @if (variableMap()[variable.id]) {
+                        <div class="flex items-center justify-between gap-3">
+                          <div class="min-w-0">
+                            <p class="text-xs text-gray-400">
+                              Valor seleccionado
+                            </p>
+                            <p
+                              class="truncate text-sm font-medium text-gray-800"
+                            >
+                              {{ variableMap()[variable.id] }}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            class="shrink-0 text-sm font-medium text-red-600 hover:text-red-700"
+                            (click)="clearVariable(variable.id)"
+                          >
+                            Cambiar
+                          </button>
+                        </div>
+                      } @else {
+                        <app-report-variable-table
+                          [variable]="variable"
+                          (onSelectOption)="onSelectOption(variable.id, $event)"
+                        />
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Report name + submit -->
+            <div class="border-t border-gray-100 pt-6">
+              <label
+                for="reportName"
+                class="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Nombre del informe
+              </label>
+              <input
+                id="reportName"
+                type="text"
+                formControlName="reportName"
+                placeholder="Ej. Informe trimestral Q1"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                [appFormFieldError]="{}"
+              />
+
+              <div class="mt-5 flex items-center justify-end gap-3">
+                @if (!canSubmit()) {
+                  <span class="text-xs text-gray-400">
+                    Completa todos los parámetros para continuar
+                  </span>
+                }
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  (click)="submit()"
+                  [disabled]="!canSubmit() || form.invalid"
+                >
+                  Crear informe
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        @case ("reports") {
+          <app-reports-list [templateId]="template()!.id" />
+        }
+
+        @default {
+          <p class="text-sm text-gray-500">Nada por aquí</p>
+        }
+      }
+    </div>
+  </div>
+}

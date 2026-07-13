@@ -1,52 +1,52 @@
-import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
-import { Routes } from "@angular/router";
+import { hasPermissionGuard } from '@/app/shared/guards/has-permission.guard';
+import { Routes } from '@angular/router';
 
 export const ASSESSMENT_ROUTES: Routes = [
   {
-    path: "dashboard",
+    path: 'dashboard',
     loadComponent: () =>
-      import("./pages/dashboard/assessment-dashboard.component").then(
+      import('./pages/dashboard/assessment-dashboard.component').then(
         (m) => m.AssessmentDashboardComponent,
       ),
-    canActivate: [hasPermissionGuard(["ASSESSMENTS_READ"])],
+    canActivate: [hasPermissionGuard(['ASSESSMENTS_READ'])],
   },
   {
-    path: "edit/:id",
+    path: 'edit/:id',
     loadComponent: () =>
-      import("./pages/dashboard/edit-assessment-modal/edit-assessment-modal.component").then(
+      import('./pages/edit-assessment-modal/edit-assessment-modal.component').then(
         (m) => m.EditAssessmentModalComponent,
       ),
-    canActivate: [hasPermissionGuard(["ASSESSMENTS_UPDATE"])],
+    canActivate: [hasPermissionGuard(['ASSESSMENTS_UPDATE'])],
   },
   {
-    path: "positions/:id",
+    path: 'positions/:id',
     loadComponent: () =>
-      import("./pages/positions/position-detail.component").then(
+      import('./pages/positions/position-detail.component').then(
         (m) => m.PositionDetailComponent,
       ),
   },
   {
-    path: "surveys",
+    path: 'surveys',
     loadComponent: () =>
-      import("./pages/surveys/surveys-list.component").then(
+      import('./pages/surveys/surveys-list.component').then(
         (m) => m.SurveysListComponent,
       ),
-    canActivate: [hasPermissionGuard(["SURVEY_READ"])],
+    canActivate: [hasPermissionGuard(['SURVEY_READ'])],
   },
   {
-    path: "surveys/new",
+    path: 'surveys/new',
     loadComponent: () =>
-      import("./pages/surveys/survey-form/survey-form.component").then(
+      import('./pages/surveys/survey-form/survey-form.component').then(
         (m) => m.SurveyFormComponent,
       ),
-    canActivate: [hasPermissionGuard(["SURVEY_CREATE"])],
+    canActivate: [hasPermissionGuard(['SURVEY_CREATE'])],
   },
   {
-    path: "surveys/:id",
+    path: 'surveys/:id',
     loadComponent: () =>
-      import("./pages/surveys/survey-form/survey-form.component").then(
+      import('./pages/surveys/survey-form/survey-form.component').then(
         (m) => m.SurveyFormComponent,
       ),
-    canActivate: [hasPermissionGuard(["SURVEY_UPDATE"])],
+    canActivate: [hasPermissionGuard(['SURVEY_UPDATE'])],
   },
 ];

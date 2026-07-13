@@ -1,0 +1,7 @@
+<div>
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+  @if (period(); as p) {
+    <app-period-card [period]="p" />
+  }
+  <app-assessment-table [periodId]="periodId" />
+</div>
