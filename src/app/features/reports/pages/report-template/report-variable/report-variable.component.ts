@@ -53,6 +53,7 @@ export class ReportVariableComponent {
           size: this.size(),
         })
         .subscribe((res) => {
+          this.isLoading.set(false);
           this.elements.set(res.data.content);
           this.pages.set(res.data.totalPages);
         });

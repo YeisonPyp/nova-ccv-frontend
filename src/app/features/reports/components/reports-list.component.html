@@ -1,5 +1,7 @@
 <div class="flex flex-col items-center gap-y-4">
-  <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-5">
+  <div
+    class="grid w-full grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5"
+  >
     @for (element of elements(); track element.id) {
       <app-file-item
         [file]="element"
