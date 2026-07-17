@@ -49,4 +49,11 @@ export const ASSESSMENT_ROUTES: Routes = [
       ),
     canActivate: [hasPermissionGuard(['SURVEY_UPDATE'])],
   },
+  {
+    path: 'periods/:periodId',
+    loadComponent: () =>
+      import('./pages/period-detail/period-detail.component').then(
+        (m) => m.PeriodDetailComponent,
+      ),
+  },
 ];

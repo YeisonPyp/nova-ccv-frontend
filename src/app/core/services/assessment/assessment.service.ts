@@ -12,9 +12,14 @@ import { EditAssesmentDto } from '../../../features/assessment/pages/edit-assess
 import { HttpClient } from '@angular/common/http';
 
 export interface AssessmentPageableQuery extends PageableQuery {
+  status?: string | null;
   periodId?: number;
-  evaluateeId?: number;
-  evaluatorId?: number;
+}
+
+export interface AssessmentStatus {
+  periodId: number;
+  status: string;
+  count: number;
 }
 
 @Injectable({
@@ -42,6 +47,14 @@ export class AssessmentService {
     return this.http.patch<ApiResponse<Assessment>>(
       `${this.API_URL}/${data.id}`,
       data,
+    );
+  }
+
+  findAssessmentStatuses(
+    periodId: number,
+  ): Observable<ApiResponse<AssessmentStatus[]>> {
+    return this.http.get<ApiResponse<AssessmentStatus[]>>(
+      `${this.API_URL}/period-status/${periodId}`,
     );
   }
 }

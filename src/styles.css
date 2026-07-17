@@ -7,6 +7,10 @@
   --color-tertiary: #606062;
   --text-alternate: #999999;
   --color-border-primary: #e2e8f0;
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-info: #17a2b8;
 }
 
 /* You can add global styles to this file, and also import other style files */

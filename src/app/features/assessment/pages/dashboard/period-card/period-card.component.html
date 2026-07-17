@@ -1,6 +1,6 @@
 <button
   type="button"
-  class="bg-background rounded-xl border border-border-primary shadow-sm p-5 text-left hover:border-primary transition-colors flex flex-col gap-4 cursor-pointer w-full"
+  class="bg-background rounded-xl border border-border-primary shadow-sm p-5 text-left hover:border-primary transition-colors flex flex-col gap-4 cursor-pointer w-full min-h-77.5"
   (click)="onClick()"
 >
   <!-- Header -->
@@ -102,7 +102,7 @@
         @for (s of period().statusCounts; track s.status) {
           <span
             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider"
-            [class]="statusBadgeClass(s.status)"
+            [appStatusBadge]="s.status"
           >
             {{ s.status }}
             <span class="font-bold">{{ s.count }}</span>

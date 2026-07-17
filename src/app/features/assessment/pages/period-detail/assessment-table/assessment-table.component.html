@@ -1,6 +1,6 @@
-<div app-loading-spinner [isLoading]="isLoading()"></div>
-@if (!isLoading()) {
-  <div class="table-wrapper">
+<div class="min-h-57.5 flex flex-col">
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+  @if (!isLoading()) {
     <app-dynamic-table
       [data]="assessments()"
       [columns]="columns"
@@ -20,7 +20,7 @@
               (item.evaluator?.lastName ?? "")
           }}
         } @else if (col.key === "status") {
-          <span class="badge" [ngClass]="getStatusClass(item.status)">
+          <span class="badge" [appStatusBadge]="item.status">
             {{ item.status }}
           </span>
         } @else if (col.key === "matrixTotalScore") {
@@ -71,12 +71,12 @@
         </button>
       </ng-template>
     </app-dynamic-table>
-  </div>
-  <app-paginator
-    [pageSize]="size()"
-    [currentPage]="page()"
-    [totalPages]="pages()"
-    (pageSizeChange)="size.set($event)"
-    (onSelectPage)="page.set($event)"
-  ></app-paginator>
-}
+    <app-paginator
+      [pageSize]="size()"
+      [currentPage]="page()"
+      [totalPages]="pages()"
+      (pageSizeChange)="size.set($event)"
+      (onSelectPage)="page.set($event)"
+    ></app-paginator>
+  }
+</div>

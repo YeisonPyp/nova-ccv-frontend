@@ -1,0 +1,70 @@
+<div app-loading-spinner [isLoading]="isLoading()"></div>
+
+@if (!isLoading()) {
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <!-- Avg score per position -->
+    <section
+      class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-2"
+    >
+      <h3 class="mb-4 text-base font-semibold text-gray-800">
+        Promedio de calificaciones por cargo
+      </h3>
+      @if (hasPositionData()) {
+        <div class="relative h-72">
+          <canvas
+            baseChart
+            type="bar"
+            [data]="positionChartData()"
+            [options]="barOptions"
+          ></canvas>
+        </div>
+      } @else {
+        <p class="py-12 text-center text-sm text-gray-400">
+          Sin datos de calificaciones para este periodo.
+        </p>
+      }
+    </section>
+
+    <!-- Avg score per survey -->
+    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h3 class="mb-4 text-base font-semibold text-gray-800">
+        Promedio por encuesta
+      </h3>
+      @if (hasSurveyData()) {
+        <div class="relative h-72">
+          <canvas
+            baseChart
+            type="bar"
+            [data]="surveyChartData()"
+            [options]="barOptions"
+          ></canvas>
+        </div>
+      } @else {
+        <p class="py-12 text-center text-sm text-gray-400">
+          Sin respuestas de encuestas para este periodo.
+        </p>
+      }
+    </section>
+
+    <!-- Evaluations per area -->
+    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h3 class="mb-4 text-base font-semibold text-gray-800">
+        Evaluaciones por área
+      </h3>
+      @if (hasAreaData()) {
+        <div class="relative h-72">
+          <canvas
+            baseChart
+            type="pie"
+            [data]="areaChartData()"
+            [options]="pieOptions"
+          ></canvas>
+        </div>
+      } @else {
+        <p class="py-12 text-center text-sm text-gray-400">
+          Sin evaluaciones para este periodo.
+        </p>
+      }
+    </section>
+  </div>
+}

@@ -20,6 +20,7 @@ import { AssessmentService } from '@/app/core/services/assessment/assessment.ser
 import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 import { Router } from '@angular/router';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { StatusBadgeDirective } from '@/app/shared/directives/status-badge.directive';
 
 @Component({
   selector: 'app-assessment-table',
@@ -30,6 +31,7 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
     HasPermissionDirective,
     PaginatorComponent,
     LoadingSpinnerComponent,
+    StatusBadgeDirective,
   ],
   templateUrl: './assessment-table.component.html',
   styleUrl: './assessment-table.component.scss',
@@ -39,6 +41,8 @@ export class AssessmentTableComponent {
   private readonly router = inject(Router);
 
   periodId = input.required<number>();
+  status = input<string | null>(null);
+
   assessments = signal<Assessment[]>([]);
   size = signal<number>(10);
   page = signal<number>(1);
@@ -49,7 +53,6 @@ export class AssessmentTableComponent {
     { key: 'evaluatee', label: 'Empleado' },
     { key: 'evaluator', label: 'Evaluador' },
     { key: 'status', label: 'Estado' },
-    { key: 'matrixTotalScore', label: 'Desempeño' },
   ];
 
   constructor() {
@@ -59,21 +62,18 @@ export class AssessmentTableComponent {
       const size = this.size();
       this.isLoading.set(true);
       this.service
-        .findAssessments({ periodId, page: page - 1, size })
+        .findAssessments({
+          periodId,
+          page: page - 1,
+          size,
+          status: this.status(),
+        })
         .subscribe((res) => {
           this.assessments.set(res.data.content);
           this.pages.set(res.data.totalPages);
           this.isLoading.set(false);
         });
     });
-  }
-
-  getStatusClass(status: string): string {
-    const classes: Record<string, string> = {
-      COMPLETED: 'status-completed',
-      PENDING: 'status-pending',
-    };
-    return classes[status] || 'status-progress';
   }
 
   onEdit(a: Assessment) {
