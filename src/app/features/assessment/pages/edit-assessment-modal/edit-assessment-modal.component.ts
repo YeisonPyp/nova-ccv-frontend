@@ -22,6 +22,7 @@ import {
   SurveyAnswerScoreChange,
 } from './survey-answer-card/survey-answer-card.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { AuthService } from '@/app/core/services/auth.service';
 
 export interface CompetencyAssessmentDto {
   [competencyId: number]: number | null;
@@ -64,8 +65,14 @@ export class EditAssessmentModalComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly assessmentService = inject(AssessmentService);
   private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
   id = input.required<number>();
   assessment = signal<Assessment | null>(null);
+
+  isReadonly = computed(
+    () => !(this.assessment()?.permissions?.includes('UPDATE') || false),
+  );
+
   isLoading = signal(true);
   assessmentForm: FormGroup;
   competencyScores = signal<CompetencyAssessmentDto>({});
@@ -151,6 +158,9 @@ export class EditAssessmentModalComponent implements OnInit {
     effect(() => {
       const a = this.assessment();
       if (!a) return;
+      if (this.isReadonly()) {
+        this.assessmentForm.disable();
+      }
       this.competencyWeightedScore.set(
         a.competencyScores?.reduce<CompetencyAssessmentDto>((acc, score) => {
           acc[score.competency?.id ?? 0] = score.weightedScore;

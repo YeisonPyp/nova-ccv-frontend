@@ -21,6 +21,7 @@ import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.
 import { Router } from '@angular/router';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { StatusBadgeDirective } from '@/app/shared/directives/status-badge.directive';
+import { AssessmentTypeComponent } from '../../edit-assessment-modal/assessment-type/assessment-type.component';
 
 @Component({
   selector: 'app-assessment-table',
@@ -32,6 +33,7 @@ import { StatusBadgeDirective } from '@/app/shared/directives/status-badge.direc
     PaginatorComponent,
     LoadingSpinnerComponent,
     StatusBadgeDirective,
+    AssessmentTypeComponent,
   ],
   templateUrl: './assessment-table.component.html',
   styleUrl: './assessment-table.component.scss',
@@ -53,6 +55,7 @@ export class AssessmentTableComponent {
     { key: 'evaluatee', label: 'Empleado' },
     { key: 'evaluator', label: 'Evaluador' },
     { key: 'status', label: 'Estado' },
+    { key: 'type', label: 'Tipo' },
   ];
 
   constructor() {

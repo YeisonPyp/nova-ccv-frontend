@@ -55,6 +55,8 @@
               ></div>
             </div>
           </div>
+        } @else if (col.key === "type") {
+          <span app-assessment-type [t]="item.type"></span>
         } @else {
           {{ item[col.key] }}
         }

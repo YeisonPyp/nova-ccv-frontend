@@ -1,12 +1,12 @@
-import { CommonModule } from "@angular/common";
-import { Component, input, forwardRef, signal, computed } from "@angular/core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { CommonModule } from '@angular/common';
+import { Component, input, forwardRef, signal, computed } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: "app-score-slider",
+  selector: 'app-score-slider',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: "./score-slider.component.html",
+  templateUrl: './score-slider.component.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -18,7 +18,6 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 export class ScoreSliderComponent implements ControlValueAccessor {
   min = input<number>(0);
   max = input<number>(5);
-  label = input<string>("Calificación");
 
   protected val = signal<number>(0);
 

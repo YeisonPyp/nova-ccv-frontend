@@ -19,6 +19,7 @@ export interface SurveyAnswerScoreChange {
 export class SurveyAnswerCardComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   answer = input.required<AssessmentSurveyAnswer>();
+  isDisabled = input.required<boolean>();
 
   onChange = output<SurveyAnswerScoreChange>();
 
@@ -29,6 +30,9 @@ export class SurveyAnswerCardComponent implements OnInit {
     effect(() => {
       const a = this.answer();
       this.scoreControl.setValue(a.score);
+      if (this.isDisabled()) {
+        this.form.disable();
+      }
       if (a.question) {
         this.scoreControl.addValidators([
           Validators.max(a.question.maxValue),
