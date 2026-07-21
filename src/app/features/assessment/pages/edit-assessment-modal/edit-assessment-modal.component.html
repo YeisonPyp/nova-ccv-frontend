@@ -131,6 +131,8 @@
                   <app-survey-answer-card
                     [answer]="answer"
                     [isDisabled]="isReadonly()"
+                    [canComment]="assessment()?.canComment ?? false"
+                    [canReply]="assessment()?.canReply ?? false"
                     (onChange)="onChangeSurveyScore($event)"
                   />
                 }

@@ -12,4 +12,10 @@
     [max]="answer().question.maxValue || 5"
     label="Puntuación"
   />
+
+  <app-answer-comments
+    [answer]="answer()"
+    [canComment]="canComment()"
+    [canReply]="canReply()"
+  />
 </div>

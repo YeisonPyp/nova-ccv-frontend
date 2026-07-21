@@ -30,12 +30,27 @@ export interface AssessmentComponentReport {
   supports?: AssessmentComponentReportSupport[];
 }
 
+export type RejectionLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export interface AssessmentAnswerComment {
+  id: number;
+  answerId: number;
+  comment: string;
+  rejectionLevel: RejectionLevel;
+  reply?: string | null;
+  repliedAt?: string | null;
+  authorName?: string;
+  authorLastName?: string;
+  createdAt: string;
+}
+
 export interface AssessmentSurveyAnswer {
   id: number;
   score: number;
   question: SurveyQuestion;
   surveyId: number;
   surveyName: string;
+  comments?: AssessmentAnswerComment[];
 }
 
 export interface Assessment {
@@ -60,4 +75,7 @@ export interface Assessment {
   permissions?: string[];
   components?: AssessmentComponentReport[];
   surveyAnswers?: AssessmentSurveyAnswer[];
+  evaluationWindowOpen?: boolean;
+  canComment?: boolean;
+  canReply?: boolean;
 }

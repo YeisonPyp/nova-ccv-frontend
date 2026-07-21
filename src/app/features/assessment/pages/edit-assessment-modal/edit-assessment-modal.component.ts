@@ -69,9 +69,13 @@ export class EditAssessmentModalComponent implements OnInit {
   id = input.required<number>();
   assessment = signal<Assessment | null>(null);
 
-  isReadonly = computed(
-    () => !(this.assessment()?.permissions?.includes('UPDATE') || false),
-  );
+  isReadonly = computed(() => {
+    const a = this.assessment();
+    const canUpdate = a?.permissions?.includes('UPDATE') ?? false;
+    // Once the evaluation window closes the assessment is view-only.
+    const windowOpen = a?.evaluationWindowOpen ?? false;
+    return !(canUpdate && windowOpen);
+  });
 
   isLoading = signal(true);
   assessmentForm: FormGroup;

@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AssessmentSurveyAnswer } from "@/app/core/models/assessment/assessment.model";
 import { ScoreSliderComponent } from "../score-slider/score-slider.component";
+import { AnswerCommentsComponent } from "./answer-comments/answer-comments.component";
 import { distinctUntilChanged, filter } from "rxjs";
 
 export interface SurveyAnswerScoreChange {
@@ -13,13 +14,20 @@ export interface SurveyAnswerScoreChange {
 @Component({
   selector: "app-survey-answer-card",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ScoreSliderComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ScoreSliderComponent,
+    AnswerCommentsComponent,
+  ],
   templateUrl: "./survey-answer-card.component.html",
 })
 export class SurveyAnswerCardComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   answer = input.required<AssessmentSurveyAnswer>();
   isDisabled = input.required<boolean>();
+  canComment = input<boolean>(false);
+  canReply = input<boolean>(false);
 
   onChange = output<SurveyAnswerScoreChange>();
 
