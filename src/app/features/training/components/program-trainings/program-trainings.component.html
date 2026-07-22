@@ -1,0 +1,71 @@
+<div class="space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h4 class="text-lg font-medium text-gray-900">Capacitaciones relacionadas</h4>
+    <button
+      class="btn btn-sm btn-primary"
+      [disabled]="generating()"
+      (click)="generate()"
+    >
+      {{ generating() ? "Generando…" : "Generar capacitaciones" }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p class="text-sm text-gray-400 py-4">Cargando…</p>
+  } @else if (metrics()?.trainings?.length) {
+    <div class="overflow-x-auto border rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Capacitación
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Fecha
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Estado
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Participantes
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Nota prom.
+            </th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (t of metrics()!.trainings; track t.trainingId) {
+            <tr>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ t.topicName }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ t.scheduledDate | date: "mediumDate" }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ t.status }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ t.participantCount }}
+              </td>
+              <td class="px-6 py-4 text-sm font-semibold text-gray-900">
+                {{ t.avgScore !== null ? t.avgScore : "-" }}
+              </td>
+              <td class="px-6 py-4 text-right text-sm">
+                <a
+                  [routerLink]="['/training', t.trainingId]"
+                  class="text-indigo-600 hover:text-indigo-900 font-medium"
+                >
+                  Ver
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <p class="text-sm text-gray-500 italic py-4">
+      Aún no se han generado capacitaciones. Usa "Generar capacitaciones" una vez
+      configurado el horario, empleados y encuestas.
+    </p>
+  }
+</div>

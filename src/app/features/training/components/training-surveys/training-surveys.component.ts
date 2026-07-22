@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { TrainingService } from '@/app/core/services/training/training.service';
-import { SurveyService } from '@/app/core/services/assessment/survey.service';
+import { TrainingSurvey } from '@/app/core/models/training/training.models';
 import {
-  SurveyAudience,
-  TrainingSurvey,
-} from '@/app/core/models/training/training.models';
-import { FormsModule } from '@angular/forms';
-import { SearchSelectComponent } from '@/app/shared/components/search-select/search-select.component';
-import { SearchSelectOption } from '@/app/shared/components/search-select/on-search-select.interface';
+  AttachSurveyEvent,
+  SurveyScopeItem,
+  SurveyScopeListComponent,
+} from '../survey-scope-list/survey-scope-list.component';
 import { TrainingSurveyImpactsModalComponent } from '../training-survey-impacts-modal/training-survey-impacts-modal.component';
 
 @Component({
@@ -16,34 +14,28 @@ import { TrainingSurveyImpactsModalComponent } from '../training-survey-impacts-
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    SearchSelectComponent,
+    SurveyScopeListComponent,
     TrainingSurveyImpactsModalComponent,
   ],
   templateUrl: './training-surveys.component.html',
 })
 export class TrainingSurveysComponent {
   private readonly service = inject(TrainingService);
-  private readonly surveyService = inject(SurveyService);
 
   trainingId = input.required<number>();
 
-  readonly audiences: { value: SurveyAudience; label: string }[] = [
-    { value: 'EMPLOYEES', label: 'A los empleados' },
-    { value: 'TRAINING', label: 'A la capacitación' },
-  ];
-
   surveys = signal<TrainingSurvey[]>([]);
   loading = signal(false);
-  selectedSurveyId = signal<number | null>(null);
-  aimedAt = signal<SurveyAudience>('EMPLOYEES');
 
-  // Survey live-search for the attach picker
-  surveyContext = this.surveyService.newSearchSelectContext(
-    (s) => this.selectedSurveyId.set(s.id),
-    { maxItems: 1, label: 'Encuesta', placeholder: 'Buscar encuesta…' },
-    () => this.selectedSurveyId.set(null),
+  scopeItems = computed<SurveyScopeItem[]>(() =>
+    this.surveys().map((s) => ({
+      id: s.id,
+      name: s.surveyTitle,
+      aimedAt: s.aimedAt ?? 'EMPLOYEES',
+    })),
   );
+
+  impactSurvey = signal<TrainingSurvey | null>(null);
 
   constructor() {
     effect(() => {
@@ -62,38 +54,18 @@ export class TrainingSurveysComponent {
     });
   }
 
-  searchSurvey(term: string) {
-    this.surveyContext.search(term);
-  }
-
-  selectSurvey(o: SearchSelectOption) {
-    this.surveyContext.select(o);
-  }
-
-  removeSelected(o: SearchSelectOption) {
-    this.surveyContext.remove(o);
-  }
-
-  attachSurvey() {
-    const surveyId = this.selectedSurveyId();
-    if (!surveyId) return;
+  attach(e: AttachSurveyEvent) {
     this.service
-      .attachSurvey(this.trainingId(), { surveyId, aimedAt: this.aimedAt() })
+      .attachSurvey(this.trainingId(), {
+        surveyId: e.surveyId,
+        aimedAt: e.aimedAt,
+      })
       .subscribe((res) => {
-        if (res.success) {
-          this.surveyContext.clear();
-          this.selectedSurveyId.set(null);
-          this.aimedAt.set('EMPLOYEES');
-          this.load(this.trainingId());
-        }
+        if (res.success) this.load(this.trainingId());
       });
   }
 
-  audienceLabel(a?: SurveyAudience): string {
-    return this.audiences.find((x) => x.value === a)?.label ?? '';
-  }
-
-  detachSurvey(trainingSurveyId: number) {
+  detach(trainingSurveyId: number) {
     if (!confirm('¿Remover encuesta de esta capacitación?')) return;
     this.service
       .detachSurvey(this.trainingId(), trainingSurveyId)
@@ -102,12 +74,9 @@ export class TrainingSurveysComponent {
       });
   }
 
-  // ── Impact factors modal ──────────────────────────────────────────────────
-
-  impactSurvey = signal<TrainingSurvey | null>(null);
-
-  openImpacts(survey: TrainingSurvey) {
-    this.impactSurvey.set(survey);
+  openImpacts(item: SurveyScopeItem) {
+    const full = this.surveys().find((s) => s.id === item.id) ?? null;
+    this.impactSurvey.set(full);
   }
 
   closeImpacts() {

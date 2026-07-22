@@ -1,0 +1,75 @@
+<div class="space-y-4">
+  <!-- Attach -->
+  <div class="border rounded-lg p-4 bg-gray-50 flex flex-wrap items-end gap-3">
+    <div class="flex-1 min-w-64">
+      <app-search-select
+        label="Adjuntar encuesta"
+        placeholder="Buscar encuesta…"
+        [items]="surveyContext.options()"
+        [selectedItems]="surveyContext.selectedOptions()"
+        (onSearch)="searchSurvey($event)"
+        (onSelect)="selectSurvey($event)"
+        (onRemove)="removeSelected($event)"
+      />
+    </div>
+    <div class="flex flex-col">
+      <label class="text-xs font-medium text-gray-600 mb-1">Dirigida a</label>
+      <select
+        [ngModel]="aimedAt()"
+        (ngModelChange)="aimedAt.set($event)"
+        class="form-control border-gray-300 rounded-md text-sm"
+      >
+        @for (a of audiences; track a.value) {
+          <option [value]="a.value">{{ a.label }}</option>
+        }
+      </select>
+    </div>
+    <button
+      class="btn btn-sm btn-primary"
+      [disabled]="!selectedSurveyId()"
+      (click)="attach()"
+    >
+      + Adjuntar
+    </button>
+  </div>
+
+  <!-- List -->
+  @if (surveys().length) {
+    <div class="space-y-4">
+      @for (survey of surveys(); track survey.id) {
+        <div class="border rounded-lg p-4 bg-gray-50">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <h5 class="font-medium text-gray-900">{{ survey.name }}</h5>
+              <span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
+              >
+                {{ audienceLabel(survey.aimedAt) }}
+              </span>
+            </div>
+            <div class="space-x-4">
+              @if (canConfigure()) {
+                <button
+                  class="text-indigo-600 hover:underline text-sm font-medium"
+                  (click)="onConfigure.emit(survey)"
+                >
+                  Configurar Impactos
+                </button>
+              }
+              <button
+                class="text-red-600 hover:underline text-sm font-medium"
+                (click)="onDetach.emit(survey.id)"
+              >
+                Remover
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="text-sm text-gray-500 italic py-4">
+      No hay encuestas asignadas.
+    </p>
+  }
+</div>

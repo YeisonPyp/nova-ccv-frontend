@@ -46,7 +46,7 @@ export class TrainingDetailComponent {
   trainingId = input.required<number>();
 
   activeTab = signal<'sessions' | 'participants' | 'surveys' | 'answers'>(
-    'participants',
+    'sessions',
   );
 
   // Eval Modal State
@@ -118,5 +118,4 @@ export class TrainingDetailComponent {
         error: () => this.submittingEval.set(false),
       });
   }
-
 }

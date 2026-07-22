@@ -1,0 +1,56 @@
+<div
+  class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col"
+>
+  <div class="p-5 grow">
+    <div class="flex justify-between items-start mb-4">
+      <span
+        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
+      >
+        {{ program().trainingTypeName }}
+      </span>
+      <span class="text-xs font-semibold text-gray-500">
+        {{ program().modalityName }}
+      </span>
+    </div>
+
+    <h3 class="text-lg font-bold text-gray-900 mb-1 line-clamp-2">
+      {{ program().topicName }}
+    </h3>
+
+    <div class="space-y-2 mt-4 text-sm text-gray-600">
+      <div class="flex items-center gap-2">
+        <i class="fi fi-rr-calendar text-gray-400"></i>
+        <span>
+          {{ program().startsAt | date: "mediumDate" }} –
+          {{ program().endsAt | date: "mediumDate" }}
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i class="fi fi-rr-clock text-gray-400"></i>
+        <span>{{ program().durationHours }} horas</span>
+      </div>
+      @if (program().areaName) {
+        <div class="flex items-center gap-2">
+          <i class="fi fi-rr-building text-gray-400"></i>
+          <span class="truncate">{{ program().areaName }}</span>
+        </div>
+      }
+      <div class="flex items-center gap-2">
+        <i class="fi fi-rr-user text-gray-400"></i>
+        <span class="truncate">
+          {{ program().trainerName }} {{ program().trainerLastname }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="bg-gray-50 px-5 py-3 border-t border-gray-100 flex justify-end items-center mt-auto"
+  >
+    <a
+      [routerLink]="['/training/programs', program().id]"
+      class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+    >
+      Ver detalle &rarr;
+    </a>
+  </div>
+</div>

@@ -29,4 +29,16 @@ export const TRAINING_ROUTES: Route[] = [
         (m) => m.TrainingDetailComponent,
       ),
   },
+  {
+    path: 'programs',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/programs-dashboard/programs-dashboard.component').then(
+            (m) => m.ProgramsDashboardComponent,
+          ),
+      },
+    ],
+  },
 ];

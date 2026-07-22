@@ -1,0 +1,41 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+  <div
+    class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Programas de capacitación</h1>
+      <p class="text-sm text-gray-500">
+        Capacitaciones programadas de forma recurrente
+      </p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">
+      + Nuevo Programa
+    </button>
+  </div>
+
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+  @if (!isLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (item of items(); track item.id) {
+        <app-program-card [program]="item" />
+      } @empty {
+        <div
+          class="col-span-full text-center py-12 bg-white rounded-lg border border-dashed border-gray-300"
+        >
+          <p class="text-gray-500">No se encontraron programas.</p>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="mt-6">
+    <app-paginator
+      [pageSize]="size()"
+      [currentPage]="page()"
+      [totalPages]="pages()"
+      (onSelectPage)="page.set($event)"
+      (pageSizeChange)="size.set($event)"
+    />
+  </div>
+</div>

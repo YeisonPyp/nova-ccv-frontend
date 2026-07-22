@@ -1,88 +1,11 @@
-<div class="space-y-4">
-  <div class="flex justify-between items-center gap-4">
-    <h4 class="text-lg font-medium text-gray-900">Encuestas de Evaluación</h4>
-  </div>
+<app-survey-scope-list
+  [surveys]="scopeItems()"
+  [canConfigure]="true"
+  (onAttach)="attach($event)"
+  (onDetach)="detach($event)"
+  (onConfigure)="openImpacts($event)"
+/>
 
-  <!-- Attach survey -->
-  <div class="border rounded-lg p-4 bg-gray-50 flex flex-wrap items-end gap-3">
-    <div class="flex-1 min-w-64">
-      <app-search-select
-        label="Adjuntar encuesta"
-        placeholder="Buscar encuesta…"
-        [items]="surveyContext.options()"
-        [selectedItems]="surveyContext.selectedOptions()"
-        (onSearch)="searchSurvey($event)"
-        (onSelect)="selectSurvey($event)"
-        (onRemove)="removeSelected($event)"
-      />
-    </div>
-    <div class="flex flex-col">
-      <label class="text-xs font-medium text-gray-600 mb-1">Dirigida a</label>
-      <select
-        [ngModel]="aimedAt()"
-        (ngModelChange)="aimedAt.set($event)"
-        class="form-control border-gray-300 rounded-md text-sm"
-      >
-        @for (a of audiences; track a.value) {
-          <option [value]="a.value">{{ a.label }}</option>
-        }
-      </select>
-    </div>
-    <button
-      class="btn btn-sm btn-primary"
-      [disabled]="!selectedSurveyId()"
-      (click)="attachSurvey()"
-    >
-      + Adjuntar
-    </button>
-  </div>
-
-  @if (loading()) {
-    <p class="text-sm text-gray-400 py-4">Cargando…</p>
-  } @else if (surveys().length) {
-    <div class="space-y-4">
-      @for (survey of surveys(); track survey.id) {
-        <div class="border rounded-lg p-4 bg-gray-50">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center gap-2">
-              <h5 class="font-medium text-gray-900">{{ survey.surveyTitle }}</h5>
-              @if (survey.aimedAt) {
-                <span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
-                >
-                  {{ audienceLabel(survey.aimedAt) }}
-                </span>
-              }
-            </div>
-            <div class="space-x-4">
-              <button
-                class="text-indigo-600 hover:underline text-sm font-medium"
-                (click)="openImpacts(survey)"
-              >
-                Configurar Impactos
-              </button>
-              <button
-                class="text-red-600 hover:underline text-sm font-medium"
-                (click)="detachSurvey(survey.id)"
-              >
-                Remover
-              </button>
-            </div>
-          </div>
-          <p class="text-xs text-gray-500">
-            Configura el peso/impacto de cada pregunta para el cálculo de notas.
-          </p>
-        </div>
-      }
-    </div>
-  } @else {
-    <p class="text-sm text-gray-500 italic py-4">
-      No hay encuestas asignadas a esta capacitación.
-    </p>
-  }
-</div>
-
-<!-- Impact factors modal -->
 @if (impactSurvey(); as survey) {
   <app-training-survey-impacts-modal
     [trainingId]="trainingId()"
