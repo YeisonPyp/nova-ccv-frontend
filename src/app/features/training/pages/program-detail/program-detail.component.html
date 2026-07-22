@@ -1,0 +1,170 @@
+<div class="p-6 max-w-6xl mx-auto space-y-6">
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading() && detail(); as p) {
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+      <button
+        type="button"
+        class="text-gray-500 hover:text-gray-700"
+        (click)="goBack()"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+      </button>
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-bold text-gray-900">{{ p.topicName }}</h1>
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
+          >
+            {{ p.trainingTypeName }}
+          </span>
+        </div>
+        <p class="text-sm text-gray-500">
+          Modalidad: {{ p.modalityName }} |
+          {{ p.startsAt | date: "mediumDate" }} –
+          {{ p.endsAt | date: "mediumDate" }}
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-gray-100 shadow-sm p-6 mb-6">
+      <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">
+        Información
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          <dt class="text-xs text-gray-400 uppercase">Capacitador</dt>
+          <dd class="text-gray-900 mt-1">
+            {{ p.trainerName }} {{ p.trainerLastname }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-400 uppercase">Responsable</dt>
+          <dd class="text-gray-900 mt-1">
+            {{ p.responsibleName }} {{ p.responsibleLastName }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-400 uppercase">Horas / por sesión</dt>
+          <dd class="text-gray-900 mt-1">
+            {{ p.durationHours }} h / {{ p.sessionHours }} h
+          </dd>
+        </div>
+        @if (p.areaName) {
+          <div>
+            <dt class="text-xs text-gray-400 uppercase">Área</dt>
+            <dd class="text-gray-900 mt-1">{{ p.areaName }}</dd>
+          </div>
+        }
+        @if (p.objective) {
+          <div class="sm:col-span-2 lg:col-span-3">
+            <dt class="text-xs text-gray-400 uppercase">Objetivo</dt>
+            <dd class="text-gray-700 mt-1">{{ p.objective }}</dd>
+          </div>
+        }
+      </div>
+
+      <div class="mt-6 border-t border-gray-100 pt-4">
+        <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">
+          Horario semanal
+        </h3>
+        @if (p.schedule?.length) {
+          <ul
+            class="space-y-2 text-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+          >
+            @for (s of p.schedule; track s.id ?? s.weekDay) {
+              <li
+                class="flex flex-col bg-gray-50 p-3 rounded-lg border border-gray-100"
+              >
+                <span class="font-medium text-gray-700">{{
+                  weekDayLabel(s.weekDay)
+                }}</span>
+                <span class="text-gray-500 mt-1">
+                  {{ formatMinutes(s.startsMinutes) }} –
+                  {{ formatMinutes(s.endsMinutes) }}
+                </span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-sm text-gray-500 italic">Sin horario.</p>
+        }
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div
+      class="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden mb-6"
+    >
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px">
+          <button
+            (click)="activeTab.set('trainings')"
+            [class]="
+              activeTab() === 'trainings'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/3 py-4 text-center border-b-2 font-medium text-sm"
+          >
+            Capacitaciones
+          </button>
+          <button
+            (click)="activeTab.set('employees')"
+            [class]="
+              activeTab() === 'employees'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/3 py-4 text-center border-b-2 font-medium text-sm"
+          >
+            Empleados
+          </button>
+          <button
+            (click)="activeTab.set('surveys')"
+            [class]="
+              activeTab() === 'surveys'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/3 py-4 text-center border-b-2 font-medium text-sm"
+          >
+            Encuestas
+          </button>
+        </nav>
+      </div>
+      <div class="p-6">
+        @if (activeTab() === "trainings") {
+          <app-program-trainings [programId]="p.id" />
+        }
+        @if (activeTab() === "employees") {
+          <app-program-employees [programId]="p.id" />
+        }
+        @if (activeTab() === "surveys") {
+          <app-program-surveys [programId]="p.id" />
+        }
+      </div>
+    </div>
+
+    <!-- METRICS (below general info + tabs) -->
+    <section class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        Métricas de las capacitaciones
+      </h3>
+      <app-program-metrics [programId]="p.id" />
+    </section>
+  }
+</div>

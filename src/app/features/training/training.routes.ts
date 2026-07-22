@@ -15,6 +15,33 @@ export const TRAINING_ROUTES: Route[] = [
         (m) => m.CreateTrainingComponent,
       ),
   },
+  // programs must come before the :trainingId wildcard
+  {
+    path: 'programs',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import(
+            './pages/programs-dashboard/programs-dashboard.component'
+          ).then((m) => m.ProgramsDashboardComponent),
+      },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('./pages/program-form/program-form.component').then(
+            (m) => m.ProgramFormComponent,
+          ),
+      },
+      {
+        path: ':programId',
+        loadComponent: () =>
+          import('./pages/program-detail/program-detail.component').then(
+            (m) => m.ProgramDetailComponent,
+          ),
+      },
+    ],
+  },
   {
     path: ':trainingId/answer/:employeeId',
     loadComponent: () =>
@@ -28,17 +55,5 @@ export const TRAINING_ROUTES: Route[] = [
       import('./pages/training-detail/training-detail.component').then(
         (m) => m.TrainingDetailComponent,
       ),
-  },
-  {
-    path: 'programs',
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./pages/programs-dashboard/programs-dashboard.component').then(
-            (m) => m.ProgramsDashboardComponent,
-          ),
-      },
-    ],
   },
 ];

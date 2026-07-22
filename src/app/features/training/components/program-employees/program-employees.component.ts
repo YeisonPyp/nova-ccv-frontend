@@ -1,17 +1,25 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { TrainingProgramService } from '@/app/core/services/training/training-program.service';
 import { EmployeeService } from '@/app/core/services/assessment/employee.service';
 import { ProgramEmployee } from '@/app/core/models/training/training-program.models';
-import { SearchSelectComponent } from '@/app/shared/components/search-select/search-select.component';
-import { ChipItemComponent } from '@/app/shared/components/search-select/chip-item/chip-item.component';
-import { SearchSelectOption } from '@/app/shared/components/search-select/on-search-select.interface';
+import { TrainingParticipant } from '@/app/core/models/training/training.models';
+import { Employee } from '@/app/core/models/assessment/employee.model';
+import { TrainingParticipantsComponent } from '../training-participants/training-participants.component';
 
+/**
+ * Program employees tab. Reuses the presentational `training-participants`
+ * component (chips of enrolled + table of employees to add).
+ */
 @Component({
   selector: 'app-program-employees',
   standalone: true,
-  imports: [CommonModule, SearchSelectComponent, ChipItemComponent],
-  templateUrl: './program-employees.component.html',
+  imports: [TrainingParticipantsComponent],
+  template: `<app-training-participants
+    [participants]="participantsView()"
+    [employees]="availableEmployees()"
+    (onAddEmployee)="add($event)"
+    (onRemoveParticipant)="remove($event)"
+  />`,
 })
 export class ProgramEmployeesComponent {
   private readonly service = inject(TrainingProgramService);
@@ -19,56 +27,62 @@ export class ProgramEmployeesComponent {
 
   programId = input.required<number>();
 
-  employees = signal<ProgramEmployee[]>([]);
-  selectedEmployeeId = signal<number | null>(null);
+  private programEmployees = signal<ProgramEmployee[]>([]);
+  private allEmployees = signal<Employee[]>([]);
 
-  employeeContext = this.employeeService.newSearchSelectEmployeeContext(
-    (e) => this.selectedEmployeeId.set(e.id),
-    { maxItems: 1, label: 'Empleado', placeholder: 'Buscar empleado…' },
-    () => this.selectedEmployeeId.set(null),
+  /** Program employees mapped to the participant shape the table expects. */
+  participantsView = computed<TrainingParticipant[]>(() =>
+    this.programEmployees().map((pe) => ({
+      id: pe.id,
+      trainingId: this.programId(),
+      employeeId: pe.employeeId,
+      employeeName: pe.employeeName,
+      employeeLastname: pe.employeeLastName,
+      employeeEmail: pe.employeeEmail,
+      approved: false,
+      status: '',
+      registeredAt: '',
+    })),
   );
+
+  /** Employees not yet enrolled. */
+  availableEmployees = computed<Employee[]>(() => {
+    const enrolled = new Set(this.programEmployees().map((e) => e.employeeId));
+    return this.allEmployees().filter((e) => !enrolled.has(e.id));
+  });
 
   constructor() {
     effect(() => {
-      this.load(this.programId());
+      this.loadProgramEmployees(this.programId());
     });
+    this.loadEmployees();
   }
 
-  load(id: number) {
+  private loadProgramEmployees(id: number) {
     this.service.getDetail(id).subscribe((res) => {
-      this.employees.set(res.data?.employees ?? []);
+      this.programEmployees.set(res.data?.employees ?? []);
     });
   }
 
-  chipOf(e: ProgramEmployee): SearchSelectOption {
-    return { id: e.id, title: `${e.employeeName} ${e.employeeLastName}` };
-  }
-
-  searchEmployee(term: string) {
-    this.employeeContext.search(term);
-  }
-  selectEmployee(o: SearchSelectOption) {
-    this.employeeContext.select(o);
-  }
-  removeSelected(o: SearchSelectOption) {
-    this.employeeContext.remove(o);
-  }
-
-  add() {
-    const employeeId = this.selectedEmployeeId();
-    if (!employeeId) return;
-    this.service.addEmployee(this.programId(), employeeId).subscribe((res) => {
-      if (res.success) {
-        this.employeeContext.clear();
-        this.selectedEmployeeId.set(null);
-        this.load(this.programId());
-      }
+  private loadEmployees() {
+    this.employeeService.findEmployees({ page: 0, size: 100 }).subscribe((res) => {
+      this.allEmployees.set(res.data?.content ?? []);
     });
   }
 
-  remove(e: ProgramEmployee) {
-    this.service.removeEmployee(this.programId(), e.id).subscribe((res) => {
-      if (res.success) this.load(this.programId());
-    });
+  add(employee: Employee) {
+    this.service
+      .addEmployee(this.programId(), employee.id)
+      .subscribe((res) => {
+        if (res.success) this.loadProgramEmployees(this.programId());
+      });
+  }
+
+  remove(participant: TrainingParticipant) {
+    this.service
+      .removeEmployee(this.programId(), participant.id)
+      .subscribe((res) => {
+        if (res.success) this.loadProgramEmployees(this.programId());
+      });
   }
 }

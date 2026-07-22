@@ -48,6 +48,6 @@ export class ProgramsDashboardComponent {
   }
 
   openCreate() {
-    // this.router.navigate(['/training/programs/create']);
+    this.router.navigate(['/training/programs/create']);
   }
 }

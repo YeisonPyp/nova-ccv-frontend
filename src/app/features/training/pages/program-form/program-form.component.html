@@ -1,0 +1,156 @@
+<div class="p-6 max-w-6xl mx-auto space-y-6">
+  <button
+    class="text-sm text-gray-500 hover:text-gray-700"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a programas
+  </button>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Nuevo programa</h1>
+    <p class="text-sm text-gray-500">
+      Define el programa y su horario semanal. Las capacitaciones se generan
+      luego automáticamente.
+    </p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+    <section class="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
+      <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">
+        Datos del programa
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Tema *</span>
+          <select app-selector [options]="topics() ?? []" formControlName="topicId"
+            class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Modalidad *</span>
+          <select app-selector [options]="modalities() ?? []" formControlName="modalityId"
+            class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Tipo *</span>
+          <select app-selector [options]="types() ?? []" formControlName="trainingTypeId"
+            class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Capacitador *</span>
+          <select app-selector [options]="trainers() ?? []" formControlName="trainerId"
+            class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Prioridad</span>
+          <select app-selector [options]="priorities() ?? []" formControlName="priorityId"
+            class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Área</span>
+          <select app-selector [options]="areas() ?? []" formControlName="areaId"
+            class="form-control"></select>
+        </label>
+        <div class="md:col-span-2">
+          <app-search-select
+            label="Responsable *"
+            placeholder="Buscar empleado…"
+            [items]="employeeCtx.options()"
+            [selectedItems]="employeeCtx.selectedOptions()"
+            (onSearch)="employeeCtx.search($event)"
+            (onSelect)="employeeCtx.select($event)"
+            (onRemove)="employeeCtx.remove($event)"
+          />
+        </div>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Horas totales *</span>
+          <input type="number" min="1" formControlName="durationHours" class="form-control" />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Horas por sesión *</span>
+          <input type="number" min="1" formControlName="sessionHours" class="form-control" />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Inicia *</span>
+          <input type="date" formControlName="startsAt" class="form-control" />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Termina *</span>
+          <input type="date" formControlName="endsAt" class="form-control" />
+        </label>
+        <label class="flex flex-col gap-1 md:col-span-2">
+          <span class="text-xs font-medium text-gray-600">Objetivo</span>
+          <input type="text" formControlName="objective" class="form-control" />
+        </label>
+        <label class="flex flex-col gap-1 md:col-span-2">
+          <span class="text-xs font-medium text-gray-600">Contenido</span>
+          <textarea rows="2" formControlName="content" class="form-control"></textarea>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Cupo (personas)</span>
+          <input type="number" min="0" formControlName="staffCount" class="form-control" />
+        </label>
+      </div>
+    </section>
+
+    <!-- Weekly schedule -->
+    <section class="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-semibold text-gray-700 uppercase">
+          Horario semanal
+        </h3>
+        <button type="button" class="btn btn-sm btn-secondary" (click)="addScheduleRow()">
+          + Agregar franja
+        </button>
+      </div>
+      @if (schedule().length) {
+        <div class="space-y-3">
+          @for (row of schedule(); track $index) {
+            <div class="flex flex-wrap items-end gap-3">
+              <label class="flex flex-col gap-1">
+                <span class="text-xs text-gray-500">Día</span>
+                <select
+                  class="form-control text-sm"
+                  [ngModel]="row.weekDay"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="updateRow($index, { weekDay: +$event })"
+                >
+                  @for (d of weekDays; track d.value) {
+                    <option [value]="d.value">{{ d.label }}</option>
+                  }
+                </select>
+              </label>
+              <label class="flex flex-col gap-1">
+                <span class="text-xs text-gray-500">Inicio</span>
+                <input type="time" class="form-control text-sm"
+                  [ngModel]="row.startTime" [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="updateRow($index, { startTime: $event })" />
+              </label>
+              <label class="flex flex-col gap-1">
+                <span class="text-xs text-gray-500">Fin</span>
+                <input type="time" class="form-control text-sm"
+                  [ngModel]="row.endTime" [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="updateRow($index, { endTime: $event })" />
+              </label>
+              <button type="button" class="text-red-600 hover:text-red-800 text-sm mb-2"
+                (click)="removeScheduleRow($index)">
+                Quitar
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="text-sm text-gray-500 italic">
+          Agrega al menos una franja para validar las horas del programa.
+        </p>
+      }
+    </section>
+
+    <div class="flex justify-end gap-3">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">Cancelar</button>
+      <button type="submit" class="btn btn-primary"
+        [disabled]="submitting() || form.invalid || !schedule().length">
+        Crear programa
+      </button>
+    </div>
+  </form>
+</div>
