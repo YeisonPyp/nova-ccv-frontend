@@ -1,0 +1,53 @@
+<div class="p-6 space-y-4">
+  <div>
+    <h1 class="text-2xl font-bold text-secondary">Parametrización — Capacitaciones</h1>
+    <p class="text-tertiary text-sm">
+      Temas, clasificaciones, estados y capacitadores
+    </p>
+  </div>
+
+  <app-catalog-section
+    path="training-topics"
+    prefix="TRAINING_TOPIC"
+    title="Temas"
+    createLabel="+ Nuevo tema"
+    entityLabel="tema"
+  />
+  <app-catalog-section
+    path="training-modalities"
+    prefix="TRAINING_MODALITY"
+    title="Modalidades"
+    createLabel="+ Nueva modalidad"
+    entityLabel="modalidad"
+  />
+  <app-catalog-section
+    path="training-priorities"
+    prefix="TRAINING_PRIORITY"
+    title="Prioridades"
+    createLabel="+ Nueva prioridad"
+    entityLabel="prioridad"
+  />
+  <app-catalog-section
+    path="training-types"
+    prefix="TRAINING_TYPE"
+    title="Tipos"
+    createLabel="+ Nuevo tipo"
+    entityLabel="tipo"
+  />
+  <app-catalog-section
+    path="training-statuses"
+    prefix="TRAINING_STATUS"
+    title="Estados de capacitación"
+    createLabel="+ Nuevo estado"
+    entityLabel="estado"
+  />
+  <app-catalog-section
+    path="training-request-statuses"
+    prefix="TRAINING_REQUEST_STATUS"
+    title="Estados de solicitud"
+    createLabel="+ Nuevo estado"
+    entityLabel="estado"
+  />
+
+  <app-trainer-section />
+</div>
