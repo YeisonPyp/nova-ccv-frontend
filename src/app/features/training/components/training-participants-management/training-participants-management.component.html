@@ -1,0 +1,14 @@
+<app-training-participants
+  [participants]="participants()"
+  [employees]="employees()"
+  (onRemoveParticipant)="onRemoveParticipant($event)"
+  (onAddEmployee)="onAddEmployee($event)"
+/>
+
+<app-paginator
+  [pageSize]="size()"
+  [currentPage]="page()"
+  [totalPages]="pages()"
+  (pageSizeChange)="size.set($event)"
+  (onSelectPage)="page.set($event)"
+></app-paginator>

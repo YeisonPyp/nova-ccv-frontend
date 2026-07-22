@@ -43,14 +43,6 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PROJECTS_CREATE"])],
       },
       {
-        path: "training",
-        loadComponent: () =>
-          import("./pages/training/training.component").then(
-            (m) => m.TrainingComponent,
-          ),
-        title: "PAT — Capacitaciones",
-      },
-      {
         path: "reports",
         loadComponent: () =>
           import("./pages/reports/reports.component").then(

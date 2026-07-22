@@ -1,0 +1,25 @@
+<div class="grid grid-cols-3 gap-4 w-full">
+  @for (p of participants(); track p.id) {
+    <app-chip-item
+      class="w-full"
+      [op]="mapOptionFromParticipant(p)"
+      (onRemove)="onRemoveParticipant.emit(p)"
+    />
+  }
+</div>
+
+<app-dynamic-table
+  [data]="employees()"
+  [columns]="columns"
+  emptyMessage="No hay empleados disponibles."
+>
+  <ng-template #actions let-employee>
+    <button
+      class="icon-btn text-tertiary hover:text-primary"
+      (click)="onAddEmployee.emit(employee)"
+      title="Agregar empleado como participante"
+    >
+      Agregar participante
+    </button>
+  </ng-template>
+</app-dynamic-table>

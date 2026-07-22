@@ -1,0 +1,4 @@
+<option [value]="null">-- Selecciona</option>
+@for (option of options(); track option.value) {
+  <option [value]="option.value">{{ option.label }}</option>
+}

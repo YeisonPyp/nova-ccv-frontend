@@ -118,6 +118,13 @@ export const routes: Routes = [
             (m) => m.REPORT_ROUTES,
           ),
       },
+      {
+        path: "training",
+        loadChildren: () =>
+          import("./features/training/training.routes").then(
+            (m) => m.TRAINING_ROUTES,
+          ),
+      }
     ],
   },
   {

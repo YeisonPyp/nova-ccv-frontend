@@ -24,7 +24,9 @@ export class TrainingCatalogService {
   private readonly base = environment.apiUrl;
 
   list(path: string): Observable<ApiResponse<TrainingCatalog[]>> {
-    return this.http.get<ApiResponse<TrainingCatalog[]>>(`${this.base}/${path}`);
+    return this.http.get<ApiResponse<TrainingCatalog[]>>(
+      `${this.base}/${path}`,
+    );
   }
 
   create(
@@ -50,5 +52,85 @@ export class TrainingCatalogService {
 
   delete(path: string, id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.base}/${path}/${id}`);
+  }
+}
+
+abstract class ITrainingCatalogService {
+  protected readonly base = environment.apiUrl;
+
+  constructor(
+    protected readonly http: HttpClient,
+    protected readonly path: string,
+  ) {}
+
+  list(): Observable<ApiResponse<TrainingCatalog[]>> {
+    return this.http.get<ApiResponse<TrainingCatalog[]>>(
+      `${this.base}/${this.path}`,
+    );
+  }
+
+  create(dto: TrainingCatalogDto): Observable<ApiResponse<TrainingCatalog>> {
+    return this.http.post<ApiResponse<TrainingCatalog>>(
+      `${this.base}/${this.path}`,
+      dto,
+    );
+  }
+
+  update(
+    id: number,
+    dto: TrainingCatalogDto,
+  ): Observable<ApiResponse<TrainingCatalog>> {
+    return this.http.put<ApiResponse<TrainingCatalog>>(
+      `${this.base}/${this.path}/${id}`,
+      dto,
+    );
+  }
+
+  delete(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.base}/${this.path}/${id}`,
+    );
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class TrainingTopicService extends ITrainingCatalogService {
+  constructor(http: HttpClient) {
+    super(http, 'training-topics');
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class TrainingModalityService extends ITrainingCatalogService {
+  constructor(http: HttpClient) {
+    super(http, 'training-modalities');
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class TrainingPriorityService extends ITrainingCatalogService {
+  constructor(http: HttpClient) {
+    super(http, 'training-priorities');
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class TrainingLevelService extends ITrainingCatalogService {
+  constructor(http: HttpClient) {
+    super(http, 'training-levels');
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class TrainingStatusService extends ITrainingCatalogService {
+  constructor(http: HttpClient) {
+    super(http, 'training-statuses');
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class TrainingTypeService extends ITrainingCatalogService {
+  constructor(http: HttpClient) {
+    super(http, 'training-types');
   }
 }
