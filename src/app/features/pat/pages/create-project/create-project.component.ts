@@ -148,7 +148,7 @@ export class CreateProjectComponent {
       (_) => this.form.patchValue({ programId: null }),
     );
   });
-  form: FormGroup<Record<keyof CreateProjectDto, any>>;
+  form: FormGroup;
 
   constructor() {
     this.form = this.fb.group({
@@ -232,7 +232,10 @@ export class CreateProjectComponent {
     this.submitting.set(true);
     this.error.set(null);
 
-    const v = this.form.value as CreateProjectDto;
+    const v = {
+      ...this.form.value,
+      year: this.year(),
+    } satisfies CreateProjectDto;
 
     this.projectService.create(v).subscribe({
       next: (res) => {

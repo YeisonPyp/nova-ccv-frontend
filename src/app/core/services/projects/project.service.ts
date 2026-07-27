@@ -43,6 +43,7 @@ export interface CreateProjectDto {
   priorityId: number;
   employeeId: number;
   tacticalActivityCode: string;
+  year: number;
   description?: string;
   programId?: number;
   objectives: CreateProjectObjectiveDto[];

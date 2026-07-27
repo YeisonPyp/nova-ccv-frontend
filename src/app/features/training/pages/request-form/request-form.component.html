@@ -1,0 +1,120 @@
+<div class="p-6 max-w-4xl mx-auto space-y-6">
+  <button
+    class="text-sm text-gray-500 hover:text-gray-700"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a solicitudes
+  </button>
+
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">Nueva solicitud</h1>
+    <p class="text-sm text-gray-500">
+      Solicita una capacitación para los empleados a tu cargo.
+    </p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+    <section class="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
+      <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">
+        Datos de la solicitud
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Categoría *</span>
+          <select app-selector [options]="topics() ?? []"
+            formControlName="trainingTopicId" class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Modalidad *</span>
+          <select app-selector [options]="modalities() ?? []"
+            formControlName="modalityId" class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Prioridad *</span>
+          <select app-selector [options]="priorities() ?? []"
+            formControlName="priorityId" class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Tipo *</span>
+          <select app-selector [options]="types() ?? []"
+            formControlName="type" class="form-control"></select>
+        </label>
+        <label class="flex flex-col gap-1 md:col-span-2">
+          <span class="text-xs font-medium text-gray-600">Tema *</span>
+          <input type="text" formControlName="topic" class="form-control"
+            placeholder="Ej. Manejo de Excel avanzado" />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-gray-600">Duración (horas) *</span>
+          <input type="number" min="1" formControlName="duration" class="form-control" />
+        </label>
+        <label class="flex flex-col gap-1 md:col-span-2">
+          <span class="text-xs font-medium text-gray-600">Justificación *</span>
+          <textarea rows="3" formControlName="justification" class="form-control"></textarea>
+        </label>
+        <label class="flex flex-col gap-1 md:col-span-2">
+          <span class="text-xs font-medium text-gray-600">Contenido sugerido</span>
+          <textarea rows="2" formControlName="content" class="form-control"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <!-- Employees (subordinates only) -->
+    <section class="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
+      <h3 class="text-sm font-semibold text-gray-700 uppercase mb-1">
+        Empleados
+      </h3>
+      <p class="text-xs text-gray-500 mb-4">
+        Solo puedes solicitar capacitaciones para empleados a tu cargo.
+      </p>
+
+      @if (employees().length) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          @for (e of employees(); track e.id) {
+            <label
+              class="flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors"
+              [class]="
+                isSelected(e.id)
+                  ? 'border-indigo-400 bg-indigo-50'
+                  : 'border-gray-200 hover:bg-gray-50'
+              "
+            >
+              <input
+                type="checkbox"
+                class="h-4 w-4"
+                [checked]="isSelected(e.id)"
+                (change)="toggleEmployee(e.id)"
+              />
+              <span class="min-w-0">
+                <span class="block text-sm font-medium text-gray-900 truncate">
+                  {{ e.name }} {{ e.lastName }}
+                </span>
+                <span class="block text-xs text-gray-500 truncate">
+                  {{ e.email }}
+                </span>
+              </span>
+            </label>
+          }
+        </div>
+      } @else {
+        <p class="text-sm text-gray-500 italic">
+          No tienes empleados a cargo para solicitar capacitaciones.
+        </p>
+      }
+    </section>
+
+    <div class="flex justify-end gap-3">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="submitting() || form.invalid || !selectedIds().length"
+      >
+        Crear solicitud
+      </button>
+    </div>
+  </form>
+</div>

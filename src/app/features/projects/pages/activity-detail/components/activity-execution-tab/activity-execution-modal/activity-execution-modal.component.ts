@@ -13,17 +13,28 @@ import {
   inject,
   input,
   OnInit,
+  signal,
   output,
 } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { debounceTime, distinctUntilChanged, filter } from "rxjs";
 import { BudgetExecutionComponent } from "./bugdet-execution/budget-execution.component";
+import { ProductExecutionComponent } from "./product-execution/product-execution.component";
+import {
+  ActivityProductExecution,
+  ActivityProductMatrixRow,
+} from "@/app/core/services/pat/pat-activity-execution.service";
 import { PatActivityPlan } from "@/app/core/services/pat/pat-activity-plan.service";
 
 @Component({
   selector: "app-activity-modal-component",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, BudgetExecutionComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    BudgetExecutionComponent,
+    ProductExecutionComponent,
+  ],
   templateUrl: "./activity-execution-modal.component.html",
 })
 export class ActivityExecutionModalComponent implements OnInit {
@@ -41,6 +52,9 @@ export class ActivityExecutionModalComponent implements OnInit {
 
   onSave = output<PatActivityExecution>();
   onClose = output<void>();
+
+  /** Products of the activity's project + executed contribution for the month. */
+  products = signal<ActivityProductMatrixRow[]>([]);
 
   form = this.fb.group({
     executedBenefit: [0, [Validators.required, Validators.min(0)]],
@@ -117,7 +131,25 @@ export class ActivityExecutionModalComponent implements OnInit {
     });
   }
 
+  private loadProducts() {
+    this.service
+      .productMatrix(this.activityId(), this.month())
+      .subscribe((res) => this.products.set(res.data ?? []));
+  }
+
+  onSaveProductExecution(exec: ActivityProductExecution) {
+    this.products.update((rows) =>
+      rows.map((r) =>
+        r.productId === exec.productId
+          ? { ...r, executionId: exec.id, contribution: exec.contribution }
+          : r,
+      ),
+    );
+  }
+
   ngOnInit(): void {
+    this.loadProducts();
+
     this.form.valueChanges
       .pipe(
         distinctUntilChanged(),

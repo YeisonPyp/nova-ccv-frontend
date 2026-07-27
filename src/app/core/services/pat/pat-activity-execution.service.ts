@@ -28,6 +28,31 @@ export interface SaveActivityBudgetExecution {
   budgetCategoryId: number;
 }
 
+export interface ActivityProductMatrixRow {
+  productId: number;
+  code: string;
+  name: string;
+  unitMeasure: string;
+  targetQuantity: number;
+  executionId?: number | null;
+  contribution?: number | null;
+}
+
+export interface ActivityProductExecution {
+  id: number;
+  activityId: number;
+  productId: number;
+  month: number;
+  contribution: number;
+}
+
+export interface SaveActivityProductExecution {
+  activityId: number;
+  productId: number;
+  month: number;
+  contribution: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -42,6 +67,23 @@ export class PatActivityExecutionService extends FilterServiceSpecImpl<
   saveBudgetExecution(e: SaveActivityBudgetExecution) {
     return this.http.post<ApiResponse<ActivityBudgetExecution>>(
       `${this.baseUrl}/budget`,
+      e,
+    );
+  }
+
+  productMatrix(
+    activityId: number,
+    month: number,
+  ): Observable<ApiResponse<ActivityProductMatrixRow[]>> {
+    return this.http.get<ApiResponse<ActivityProductMatrixRow[]>>(
+      `${this.baseUrl}/products`,
+      { params: { activityId, month } },
+    );
+  }
+
+  saveProductExecution(e: SaveActivityProductExecution) {
+    return this.http.post<ApiResponse<ActivityProductExecution>>(
+      `${this.baseUrl}/product`,
       e,
     );
   }

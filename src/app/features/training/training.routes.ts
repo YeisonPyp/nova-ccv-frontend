@@ -42,6 +42,33 @@ export const TRAINING_ROUTES: Route[] = [
       },
     ],
   },
+  // requests must come before the :trainingId wildcard
+  {
+    path: 'requests',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/requests-list/requests-list.component').then(
+            (m) => m.RequestsListComponent,
+          ),
+      },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('./pages/request-form/request-form.component').then(
+            (m) => m.RequestFormComponent,
+          ),
+      },
+      {
+        path: ':requestId',
+        loadComponent: () =>
+          import('./pages/request-detail/request-detail.component').then(
+            (m) => m.RequestDetailComponent,
+          ),
+      },
+    ],
+  },
   {
     path: ':trainingId/answer/:employeeId',
     loadComponent: () =>

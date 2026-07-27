@@ -132,6 +132,13 @@ export const routes: Routes = [
     component: ForbiddenComponent,
   },
   {
+    path: "unavailable",
+    loadComponent: () =>
+      import("./shared/components/unavailable/unavailable.component").then(
+        (m) => m.UnavailableComponent,
+      ),
+  },
+  {
     path: "**",
     redirectTo: "auth/login",
   },

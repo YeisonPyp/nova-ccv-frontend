@@ -1,0 +1,29 @@
+<app-project-section-card
+  title="Productos"
+  addLabel="+ Nuevo Producto"
+  (onAdd)="openCreate()"
+>
+  <div app-loading-spinner [isLoading]="loading()"></div>
+  @if (!loading()) {
+    <app-dynamic-table [data]="products()" [columns]="columns()">
+      <ng-template #actions let-item>
+        <button
+          class="btn bg-primary text-white"
+          title="Eliminar producto"
+          (click)="remove(item)"
+          [disabled]="!canManage()"
+        >
+          Eliminar
+        </button>
+      </ng-template>
+    </app-dynamic-table>
+  }
+</app-project-section-card>
+
+@if (modalOpen() && projectId(); as pid) {
+  <app-product-form-modal
+    [projectId]="pid"
+    (onClose)="closeModal()"
+    (onSaved)="onSaved()"
+  />
+}

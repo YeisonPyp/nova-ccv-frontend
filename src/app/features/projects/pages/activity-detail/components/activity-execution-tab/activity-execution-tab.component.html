@@ -1,36 +1,38 @@
 <div class="flex flex-col gap-4">
-  <div class="flex items-center justify-between">
-    <h3
-      class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
-    >
-      Ejecución mensual
-    </h3>
-  </div>
+  @if (editingMonth(); as month) {
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-semibold text-secondary uppercase tracking-wider m-0">
+        Ejecución — {{ month.label }}
+      </h3>
+    </div>
 
-  <div
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
-  >
-    @for (card of cards(); track card.month) {
-      <app-month-metric-card
-        [label]="card.label"
-        [registered]="!!card.execution"
-        [metrics]="cardMetrics(card)"
-        (cardClick)="openMonth(card)"
-      />
-    }
-  </div>
+    <app-activity-modal-component
+      [isOpen]="true"
+      [consolidation]="consolidation()"
+      [month]="month.month"
+      [activityId]="activityId()"
+      [execution]="month.execution"
+      [plan]="month.plan"
+      [budgetMatrix]="budgetMatrix()"
+      (onSave)="onSave.emit($event)"
+      (onClose)="closeModal()"
+    ></app-activity-modal-component>
+  } @else {
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-semibold text-secondary uppercase tracking-wider m-0">
+        Ejecución mensual
+      </h3>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      @for (card of cards(); track card.month) {
+        <app-month-metric-card
+          [label]="card.label"
+          [registered]="!!card.execution"
+          [metrics]="cardMetrics(card)"
+          (cardClick)="openMonth(card)"
+        />
+      }
+    </div>
+  }
 </div>
-
-@if (editingMonth(); as month) {
-  <app-activity-modal-component
-    [isOpen]="modalOpen()"
-    [consolidation]="consolidation()"
-    [month]="month.month"
-    [activityId]="activityId()"
-    [execution]="month.execution"
-    [plan]="month.plan"
-    [budgetMatrix]="budgetMatrix()"
-    (onSave)="onSave.emit($event)"
-    (onClose)="closeModal()"
-  ></app-activity-modal-component>
-}

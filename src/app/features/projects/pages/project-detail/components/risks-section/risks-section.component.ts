@@ -1,16 +1,16 @@
-import { Component, input, output, signal } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, input, output, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { ProjectRisk } from "@/app/core/models/projects/project.model";
-import { RiskUpsertModalComponent } from "../risk-upsert-modal/risk-upsert-modal.component";
-import { ProjectSectionCardComponent } from "../project-section-card/project-section-card.component";
-import { PriorityLabelPipe } from "../pipes/priority";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { ProjectRisk } from '@/app/core/models/projects/project.model';
+import { RiskUpsertModalComponent } from '../risk-upsert-modal/risk-upsert-modal.component';
+import { ProjectSectionCardComponent } from '../project-section-card/project-section-card.component';
+import { PriorityLabelPipe } from '../pipes/priority';
 
 @Component({
-  selector: "app-risks-section",
+  selector: 'app-risks-section',
   standalone: true,
   imports: [
     CommonModule,
@@ -19,21 +19,21 @@ import { PriorityLabelPipe } from "../pipes/priority";
     ProjectSectionCardComponent,
     PriorityLabelPipe,
   ],
-  templateUrl: "./risks-section.component.html",
+  templateUrl: './risks-section.component.html',
 })
 export class RisksSectionComponent {
   projectId = input.required<number>();
-  risks = input.required<ProjectRisk[]>();
+  risks = signal<ProjectRisk[]>([]);
   riskModalOpen = signal(false);
   editingRisk = signal<ProjectRisk | null>(null);
 
   readonly riskColumns: TableColumn[] = [
-    { key: "displayOrder", label: "#" },
-    { key: "name", label: "Nombre" },
-    { key: "probability", label: "Probabilidad" },
-    { key: "priority", label: "Prioridad" },
-    { key: "estimatedCostAmount", label: "Costo estimado" },
-    { key: "estimatedHours", label: "Horas estimadas" },
+    { key: 'displayOrder', label: '#' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'probability', label: 'Probabilidad' },
+    { key: 'priority', label: 'Prioridad' },
+    { key: 'estimatedCostAmount', label: 'Costo estimado' },
+    { key: 'estimatedHours', label: 'Horas estimadas' },
   ];
 
   onSaved = output<ProjectRisk>();
