@@ -23,7 +23,6 @@ import { AssessmentYearMetricsComponent } from './assessment-year-metrics/assess
 })
 export class AssessmentDashboardComponent {
   private readonly service = inject(PeriodService);
-  private readonly router = inject(Router);
 
   periods = signal<EvaluationPeriod[]>([]);
   size = signal<number>(10);
@@ -44,9 +43,5 @@ export class AssessmentDashboardComponent {
           this.isLoading.set(false);
         });
     });
-  }
-
-  goToSurveys() {
-    this.router.navigate(['/assessment/surveys']);
   }
 }
