@@ -6,23 +6,27 @@
     </button>
   </div>
 
-  <div app-loading-spinner [isLoading]="isLoading()"></div>
+  <div class="flex flex-col gap-y-5">
+    <app-assessment-year-metrics />
 
-  @if (!isLoading()) {
-    <div class="flex flex-col">
-      <div class="grid grid-cols-3 gap-4">
-        @for (period of periods(); track period.id) {
-          <app-period-card [period]="period" />
-        }
+    <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+    @if (!isLoading()) {
+      <div class="flex flex-col py-3">
+        <div class="grid grid-cols-3 gap-4">
+          @for (period of periods(); track period.id) {
+            <app-period-card [period]="period" />
+          }
+        </div>
+
+        <app-paginator
+          [pageSize]="size()"
+          [currentPage]="page()"
+          [totalPages]="pages()"
+          (pageSizeChange)="size.set($event)"
+          (onSelectPage)="page.set($event)"
+        ></app-paginator>
       </div>
-
-      <app-paginator
-        [pageSize]="size()"
-        [currentPage]="page()"
-        [totalPages]="pages()"
-        (pageSizeChange)="size.set($event)"
-        (onSelectPage)="page.set($event)"
-      ></app-paginator>
-    </div>
-  }
+    }
+  </div>
 </div>

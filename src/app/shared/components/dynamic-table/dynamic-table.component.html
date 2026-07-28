@@ -1,3 +1,6 @@
+@if (exportable()) {
+  <app-dynamic-table-exporter [data]="data()" [columns]="columns()" />
+}
 <div class="table-container">
   @if (data().length) {
     <table class="base-table">

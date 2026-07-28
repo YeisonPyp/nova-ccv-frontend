@@ -7,6 +7,7 @@ import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.
 import { PeriodService } from '@/app/core/services/assessment/period.service';
 import { PeriodCardComponent } from './period-card/period-card.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { AssessmentYearMetricsComponent } from './assessment-year-metrics/assessment-year-metrics.component';
 
 @Component({
   selector: 'app-assessment-dashboard',
@@ -16,6 +17,7 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
     PaginatorComponent,
     PeriodCardComponent,
     LoadingSpinnerComponent,
+    AssessmentYearMetricsComponent,
   ],
   templateUrl: './assessment-dashboard.component.html',
 })

@@ -8,6 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FilterRow } from "./filter-section/filter-section.component";
 import { NestedValuePipe } from "../../pipes/nested-value.pipe";
+import { DynamicTableExporterComponent } from "./dynamic-table-exporter/dynamic-table-exporter.component";
 
 export type FilterOperator = "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "lk";
 
@@ -46,7 +47,7 @@ export interface TableColumn {
 @Component({
   selector: "app-dynamic-table",
   standalone: true,
-  imports: [CommonModule, NestedValuePipe],
+  imports: [CommonModule, NestedValuePipe, DynamicTableExporterComponent],
   templateUrl: "./dynamic-table.component.html",
   styleUrl: "./dynamic-table.component.scss",
 })
@@ -54,6 +55,7 @@ export class DynamicTableComponent<T> {
   data = input.required<T[]>();
   columns = input.required<TableColumn[]>();
   emptyMessage = input<string>("No hay datos disponibles.");
+  exportable = input<boolean>(true);
 
   hasFilters = computed(() => this.columns().some((c) => !!c.filterSet));
 
