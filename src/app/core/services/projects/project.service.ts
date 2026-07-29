@@ -1,7 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
 import { APIPage } from '../../models/api-page.model';
 import {
@@ -17,7 +15,6 @@ import {
 import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import { PageableQueryWithRsql } from '@/app/shared/components/pagination-table/pagination-table.component';
 import builder from '@rsql/builder';
-import { emit } from '@rsql/emitter';
 import { PatActivityBudgetMatrix } from '../../models/pat/pat-models';
 
 export const RISK_SCALE_OPTIONS = [
@@ -64,6 +61,13 @@ export interface ProjectQueryParams extends PageableQueryWithRsql {
   status?: string | null;
   year?: number;
   areaId?: number;
+}
+
+export interface ProjectFile {
+  id: number;
+  fileName: string;
+  bucketName: string;
+  description: string;
 }
 
 export interface ActivityQueryParams extends PageableQuery {
@@ -166,5 +170,45 @@ export class ProjectService extends FilterServiceSpecImpl<
       `${this.baseUrl}/${projectId}/budget-matrix`,
       { budgetCategoryId, amount },
     );
+  }
+
+  findProjectFiles(
+    projectId: number,
+  ): Observable<ApiResponse<Array<ProjectFile>>> {
+    return this.http.get<ApiResponse<Array<ProjectFile>>>(
+      `${this.baseUrl}/${projectId}/files`,
+    );
+  }
+
+  updateProjectFile(
+    id: number,
+    file: File,
+  ): Observable<ApiResponse<ProjectFile>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.put<ApiResponse<ProjectFile>>(
+      `${this.baseUrl}/files/${id}`,
+      formData,
+    );
+  }
+
+  uploadProjectFile(
+    projectId: number,
+    file: File,
+    description?: string,
+  ): Observable<ApiResponse<ProjectFile>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (description) {
+      formData.append('description', description);
+    }
+    return this.http.post<ApiResponse<ProjectFile>>(
+      `${this.baseUrl}/${projectId}/files`,
+      formData,
+    );
+  }
+
+  deleteProjectFile(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/files/${id}`);
   }
 }

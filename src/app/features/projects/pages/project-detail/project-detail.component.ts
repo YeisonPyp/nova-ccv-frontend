@@ -23,8 +23,9 @@ import { ActivitesSectionComponent } from './components/activities-section/activ
 import { ProductsTabComponent } from './components/products-tab/products-tab.component';
 import { BudgetTabComponent } from './components/budget-tab/budget-tab.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { FilesTabComponent } from './components/files-tab/files-tab.component';
 
-type TabKeys = 'products' | 'activities' | 'risks' | 'budget';
+type TabKeys = 'products' | 'activities' | 'risks' | 'budget' | 'files';
 interface Tab {
   key: TabKeys;
   label: string;
@@ -37,6 +38,7 @@ interface Tab {
     CurrencyPipe,
     DatePipe,
     RisksSectionComponent,
+    FilesTabComponent,
     ActivitesSectionComponent,
     NgComponentOutlet,
     LoadingSpinnerComponent,
@@ -59,6 +61,7 @@ export class ProjectDetailComponent implements OnInit {
     activities: ActivitesSectionComponent,
     budget: BudgetTabComponent,
     risks: RisksSectionComponent,
+    files: FilesTabComponent,
   };
 
   tabs: Tab[] = [
@@ -66,6 +69,7 @@ export class ProjectDetailComponent implements OnInit {
     { key: 'activities', label: 'Actividades' },
     { key: 'budget', label: 'Presupuesto' },
     { key: 'risks', label: 'Riesgos' },
+    { key: 'files', label: 'Archivos' },
   ];
 
   activeTab = signal<TabKeys>('activities');
@@ -80,6 +84,7 @@ export class ProjectDetailComponent implements OnInit {
       activities: base,
       budget: base,
       risks: base,
+      files: base,
     };
   });
 

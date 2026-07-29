@@ -1,0 +1,31 @@
+<div
+  class="bg-white rounded-lg border border-gray-200 shadow-sm mb-8 overflow-hidden"
+>
+  <div
+    class="px-4 py-3 border-b border-gray-100 flex items-center justify-between"
+  >
+    <h3 class="text-sm font-semibold text-gray-700 m-0">
+      Archivos y digitalizaciones
+    </h3>
+  </div>
+
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading()) {
+    <div
+      class="py-3 grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-5"
+    >
+      @for (element of elements(); track element.id) {
+        <app-file-item
+          [file]="element"
+          [label]="element.description"
+          [canUpdate]="canEdit()"
+          [canDelete]="canEdit()"
+          (fileSelected)="uploadFile($event, element)"
+          (deleteRequested)="deleteFile(element)"
+        ></app-file-item>
+      }
+      <app-file-item (fileSelected)="uploadFile($event, undefined)" />
+    </div>
+  }
+</div>
