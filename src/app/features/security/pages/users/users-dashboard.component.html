@@ -12,30 +12,25 @@
       </button>
     </div>
 
-    @if (loading()) {
-      <div class="text-center py-8">
-        <div class="spinner-border text-primary" role="status"></div>
-      </div>
-    } @else {
-      <app-dynamic-table
-        [data]="users()"
-        [columns]="columns"
-        emptyMessage="No hay usuarios."
-      >
-        <ng-template #actions let-user>
-          @if (canUpdate) {
-            <button class="btn btn-sm btn-primary" (click)="manage(user)">
-              Gestionar
-            </button>
-          }
-        </ng-template>
-      </app-dynamic-table>
+    <app-dynamic-table
+      [data]="users()"
+      [columns]="columns"
+      emptyMessage="No hay usuarios."
+      (searchChange)="onSearchChange($event)"
+    >
+      <ng-template #actions let-user>
+        @if (canUpdate) {
+          <button class="btn btn-sm btn-primary" (click)="manage(user)">
+            Gestionar
+          </button>
+        }
+      </ng-template>
+    </app-dynamic-table>
 
-      <app-pagination
-        [pages]="totalPages()"
-        [currentPage]="page()"
-        (pageChange)="load($event)"
-      />
-    }
+    <app-pagination
+      [pages]="totalPages()"
+      [currentPage]="page()"
+      (pageChange)="page.set($event)"
+    />
   </div>
 }

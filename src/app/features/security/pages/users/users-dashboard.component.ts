@@ -1,18 +1,19 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, OnInit, signal } from "@angular/core";
-import { Router } from "@angular/router";
-import { AuthService } from "@/app/core/services/auth.service";
-import { UserService } from "@/app/core/services/user/user.service";
-import { UserResponse } from "@/app/core/models/user/user.model";
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '@/app/core/services/auth.service';
+import { UserService } from '@/app/core/services/user/user.service';
+import { UserResponse } from '@/app/core/models/user/user.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
-import { ForbiddenComponent } from "@/app/shared/components/forbidden/forbidden.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { ForbiddenComponent } from '@/app/shared/components/forbidden/forbidden.component';
+import { ExpressionNode } from '@rsql/ast';
 
 @Component({
-  selector: "app-users-dashboard",
+  selector: 'app-users-dashboard',
   standalone: true,
   imports: [
     CommonModule,
@@ -20,9 +21,9 @@ import { ForbiddenComponent } from "@/app/shared/components/forbidden/forbidden.
     PaginationComponent,
     ForbiddenComponent,
   ],
-  templateUrl: "./users-dashboard.component.html",
+  templateUrl: './users-dashboard.component.html',
 })
-export class UsersDashboardComponent implements OnInit {
+export class UsersDashboardComponent {
   private auth = inject(AuthService);
   private service = inject(UserService);
   private router = inject(Router);
@@ -32,47 +33,84 @@ export class UsersDashboardComponent implements OnInit {
   size = signal(10);
   totalPages = signal(0);
   loading = signal(false);
+  searchNodes = signal<ExpressionNode[]>([]);
 
   columns: TableColumn[] = [
-    { key: "username", label: "Usuario" },
-    { key: "firstName", label: "Nombre" },
-    { key: "lastName", label: "Apellido" },
-    { key: "email", label: "Correo" },
-    { key: "status", label: "Estado" },
+    {
+      key: 'username',
+      label: 'Usuario',
+      filterSet: {
+        valueType: 'text',
+        search: true,
+      },
+    },
+    {
+      key: 'firstName',
+      label: 'Nombre',
+      filterSet: {
+        valueType: 'text',
+        search: true,
+      },
+    },
+    {
+      key: 'lastName',
+      label: 'Apellido',
+      filterSet: {
+        valueType: 'text',
+        search: true,
+      },
+    },
+    {
+      key: 'email',
+      label: 'Correo',
+      filterSet: {
+        valueType: 'email',
+        search: true,
+      },
+    },
+    { key: 'status', label: 'Estado' },
   ];
 
-  get canRead() {
-    return this.auth.hasPermission("USERS_READ");
-  }
-
-  get canUpdate() {
-    return this.auth.hasPermission("USERS_UPDATE");
-  }
-
-  ngOnInit(): void {
-    if (this.canRead) this.load(1);
-  }
-
-  load(page: number) {
-    this.page.set(page);
-    this.loading.set(true);
-    this.service.getAllUsers({ page: page - 1, size: this.size() }).subscribe({
-      next: (res) => {
-        if (res.success && res.data) {
-          this.users.set(res.data.content);
-          this.totalPages.set(res.data.totalPages);
-        }
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+  constructor() {
+    effect(() => {
+      this.loading.set(true);
+      this.service
+        .getAllUsers({
+          page: this.page() - 1,
+          size: this.size(),
+          nodes: this.searchNodes(),
+        })
+        .subscribe({
+          next: (res) => {
+            if (res.success && res.data) {
+              this.users.set(res.data.content);
+              this.totalPages.set(res.data.totalPages);
+            }
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false),
+        });
     });
   }
 
+  get canRead() {
+    return this.auth.hasPermission('USERS_READ');
+  }
+
+  get canUpdate() {
+    return this.auth.hasPermission('USERS_UPDATE');
+  }
+
+  onSearchChange(nodes: ExpressionNode[]) {
+    this.page.set(1);
+    this.searchNodes.set(nodes);
+  }
+
   manage(user: UserResponse) {
-    this.router.navigate(["/security/users/", user.id]);
+    this.router.navigate(['/security/users/', user.id]);
   }
 
   onCreateClicked() {
-    this.router.navigate(["/security/users/new"]);
+    this.router.navigate(['/security/users/new']);
   }
 }
