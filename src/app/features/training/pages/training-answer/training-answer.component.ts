@@ -95,7 +95,7 @@ export class TrainingAnswerComponent {
           ) ?? null,
         );
         const map: Record<number, number> = {};
-        for (const a of answers.data ?? []) map[a.questionId] = Number(a.score);
+        for (const a of answers.data ?? []) map[a.id] = Number(a.score);
         this.scores.set(map);
         this.isLoading.set(false);
       },

@@ -4,12 +4,15 @@ import {
   computed,
   effect,
   input,
-  OnInit,
   output,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TrainingEffectiveness } from '@/app/core/models/training/training.models';
+import {
+  Training,
+  TrainingAssessment,
+  TrainingSurveyAnswer,
+} from '@/app/core/models/training/training.models';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 export interface TrainingEffectivenessScores {
@@ -18,6 +21,15 @@ export interface TrainingEffectivenessScores {
 
 export interface TrainingSurveyScore {
   [questionId: number]: number;
+}
+
+interface TrainingSurvey {
+  assessment: TrainingAssessment;
+  trainingAssessmentId: number;
+  training: Training;
+  surveyId: number;
+  surveyName: string;
+  answers: TrainingSurveyAnswer[];
 }
 /**
  * "Evaluación eficacia de las capacitaciones recibidas": training surveys that
@@ -32,7 +44,29 @@ export interface TrainingSurveyScore {
   templateUrl: './training-effectiveness.component.html',
 })
 export class TrainingEffectivenessComponent {
-  surveys = input.required<TrainingEffectiveness[]>();
+  assessments = input.required<TrainingAssessment[]>();
+
+  surveys = computed(() => {
+    const groups = this.assessments().reduce((prev, assessment) => {
+      assessment.answers.forEach((answer) => {
+        const group = prev.get(answer.surveyId);
+        if (group) {
+          group.answers.push(answer);
+        } else {
+          prev.set(answer.surveyId, {
+            assessment,
+            training: assessment.training,
+            trainingAssessmentId: assessment.id,
+            surveyId: answer.surveyId,
+            surveyName: answer.surveyName,
+            answers: [answer],
+          });
+        }
+      });
+      return prev;
+    }, new Map<number, TrainingSurvey>());
+    return Array.from(groups.values());
+  });
 
   onUpdateScores = output<TrainingEffectivenessScores>();
   isDisabled = input<boolean>(false);
@@ -44,11 +78,11 @@ export class TrainingEffectivenessComponent {
   constructor() {
     effect(() => {
       const map: TrainingEffectivenessScores = {};
-      for (const s of this.surveys()) {
-        map[s.trainingAssessmentId] = {};
-        for (const q of s.questions) {
+      for (const s of this.assessments()) {
+        map[s.id] = {};
+        for (const q of s.answers) {
           if (q.score !== null && q.score !== undefined) {
-            map[s.trainingAssessmentId][q.questionId] = Number(q.score);
+            map[s.id][q.question.id] = Number(q.score);
           }
         }
       }
@@ -59,16 +93,13 @@ export class TrainingEffectivenessComponent {
     });
   }
 
-  /** Who answers this block, per the survey scope. */
-  audienceLabel(s: TrainingEffectiveness): string {
-    return s.aimedAt === 'EMPLOYEES'
-      ? 'Evaluación del jefe inmediato'
-      : 'Evaluación del funcionario';
-  }
-
   scoreOf(trainingAssessmentId: number, questionId: number): number | null {
     const v = this.scores()[trainingAssessmentId]?.[questionId];
     return v === undefined ? null : v;
+  }
+
+  canEdit(a: TrainingAssessment) {
+    return a.permissions?.includes('UPDATE') && !this.isDisabled();
   }
 
   setScore(trainingAssessmentId: number, questionId: number, value: number) {

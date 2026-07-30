@@ -145,7 +145,7 @@
       <!-- ── TRAINING EFFECTIVENESS (does not affect the average) ── -->
       @if (trainingAssessments()?.length) {
         <app-training-effectiveness
-          [surveys]="trainingAssessments()!"
+          [assessments]="trainingAssessments()!"
           [isDisabled]="isReadonly()"
           (onUpdateScores)="onTrainingScore($event)"
         />

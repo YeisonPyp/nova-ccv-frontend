@@ -1,4 +1,4 @@
-import { TrainingEffectiveness } from '../training/training.models';
+import { TrainingAssessment } from '../training/training.models';
 import { Area } from './area.model';
 import { CompetencyScore } from './competency-score.model';
 import { Employee } from './employee.model';
@@ -79,5 +79,5 @@ export interface Assessment {
   evaluationWindowOpen?: boolean;
   canComment?: boolean;
   canReply?: boolean;
-  trainingAssessments?: TrainingEffectiveness[];
+  trainingAssessments?: TrainingAssessment[];
 }

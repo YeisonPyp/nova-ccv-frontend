@@ -1,3 +1,5 @@
+import { SurveyQuestion } from '../assessment/survey.model';
+
 export interface Training {
   id: number;
   topicName: string;
@@ -136,25 +138,16 @@ export interface AttachTrainingSurveyDto {
   feedbackAfter?: string | null;
 }
 
-/** A training survey resurfaced inside a performance assessment. */
-export interface TrainingEffectivenessQuestion {
-  questionId: number;
-  description: string;
-  minValue?: number;
-  maxValue?: number;
-  score?: number | null;
-}
-
-export interface TrainingEffectiveness {
-  trainingAssessmentId: number;
-  trainingSurveyId: number;
+export interface TrainingAssessment {
+  id: number;
+  periodId: number;
   trainingId: number;
-  trainingTopic: string;
-  trainingDate: string;
-  surveyId: number;
-  surveyName: string;
-  aimedAt: SurveyAudience;
-  questions: TrainingEffectivenessQuestion[];
+  evaluateeId: string;
+  evaluatorId: string;
+  aimedAt: string;
+  training: Training;
+  answers: TrainingSurveyAnswer[];
+  permissions?: string[];
 }
 
 export interface SetQuestionImpactDto {
@@ -163,9 +156,10 @@ export interface SetQuestionImpactDto {
 }
 
 export interface TrainingSurveyAnswer {
-  id?: number;
-  employeeId?: number;
-  questionId: number;
+  id: number;
+  surveyId: number;
+  surveyName: string;
+  question: SurveyQuestion;
   score: number;
 }
 

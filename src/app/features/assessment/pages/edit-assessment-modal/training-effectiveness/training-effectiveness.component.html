@@ -11,7 +11,7 @@
     </p>
 
     <div class="flex flex-col gap-6">
-      @for (s of surveys(); track s.trainingAssessmentId) {
+      @for (s of surveys(); track s.surveyId) {
         <div class="rounded-lg border border-gray-200">
           <!-- training + scope header -->
           <div
@@ -19,47 +19,47 @@
           >
             <div class="min-w-0">
               <p class="text-sm font-medium text-gray-800 truncate">
-                {{ s.trainingTopic }}
+                {{ s.training.topicName }}
               </p>
               <p class="text-xs text-gray-500">
-                {{ s.trainingDate | date: "mediumDate" }} · {{ s.surveyName }}
+                {{ s.training.scheduledDate | date: "mediumDate" }} ·
+                {{ s.surveyName }}
               </p>
             </div>
-            <span
-              class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-              [class]="
-                s.aimedAt === 'EMPLOYEES'
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'bg-emerald-50 text-emerald-700'
-              "
-            >
-              {{ audienceLabel(s) }}
-            </span>
           </div>
 
           <!-- questions -->
           <div class="divide-y divide-gray-100">
-            @for (q of s.questions; track q.questionId) {
+            @for (answer of s.answers; track answer.id) {
               <div
                 class="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
               >
                 <p class="flex-1 min-w-0 text-sm text-gray-800 wrap-break-word">
-                  {{ q.description }}
+                  {{ answer.question.description }}
                 </p>
 
-                @if (isYesNo(q.minValue, q.maxValue)) {
+                @if (
+                  isYesNo(answer.question.minValue, answer.question.maxValue)
+                ) {
                   <!-- SI / NO, as in the official format -->
                   <div class="flex items-center gap-4 shrink-0">
                     <label class="flex items-center gap-1.5 text-sm">
                       <input
                         type="radio"
-                        [name]="'q-' + q.questionId"
+                        [name]="'q-' + answer.question.id"
                         [checked]="
-                          scoreOf(s.trainingAssessmentId, q.questionId) === 1
+                          scoreOf(
+                            s.trainingAssessmentId,
+                            answer.question.id
+                          ) === 1
                         "
-                        [disabled]="isDisabled()"
+                        [disabled]="!canEdit(s.assessment)"
                         (change)="
-                          setScore(s.trainingAssessmentId, q.questionId, 1)
+                          setScore(
+                            s.trainingAssessmentId,
+                            answer.question.id,
+                            1
+                          )
                         "
                       />
                       SI
@@ -67,13 +67,20 @@
                     <label class="flex items-center gap-1.5 text-sm">
                       <input
                         type="radio"
-                        [name]="'q-' + q.questionId"
+                        [name]="'q-' + answer.question.id"
                         [checked]="
-                          scoreOf(s.trainingAssessmentId, q.questionId) === 0
+                          scoreOf(
+                            s.trainingAssessmentId,
+                            answer.question.id
+                          ) === 0
                         "
-                        [disabled]="isDisabled()"
+                        [disabled]="!canEdit(s.assessment)"
                         (change)="
-                          setScore(s.trainingAssessmentId, q.questionId, 0)
+                          setScore(
+                            s.trainingAssessmentId,
+                            answer.question.id,
+                            0
+                          )
                         "
                       />
                       NO
@@ -83,12 +90,18 @@
                   <input
                     type="number"
                     class="form-control w-24 text-sm text-right shrink-0"
-                    [min]="q.minValue ?? 0"
-                    [max]="q.maxValue ?? 5"
-                    [disabled]="isDisabled()"
-                    [ngModel]="scoreOf(s.trainingAssessmentId, q.questionId)"
+                    [min]="answer.question.minValue ?? 0"
+                    [max]="answer.question.maxValue ?? 5"
+                    [disabled]="!canEdit(s.assessment)"
+                    [ngModel]="
+                      scoreOf(s.trainingAssessmentId, answer.question.id)
+                    "
                     (ngModelChange)="
-                      setScore(s.trainingAssessmentId, q.questionId, $event)
+                      setScore(
+                        s.trainingAssessmentId,
+                        answer.question.id,
+                        $event
+                      )
                     "
                   />
                 }
