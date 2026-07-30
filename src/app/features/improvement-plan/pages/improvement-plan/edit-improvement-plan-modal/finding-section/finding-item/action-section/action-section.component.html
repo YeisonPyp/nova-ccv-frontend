@@ -1,0 +1,37 @@
+<section class="p-4">
+  <div class="group">
+    <span
+      class="text-sm font-bold text-tertiary uppercase tracking-wider cursor-pointer mb-4 hover:text-secondary transition-colors"
+    >
+      Acciones de mejora
+    </span>
+
+    <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+    @if (!isLoading()) {
+      <div class="space-y-2">
+        @for (action of pagedActions(); track action.id) {
+          <app-action-details
+            [action]="action"
+            (onDelete)="onDeleteAction($event)"
+          ></app-action-details>
+        }
+      </div>
+
+      @if (actions().length > 0) {
+        <app-paginator
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (onSelectPage)="onSelectPage($event)"
+          (pageSizeChange)="onPageSizeChange($event)"
+        ></app-paginator>
+      }
+
+      <app-new-action
+        [findingId]="findingId()"
+        (onCreated)="onCreated($event)"
+      ></app-new-action>
+    }
+  </div>
+</section>

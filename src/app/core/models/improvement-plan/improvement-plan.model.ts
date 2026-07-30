@@ -9,7 +9,6 @@ export interface ImprovementPlan {
   controlEntityId: number;
   controlEntityName: string;
   expiresAt: string;
-  correctiveActionsLength: number;
   completedAt?: string;
   startsAt: string;
   createdAt: string;

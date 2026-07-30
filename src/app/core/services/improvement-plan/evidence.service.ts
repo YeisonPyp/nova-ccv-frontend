@@ -32,7 +32,7 @@ export class EvidenceService {
 
   create(dto: CreateEvidenceDto): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
     const formData = new FormData();
-    formData.append('correctiveActionId', dto.correctiveActionId + '');
+    formData.append('actionId', dto.actionId + '');
     if (dto.description)
       formData.append('description', dto.description);
     formData.append('file', dto.file);
@@ -50,7 +50,7 @@ export class EvidenceService {
     dto: CreateEvidenceDto,
   ): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
     const formData = new FormData();
-    formData.append('correctiveActionId', dto.correctiveActionId + '');
+    formData.append('actionId', dto.actionId + '');
     if (dto.description)
       formData.append('description', dto.description);
     formData.append('file', dto.file);

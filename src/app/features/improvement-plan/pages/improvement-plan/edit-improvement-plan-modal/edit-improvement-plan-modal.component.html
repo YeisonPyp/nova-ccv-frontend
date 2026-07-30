@@ -83,7 +83,7 @@
             </svg>
             Responsable
           </label>
-          <app-search-select
+          <app-select-search
             class="w-full"
             [emptyMessage]="searchSelectEmployeesContext.op?.emptyMessage ?? ''"
             [items]="searchSelectEmployeesContext.options()"
@@ -93,7 +93,7 @@
             (onRemove)="searchSelectEmployeesContext.remove($event)"
             (onSearch)="searchSelectEmployeesContext.search($event)"
             (onSelect)="searchSelectEmployeesContext.select($event)"
-          ></app-search-select>
+          ></app-select-search>
         </div>
 
         <div class="flex flex-col gap-2">
@@ -190,10 +190,7 @@
 
       @if (plan()) {
         <section class="pt-6 border-t border-gray-100">
-          <app-corrective-action-section
-            [planId]="plan()?.id!"
-            [childActions]="plan()?.correctiveActionsLength ?? 0"
-          ></app-corrective-action-section>
+          <app-finding-section [planId]="plan()?.id!"></app-finding-section>
         </section>
       }
     </div>

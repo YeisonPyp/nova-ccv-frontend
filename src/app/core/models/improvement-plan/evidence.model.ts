@@ -1,6 +1,6 @@
 export interface EvidenceDto {
   id: number;
-  correctiveAction?: any;
+  action?: any;
   type: string;
   description?: string;
   url?: string;
@@ -11,7 +11,7 @@ export interface EvidenceDto {
 }
 
 export interface CreateEvidenceDto {
-  correctiveActionId: number;
+  actionId: number;
   file: File;
   description?: string;
 }

@@ -3,25 +3,22 @@
     <span
       class="text-sm font-bold text-tertiary uppercase tracking-wider cursor-pointer mb-4 hover:text-secondary transition-colors"
     >
-      Acciones de mejora
+      Hallazgos
     </span>
 
     <div app-loading-spinner [isLoading]="isLoading()"></div>
 
     @if (!isLoading()) {
-      <div class="space-y-2">
-        @if (childActions() >= 0) {
-          @for (action of pagedActions(); track action.id) {
-            <app-corrective-action-details
-              [action]="action"
-              [planId]="planId()"
-              (onDelete)="onDeleteCorrectiveAction($event)"
-            ></app-corrective-action-details>
-          }
+      <div class="space-y-3 mt-2">
+        @for (finding of pagedFindings(); track finding.id) {
+          <app-finding-item
+            [finding]="finding"
+            (onDelete)="onDeleteFinding($event)"
+          ></app-finding-item>
         }
       </div>
 
-      @if (actions().length > 0) {
+      @if (findings().length > 0) {
         <app-paginator
           [pageSize]="pageSize()"
           [currentPage]="currentPage()"
@@ -31,11 +28,10 @@
         ></app-paginator>
       }
 
-      <app-new-corrective-action
+      <app-new-finding
         [planId]="planId()"
-        [parentId]="parentId()"
         (onCreated)="onCreated($event)"
-      ></app-new-corrective-action>
+      ></app-new-finding>
     }
   </div>
 </section>

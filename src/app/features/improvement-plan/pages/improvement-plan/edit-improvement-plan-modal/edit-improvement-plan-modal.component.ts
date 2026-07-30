@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { CorrectiveActionSectionComponent } from "./corrective-action-section/corrective-action-section.component";
+import { FindingSectionComponent } from "./finding-section/finding-section.component";
 import {
   ImprovementPlanService,
   improvementPlanStatus,
@@ -23,6 +23,7 @@ import {
 import { EmployeeService } from "@/app/core/services/assessment/employee.service";
 import { ControlEntityService } from "@/app/core/services/improvement-plan/control-entity.service";
 import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
+import { SelectSearchComponent } from "@/app/shared/components/select-search/select-search.component";
 import { ImprovementPlan } from "@/app/core/models/improvement-plan/improvement-plan.model";
 import { Employee } from "@/app/core/models/assessment/employee.model";
 import { ControlEntity } from "@/app/core/models/improvement-plan/control-entity.model";
@@ -34,8 +35,9 @@ import { ActivatedRoute, Router } from "@angular/router";
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    CorrectiveActionSectionComponent,
+    FindingSectionComponent,
     SearchSelectComponent,
+    SelectSearchComponent,
   ],
   templateUrl: "./edit-improvement-plan-modal.component.html",
   styleUrl: "./edit-improvement-plan-modal.component.scss",

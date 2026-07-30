@@ -1,22 +1,15 @@
-import {
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from "@angular/core";
+import { Component, computed, inject, input, output, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { HttpEventType } from "@angular/common/http";
-import { EvidenceService } from "@/app/core/services/improvement-plan/evidence.service";
-import { EvidenceDto } from "@/app/core/models/improvement-plan/evidence.model";
+import { FindingDocumentService } from "@/app/core/services/improvement-plan/finding-document.service";
+import { FindingDocumentDto } from "@/app/core/models/improvement-plan/finding-document.model";
 import {
   FileItemComponent,
   FileResource,
 } from "@/app/shared/components/file-item/file-item.component";
 
 @Component({
-  selector: "app-evidence-item",
+  selector: "app-finding-document-item",
   standalone: true,
   imports: [CommonModule, FileItemComponent],
   template: `
@@ -24,44 +17,43 @@ import {
       [file]="fileResource()"
       [loading]="loading()"
       [uploadProgress]="uploadProgress()"
-      label="Añadir evidencia"
+      label="Añadir documento"
       accept="image/*,.pdf"
       (fileSelected)="onFileSelected($event)"
       (deleteRequested)="onDeleteRequested()"
     />
   `,
-  styleUrls: ["./evidence-item.component.scss"],
 })
-export class EvidenceItemComponent {
-  private readonly evidenceService = inject(EvidenceService);
+export class FindingDocumentItemComponent {
+  private readonly findingDocumentService = inject(FindingDocumentService);
 
-  evidence = input<EvidenceDto | null>(null);
-  actionId = input.required<number>();
+  document = input<FindingDocumentDto | null>(null);
+  findingId = input.required<number>();
 
-  onSaved = output<EvidenceDto>();
-  onRemoved = output<EvidenceDto>();
+  onSaved = output<FindingDocumentDto>();
+  onRemoved = output<FindingDocumentDto>();
 
   loading = signal(false);
   uploadProgress = signal(0);
 
   fileResource = computed((): FileResource | null => {
-    const e = this.evidence();
-    if (!e) return null;
+    const d = this.document();
+    if (!d) return null;
     return {
-      id: e.id,
-      bucketName: e.bucketName ?? "",
-      fileName: e.objectName ?? "",
-      description: e.description,
-      createdAt: e.createdAt,
+      id: d.id,
+      bucketName: d.bucketName ?? "",
+      fileName: d.fileName ?? "",
+      description: d.description,
+      createdAt: d.createdAt,
     };
   });
 
   onFileSelected(file: File): void {
-    const prev = this.evidence();
-    const dto = { actionId: this.actionId(), file };
+    const prev = this.document();
+    const dto = { findingId: this.findingId(), file };
     const obs$ = prev?.id
-      ? this.evidenceService.update(prev.id, dto)
-      : this.evidenceService.create(dto);
+      ? this.findingDocumentService.update(prev.id, dto)
+      : this.findingDocumentService.create(dto);
 
     obs$.subscribe({
       next: (event) => {
@@ -82,10 +74,10 @@ export class EvidenceItemComponent {
   }
 
   onDeleteRequested(): void {
-    const e = this.evidence();
-    if (!e) return;
+    const d = this.document();
+    if (!d) return;
     this.loading.set(true);
-    this.evidenceService.deleteById(e.id).subscribe({
+    this.findingDocumentService.deleteById(d.id).subscribe({
       next: (res) => {
         if (res.success) this.onRemoved.emit(res.data);
         this.loading.set(false);
