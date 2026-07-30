@@ -142,6 +142,15 @@
         </section>
       }
 
+      <!-- ── TRAINING EFFECTIVENESS (does not affect the average) ── -->
+      @if (trainingAssessments()?.length) {
+        <app-training-effectiveness
+          [surveys]="trainingAssessments()!"
+          [isDisabled]="isReadonly()"
+          (onUpdateScores)="onTrainingScore($event)"
+        />
+      }
+
       <!-- ── FORM ── -->
       <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <form

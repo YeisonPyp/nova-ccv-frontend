@@ -59,6 +59,7 @@ export class TrainingSurveysComponent {
       .attachSurvey(this.trainingId(), {
         surveyId: e.surveyId,
         aimedAt: e.aimedAt,
+        feedbackAfter: e.feedbackAfter,
       })
       .subscribe((res) => {
         if (res.success) this.load(this.trainingId());

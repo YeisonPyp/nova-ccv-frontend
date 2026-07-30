@@ -1,19 +1,19 @@
-import { inject, Injectable } from "@angular/core";
-import { map, Observable } from "rxjs";
-import { ApiResponse } from "../../models/api-response.model";
-import { APIPage } from "../../models/api-page.model";
-import { Position } from "../../models/assessment/position.model";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../../environments/environment";
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { ApiResponse } from '../../models/api-response.model';
+import { APIPage } from '../../models/api-page.model';
+import { Position } from '../../models/assessment/position.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 import {
   PageableQuery,
   PageableQueryParams,
-} from "../../../shared/pageable-query";
+} from '../../../shared/pageable-query';
 import {
   OnSelectCallback,
   SearchSelectContextFactory,
   SearchSelectContextFactoryOptions,
-} from "../../../shared/components/search-select/on-search-select.interface";
+} from '../../../shared/components/search-select/on-search-select.interface';
 
 export interface CreatePositionDto {
   name: string;
@@ -34,11 +34,15 @@ export interface PositionPageableQuery extends PageableQuery {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class PositionService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/position`;
+
+  findAll() {
+    return this.http.get<ApiResponse<Array<Position>>>(`${this.API_URL}/all`);
+  }
 
   findPositions(
     query: PositionPageableQuery,

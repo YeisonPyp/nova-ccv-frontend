@@ -16,6 +16,8 @@ export interface SurveyScopeItem {
 export interface AttachSurveyEvent {
   surveyId: number;
   aimedAt: SurveyAudience;
+  /** Postgres interval; resurfaces the survey in performance assessments. */
+  feedbackAfter?: string | null;
 }
 
 /**
@@ -47,6 +49,8 @@ export class SurveyScopeListComponent {
 
   selectedSurveyId = signal<number | null>(null);
   aimedAt = signal<SurveyAudience>('EMPLOYEES');
+  /** Months after the training to re-ask this survey in assessments (0 = never). */
+  feedbackAfterMonths = signal<number>(0);
 
   surveyContext = this.surveyService.newSearchSelectContext(
     (s) => this.selectedSurveyId.set(s.id),
@@ -71,9 +75,15 @@ export class SurveyScopeListComponent {
   attach() {
     const surveyId = this.selectedSurveyId();
     if (!surveyId) return;
-    this.onAttach.emit({ surveyId, aimedAt: this.aimedAt() });
+    const months = this.feedbackAfterMonths();
+    this.onAttach.emit({
+      surveyId,
+      aimedAt: this.aimedAt(),
+      feedbackAfter: months > 0 ? `${months} months` : null,
+    });
     this.surveyContext.clear();
     this.selectedSurveyId.set(null);
     this.aimedAt.set('EMPLOYEES');
+    this.feedbackAfterMonths.set(0);
   }
 }

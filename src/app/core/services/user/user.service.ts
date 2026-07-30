@@ -19,6 +19,8 @@ export interface CreateUserDto {
   positionId: number;
   scheduleId: number;
   password: string | null;
+  /** Direct boss (optional). */
+  reportsTo?: number | null;
 }
 
 export interface UpdateUserDto {

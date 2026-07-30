@@ -22,7 +22,14 @@ import {
   SurveyAnswerScoreChange,
 } from './survey-answer-card/survey-answer-card.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
-import { AuthService } from '@/app/core/services/auth.service';
+import {
+  TrainingEffectivenessComponent,
+  TrainingEffectivenessScores,
+} from './training-effectiveness/training-effectiveness.component';
+import {
+  SubmitTrainingAnswerItem,
+  SubmitTrainingAnswersDto,
+} from '@/app/core/models/training/training.models';
 
 export interface CompetencyAssessmentDto {
   [competencyId: number]: number | null;
@@ -47,6 +54,7 @@ export interface EditAssesmentDto {
   observations?: string;
   agreements?: string;
   aspectsToImprove?: string;
+  trainingScores?: Array<SubmitTrainingAnswersDto>;
 }
 
 @Component({
@@ -57,6 +65,7 @@ export interface EditAssesmentDto {
     CompetencyScoreCardComponent,
     SurveyAnswerCardComponent,
     LoadingSpinnerComponent,
+    TrainingEffectivenessComponent,
   ],
   templateUrl: './edit-assessment-modal.component.html',
   styleUrl: './edit-assessment-modal.component.scss',
@@ -65,7 +74,6 @@ export class EditAssessmentModalComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly assessmentService = inject(AssessmentService);
   private readonly fb = inject(FormBuilder);
-  private readonly auth = inject(AuthService);
   id = input.required<number>();
   assessment = signal<Assessment | null>(null);
 
@@ -83,6 +91,12 @@ export class EditAssessmentModalComponent implements OnInit {
   competencyWeightedScore = signal<CompetencyAssessmentDto>({});
   componentWeightedScore = signal<ComponentAssessmentDto>({});
   surveyScores = signal<SurveyAssessmentDto>({});
+
+  trainingAssessments = computed(
+    () => this.assessment()?.trainingAssessments ?? [],
+  );
+
+  trainingSurveyScores = signal<SubmitTrainingAnswersDto[]>([]);
 
   surveyGroups = computed(() => {
     const answers = this.assessment()?.surveyAnswers ?? [];
@@ -117,6 +131,24 @@ export class EditAssessmentModalComponent implements OnInit {
       Object.values(scores).reduce((a, b) => a + (b?.score ?? 0), 0) /
       (Object.keys(scores).length || 1)
     );
+  }
+
+  onTrainingScore(s: TrainingEffectivenessScores) {
+    const finalScores: SubmitTrainingAnswersDto[] = [];
+    Object.keys(s).forEach(($trainingAssessmentId) => {
+      const trainingAssessmentId = Number($trainingAssessmentId);
+      const trScore: SubmitTrainingAnswersDto = {
+        answers: [] as SubmitTrainingAnswerItem[],
+        trainingAssessmentId: trainingAssessmentId,
+      };
+      Object.keys(s[trainingAssessmentId]).forEach(($questionId) => {
+        const questionId = Number($questionId);
+        const score = s[trainingAssessmentId][questionId];
+        trScore.answers.push({ questionId, score });
+      });
+      finalScores.push(trScore);
+    });
+    this.trainingSurveyScores.set(finalScores);
   }
 
   private calculateSurveyScore(): number {
@@ -241,6 +273,7 @@ export class EditAssessmentModalComponent implements OnInit {
         observations: formValue.observations,
         agreements: formValue.agreements,
         aspectsToImprove: formValue.aspectsToImprove,
+        trainingScores: this.trainingSurveyScores(),
         id: this.assessment()!.id,
       };
       this.assessmentService.updateAssessment(payload).subscribe({

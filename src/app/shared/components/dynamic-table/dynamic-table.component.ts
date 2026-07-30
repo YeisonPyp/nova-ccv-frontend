@@ -31,7 +31,9 @@ export interface TableColumn {
       | "month"
       | "week"
       | "datetime-local"
-      | "tel";
+    | "tel";
+
+    onValue?(colKey: string, v: string): void
 
     /**
      * The available operators

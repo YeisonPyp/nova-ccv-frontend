@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -76,8 +83,7 @@ export class TrainingAnswerComponent {
     this.isLoading.set(true);
     forkJoin({
       detail: this.service.getDetail(trainingId),
-      participants:
-        this.participantService.getTrainingParticipants(trainingId),
+      participants: this.participantService.getTrainingParticipants(trainingId),
       answers: this.service.getAnswers(trainingId, employeeId),
     }).subscribe({
       next: ({ detail, participants, answers }) => {
@@ -115,32 +121,31 @@ export class TrainingAnswerComponent {
   }
 
   onSubmit() {
-    if (this.saving()) return;
-    // only submit questions belonging to the visible (audience) surveys
-    const visibleQuestionIds = new Set<number>();
-    for (const s of this.visibleSurveys()) {
-      for (const q of s.impacts ?? []) visibleQuestionIds.add(q.questionId);
-    }
-    const items = Object.entries(this.scores())
-      .filter(([questionId]) => visibleQuestionIds.has(Number(questionId)))
-      .map(([questionId, score]) => ({
-        questionId: Number(questionId),
-        score: Number(score),
-      }));
-    if (!items.length) return;
-
-    this.saving.set(true);
-    this.service
-      .submitAnswers(this.trainingId(), {
-        employeeId: this.employeeId(),
-        answers: items,
-      })
-      .subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.goBack();
-        },
-        error: () => this.saving.set(false),
-      });
+    // if (this.saving()) return;
+    // // only submit questions belonging to the visible (audience) surveys
+    // const visibleQuestionIds = new Set<number>();
+    // for (const s of this.visibleSurveys()) {
+    //   for (const q of s.impacts ?? []) visibleQuestionIds.add(q.questionId);
+    // }
+    // const items = Object.entries(this.scores())
+    //   .filter(([questionId]) => visibleQuestionIds.has(Number(questionId)))
+    //   .map(([questionId, score]) => ({
+    //     questionId: Number(questionId),
+    //     score: Number(score),
+    //   }));
+    // if (!items.length) return;
+    // this.saving.set(true);
+    // this.service
+    //   .submitAnswers(this.trainingId(), {
+    //     employeeId: this.employeeId(),
+    //     answers: items,
+    //   })
+    //   .subscribe({
+    //     next: () => {
+    //       this.saving.set(false);
+    //       this.goBack();
+    //     },
+    //     error: () => this.saving.set(false),
+    //   });
   }
 }

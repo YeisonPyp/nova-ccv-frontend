@@ -1,29 +1,37 @@
-<div class="card shadow-sm">
-  <div class="card-body space-y-4">
+<div
+  class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+>
+  <div class="p-6 space-y-4">
     @if (!employee()) {
-      <p class="text-tertiary text-sm">Sin empleado vinculado.</p>
+      <p class="text-gray-500 text-sm italic">Sin empleado vinculado.</p>
     } @else {
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center mb-6">
         <div class="flex gap-2">
           <span
-            class="badge px-2 py-1 text-xs"
-            [class.bg-success]="employee()!.isActive"
-            [class.bg-secondary]="!employee()!.isActive"
+            class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium"
+            [class.bg-green-100]="employee()!.isActive"
+            [class.text-green-800]="employee()!.isActive"
+            [class.bg-gray-100]="!employee()!.isActive"
+            [class.text-gray-800]="!employee()!.isActive"
           >
             {{ employee()!.isActive ? "Activo" : "Inactivo" }}
           </span>
         </div>
         @if (autoSaving()) {
-          <span class="text-xs text-tertiary">Guardando...</span>
+          <span class="text-xs text-indigo-600 font-medium animate-pulse"
+            >Guardando...</span
+          >
         }
       </div>
 
       <form [formGroup]="form" class="space-y-4">
-        <div>
-          <label class="form-label fw-semibold text-sm">Correo electrónico</label>
+        <div class="form-group">
+          <label class="form-label text-sm font-medium text-gray-700 mb-1 block"
+            >Correo electrónico corporativo</label
+          >
           <input
             type="email"
-            class="form-control"
+            class="form-control w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             formControlName="email"
             placeholder="correo@ejemplo.com"
             (input)="onFieldChange()"
@@ -31,30 +39,34 @@
         </div>
       </form>
 
-      <div>
-        <app-search-select
-          [label]="positionCtx.op?.label ?? 'Cargo'"
-          [placeholder]="positionCtx.op?.placeholder ?? 'Buscar cargo...'"
-          [maxElements]="1"
-          [items]="positionCtx.options()"
-          [selectedItems]="positionCtx.selectedOptions()"
-          (onSearch)="positionCtx.search($event)"
-          (onSelect)="onPositionSelect($event)"
-          (onRemove)="onPositionRemove($event)"
-        />
-      </div>
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-gray-100"
+      >
+        <div class="form-group">
+          <app-search-select
+            [label]="positionCtx.op?.label ?? 'Cargo asignado'"
+            [placeholder]="positionCtx.op?.placeholder ?? 'Buscar cargo...'"
+            [maxElements]="1"
+            [items]="positionCtx.options()"
+            [selectedItems]="positionCtx.selectedOptions()"
+            (onSearch)="positionCtx.search($event)"
+            (onSelect)="onPositionSelect($event)"
+            (onRemove)="onPositionRemove($event)"
+          />
+        </div>
 
-      <div>
-        <app-search-select
-          [label]="reportsToCtx.op?.label ?? 'Reporta a'"
-          [placeholder]="reportsToCtx.op?.placeholder ?? 'Buscar empleado...'"
-          [maxElements]="1"
-          [items]="reportsToCtx.options()"
-          [selectedItems]="reportsToCtx.selectedOptions()"
-          (onSearch)="reportsToCtx.search($event)"
-          (onSelect)="onReportsToSelect($event)"
-          (onRemove)="onReportsToRemove($event)"
-        />
+        <div class="form-group">
+          <app-search-select
+            [label]="reportsToCtx.op?.label ?? 'Reporta a (Jefe directo)'"
+            [placeholder]="reportsToCtx.op?.placeholder ?? 'Buscar empleado...'"
+            [maxElements]="1"
+            [items]="reportsToCtx.options()"
+            [selectedItems]="reportsToCtx.selectedOptions()"
+            (onSearch)="reportsToCtx.search($event)"
+            (onSelect)="onReportsToSelect($event)"
+            (onRemove)="onReportsToRemove($event)"
+          />
+        </div>
       </div>
     }
   </div>

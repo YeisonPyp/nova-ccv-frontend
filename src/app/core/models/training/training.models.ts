@@ -132,6 +132,29 @@ export interface AttachTrainingSurveyDto {
   surveyId: number;
   aimedAt: SurveyAudience;
   evaluatorId?: number;
+  /** Postgres interval (e.g. "4 months"); resurfaces the survey in assessments. */
+  feedbackAfter?: string | null;
+}
+
+/** A training survey resurfaced inside a performance assessment. */
+export interface TrainingEffectivenessQuestion {
+  questionId: number;
+  description: string;
+  minValue?: number;
+  maxValue?: number;
+  score?: number | null;
+}
+
+export interface TrainingEffectiveness {
+  trainingAssessmentId: number;
+  trainingSurveyId: number;
+  trainingId: number;
+  trainingTopic: string;
+  trainingDate: string;
+  surveyId: number;
+  surveyName: string;
+  aimedAt: SurveyAudience;
+  questions: TrainingEffectivenessQuestion[];
 }
 
 export interface SetQuestionImpactDto {
@@ -152,7 +175,7 @@ export interface SubmitTrainingAnswerItem {
 }
 
 export interface SubmitTrainingAnswersDto {
-  employeeId: number;
+  trainingAssessmentId: number;
   answers: SubmitTrainingAnswerItem[];
 }
 

@@ -1,27 +1,37 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, OnInit, signal } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { EmployeeService } from "@/app/core/services/assessment/employee.service";
-import { PositionService } from "@/app/core/services/assessment/position.service";
-import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
-import { SearchSelectOption } from "@/app/shared/components/search-select/on-search-select.interface";
-import { ScheduleService } from "@/app/core/services/assessment/schedule.service";
-import { Schedule } from "@/app/core/models/assessment/schedule.model";
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { EmployeeService } from '@/app/core/services/assessment/employee.service';
+import { PositionService } from '@/app/core/services/assessment/position.service';
+import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
+import { SearchSelectOption } from '@/app/shared/components/search-select/on-search-select.interface';
+import { ScheduleService } from '@/app/core/services/assessment/schedule.service';
 import {
   CreateUserDto,
   UserService,
-} from "@/app/core/services/user/user.service";
-import { RoleService } from "@/app/core/services/user/role.service";
-import { RoleResponse } from "@/app/core/models/user/role.model";
-import { Router } from "@angular/router";
+} from '@/app/core/services/user/user.service';
+import { RoleService } from '@/app/core/services/user/role.service';
+import { RoleResponse } from '@/app/core/models/user/role.model';
+import { Router } from '@angular/router';
+import {
+  Option,
+  SelectorComponent,
+} from '@/app/shared/components/selector/selector.component';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
-  selector: "app-user-registry-form",
+  selector: 'app-user-registry-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SearchSelectComponent],
-  templateUrl: "./user-registry-form.component.html",
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SelectSearchComponent,
+    SelectorComponent,
+  ],
+  templateUrl: './user-registry-form.component.html',
 })
-export class UserRegistryFormComponent implements OnInit {
+export class UserRegistryFormComponent {
   private readonly positionService = inject(PositionService);
   private readonly employeeService = inject(EmployeeService);
   private readonly scheduleService = inject(ScheduleService);
@@ -34,22 +44,25 @@ export class UserRegistryFormComponent implements OnInit {
   positions = signal<SearchSelectOption[]>([]);
   employees = signal<SearchSelectOption[]>([]);
   selectedEmployees = signal<SearchSelectOption[]>([]);
-  schedules = signal<Schedule[]>([]);
-  roles = signal<RoleResponse[]>([]);
+  schedules = toSignal(
+    this.scheduleService
+      .findAll()
+      .pipe(
+        map((res) =>
+          res.data.map((s) => ({ label: s.name, value: s.id }) as Option),
+        ),
+      ),
+  );
+  roles = toSignal(
+    this.roleService
+      .findAll()
+      .pipe(
+        map((res) =>
+          res.data.map((s) => ({ label: s.name, value: s.id }) as Option),
+        ),
+      ),
+  );
   creating = signal(false);
-
-  ngOnInit(): void {
-    this.scheduleService.findAll().subscribe({
-      next: (res) => {
-        if (res.success && res.data) this.schedules.set(res.data);
-      },
-    });
-    this.roleService.findAll().subscribe({
-      next: (res) => {
-        if (res.success && res.data) this.roles.set(res.data);
-      },
-    });
-  }
 
   findEmployees(q: string) {
     this.employeeService.findEmployees({ nameOrEmail: q }).subscribe((r) => {
@@ -78,12 +91,12 @@ export class UserRegistryFormComponent implements OnInit {
 
   onSelectReportsTo(o: SearchSelectOption) {
     this.selectedEmployees.set([o]);
-    this.form.patchValue({ positionId: o.id as number });
+    this.form.patchValue({ reportsTo: o.id as number });
   }
 
   onRemoveReportsTo(_: SearchSelectOption) {
     this.selectedEmployees.set([]);
-    this.form.patchValue({ positionId: null });
+    this.form.patchValue({ reportsTo: null });
   }
 
   onRemovePosition(o: SearchSelectOption) {
@@ -98,14 +111,16 @@ export class UserRegistryFormComponent implements OnInit {
   }
 
   form = this.fb.group({
-    firstName: ["", [Validators.required, Validators.minLength(2)]],
-    lastName: ["", [Validators.required, Validators.minLength(2)]],
-    email: ["", [Validators.required, Validators.email]],
-    password: ["", [Validators.minLength(8)]],
-    roleId: [0, [Validators.required]],
-    upin: ["", [Validators.required]],
-    positionId: [0, [Validators.required]],
-    scheduleId: [0, [Validators.required]],
+    firstName: ['', [Validators.required, Validators.minLength(2)]],
+    lastName: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.minLength(8)]],
+    roleId: [null as number | null, [Validators.required]],
+    upin: ['', [Validators.required]],
+    positionId: [null as number | null, [Validators.required]],
+    scheduleId: [null as number | null, [Validators.required]],
+    // optional direct boss, sent to the backend as RegisterRequest.reportsTo
+    reportsTo: [null as number | null],
   });
 
   submit() {
@@ -120,7 +135,7 @@ export class UserRegistryFormComponent implements OnInit {
         next: (res) => {
           if (res.success) {
             this.form.reset();
-            this.router.navigate(["users", res.data.id]);
+            this.router.navigate(['users', res.data.id]);
           }
           this.creating.set(false);
         },

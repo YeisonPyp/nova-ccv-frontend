@@ -38,49 +38,54 @@
     }
 
     <!-- Form card -->
-    <div class="card shadow-sm">
-      <div class="card-body">
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+    >
+      <div class="p-6">
         @if (user(); as u) {
           <p class="text-tertiary text-sm mb-4">
             {{ u.username }} · {{ u.email }}
           </p>
         }
         <form [formGroup]="form" class="space-y-4">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-semibold text-sm">
-                Nombre <span class="text-danger">*</span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+              <label
+                class="form-label text-sm font-medium text-gray-700 mb-1 block"
+              >
+                Nombre <span class="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                class="form-control"
+                class="form-control w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 formControlName="firstName"
                 placeholder="Nombre"
-                [ngClass]="{ 'is-invalid': isFieldInvalid('firstName') }"
+                [ngClass]="{ 'border-red-400': isFieldInvalid('firstName') }"
                 (input)="onFieldChange()"
               />
               @if (isFieldInvalid("firstName")) {
-                <div class="invalid-feedback">Mínimo 2 caracteres</div>
+                <div class="text-red-500 text-xs mt-1">Mínimo 2 caracteres</div>
               }
             </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold text-sm">
-                Apellido <span class="text-danger">*</span>
+            <div class="form-group">
+              <label
+                class="form-label text-sm font-medium text-gray-700 mb-1 block"
+              >
+                Apellido <span class="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                class="form-control"
+                class="form-control w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 formControlName="lastName"
                 placeholder="Apellido"
-                [ngClass]="{ 'is-invalid': isFieldInvalid('lastName') }"
+                [ngClass]="{ 'border-red-400': isFieldInvalid('lastName') }"
                 (input)="onFieldChange()"
               />
               @if (isFieldInvalid("lastName")) {
-                <div class="invalid-feedback">Mínimo 2 caracteres</div>
+                <div class="text-red-500 text-xs mt-1">Mínimo 2 caracteres</div>
               }
             </div>
           </div>
-
         </form>
       </div>
     </div>
@@ -89,27 +94,29 @@
     @if (user(); as u) {
       <details (toggle)="onRolesToggle($event)">
         <summary
-          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+          class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
         >
           Roles
         </summary>
-        <div class="card shadow-sm">
-          <div class="card-body space-y-4">
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div class="p-6 space-y-4">
             <div class="flex flex-wrap gap-2 min-h-8">
               @if (u.roles.length === 0) {
-                <span class="text-tertiary text-sm">Sin roles asignados.</span>
+                <span class="text-tertiary text-sm italic"
+                  >Sin roles asignados.</span
+                >
               }
               @for (role of u.roles; track role; let i = $index) {
                 <span
-                  class="badge bg-primary text-white px-3 py-2 d-inline-flex align-items-center gap-2"
-                  style="font-size: 0.85rem"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-100"
                 >
                   {{ role }}
                   @if (canUpdate && i !== 0) {
                     <button
                       type="button"
-                      class="btn-close btn-close-white cursor-pointer"
-                      style="font-size: 1rem"
+                      class="text-primary hover:text-indigo-900 cursor-pointer focus:outline-none"
                       [disabled]="saving()"
                       (click)="removeRole(role)"
                       aria-label="Quitar rol"
@@ -122,8 +129,8 @@
             </div>
 
             @if (canUpdate && canReadRoles) {
-              <div class="border-t pt-4">
-                <h4 class="text-sm font-semibold text-tertiary uppercase mb-3">
+              <div class="border-t border-gray-100 pt-4 mt-4">
+                <h4 class="text-sm font-semibold text-gray-600 uppercase mb-3">
                   Roles disponibles
                 </h4>
                 <app-dynamic-table
@@ -133,7 +140,7 @@
                 >
                   <ng-template #actions let-role>
                     <button
-                      class="btn btn-sm btn-outline-primary"
+                      class="btn btn-sm btn-outline-primary text-xs"
                       [disabled]="saving()"
                       (click)="assignRole(role)"
                     >
@@ -154,12 +161,14 @@
 
       <details (toggle)="onPermissionsToggle($event)">
         <summary
-          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+          class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
         >
           Permisos
         </summary>
-        <div class="card shadow-sm">
-          <div class="card-body space-y-4">
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div class="p-6 space-y-4">
             <app-permissions-manager
               [assigned]="u.permissions"
               [all]="allPermissions()"
@@ -176,12 +185,14 @@
       @if (canReadStatusChanges) {
         <details (toggle)="onStatusChangesToggle($event)">
           <summary
-            class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+            class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
           >
             Cambios de estado
           </summary>
-          <div class="card shadow-sm">
-            <div class="card-body space-y-4">
+          <div
+            class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+          >
+            <div class="p-6 space-y-4">
               @if (canCreateStatusChange) {
                 <div class="flex justify-end">
                   <button
@@ -195,8 +206,7 @@
               @if (statusChangesLoading()) {
                 <div class="text-center py-4">
                   <div
-                    class="spinner-border spinner-border-sm text-primary"
-                    role="status"
+                    class="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"
                   ></div>
                 </div>
               } @else {
@@ -221,7 +231,7 @@
       <!-- Employee section at the end -->
       <details>
         <summary
-          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+          class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
         >
           Empleado
         </summary>

@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
@@ -6,42 +6,42 @@ import {
   inject,
   OnInit,
   signal,
-} from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from "rxjs";
-import { AuthService } from "@/app/core/services/auth.service";
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { AuthService } from '@/app/core/services/auth.service';
 import {
   UpdateUserDto,
   UserService,
-} from "@/app/core/services/user/user.service";
-import { RoleService } from "@/app/core/services/user/role.service";
-import { PermissionService } from "@/app/core/services/user/permission.service";
-import { UserStatusChangeService } from "@/app/core/services/user/user-status-change.service";
-import { UserResponse } from "@/app/core/models/user/user.model";
-import { RoleResponse } from "@/app/core/models/user/role.model";
-import { PermissionResponse } from "@/app/core/models/user/permission.model";
+} from '@/app/core/services/user/user.service';
+import { RoleService } from '@/app/core/services/user/role.service';
+import { PermissionService } from '@/app/core/services/user/permission.service';
+import { UserStatusChangeService } from '@/app/core/services/user/user-status-change.service';
+import { UserResponse } from '@/app/core/models/user/user.model';
+import { RoleResponse } from '@/app/core/models/user/role.model';
+import { PermissionResponse } from '@/app/core/models/user/permission.model';
 import {
   USER_STATUSES,
   UserStatus,
   UserStatusChange,
-} from "@/app/core/models/user/user-status-change.model";
+} from '@/app/core/models/user/user-status-change.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
-import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
-import { ForbiddenComponent } from "@/app/shared/components/forbidden/forbidden.component";
-import { UserEmployeeComponent } from "../user-employee/user-employee.component";
-import { PermissionsManagerComponent } from "@/app/shared/components/permissions-manager/permissions-manager.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
+import { ForbiddenComponent } from '@/app/shared/components/forbidden/forbidden.component';
+import { UserEmployeeComponent } from '../user-employee/user-employee.component';
+import { PermissionsManagerComponent } from '@/app/shared/components/permissions-manager/permissions-manager.component';
 
 const PAGE_SIZE = 10;
 const AUTOSAVE_DELAY_MS = 700;
 
 @Component({
-  selector: "app-user-detail",
+  selector: 'app-user-detail',
   standalone: true,
   imports: [
     CommonModule,
@@ -53,7 +53,7 @@ const AUTOSAVE_DELAY_MS = 700;
     UserEmployeeComponent,
     PermissionsManagerComponent,
   ],
-  templateUrl: "./user-detail.component.html",
+  templateUrl: './user-detail.component.html',
 })
 export class UserDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -92,27 +92,27 @@ export class UserDetailComponent implements OnInit {
   readonly availableStatuses = USER_STATUSES;
 
   form = this.fb.group({
-    firstName: ["", [Validators.required, Validators.minLength(2)]],
-    lastName: ["", [Validators.required, Validators.minLength(2)]],
+    firstName: ['', [Validators.required, Validators.minLength(2)]],
+    lastName: ['', [Validators.required, Validators.minLength(2)]],
   });
 
   statusChangeForm = this.fb.group({
     newStatus: this.fb.control<UserStatus | null>(null, Validators.required),
-    reason: ["", [Validators.required, Validators.minLength(1)]],
+    reason: ['', [Validators.required, Validators.minLength(1)]],
   });
 
   private autoSave$ = new Subject<void>();
 
   statusChangeColumns: TableColumn[] = [
-    { key: "oldStatus", label: "Estado anterior" },
-    { key: "newStatus", label: "Nuevo estado" },
-    { key: "reason", label: "Motivo" },
-    { key: "createdAt", label: "Fecha" },
+    { key: 'oldStatus', label: 'Estado anterior' },
+    { key: 'newStatus', label: 'Nuevo estado' },
+    { key: 'reason', label: 'Motivo' },
+    { key: 'createdAt', label: 'Fecha' },
   ];
 
   roleColumns: TableColumn[] = [
-    { key: "name", label: "Nombre" },
-    { key: "description", label: "Descripción" },
+    { key: 'name', label: 'Nombre' },
+    { key: 'description', label: 'Descripción' },
   ];
 
   availableRoles = computed(() => {
@@ -133,27 +133,27 @@ export class UserDetailComponent implements OnInit {
   readonly isEditMode = () => true;
 
   get canUpdate() {
-    return this.auth.hasPermission("USERS_UPDATE");
+    return this.auth.hasPermission('USERS_UPDATE');
   }
   get canRead() {
-    return this.auth.hasPermission("USERS_READ");
+    return this.auth.hasPermission('USERS_READ');
   }
   get canReadRoles() {
-    return this.auth.hasPermission("ROLE_READ");
+    return this.auth.hasPermission('ROLE_READ');
   }
   get canReadPermissions() {
-    return this.auth.hasPermission("PERMISSION_READ");
+    return this.auth.hasPermission('PERMISSION_READ');
   }
   get canReadStatusChanges() {
-    return this.auth.hasPermission("USER_STATUS_CHANGE_READ");
+    return this.auth.hasPermission('USER_STATUS_CHANGE_READ');
   }
   get canCreateStatusChange() {
-    return this.auth.hasPermission("USER_STATUS_CHANGE_CREATE");
+    return this.auth.hasPermission('USER_STATUS_CHANGE_CREATE');
   }
 
   ngOnInit(): void {
     if (!this.canRead) return;
-    const id = Number(this.route.snapshot.paramMap.get("id"));
+    const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!id) {
       this.goBack();
       return;
@@ -383,6 +383,6 @@ export class UserDetailComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(["/conf/users"]);
+    this.router.navigate(['/security/users']);
   }
 }
