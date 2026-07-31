@@ -42,4 +42,8 @@ export class ContractDashboardComponent {
   createContract(type: "employee" | "agency"): void {
     this.router.navigate(["/contracts/create", type]);
   }
+
+  openSeedDashboard(): void {
+    this.router.navigate(["/contracts/seed-dashboard"]);
+  }
 }

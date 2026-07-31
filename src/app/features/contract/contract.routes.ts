@@ -5,8 +5,8 @@ export const CONTRACT_ROUTES: Routes = [
   {
     path: "dashboard",
     loadComponent: () =>
-      import("./pages/dashboard/contract-dashboard.component").then(
-        (m) => m.ContractDashboardComponent,
+      import("./pages/seed-dashboard/contract-seed-dashboard.component").then(
+        (m) => m.ContractSeedDashboardComponent,
       ),
     canActivate: [hasPermissionGuard(["CONTRACT_READ"])],
   },
