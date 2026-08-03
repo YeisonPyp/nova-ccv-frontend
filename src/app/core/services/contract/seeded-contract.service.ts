@@ -4,7 +4,10 @@ import { Observable } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
-import { SeededContract } from "../../models/contract/seeded-contract.model";
+import {
+  SeededContract,
+  UpdateSeededContractDto,
+} from "../../models/contract/seeded-contract.model";
 import {
   FilterServiceSpec,
   PageableQueryWithRsql,
@@ -23,6 +26,22 @@ export class SeededContractService implements FilterServiceSpec {
     return this.http.get<ApiResponse<APIPage<SeededContract>>>(
       `${this.base}/seeded-contracts`,
       { params },
+    );
+  }
+
+  findById(id: string): Observable<ApiResponse<SeededContract>> {
+    return this.http.get<ApiResponse<SeededContract>>(
+      `${this.base}/seeded-contracts/${id}`,
+    );
+  }
+
+  update(
+    id: string,
+    dto: UpdateSeededContractDto,
+  ): Observable<ApiResponse<SeededContract>> {
+    return this.http.put<ApiResponse<SeededContract>>(
+      `${this.base}/seeded-contracts/${id}`,
+      dto,
     );
   }
 }

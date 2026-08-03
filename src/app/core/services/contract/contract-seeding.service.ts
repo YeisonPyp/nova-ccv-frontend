@@ -26,6 +26,12 @@ export class ContractSeedingService implements FilterServiceSpec {
     );
   }
 
+  findById(id: string): Observable<ApiResponse<ContractSeeding>> {
+    return this.http.get<ApiResponse<ContractSeeding>>(
+      `${this.base}/contract-seedings/${id}`,
+    );
+  }
+
   seedFromPdf(file: File): Observable<ApiResponse<ContractSeeding>> {
     const formData = new FormData();
     formData.append("file", file);

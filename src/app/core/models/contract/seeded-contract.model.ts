@@ -24,3 +24,10 @@ export interface SeededContract {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UpdateSeededContractDto {
+  contractCode?: string;
+  contractType?: string;
+  contractorName?: string;
+  employeeId?: number;
+}

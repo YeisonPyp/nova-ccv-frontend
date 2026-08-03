@@ -54,6 +54,8 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   service = input.required<FilterServiceSpec>();
   tableColumns = input.required<TableColumn[]>();
   showFilterSection = input(true);
+  /** Fixed RSQL predicate always ANDed with whatever the filter section builds. */
+  baseRsqlQuery = input<string>("");
   filterRows = signal<FilterRow[]>([]);
 
   @ContentChild("actions") actionsTemplate?: TemplateRef<any>;
@@ -91,8 +93,12 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   load(page = 1) {
     this.loading.set(true);
 
+    const base = this.baseRsqlQuery();
+    const filter = this.rsqlQuery();
+    const rsqlQuery = base && filter ? `${base};${filter}` : base || filter;
+
     this.service()
-      .findAll({ page: page - 1, size: 10, rsqlQuery: this.rsqlQuery() })
+      .findAll({ page: page - 1, size: 10, rsqlQuery })
       .subscribe({
         next: (res) => {
           if (res.success && res.data) {
