@@ -19,41 +19,95 @@
       </div>
     </div>
   } @else {
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <app-dynamic-table
-          [data]="plans()"
-          [columns]="columns"
-          emptyMessage="No se encontraron planes de mejora."
-        >
-          <ng-template #actions let-item>
-            <button
-              *ngIf="isAdmin()"
-              class="btn btn-sm btn-outline-primary me-2"
-              (click)="openPlan(item)"
-              title="Editar"
-            >
-              <i class="bi">✏️</i>
-            </button>
-            <button
-              *ngIf="isAdmin()"
-              class="btn btn-sm btn-outline-danger"
-              (click)="deletePlan(item)"
-              title="Eliminar"
-            >
-              <i class="bi">🗑️</i>
-            </button>
-          </ng-template>
-        </app-dynamic-table>
+    @if (plans().length === 0) {
+      <p class="text-sm text-gray-400 text-center py-8">
+        No se encontraron planes de mejora.
+      </p>
+    }
 
-        <app-paginator
-          [currentPage]="currentPage()"
-          [totalPages]="totalPages()"
-          [pageSize]="pageSize()"
-          (onSelectPage)="onPageChange($event)"
-          (pageSizeChange)="onPageSizeChange($event)"
-        ></app-paginator>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
+      @for (plan of plans(); track plan.id) {
+        <div
+          class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-3"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-xs font-mono text-gray-400">#{{ plan.id }}</span>
+              <h3 class="text-base font-semibold text-secondary m-0">
+                {{ plan.name }}
+              </h3>
+            </div>
+            <div class="flex gap-1 shrink-0">
+              <button
+                *ngIf="isAdmin()"
+                class="btn btn-sm btn-outline-primary"
+                (click)="openPlan(plan)"
+                title="Editar"
+              >
+                <i class="bi">✏️</i>
+              </button>
+              <button
+                *ngIf="isAdmin()"
+                class="btn btn-sm btn-outline-danger"
+                (click)="deletePlan(plan)"
+                title="Eliminar"
+              >
+                <i class="bi">🗑️</i>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                Entidad de Control
+              </p>
+              <p class="text-gray-700 m-0">
+                {{ plan.controlEntityName || "—" }}
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                Completado en
+              </p>
+              <p class="text-gray-700 m-0">
+                {{ plan.completedAt ? (plan.completedAt | date: "dd/MM/yyyy") : "—" }}
+              </p>
+            </div>
+            <div class="col-span-2">
+              <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                Creado en
+              </p>
+              <p class="text-gray-700 m-0">
+                {{ plan.createdAt | date: "dd/MM/yyyy" }}
+              </p>
+            </div>
+          </div>
+
+          <div class="h-48 flex items-center justify-center">
+            @if (hasActions(plan)) {
+              <canvas
+                baseChart
+                [data]="chartData(plan)"
+                [options]="chartOptions"
+                type="doughnut"
+              ></canvas>
+            } @else {
+              <span class="text-xs text-gray-400"
+                >Sin acciones de mejora registradas</span
+              >
+            }
+          </div>
+        </div>
+      }
     </div>
+
+    <app-paginator
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [pageSize]="pageSize()"
+      (onSelectPage)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-paginator>
   }
 </div>

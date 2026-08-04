@@ -1,6 +1,11 @@
 import { Employee } from '../assessment/employee.model';
 import { ControlEntity } from './control-entity.model';
 
+export interface ActionStatusCount {
+  status: string;
+  count: number;
+}
+
 export interface ImprovementPlan {
   id: number;
   name: string;
@@ -15,6 +20,7 @@ export interface ImprovementPlan {
   updatedAt: string;
   employee?: Employee;
   controlEntity?: ControlEntity;
+  actionStatusCounts?: ActionStatusCount[];
 
   permissions?: Array<string>;
 }

@@ -1,9 +1,7 @@
 import { Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  DynamicTableComponent,
-  TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
+import { provideCharts, withDefaultRegisterables, BaseChartDirective } from "ng2-charts";
+import { Chart, registerables, ChartConfiguration, ChartData } from "chart.js";
 import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
 import { ImprovementPlanService } from "@/app/core/services/improvement-plan/improvement-plan.service";
 import { ImprovementPlan } from "@/app/core/models/improvement-plan/improvement-plan.model";
@@ -11,16 +9,35 @@ import { ImprovementPlanMetricsCardsComponent } from "../components/improvement-
 import { Router } from "@angular/router";
 import { HasPermissionDirective } from "@/app/shared/directives/has-permission.directive";
 
+Chart.register(...registerables);
+
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Pendiente",
+  RUNNING: "En ejecución",
+  COMPLETED: "Completada",
+  OVERDUE: "Vencida",
+  CANCELLED: "Cancelada",
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  PENDING: "#94a3b8",
+  RUNNING: "#3b82f6",
+  COMPLETED: "#22c55e",
+  OVERDUE: "#ed3237",
+  CANCELLED: "#6b7280",
+};
+
 @Component({
   selector: "app-improvement-plan-list",
   standalone: true,
   imports: [
     CommonModule,
-    DynamicTableComponent,
     PaginatorComponent,
     ImprovementPlanMetricsCardsComponent,
     HasPermissionDirective,
+    BaseChartDirective,
   ],
+  providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: "./improvement-plan-list.component.html",
   styleUrls: ["./improvement-plan-list.component.scss"],
 })
@@ -35,14 +52,6 @@ export class ImprovementPlanListComponent implements OnInit {
 
   loading = signal(false);
   error = signal<string | null>(null);
-
-  columns: TableColumn[] = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Nombre" },
-    { key: "controlEntityName", label: "Entidad de Control" },
-    { key: "completedAt", label: "Completado en" },
-    { key: "createdAt", label: "Creado en" },
-  ];
 
   ngOnInit(): void {
     this.loadPlans();
@@ -102,4 +111,32 @@ export class ImprovementPlanListComponent implements OnInit {
   isAdmin(): boolean {
     return true;
   }
+
+  hasActions(plan: ImprovementPlan): boolean {
+    return (plan.actionStatusCounts?.length ?? 0) > 0;
+  }
+
+  chartData(plan: ImprovementPlan): ChartData<"doughnut"> {
+    const rows = plan.actionStatusCounts ?? [];
+    return {
+      labels: rows.map((r) => STATUS_LABELS[r.status] ?? r.status),
+      datasets: [
+        {
+          data: rows.map((r) => r.count),
+          backgroundColor: rows.map(
+            (r) => STATUS_COLORS[r.status] ?? "#d1d5db",
+          ),
+          borderWidth: 0,
+        },
+      ],
+    };
+  }
+
+  readonly chartOptions: ChartConfiguration<"doughnut">["options"] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 } } },
+    },
+  };
 }
