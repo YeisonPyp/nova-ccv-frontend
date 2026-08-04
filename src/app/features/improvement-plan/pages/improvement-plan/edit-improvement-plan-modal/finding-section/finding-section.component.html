@@ -28,10 +28,12 @@
         ></app-paginator>
       }
 
-      <app-new-finding
-        [planId]="planId()"
-        (onCreated)="onCreated($event)"
-      ></app-new-finding>
+      @if (canCreate()) {
+        <app-new-finding
+          [planId]="planId()"
+          (onCreated)="onCreated($event)"
+        ></app-new-finding>
+      }
     }
   </div>
 </section>

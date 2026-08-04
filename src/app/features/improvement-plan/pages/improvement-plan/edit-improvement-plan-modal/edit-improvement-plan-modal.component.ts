@@ -1,46 +1,42 @@
-import { CommonModule } from "@angular/common";
-import { Component, computed, effect, inject, signal } from "@angular/core";
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { FindingSectionComponent } from "./finding-section/finding-section.component";
+} from '@angular/forms';
+import { FindingSectionComponent } from './finding-section/finding-section.component';
 import {
   ImprovementPlanService,
   improvementPlanStatus,
-} from "@/app/core/services/improvement-plan/improvement-plan.service";
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  of,
-  switchMap,
-} from "rxjs";
-import { EmployeeService } from "@/app/core/services/assessment/employee.service";
-import { ControlEntityService } from "@/app/core/services/improvement-plan/control-entity.service";
-import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
-import { SelectSearchComponent } from "@/app/shared/components/select-search/select-search.component";
-import { ImprovementPlan } from "@/app/core/models/improvement-plan/improvement-plan.model";
-import { Employee } from "@/app/core/models/assessment/employee.model";
-import { ControlEntity } from "@/app/core/models/improvement-plan/control-entity.model";
-import { ActivatedRoute, Router } from "@angular/router";
+} from '@/app/core/services/improvement-plan/improvement-plan.service';
+import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
+import { EmployeeService } from '@/app/core/services/assessment/employee.service';
+import { ControlEntityService } from '@/app/core/services/improvement-plan/control-entity.service';
+import { SearchSelectComponent } from '@/app/shared/components/search-select/search-select.component';
+import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
+import { ImprovementPlan } from '@/app/core/models/improvement-plan/improvement-plan.model';
+import { Employee } from '@/app/core/models/assessment/employee.model';
+import { ControlEntity } from '@/app/core/models/improvement-plan/control-entity.model';
+import { Router } from '@angular/router';
+import { HasPermissionDirective } from '@/app/shared/directives/has-permission.directive';
 
 @Component({
-  selector: "app-edit-improvement-plan-modal",
+  selector: 'app-edit-improvement-plan-modal',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     FindingSectionComponent,
     SearchSelectComponent,
     SelectSearchComponent,
+    HasPermissionDirective,
   ],
-  templateUrl: "./edit-improvement-plan-modal.component.html",
-  styleUrl: "./edit-improvement-plan-modal.component.scss",
+  templateUrl: './edit-improvement-plan-modal.component.html',
+  styleUrl: './edit-improvement-plan-modal.component.scss',
 })
 export class EditImprovementPlanModalComponent {
   error = signal(null);
@@ -49,7 +45,6 @@ export class EditImprovementPlanModalComponent {
   private controlEntityService = inject(ControlEntityService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
 
   searchSelectEmployeesContext =
     this.employeeService.newSearchSelectEmployeeContext(
@@ -57,8 +52,8 @@ export class EditImprovementPlanModalComponent {
       {
         maxItems: 1,
         isRequired: true,
-        placeholder: "Empleado responsable...",
-        label: "Responsable",
+        placeholder: 'Empleado responsable...',
+        label: 'Responsable',
       },
     );
 
@@ -68,13 +63,13 @@ export class EditImprovementPlanModalComponent {
       {
         maxItems: 1,
         isRequired: true,
-        placeholder: "Entidad encargada",
-        label: "Entidad",
+        placeholder: 'Entidad encargada',
+        label: 'Entidad',
       },
     );
 
   plan = signal<ImprovementPlan | null>(null);
-  planId = signal<number | null>(null);
+  id = input<number | null>(null);
 
   get planStatus() {
     return Object.keys(improvementPlanStatus) as Array<
@@ -88,91 +83,97 @@ export class EditImprovementPlanModalComponent {
 
   get assignedName(): string {
     const plan = this.plan();
-    if (plan == null || plan?.employee == null) return "";
+    if (plan == null || plan?.employee == null) return '';
     const e = plan.employee;
-    return `${e.name ?? ""} ${e.lastName ?? ""}`;
+    return `${e.name ?? ''} ${e.lastName ?? ''}`;
   }
 
-  isLoading = computed(() => this.plan() == null && this.error() == null);
+  isLoading = signal(false);
 
   form: FormGroup = this.fb.group({
-    name: ["", Validators.required],
-    description: ["", Validators.required],
-    expiresAt: ["", Validators.required],
-    startsAt: [""],
-    status: [""],
+    name: ['', Validators.required],
+    description: ['', Validators.required],
+    expiresAt: ['', Validators.required],
+    startsAt: [''],
+    status: [''],
   });
 
   constructor() {
-    this.route.paramMap
-      .pipe(
-        map((params) => {
-          const id = params.get("id");
-          return id ? +id : null;
-        }),
-        switchMap((id) => {
-          this.planId.set(id);
-          if (!id) return of(null);
-          this.form.valueChanges
-            .pipe(
-              debounceTime(800),
-              filter(() => this.form.valid),
-              distinctUntilChanged(
-                (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
-              ),
-              switchMap((value) => this.service.update(id, value)),
-            )
-            .subscribe({
-              next: (next) => {
-                this.plan.set(next.data);
-              },
-              error: (err) => console.log(err),
-            });
-          return this.service.findById(id).pipe(
-            map((response) => response.data),
-            catchError((err) => {
-              this.error.set(err);
-              return of(null);
-            }),
-          );
-        }),
-      )
-      .subscribe((p) => this.plan.set(p));
-
     effect(() => {
-      const p = this.plan();
-      if (p) {
-        const {
-          name,
-          description,
-          status,
-          expiresAt,
-          controlEntity,
-          employee,
-          startsAt,
-        } = p;
-        this.form.patchValue(
-          {
+      const planId = this.id();
+      if (planId) {
+        this.isLoading.set(true);
+        this.service.findById(planId).subscribe((res) => {
+          this.plan.set(res.data);
+          this.isLoading.set(false);
+          const {
             name,
             description,
-            expiresAt,
             status,
+            expiresAt,
+            controlEntity,
+            employee,
             startsAt,
-          },
-          { emitEvent: false },
-        );
-        if (employee) {
-          this.searchSelectEmployeesContext.selectResults([employee]);
-        }
-        if (controlEntity) {
-          this.searchSelectControlEntityContext.selectResults([controlEntity]);
-        }
-      } else {
-        this.form.reset();
-        this.searchSelectControlEntityContext.clear();
-        this.searchSelectEmployeesContext.clear();
+          } = res.data;
+          this.form.patchValue(
+            {
+              name,
+              description,
+              expiresAt,
+              status,
+              startsAt,
+            },
+            { emitEvent: false },
+          );
+          if (employee) {
+            this.searchSelectEmployeesContext.selectResults([employee]);
+          }
+          if (controlEntity) {
+            this.searchSelectControlEntityContext.selectResults([
+              controlEntity,
+            ]);
+          }
+          if (!this.canSetPlanProperties()) {
+            this.form.disable({ emitEvent: false });
+          }
+          if (this.canSetStatus()) {
+            this.form.get('status')?.enable({ emitEvent: false });
+          }
+        });
+
+        this.form.valueChanges
+          .pipe(
+            debounceTime(800),
+            filter(() => this.form.valid),
+            distinctUntilChanged(
+              (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
+            ),
+            switchMap((value) => this.service.update(planId, value)),
+          )
+          .subscribe({
+            next: (next) => {
+              this.plan.set(next.data);
+            },
+            error: (err) => console.log(err),
+          });
       }
     });
+  }
+
+  canSetStatus() {
+    if (!this.id()) return true;
+    const p = this.plan();
+    return p?.permissions?.includes('SET_STATUS') || false;
+  }
+
+  canSetPlanProperties() {
+    if (!this.id()) return true;
+    const p = this.plan();
+    return p?.permissions?.includes('UPDATE_PLAN_PROPERTIES') || false;
+  }
+
+  canCreateFindings() {
+    return this.plan()?.permissions?.includes('CREATE_FINDINGS') || false;
   }
 
   updateAssignedEmployee(e: Employee) {
@@ -244,6 +245,6 @@ export class EditImprovementPlanModalComponent {
   }
 
   goBack(): void {
-    this.router.navigate(["improvement-plan"]);
+    this.router.navigate(['improvement-plan']);
   }
 }

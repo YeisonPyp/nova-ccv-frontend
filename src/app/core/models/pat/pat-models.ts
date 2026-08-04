@@ -1,4 +1,3 @@
-import { PatActivityPlan } from '../../services/pat/pat-activity-plan.service';
 import { Area } from '../assessment/area.model';
 import { Employee } from '../assessment/employee.model';
 import { CostCenter } from '../cost-center/cost-center.models';
@@ -28,59 +27,56 @@ export interface PatTacticalActivity {
   name: string;
   code: string;
   description: string;
+  year: number;
 }
 
-export interface PatActivityConsolidation {
-  approvedBudget: number;
-  executedBudget: number;
-  plannedBudget: number;
-  unexecutedBudget: number;
+export interface PatSpecificObjective {
+  id: number;
+  name: string;
+  code: string;
+  description: string;
+  year: number;
+  tacticalActivities: PatTacticalActivity[];
+}
 
-  plannedMeasurementGoal: number;
-  plannedMeasurement: number;
-  executedMeasurementGoal: number;
-  pendingMeasurementGoal: number;
+export interface PatStrategicObjective {
+  id: number;
+  name: string;
+  code: string;
+  planName: string;
+  description?: string;
+  specificObjectives?: PatSpecificObjective[];
+}
 
-  plannedIndicatorGoal: number;
-  plannedIndicator: number;
-  executedIndicatorGoal: number;
-  pendingIndicatorGoal: number;
-  plannedBenefitGoal: number;
-  plannedBenefit: number;
-  executedBenefitGoal: number;
-  pendingBenefitGoal: number;
-  updatedAt: string;
+export interface PatBenefitType {
+  id: number;
+  name: string;
 }
 
 export interface PatActivity {
   id: number;
   code: string;
   name: string;
-  description: string;
+  year: number;
+  description?: string;
+  measurement: string;
+  measurementGoal?: number;
   program?: PatStrategicProgram;
   policy?: PatPolicy;
+  pillar?: PatPillar;
+  area?: Area;
+  employee?: Employee;
+  costCenter?: CostCenter;
+  tacticalActivity?: PatTacticalActivity;
   startsAt: string;
   endsAt: string;
   createdAt: string;
   updatedAt: string;
-  consolidation?: PatActivityConsolidation;
-  pillar?: PatPillar;
-  area?: Area;
-  measurement?: PatMeasurement;
-  measurementGoal: number;
-  indicatorGoal: number;
-  indicator?: PatCuantitativeIndicator;
-  benefitGoal: number;
-  indicatorBaseLine: number;
-  benefitType?: PatBenefitType;
-  benefitAmount: number;
 
-  employee?: Employee;
-  costCenter?: CostCenter;
-  tacticalActivity?: PatTacticalActivity;
+  approvedBudget?: number;
+  executedBudget?: number;
 
   executions?: PatActivityExecution[];
-  plans?: PatActivityPlan[];
   budgetMatrix?: PatActivityBudgetMatrix[];
 }
 
@@ -100,84 +96,109 @@ export interface BudgetCategory {
   description: string;
 }
 
-export interface PatActivityExecution {
-  id: number;
-  activityId: number;
-  executedBudget: number;
-  executedBenefit: number;
-  executedMeasurementGoal: number;
-  executedIndicatorGoal: number;
-  month: number;
-  description: string;
-  budgetExecutions?: ActivityBudgetExecution[];
-  createdAt: string;
-}
-export interface ActivityBudgetExecution {
-  id: number;
-  executionId: number;
-  activityId: number;
-  month: number;
-  amount: number;
-  budgetCategory: BudgetCategory;
-}
-
 export interface BudgetAmount {
   id: number;
   amount: number;
 }
 
-export interface PatMeasurement {
+export interface PatActivityExecution {
   id: number;
-  name: string;
-  description: string;
-}
-
-export interface PatTacticalActivity {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  year: number;
-}
-
-export interface PatSpecificObjective {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  year: number;
-  tacticalActivities: PatTacticalActivity[];
-}
-
-export interface PatBenefitType {
-  id: number;
-  name: string;
-}
-
-export interface PatStrategicObjective {
-  id: number;
-  name: string;
-  code: string;
-  planName: string;
+  activityId: number;
+  executedBudget: number;
+  month: number;
   description?: string;
-  specificObjectives?: PatSpecificObjective[];
+  budgetExecutions?: ActivityBudgetExecution[];
+  createdAt: string;
 }
 
-export interface PatProduct {
+export interface ActivityBudgetExecution {
   id: number;
+  executionId: number;
+  amount: number;
+  budgetCategory: BudgetCategory;
+}
+
+// ─── Indicadores por actividad (con planeación/ejecución mensual) ─────────
+
+export interface PatActivityIndicator {
+  id: number;
+  activityId: number;
   name: string;
+  description?: string;
+  unitMeasure?: string;
+  targetValue: number;
+  createdAt: string;
+}
+
+export interface PatActivityIndicatorMonthlyPlan {
+  id: number;
+  indicatorId: number;
+  month: number;
+  plannedValue: number;
+}
+
+export interface PatActivityIndicatorExecution {
+  id: number;
+  indicatorId: number;
+  month: number;
+  executedValue: number;
+  description?: string;
+  createdAt: string;
+}
+
+// ─── Productos por actividad (con planeación/ejecución mensual) ──────────
+
+export interface PatActivityProduct {
+  id: number;
+  activityId: number;
   code: string;
-  description: string;
+  name: string;
+  description?: string;
+  targetQuantity: number;
+  unitMeasure: string;
+  createdAt: string;
 }
 
-export interface PatCuantitativeIndicator {
+export interface PatActivityProductMonthlyPlan {
   id: number;
-  name: string;
-  description: string;
+  productId: number;
+  month: number;
+  plannedQuantity: number;
 }
 
-export interface PatCualitativeIndicator {
+export interface PatActivityProductExecution {
   id: number;
-  name: string;
-  description: string;
+  productId: number;
+  month: number;
+  executedQuantity: number;
+  description?: string;
+  createdAt: string;
 }
+
+// ─── Beneficios/beneficiarios por actividad (con planeación/ejecución mensual) ─
+
+export interface PatActivityBenefit {
+  id: number;
+  activityId: number;
+  benefitTypeId: number;
+  benefitTypeName: string;
+  targetValue: number;
+  createdAt: string;
+}
+
+export interface PatActivityBenefitMonthlyPlan {
+  id: number;
+  benefitId: number;
+  month: number;
+  plannedValue: number;
+}
+
+export interface PatActivityBenefitExecution {
+  id: number;
+  benefitId: number;
+  month: number;
+  executedValue: number;
+  description?: string;
+  createdAt: string;
+}
+

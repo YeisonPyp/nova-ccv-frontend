@@ -1,0 +1,58 @@
+<app-project-section-card
+  title="Indicadores"
+  addLabel="+ Nuevo indicador"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="indicators()"
+    [columns]="columns"
+    emptyMessage="Sin indicadores registrados."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @switch (col.key) {
+        @case ("name") {
+          <div class="font-medium text-sm text-gray-800">{{ item.name }}</div>
+          @if (item.description) {
+            <div class="text-xs text-gray-400 mt-0.5">
+              {{ item.description }}
+            </div>
+          }
+        }
+        @case ("unitMeasure") {
+          {{ item.unitMeasure || "—" }}
+        }
+        @case ("targetValue") {
+          {{ item.targetValue != null ? item.targetValue : "—" }}
+        }
+      }
+    </ng-template>
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openMonthly(item)">
+        Planeación
+      </button>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-indicator-upsert-modal
+  [isOpen]="upsertModalOpen()"
+  [activityId]="activityId()"
+  [indicator]="editingIndicator()"
+  (onClose)="closeUpsertModal()"
+  (onSaved)="onSaved($event)"
+/>
+
+<app-indicator-monthly-modal
+  [isOpen]="monthlyModalOpen()"
+  [indicator]="editingIndicator()"
+  (onClose)="closeMonthlyModal()"
+/>

@@ -1,0 +1,97 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <h4 class="text-base font-semibold text-secondary m-0">{{ activityName() }}</h4>
+    <a
+      [routerLink]="['/pat', year(), 'activities', activityId()]"
+      class="text-xs font-medium text-primary hover:underline whitespace-nowrap"
+    >
+      Ver detalle →
+    </a>
+  </div>
+
+  <!-- ── PRESUPUESTO ── -->
+  <section>
+    <h5
+      class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+    >
+      Presupuesto
+    </h5>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <app-execution-pie-chart
+        [planned]="approvedBudgetTotal()"
+        [executed]="executedBudgetTotal()"
+      />
+      <div class="lg:col-span-2">
+        <app-planned-executed-line-chart
+          [plannedValues]="budgetPlannedMonthly()"
+          [executedValues]="budgetExecutedMonthly()"
+          plannedLabel="Planeado"
+          executedLabel="Ejecutado"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INDICADORES ── -->
+  @if (indicatorSeries().length) {
+    <section>
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+      >
+        Indicadores
+      </h5>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @for (s of indicatorSeries(); track s.key) {
+          <app-planned-executed-line-chart
+            [title]="s.title"
+            [plannedValues]="s.planned"
+            [executedValues]="s.executed"
+            [height]="180"
+          />
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ── PRODUCTOS ── -->
+  @if (productSeries().length) {
+    <section>
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+      >
+        Productos
+      </h5>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @for (s of productSeries(); track s.key) {
+          <app-planned-executed-line-chart
+            [title]="s.title"
+            [plannedValues]="s.planned"
+            [executedValues]="s.executed"
+            [height]="180"
+          />
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ── BENEFICIOS ── -->
+  @if (benefitSeries().length) {
+    <section>
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+      >
+        Beneficios
+      </h5>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @for (s of benefitSeries(); track s.key) {
+          <app-planned-executed-line-chart
+            [title]="s.title"
+            [plannedValues]="s.planned"
+            [executedValues]="s.executed"
+            [height]="180"
+          />
+        }
+      </div>
+    </section>
+  }
+</div>

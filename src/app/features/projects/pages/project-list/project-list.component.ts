@@ -1,19 +1,24 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
-import { ProjectService } from "@/app/core/services/projects/project.service";
-import { Project } from "@/app/core/models/projects/project.model";
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { ProjectService } from '@/app/core/services/projects/project.service';
+import { Project } from '@/app/core/models/projects/project.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
 
 @Component({
-  selector: "app-project-list",
+  selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule, DynamicTableComponent, PaginationComponent],
-  templateUrl: "./project-list.component.html",
+  imports: [
+    CommonModule,
+    DynamicTableComponent,
+    PaginationComponent,
+    RouterLink,
+  ],
+  templateUrl: './project-list.component.html',
 })
 export class ProjectListComponent implements OnInit {
   private readonly service = inject(ProjectService);
@@ -26,14 +31,14 @@ export class ProjectListComponent implements OnInit {
   pageSize = 10;
 
   columns: TableColumn[] = [
-    { key: "code", label: "Código" },
-    { key: "name", label: "Nombre" },
-    { key: "areaName", label: "Área" },
-    { key: "status", label: "Estado" },
-    { key: "priority", label: "Prioridad" },
-    { key: "startDate", label: "Inicio" },
-    { key: "endDate", label: "Fin" },
-    { key: "totalBudget", label: "Presupuesto" },
+    { key: 'code', label: 'Código' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'areaName', label: 'Área' },
+    { key: 'status', label: 'Estado' },
+    { key: 'priority', label: 'Prioridad' },
+    { key: 'startDate', label: 'Inicio' },
+    { key: 'endDate', label: 'Fin' },
+    { key: 'totalBudget', label: 'Presupuesto' },
   ];
 
   ngOnInit(): void {
@@ -60,6 +65,6 @@ export class ProjectListComponent implements OnInit {
   }
 
   openDetail(project: Project): void {
-    this.router.navigate(["/projects", project.id]);
+    this.router.navigate(['/projects', project.id]);
   }
 }

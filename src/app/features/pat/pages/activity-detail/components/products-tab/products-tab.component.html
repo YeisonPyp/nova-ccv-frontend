@@ -1,0 +1,61 @@
+<app-project-section-card
+  title="Productos"
+  addLabel="+ Nuevo producto"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="products()"
+    [columns]="columns"
+    emptyMessage="Sin productos registrados."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @switch (col.key) {
+        @case ("code") {
+          <span class="text-xs font-mono text-gray-400">{{ item.code }}</span>
+        }
+        @case ("name") {
+          <div class="font-medium text-sm text-gray-800">{{ item.name }}</div>
+          @if (item.description) {
+            <div class="text-xs text-gray-400 mt-0.5">
+              {{ item.description }}
+            </div>
+          }
+        }
+        @case ("targetQuantity") {
+          {{ item.targetQuantity }}
+        }
+        @case ("unitMeasure") {
+          {{ item.unitMeasure }}
+        }
+      }
+    </ng-template>
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openMonthly(item)">
+        Planeación
+      </button>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-pat-product-upsert-modal
+  [isOpen]="upsertModalOpen()"
+  [activityId]="activityId()"
+  [product]="editingProduct()"
+  (onClose)="closeUpsertModal()"
+  (onSaved)="onSaved($event)"
+/>
+
+<app-pat-product-monthly-modal
+  [isOpen]="monthlyModalOpen()"
+  [product]="editingProduct()"
+  (onClose)="closeMonthlyModal()"
+/>

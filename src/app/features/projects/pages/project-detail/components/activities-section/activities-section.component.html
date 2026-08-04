@@ -17,7 +17,10 @@
       <div class="w-full">
         <div class="flex flex-col gap-4 py-4 px-4">
           @for (activity of activities(); track activity.id) {
-            <app-activity-card [activity]="activity" />
+            <app-activity-card
+              [activity]="activity"
+              (onEdit)="openEditActivity($event)"
+            />
           } @empty {
             <span class="text-sm text-center">No hay actividades</span>
           }
@@ -42,3 +45,12 @@
     </div>
   }
 </app-project-section-card>
+
+<app-activity-upsert-modal
+  [isOpen]="activityModalOpen()"
+  [projectId]="projectId()"
+  [activity]="editingActivity()"
+  [activities]="activities()"
+  (onClose)="closeActivityModal()"
+  (onSaved)="onActivitySaved($event)"
+/>

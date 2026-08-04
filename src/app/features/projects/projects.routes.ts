@@ -11,28 +11,19 @@ export const PROJECTS_ROUTES: Routes = [
     canActivate: [hasPermissionGuard(['PROJECTS_READ'])],
   },
   {
+    path: 'create',
+    loadComponent: () =>
+      import('./pages/create-project/create-project.component').then(
+        (m) => m.CreateProjectComponent,
+      ),
+    canActivate: [hasPermissionGuard(['PROJECTS_CREATE'])],
+  },
+  {
     path: ':id',
     loadComponent: () =>
       import('./pages/project-detail/project-detail.component').then(
         (m) => m.ProjectDetailComponent,
       ),
     canActivate: [hasPermissionGuard(['PROJECTS_READ'])],
-  },
-  {
-    path: ':projectId/activities/create',
-    loadComponent: () =>
-      import('./pages/create-activity/create-activity.component').then(
-        (m) => m.CreatePatActivityComponent,
-      ),
-    canActivate: [hasPermissionGuard(['PAT_ACTIVITY_CREATE'])],
-  },
-  {
-    path: 'activities/:id',
-    loadComponent: () =>
-      import('./pages/activity-detail/activity-detail.component').then(
-        (m) => m.ActivityDetailComponent,
-      ),
-    title: 'PAT — Detalle de Actividad',
-    canActivate: [hasPermissionGuard(['PAT_ACTIVITY_READ'])],
   },
 ];

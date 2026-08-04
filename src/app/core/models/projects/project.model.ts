@@ -6,6 +6,56 @@ export interface ProjectStatus {
   color: string;
 }
 
+export type ProjectFormulationStatus =
+  | 'formulated'
+  | 'under_evaluation'
+  | 'viabilized';
+
+export type ProjectInitiativeType = 'program' | 'project';
+
+export type ProjectTechnicalConcept =
+  | 'viable'
+  | 'viable_with_adjustments'
+  | 'not_viable';
+
+export type ProjectIndicatorType = 'management' | 'result';
+
+export interface ProjectFormulation {
+  formulationDate?: string;
+  formulationStatus: ProjectFormulationStatus;
+  strategicAxis?: string;
+  strategicObjectives?: string;
+  poaRelation?: string;
+  patRelation?: string;
+  initiativeType: ProjectInitiativeType;
+  background?: string;
+  justification?: string;
+  problemDescription?: string;
+  scopeIncludes?: string;
+  scopeExcludes?: string;
+  directBeneficiaries?: number;
+  indirectBeneficiaries?: number;
+  estimatedBeneficiaries?: number;
+  executionMethodology?: string;
+  budgetDetail?: string;
+  monitoringPlan?: string;
+  sustainability?: string;
+  conclusions?: string;
+  preparedBy?: string;
+  reviewedBy?: string;
+  approvedBy?: string;
+  technicalConcept?: ProjectTechnicalConcept;
+  updatedAt?: string;
+}
+
+export interface ProjectIndicator {
+  id: number;
+  type: ProjectIndicatorType;
+  name: string;
+  targetValue?: number;
+  currentValue: number;
+}
+
 export interface Project {
   id: number;
   code: string;
@@ -13,6 +63,7 @@ export interface Project {
   areaName: string;
   area?: Area;
   costCenter?: CostCenter;
+  totalBudget?: number;
   startDate: string;
   endDate: string;
   status: ProjectStatus;
@@ -21,13 +72,14 @@ export interface Project {
   description?: string;
   generalObjective?: string;
 
+  formulation?: ProjectFormulation;
+  indicators?: ProjectIndicator[];
   activities?: ProjectActivity[];
   risks?: ProjectRisk[];
 }
 
 export interface ProjectActivity {
   id: number;
-  activityId: number;
   projectId: number;
   projectCode?: string;
   parentId?: number;
@@ -40,6 +92,8 @@ export interface ProjectActivity {
   approvedBudget: number;
   executedBudget: number;
   progressPercentage: number;
+  status?: string;
+  priority?: string;
   colorHex: string;
 }
 

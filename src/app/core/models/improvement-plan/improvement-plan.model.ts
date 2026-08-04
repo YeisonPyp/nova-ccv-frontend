@@ -1,5 +1,5 @@
-import { Employee } from "../assessment/employee.model";
-import { ControlEntity } from "./control-entity.model";
+import { Employee } from '../assessment/employee.model';
+import { ControlEntity } from './control-entity.model';
 
 export interface ImprovementPlan {
   id: number;
@@ -15,6 +15,8 @@ export interface ImprovementPlan {
   updatedAt: string;
   employee?: Employee;
   controlEntity?: ControlEntity;
+
+  permissions?: Array<string>;
 }
 
 export interface CreateImprovementPlanDto {

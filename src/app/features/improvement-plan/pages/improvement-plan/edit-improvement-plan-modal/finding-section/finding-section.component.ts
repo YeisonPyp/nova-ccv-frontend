@@ -1,14 +1,21 @@
-import { CommonModule } from "@angular/common";
-import { Component, computed, inject, input, OnInit, signal } from "@angular/core";
-import { FindingService } from "@/app/core/services/improvement-plan/finding.service";
-import { FindingDto } from "@/app/core/models/improvement-plan/finding.model";
-import { NewFindingComponent } from "./new-finding/new-finding.component";
-import { FindingItemComponent } from "./finding-item/finding-item.component";
-import { PaginatorComponent } from "@/app/shared/components/paginator/paginator.component";
-import { LoadingSpinnerComponent } from "@/app/shared/components/loading-spinner/loading-spinner.component";
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { FindingService } from '@/app/core/services/improvement-plan/finding.service';
+import { FindingDto } from '@/app/core/models/improvement-plan/finding.model';
+import { NewFindingComponent } from './new-finding/new-finding.component';
+import { FindingItemComponent } from './finding-item/finding-item.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
+import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
-  selector: "app-finding-section",
+  selector: 'app-finding-section',
   standalone: true,
   imports: [
     CommonModule,
@@ -17,11 +24,12 @@ import { LoadingSpinnerComponent } from "@/app/shared/components/loading-spinner
     PaginatorComponent,
     LoadingSpinnerComponent,
   ],
-  templateUrl: "./finding-section.component.html",
-  styleUrl: "./finding-section.component.scss",
+  templateUrl: './finding-section.component.html',
+  styleUrl: './finding-section.component.scss',
 })
 export class FindingSectionComponent implements OnInit {
   planId = input.required<number>();
+  canCreate = input.required<boolean>();
   service = inject(FindingService);
 
   isLoading = signal(false);

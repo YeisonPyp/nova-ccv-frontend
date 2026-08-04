@@ -5,6 +5,9 @@ import { APIPage } from '../../models/api-page.model';
 import {
   Project,
   ProjectActivity,
+  ProjectFormulation,
+  ProjectIndicator,
+  ProjectIndicatorType,
   ProjectRisk,
 } from '../../models/projects/project.model';
 import { GanttData } from './project-activites.service';
@@ -16,6 +19,7 @@ import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec
 import { PageableQueryWithRsql } from '@/app/shared/components/pagination-table/pagination-table.component';
 import builder from '@rsql/builder';
 import { PatActivityBudgetMatrix } from '../../models/pat/pat-models';
+import { environment } from '@/environments/environment.development';
 
 export const RISK_SCALE_OPTIONS = [
   { value: 'low', label: 'Baja' },
@@ -33,18 +37,62 @@ export interface CreateProjectDto {
   code: string;
   name: string;
   areaId: number;
+  employeeId: number;
+  costCenterId?: number | null;
   generalObjective: string;
   status: string;
   starts: string;
   ends: string;
   priorityId: number;
-  employeeId: number;
-  tacticalActivityCode: string;
-  year: number;
+  totalBudget?: number | null;
   description?: string;
-  programId?: number;
   objectives: CreateProjectObjectiveDto[];
 }
+
+export interface CreateProjectActivityDto {
+  name: string;
+  description?: string;
+  parentId?: number | null;
+  displayOrder: number;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  status: string;
+  priority?: string | null;
+  colorHex?: string;
+  approvedBudget?: number | null;
+}
+
+export interface UpdateProjectActivityDto {
+  name?: string;
+  description?: string;
+  parentId?: number | null;
+  displayOrder?: number;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  progressPercentage?: number;
+  status?: string;
+  priority?: string | null;
+  colorHex?: string;
+  approvedBudget?: number | null;
+  executedBudget?: number | null;
+}
+
+export interface CreateProjectIndicatorDto {
+  type: ProjectIndicatorType;
+  name: string;
+  targetValue?: number | null;
+}
+
+export interface UpdateProjectIndicatorDto {
+  type?: ProjectIndicatorType;
+  name?: string;
+  targetValue?: number | null;
+  currentValue?: number | null;
+}
+
+export type UpdateProjectFormulationDto = Partial<
+  Omit<ProjectFormulation, 'estimatedBeneficiaries' | 'updatedAt'>
+>;
 
 export interface CreateRiskDto {
   projectId: number;
@@ -59,7 +107,6 @@ export interface CreateRiskDto {
 
 export interface ProjectQueryParams extends PageableQueryWithRsql {
   status?: string | null;
-  year?: number;
   areaId?: number;
 }
 
@@ -91,10 +138,6 @@ export class ProjectService extends FilterServiceSpecImpl<
       q.nodes.push(builder.comparison('status', '==', q.status));
       delete q.status;
     }
-    if (q.year) {
-      q.nodes.push(builder.comparison('year', '==', q.year));
-      delete q.year;
-    }
     if (q.areaId) {
       q.nodes.push(builder.comparison('area.id', '==', q.areaId));
       delete q.areaId;
@@ -117,24 +160,94 @@ export class ProjectService extends FilterServiceSpecImpl<
     );
   }
 
-  deleteActivity(id: number): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(
-      `${this.baseUrl}/project-activities/${id}`,
+  createActivity(
+    projectId: number,
+    dto: CreateProjectActivityDto,
+  ): Observable<ApiResponse<ProjectActivity>> {
+    return this.http.post<ApiResponse<ProjectActivity>>(
+      `${this.baseUrl}/${projectId}/activities`,
+      dto,
     );
   }
 
-  findRisks(projectId: number): Observable<ApiResponse<ProjectRisk[]>> {
-    return this.http.get<ApiResponse<ProjectRisk[]>>(
-      `${this.baseUrl}/project-risks`,
-      { params: { projectId } },
+  updateActivity(
+    id: number,
+    dto: UpdateProjectActivityDto,
+  ): Observable<ApiResponse<ProjectActivity>> {
+    return this.http.put<ApiResponse<ProjectActivity>>(
+      `${this.baseUrl}/activities/${id}`,
+      dto,
     );
+  }
+
+  deleteActivity(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.baseUrl}/activities/${id}`,
+    );
+  }
+
+  findFormulation(
+    projectId: number,
+  ): Observable<ApiResponse<ProjectFormulation>> {
+    return this.http.get<ApiResponse<ProjectFormulation>>(
+      `${this.baseUrl}/${projectId}/formulation`,
+    );
+  }
+
+  updateFormulation(
+    projectId: number,
+    dto: UpdateProjectFormulationDto,
+  ): Observable<ApiResponse<ProjectFormulation>> {
+    return this.http.put<ApiResponse<ProjectFormulation>>(
+      `${this.baseUrl}/${projectId}/formulation`,
+      dto,
+    );
+  }
+
+  findIndicators(
+    projectId: number,
+  ): Observable<ApiResponse<ProjectIndicator[]>> {
+    return this.http.get<ApiResponse<ProjectIndicator[]>>(
+      `${this.baseUrl}/${projectId}/indicators`,
+    );
+  }
+
+  createIndicator(
+    projectId: number,
+    dto: CreateProjectIndicatorDto,
+  ): Observable<ApiResponse<ProjectIndicator>> {
+    return this.http.post<ApiResponse<ProjectIndicator>>(
+      `${this.baseUrl}/${projectId}/indicators`,
+      dto,
+    );
+  }
+
+  updateIndicator(
+    id: number,
+    dto: UpdateProjectIndicatorDto,
+  ): Observable<ApiResponse<ProjectIndicator>> {
+    return this.http.put<ApiResponse<ProjectIndicator>>(
+      `${this.baseUrl}/indicators/${id}`,
+      dto,
+    );
+  }
+
+  deleteIndicator(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.baseUrl}/indicators/${id}`,
+    );
+  }
+
+  private readonly riskBaseUrl = `${environment.apiUrl}/project-risks`;
+
+  findRisks(projectId: number): Observable<ApiResponse<ProjectRisk[]>> {
+    return this.http.get<ApiResponse<ProjectRisk[]>>(this.riskBaseUrl, {
+      params: { projectId },
+    });
   }
 
   createRisk(dto: CreateRiskDto): Observable<ApiResponse<ProjectRisk>> {
-    return this.http.post<ApiResponse<ProjectRisk>>(
-      `${this.baseUrl}/project-risks`,
-      dto,
-    );
+    return this.http.post<ApiResponse<ProjectRisk>>(this.riskBaseUrl, dto);
   }
 
   updateRisk(
@@ -142,15 +255,13 @@ export class ProjectService extends FilterServiceSpecImpl<
     dto: CreateRiskDto,
   ): Observable<ApiResponse<ProjectRisk>> {
     return this.http.put<ApiResponse<ProjectRisk>>(
-      `${this.baseUrl}/project-risks/${id}`,
+      `${this.riskBaseUrl}/${id}`,
       dto,
     );
   }
 
   deleteRisk(id: number): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(
-      `${this.baseUrl}/project-risks/${id}`,
-    );
+    return this.http.delete<ApiResponse<void>>(`${this.riskBaseUrl}/${id}`);
   }
 
   findBudgetMatrix(

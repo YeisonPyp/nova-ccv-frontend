@@ -120,7 +120,13 @@
         </tr>
       } @empty {
         <tr class="table-row">
-          <span class="text-sm w-full text-center">{{ emptyMessage() }}</span>
+          <td [attr.colspan]="columns().length + 1">
+            <div class="flex justify-center my-10">
+              <span class="text-sm flex-1 text-center">{{
+                emptyMessage()
+              }}</span>
+            </div>
+          </td>
         </tr>
       }
     </tbody>

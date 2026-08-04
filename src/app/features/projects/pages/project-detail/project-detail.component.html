@@ -59,6 +59,13 @@
         >
           Presupuesto Total
         </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{
+            p.totalBudget != null
+              ? (p.totalBudget | currency: "COP" : "symbol-narrow" : "1.0-0")
+              : "—"
+          }}
+        </p>
       </div>
 
       <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">

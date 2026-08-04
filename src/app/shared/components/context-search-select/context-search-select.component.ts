@@ -1,14 +1,14 @@
 import { Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { SearchSelectComponent } from "../search-select/search-select.component";
+import { SelectSearchComponent } from "../select-search/select-search.component";
 import { SearchSelectContext } from "../search-select/on-search-select.interface";
 
 @Component({
   selector: "app-context-search-select",
   standalone: true,
-  imports: [CommonModule, SearchSelectComponent],
+  imports: [CommonModule, SelectSearchComponent],
   template: `
-    <app-search-select
+    <app-select-search
       [label]="label()"
       [required]="required()"
       [items]="ctx().options()"

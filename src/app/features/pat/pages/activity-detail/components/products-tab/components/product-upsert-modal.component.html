@@ -1,0 +1,102 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 560px"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ product() ? "Editar producto" : "Nuevo producto" }}
+        </h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body">
+        @if (error()) {
+          <div
+            class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          id="product-form"
+          (ngSubmit)="submit()"
+          class="flex flex-col gap-4"
+        >
+          <div class="form-row">
+            <div class="form-group" style="flex: 1">
+              <label>Código <span class="required">*</span></label>
+              <input
+                type="text"
+                formControlName="code"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('code')"
+              />
+            </div>
+            <div class="form-group" style="flex: 3">
+              <label>Nombre <span class="required">*</span></label>
+              <input
+                type="text"
+                formControlName="name"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('name')"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="half-width form-group">
+              <label>Cantidad meta <span class="required">*</span></label>
+              <input
+                type="number"
+                formControlName="targetQuantity"
+                class="form-control"
+                min="0"
+              />
+            </div>
+            <div class="half-width form-group">
+              <label>Unidad de medida <span class="required">*</span></label>
+              <input
+                type="text"
+                formControlName="unitMeasure"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('unitMeasure')"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="product-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            {{ product() ? "Guardar cambios" : "Crear producto" }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

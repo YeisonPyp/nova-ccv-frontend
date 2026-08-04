@@ -55,12 +55,22 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
       },
       {
-        path: "projects/create",
+        path: "activities/create",
         loadComponent: () =>
-          import("./pages/create-project/create-project.component").then(
-            (m) => m.CreateProjectComponent,
+          import("./pages/create-activity/create-activity.component").then(
+            (m) => m.CreatePatActivityComponent,
           ),
-        canActivate: [hasPermissionGuard(["PROJECTS_CREATE"])],
+        title: "PAT — Nueva Actividad",
+        canActivate: [hasPermissionGuard(["PAT_ACTIVITY_CREATE"])],
+      },
+      {
+        path: "activities/:id",
+        loadComponent: () =>
+          import("./pages/activity-detail/activity-detail.component").then(
+            (m) => m.PatActivityDetailComponent,
+          ),
+        title: "PAT — Detalle de Actividad",
+        canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
       {
         path: "reports",

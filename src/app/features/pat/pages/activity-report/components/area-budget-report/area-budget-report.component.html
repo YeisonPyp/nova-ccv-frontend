@@ -1,0 +1,54 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+  <h5
+    class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+  >
+    Ejecución presupuestal por área
+  </h5>
+
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+  @if (!isLoading()) {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <app-dynamic-table
+          [data]="areas()"
+          [columns]="columns"
+          [exportable]="false"
+          emptyMessage="Sin áreas con presupuesto registrado."
+        >
+          <ng-template #customCell let-item let-col="column">
+            @switch (col.key) {
+              @case ("areaName") {
+                <span class="font-medium text-sm text-gray-800">{{
+                  item.areaName
+                }}</span>
+              }
+              @case ("plannedBudget") {
+                {{ item.plannedBudget | currency: "COP" : "symbol-narrow" : "1.0-0" }}
+              }
+              @case ("approvedBudget") {
+                {{ item.approvedBudget | currency: "COP" : "symbol-narrow" : "1.0-0" }}
+              }
+              @case ("unplannedBudget") {
+                {{ item.unplannedBudget | currency: "COP" : "symbol-narrow" : "1.0-0" }}
+              }
+            }
+          </ng-template>
+          <ng-template #actions let-item>
+            <input
+              type="checkbox"
+              class="w-4 h-4 cursor-pointer"
+              [checked]="isChecked(item.areaId)"
+              (change)="toggle(item.areaId)"
+              title="Ver actividades de esta área"
+            />
+          </ng-template>
+        </app-dynamic-table>
+      </div>
+
+      <div class="h-80">
+        <canvas baseChart [data]="chartData()" [options]="chartOptions" type="bar"></canvas>
+      </div>
+    </div>
+  }
+</div>

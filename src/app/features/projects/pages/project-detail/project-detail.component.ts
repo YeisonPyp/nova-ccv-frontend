@@ -24,8 +24,17 @@ import { ProductsTabComponent } from './components/products-tab/products-tab.com
 import { BudgetTabComponent } from './components/budget-tab/budget-tab.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { FilesTabComponent } from './components/files-tab/files-tab.component';
+import { FormulationSectionComponent } from './components/formulation-section/formulation-section.component';
+import { IndicatorsSectionComponent } from './components/indicators-section/indicators-section.component';
 
-type TabKeys = 'products' | 'activities' | 'risks' | 'budget' | 'files';
+type TabKeys =
+  | 'formulation'
+  | 'products'
+  | 'activities'
+  | 'indicators'
+  | 'risks'
+  | 'budget'
+  | 'files';
 interface Tab {
   key: TabKeys;
   label: string;
@@ -40,6 +49,8 @@ interface Tab {
     RisksSectionComponent,
     FilesTabComponent,
     ActivitesSectionComponent,
+    FormulationSectionComponent,
+    IndicatorsSectionComponent,
     NgComponentOutlet,
     LoadingSpinnerComponent,
   ],
@@ -57,22 +68,26 @@ export class ProjectDetailComponent implements OnInit {
   error = signal<string | null>(null);
 
   tabComponents: Record<TabKeys, Type<any>> = {
+    formulation: FormulationSectionComponent,
     products: ProductsTabComponent,
     activities: ActivitesSectionComponent,
+    indicators: IndicatorsSectionComponent,
     budget: BudgetTabComponent,
     risks: RisksSectionComponent,
     files: FilesTabComponent,
   };
 
   tabs: Tab[] = [
+    { key: 'formulation', label: 'Formulación' },
     { key: 'products', label: 'Productos' },
     { key: 'activities', label: 'Actividades' },
+    { key: 'indicators', label: 'Indicadores' },
     { key: 'budget', label: 'Presupuesto' },
     { key: 'risks', label: 'Riesgos' },
     { key: 'files', label: 'Archivos' },
   ];
 
-  activeTab = signal<TabKeys>('activities');
+  activeTab = signal<TabKeys>('formulation');
 
   tabInputs = computed<Record<TabKeys, Record<string, unknown>>>(() => {
     const project = this.project();
@@ -80,8 +95,10 @@ export class ProjectDetailComponent implements OnInit {
     const base = { projectId: project?.id };
 
     return {
+      formulation: base,
       products: base,
       activities: base,
+      indicators: base,
       budget: base,
       risks: base,
       files: base,

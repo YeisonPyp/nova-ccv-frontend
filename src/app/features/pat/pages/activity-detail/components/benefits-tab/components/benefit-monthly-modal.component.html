@@ -1,0 +1,35 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 820px"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">
+          Planeación — {{ benefit()?.benefitTypeName }}
+        </h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body flex flex-col gap-6">
+        <app-monthly-values-grid
+          title="Planeado por mes"
+          [values]="planned()"
+          (save)="savePlan($event)"
+        />
+        <app-monthly-values-grid
+          title="Ejecutado por mes"
+          [values]="executed()"
+          (save)="saveExecution($event)"
+        />
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,6 +1,12 @@
 <div class="flex flex-col min-h-screen" [formGroup]="form">
-  <div class="p-4 border-b border-gray-200 bg-white flex items-center justify-between">
-    <button class="btn btn-link text-sm text-gray-500 ps-0" type="button" (click)="goBack()">
+  <div
+    class="p-4 border-b border-gray-200 bg-white flex items-center justify-between"
+  >
+    <button
+      class="btn btn-link text-sm text-gray-500 ps-0"
+      type="button"
+      (click)="goBack()"
+    >
       ← Volver a planes
     </button>
     <div class="flex gap-2">
@@ -41,7 +47,7 @@
       >
         <div class="flex flex-col gap-2">
           <label
-            class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em] flex items-center gap-1.5"
+            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
           >
             <svg
               class="w-3 h-3"
@@ -68,7 +74,7 @@
 
         <div class="flex flex-col gap-2">
           <label
-            class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em] flex items-center gap-1.5"
+            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
           >
             <svg
               class="w-3 h-3"
@@ -90,6 +96,7 @@
             [selectedItems]="searchSelectEmployeesContext.selectedOptions()"
             [maxElements]="searchSelectEmployeesContext.op?.maxItems ?? 1"
             [required]="searchSelectEmployeesContext.op?.isRequired ?? false"
+            [disabled]="!canSetPlanProperties()"
             (onRemove)="searchSelectEmployeesContext.remove($event)"
             (onSearch)="searchSelectEmployeesContext.search($event)"
             (onSelect)="searchSelectEmployeesContext.select($event)"
@@ -98,7 +105,7 @@
 
         <div class="flex flex-col gap-2">
           <label
-            class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em] flex items-center gap-1.5"
+            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
           >
             <svg
               class="w-3 h-3"
@@ -113,22 +120,27 @@
             </svg>
             Entidad de control
           </label>
-          <app-search-select
+          <app-select-search
             class="w-full"
-            [emptyMessage]="searchSelectControlEntityContext.op?.emptyMessage ?? ''"
+            [emptyMessage]="
+              searchSelectControlEntityContext.op?.emptyMessage ?? ''
+            "
             [items]="searchSelectControlEntityContext.options()"
             [selectedItems]="searchSelectControlEntityContext.selectedOptions()"
             [maxElements]="searchSelectControlEntityContext.op?.maxItems ?? 1"
-            [required]="searchSelectControlEntityContext.op?.isRequired ?? false"
+            [required]="
+              searchSelectControlEntityContext.op?.isRequired ?? false
+            "
+            [disabled]="!canSetPlanProperties()"
             (onRemove)="searchSelectControlEntityContext.remove($event)"
             (onSearch)="searchSelectControlEntityContext.search($event)"
             (onSelect)="searchSelectControlEntityContext.select($event)"
-          ></app-search-select>
+          ></app-select-search>
         </div>
 
         <div class="flex flex-col gap-2">
           <label
-            class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em] flex items-center gap-1.5"
+            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
           >
             <svg
               class="w-3 h-3"
@@ -171,9 +183,7 @@
       </section>
 
       <section class="space-y-3">
-        <label
-          class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em] ml-1"
-        >
+        <label class="text-[10px] font-bold uppercase tracking-[0.15em] ml-1">
           Descripción General del Plan
         </label>
         <div class="relative group">
@@ -190,7 +200,10 @@
 
       @if (plan()) {
         <section class="pt-6 border-t border-gray-100">
-          <app-finding-section [planId]="plan()?.id!"></app-finding-section>
+          <app-finding-section
+            [planId]="plan()?.id!"
+            [canCreate]="canCreateFindings()"
+          ></app-finding-section>
         </section>
       }
     </div>

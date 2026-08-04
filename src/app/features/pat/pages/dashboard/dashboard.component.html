@@ -1,5 +1,8 @@
 <div class="p-6 max-w-9xl mx-auto flex flex-col gap-6">
-  <app-performance-indicators-panel [year]="year() || 2026" />
+  <app-area-budget-report
+    [year]="year() || null"
+    (selectedAreaIds)="onAreaSelected($event)"
+  />
   <!-- Tabs -->
   <div
     class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"

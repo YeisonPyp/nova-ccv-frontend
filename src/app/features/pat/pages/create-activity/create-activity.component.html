@@ -1,0 +1,183 @@
+<div class="w-full p-6">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver al PAT
+  </button>
+
+  <div class="flex items-center gap-3 mb-6">
+    <h2 class="text-xl font-bold text-secondary m-0">Nueva Actividad PAT</h2>
+  </div>
+
+  @if (error()) {
+    <div
+      class="mb-4 px-4 py-2.5 rounded bg-red-50 text-red-700 text-sm border border-red-200"
+    >
+      {{ error() }}
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-6">
+    <!-- ── IDENTIFICACIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Identificación
+      </h5>
+      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
+        <div class="form-group">
+          <label>Código</label>
+          <input type="text" formControlName="code" class="form-control" />
+        </div>
+
+        <div class="col-span-2 form-group">
+          <label>Nombre <span class="required">*</span></label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="text"
+            formControlName="name"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('name')"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PARTES ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Partes de la Actividad
+      </h5>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <app-context-search-select
+          [ctx]="tacticalActivityCtx()"
+          label="Actividad táctica"
+          [required]="true"
+        />
+
+        <app-context-search-select
+          [ctx]="employeeCtx"
+          label="Empleado responsable"
+          [required]="true"
+        />
+
+        <app-context-search-select
+          [ctx]="costCenterCtx"
+          label="Centro de costo"
+          [required]="true"
+        />
+
+        <app-context-search-select
+          [ctx]="programCtx()"
+          label="Programa estratégico"
+          [required]="false"
+        />
+
+        <app-context-search-select
+          [ctx]="policyCtx"
+          label="Política"
+          [required]="false"
+        />
+      </div>
+    </section>
+
+    <!-- ── MEDICIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Medición
+      </h5>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div class="form-group">
+          <label>Unidad de medida <span class="required">*</span></label>
+          <input
+            type="text"
+            formControlName="measurement"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('measurement')"
+            placeholder="Ej. Documentos publicados"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Meta</label>
+          <input
+            type="number"
+            formControlName="measurementGoal"
+            class="form-control"
+            step="0.01"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PLANIFICACIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Planificación
+      </h5>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div class="form-group">
+          <label>Fecha de inicio <span class="required">*</span></label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="date"
+            formControlName="starts"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('starts')"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Fecha de fin <span class="required">*</span></label>
+          <input
+            [appFormFieldError]="formErrors"
+            type="date"
+            formControlName="ends"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('ends')"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DESCRIPCIÓN ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h5
+        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
+      >
+        Descripción
+      </h5>
+      <div class="form-group">
+        <textarea
+          formControlName="description"
+          rows="4"
+          class="form-control"
+          style="resize: none"
+        ></textarea>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <div class="flex justify-end gap-3 pb-8">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        @if (submitting()) {
+          Creando...
+        } @else {
+          Crear Actividad
+        }
+      </button>
+    </div>
+  </form>
+</div>
