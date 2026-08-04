@@ -59,6 +59,16 @@ export class PatActivityService extends FilterServiceSpecImpl<
       { budgetCategoryId, amount },
     );
   }
+
+  seedFromFile(year: number, file: File): Observable<ApiResponse<void>> {
+    const formData = new FormData();
+    formData.append('year', String(year));
+    formData.append('file', file);
+    return this.http.post<ApiResponse<void>>(
+      `${this.baseUrl}/seed-from-file`,
+      formData,
+    );
+  }
 }
 
 export class PatActivityServiceByYear implements FilterServiceSpec {
