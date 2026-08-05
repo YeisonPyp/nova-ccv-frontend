@@ -56,6 +56,12 @@ export class ActionSectionComponent implements OnInit {
     this.actions.set(this.actions().filter((i) => i.id !== a.id));
   }
 
+  onActionUpdated(updated: ImprovementActionDto) {
+    this.actions.set(
+      this.actions().map((a) => (a.id === updated.id ? updated : a)),
+    );
+  }
+
   onSelectPage(page: number) {
     this.currentPage.set(page);
   }

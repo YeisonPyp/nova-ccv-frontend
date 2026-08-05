@@ -15,5 +15,9 @@
     </button>
   </div>
 
-  <app-activities-by-area-report [year]="year()" [areaIds]="areaIds()" />
+  @if (hasAreaFilter()) {
+    <app-activities-by-area-report [year]="year()" [areaIds]="areaIds()" />
+  } @else {
+    <app-activities-table [year]="year()" />
+  }
 </div>

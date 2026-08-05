@@ -23,6 +23,8 @@ import { debounceTime, distinctUntilChanged, filter, switchMap } from "rxjs";
 import { EvidenceDto } from "@/app/core/models/improvement-plan/evidence.model";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { AutosizeTextareaDirective } from "@/app/shared/directives/autosize-textarea.directive";
+import { AuthService } from "@/app/core/services/auth.service";
+import { ApprovalFlowModalComponent } from "./approval-flow-modal/approval-flow-modal.component";
 
 @Component({
   selector: "app-action-details",
@@ -32,6 +34,7 @@ import { AutosizeTextareaDirective } from "@/app/shared/directives/autosize-text
     EvidenceItemComponent,
     ReactiveFormsModule,
     AutosizeTextareaDirective,
+    ApprovalFlowModalComponent,
   ],
   templateUrl: "./action-details.component.html",
   styleUrl: "./action-details.component.scss",
@@ -40,19 +43,27 @@ export class ActionDetailsComponent implements OnInit {
   action = input.required<ImprovementActionDto>();
 
   evidences = signal<EvidenceDto[]>([]);
+  approvalModalOpen = signal(false);
 
   onDelete = output<ImprovementActionDto>();
+  onUpdated = output<ImprovementActionDto>();
 
   service = inject(ImprovementActionService);
+  private readonly authService = inject(AuthService);
 
   formGroup: FormGroup;
 
-  get actionStatuses() {
-    return Object.keys(improvementActionStatus) as Array<ImprovementActionStatus>;
+  getActionStatusName(k: string) {
+    return (
+      improvementActionStatus[k as ImprovementActionStatus] ?? k
+    );
   }
 
-  getActionStatusName(k: ImprovementActionStatus) {
-    return improvementActionStatus[k];
+  get isLocked(): boolean {
+    return (
+      this.action().status === "COMPLETED" &&
+      !this.authService.hasPermission("PLAN_AUDITOR_ROLE")
+    );
   }
 
   get pdcaPhases(): PdcaPhase[] {
@@ -81,10 +92,10 @@ export class ActionDetailsComponent implements OnInit {
       indicator: [""],
       startDate: [""],
       closeDate: [""],
-      status: [""],
       followUpObservations: [""],
       actualCloseDate: [""],
       wasEffective: [""],
+      ineffectivenessJustification: [""],
     });
 
     toObservable(this.action).subscribe((a) => {
@@ -99,7 +110,6 @@ export class ActionDetailsComponent implements OnInit {
           indicator: a.indicator,
           startDate: a.startDate,
           closeDate: a.closeDate,
-          status: a.status,
           followUpObservations: a.followUpObservations,
           actualCloseDate: a.actualCloseDate,
           wasEffective:
@@ -108,9 +118,16 @@ export class ActionDetailsComponent implements OnInit {
               : a.wasEffective === false
                 ? "false"
                 : "",
+          ineffectivenessJustification: a.ineffectivenessJustification ?? "",
         },
         { emitEvent: false },
       );
+
+      if (this.isLocked) {
+        this.formGroup.disable({ emitEvent: false });
+      } else {
+        this.formGroup.enable({ emitEvent: false });
+      }
     });
   }
 
@@ -133,6 +150,18 @@ export class ActionDetailsComponent implements OnInit {
       .subscribe({
         error: (err) => console.error("Error al guardar la acción:", err),
       });
+  }
+
+  openApprovalModal(): void {
+    this.approvalModalOpen.set(true);
+  }
+
+  closeApprovalModal(): void {
+    this.approvalModalOpen.set(false);
+  }
+
+  onApprovalUpdated(updated: ImprovementActionDto): void {
+    this.onUpdated.emit(updated);
   }
 
   togglePhase(phase: PdcaPhase): void {

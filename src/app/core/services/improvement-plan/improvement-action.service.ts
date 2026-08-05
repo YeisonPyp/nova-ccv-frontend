@@ -3,7 +3,9 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import {
+  CreateImprovementActionApprovalStepDto,
   CreateImprovementActionDto,
+  ImprovementActionApprovalStepDto,
   ImprovementActionDto,
   UpdateImprovementActionDto,
 } from "../../models/improvement-plan/improvement-action.model";
@@ -80,6 +82,24 @@ export class ImprovementActionService {
   deleteById(id: number): Observable<ApiResponse<ImprovementActionDto>> {
     return this.http.delete<ApiResponse<ImprovementActionDto>>(
       `${this.apiUrl}/${id}`,
+    );
+  }
+
+  findApprovalSteps(
+    actionId: number,
+  ): Observable<ApiResponse<ImprovementActionApprovalStepDto[]>> {
+    return this.http.get<ApiResponse<ImprovementActionApprovalStepDto[]>>(
+      `${this.apiUrl}/${actionId}/approval-steps`,
+    );
+  }
+
+  createApprovalStep(
+    actionId: number,
+    dto: CreateImprovementActionApprovalStepDto,
+  ): Observable<ApiResponse<ImprovementActionApprovalStepDto>> {
+    return this.http.post<ApiResponse<ImprovementActionApprovalStepDto>>(
+      `${this.apiUrl}/${actionId}/approval-steps`,
+      dto,
     );
   }
 }

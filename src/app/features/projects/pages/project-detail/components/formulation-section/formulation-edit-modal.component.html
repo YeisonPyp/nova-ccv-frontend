@@ -1,16 +1,16 @@
 @if (isOpen()) {
   <div class="modal-overlay" (click)="close()">
     <div
-      class="modal-container"
+      class="modal-container flex flex-col"
       style="max-width: 900px; max-height: 90vh"
       (click)="$event.stopPropagation()"
     >
-      <div class="modal-header">
+      <div class="modal-header shrink-0">
         <h2 class="modal-title">Editar formulación (Marco Lógico)</h2>
         <button type="button" class="close-btn" (click)="close()">×</button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body flex-1 min-h-0 overflow-y-auto">
         @if (error()) {
           <div
             class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
@@ -43,7 +43,10 @@
               </div>
               <div class="half-width form-group">
                 <label>Estado de formulación</label>
-                <select formControlName="formulationStatus" class="form-control">
+                <select
+                  formControlName="formulationStatus"
+                  class="form-control"
+                >
                   @for (s of statusOptions; track s.value) {
                     <option [value]="s.value">{{ s.label }}</option>
                   }
@@ -280,7 +283,7 @@
         </form>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer shrink-0">
         <button type="button" class="btn btn-secondary" (click)="close()">
           Cancelar
         </button>

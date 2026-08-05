@@ -1,16 +1,16 @@
-import { Injectable } from "@angular/core";
-import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec.service";
+import { Injectable } from '@angular/core';
+import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import {
   FilterServiceSpec,
   PageableQueryWithRsql,
-} from "@/app/shared/components/pagination-table/pagination-table.component";
-import { Observable } from "rxjs";
-import { ApiResponse } from "../../models/api-response.model";
-import { APIPage } from "../../models/api-page.model";
+} from '@/app/shared/components/pagination-table/pagination-table.component';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../../models/api-response.model';
+import { APIPage } from '../../models/api-page.model';
 import {
   ActivityBudgetExecution,
   PatActivityExecution,
-} from "../../models/pat/pat-models";
+} from '../../models/pat/pat-models';
 
 export interface CreatePatActivityExecutionDto {
   activityId: number;
@@ -26,14 +26,14 @@ export interface SaveActivityBudgetExecution {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class PatActivityExecutionService extends FilterServiceSpecImpl<
   PatActivityExecution,
   CreatePatActivityExecutionDto
 > {
   constructor() {
-    super("pat/v2/activity-executions");
+    super('pat/v2/activity-executions');
   }
 
   saveBudgetExecution(e: SaveActivityBudgetExecution) {

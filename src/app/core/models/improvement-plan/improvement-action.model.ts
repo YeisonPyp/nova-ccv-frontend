@@ -25,6 +25,29 @@ export const executionFrequencyLabels: Record<ExecutionFrequency, string> = {
   ANNUAL: "Anual",
 };
 
+export type ImprovementActionApprovalDecision = "APPROVED" | "PENDING";
+
+export const approvalDecisionLabels: Record<
+  ImprovementActionApprovalDecision,
+  string
+> = {
+  APPROVED: "Aprobada",
+  PENDING: "Pendiente",
+};
+
+export interface ImprovementActionApprovalStepDto {
+  id: number;
+  observation: string;
+  decision: ImprovementActionApprovalDecision;
+  createdBy?: Employee;
+  createdAt: string;
+}
+
+export interface CreateImprovementActionApprovalStepDto {
+  observation: string;
+  decision: ImprovementActionApprovalDecision;
+}
+
 export interface ImprovementActionDto {
   id: number;
   letter: string;
@@ -40,8 +63,10 @@ export interface ImprovementActionDto {
   followUpObservations?: string;
   actualCloseDate?: string;
   wasEffective?: boolean | null;
+  ineffectivenessJustification?: string;
   employee?: Employee;
   evidences?: EvidenceDto[];
+  lastApprovalStep?: ImprovementActionApprovalStepDto;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -69,8 +94,8 @@ export interface UpdateImprovementActionDto {
   startDate?: string;
   closeDate?: string;
   employeeId?: number;
-  status?: string;
   followUpObservations?: string;
   actualCloseDate?: string;
   wasEffective?: boolean;
+  ineffectivenessJustification?: string;
 }

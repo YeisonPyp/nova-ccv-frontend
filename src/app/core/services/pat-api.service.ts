@@ -1,8 +1,8 @@
 // core/services/pat-api.service.ts  (métodos añadidos)
-import { Injectable, inject } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { environment } from "../../../environments/environment";
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   Program,
   ProgramWithMetrics,
@@ -24,10 +24,10 @@ import {
   TrainingStatus,
   ReportConfig,
   ReportResult,
-} from "../../features/pat/models/pat.models";
-import { ApiResponse } from "../models/api-response.model";
+} from '../../features/pat/models/pat.models';
+import { ApiResponse } from '../models/api-response.model';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class PatApiService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/pat`;
@@ -81,7 +81,7 @@ export class PatApiService {
   // ── Cronograma ────────────────────────────────────────────
   getScheduleByProgram(programId: number): Observable<ScheduleRow[]> {
     return this.http.get<ScheduleRow[]>(
-      `${this.base}/executions/program/${programId}/schedule`,
+      `${this.base}-executions/program/${programId}/schedule`,
     );
   }
 
@@ -89,12 +89,12 @@ export class PatApiService {
   createExecution(
     payload: CreateExecutionPayload,
   ): Observable<ExecutionRecord> {
-    return this.http.post<ExecutionRecord>(`${this.base}/executions`, payload);
+    return this.http.post<ExecutionRecord>(`${this.base}-executions`, payload);
   }
 
   // ── Metas Estratégicas ────────────────────────────────────
   getStrategicGoals(year?: number): Observable<StrategicGoal[]> {
-    const params = year ? new HttpParams().set("year", year) : undefined;
+    const params = year ? new HttpParams().set('year', year) : undefined;
     return this.http.get<StrategicGoal[]>(`${this.base}/strategic-goals`, {
       params,
     });
@@ -147,14 +147,14 @@ export class PatApiService {
   getAreaConsolidation(year: number): Observable<AreaConsolidation[]> {
     return this.http.get<AreaConsolidation[]>(
       `${this.base}/area-consolidation`,
-      { params: new HttpParams().set("year", year) },
+      { params: new HttpParams().set('year', year) },
     );
   }
 
   // ── Capacitaciones ────────────────────────────────────────
   getTrainings(year: number): Observable<Training[]> {
     return this.http.get<Training[]>(`${this.base}/trainings`, {
-      params: new HttpParams().set("year", year),
+      params: new HttpParams().set('year', year),
     });
   }
   createTraining(
@@ -165,7 +165,7 @@ export class PatApiService {
   getEmployeeTrainingStats(year: number): Observable<EmployeeTrainingStats[]> {
     return this.http.get<EmployeeTrainingStats[]>(
       `${this.base}/trainings/employee-stats`,
-      { params: new HttpParams().set("year", year) },
+      { params: new HttpParams().set('year', year) },
     );
   }
   updateParticipantStatus(
@@ -179,10 +179,10 @@ export class PatApiService {
   }
   uploadTrainingEvidence(payload: UploadEvidencePayload): Observable<void> {
     const formData = new FormData();
-    formData.append("file", payload.file);
-    formData.append("completionDate", payload.completionDate);
+    formData.append('file', payload.file);
+    formData.append('completionDate', payload.completionDate);
     if (payload.score != null) {
-      formData.append("score", String(payload.score));
+      formData.append('score', String(payload.score));
     }
     return this.http.post<void>(
       `${this.base}/training-participants/${payload.participantId}/evidence`,
