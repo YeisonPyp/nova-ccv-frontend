@@ -143,6 +143,7 @@
                         <app-report-variable-table
                           [variable]="variable"
                           (onSelectOption)="onSelectOption(variable.id, $event)"
+                          (noOptions)="onNoOptions($event)"
                         />
                       }
                     </div>

@@ -1,38 +1,35 @@
-import { Employee } from "../assessment/employee.model";
-import { EvidenceDto } from "./evidence.model";
+import { Employee } from '../assessment/employee.model';
+import { EvidenceDto } from './evidence.model';
 
-export type PdcaPhase = "PLAN" | "DO" | "CHECK" | "ACT";
+export type PdcaPhase = 'PLAN' | 'DO' | 'CHECK' | 'ACT';
 
 export const pdcaPhaseLabels: Record<PdcaPhase, string> = {
-  PLAN: "Planear",
-  DO: "Hacer",
-  CHECK: "Verificar",
-  ACT: "Actuar",
+  PLAN: 'Planear',
+  DO: 'Hacer',
+  CHECK: 'Verificar',
+  ACT: 'Actuar',
 };
 
 export type ExecutionFrequency =
-  | "MONTHLY"
-  | "BIMONTHLY"
-  | "QUARTERLY"
-  | "SEMIANNUAL"
-  | "ANNUAL";
+  'UNIQUE' | 'MONTHLY' | 'BIMONTHLY' | 'QUARTERLY' | 'SEMIANNUAL' | 'ANNUAL';
 
 export const executionFrequencyLabels: Record<ExecutionFrequency, string> = {
-  MONTHLY: "Mensual",
-  BIMONTHLY: "Bimestral",
-  QUARTERLY: "Trimestral",
-  SEMIANNUAL: "Semestral",
-  ANNUAL: "Anual",
+  UNIQUE: 'Único',
+  MONTHLY: 'Mensual',
+  BIMONTHLY: 'Bimestral',
+  QUARTERLY: 'Trimestral',
+  SEMIANNUAL: 'Semestral',
+  ANNUAL: 'Anual',
 };
 
-export type ImprovementActionApprovalDecision = "APPROVED" | "PENDING";
+export type ImprovementActionApprovalDecision = 'APPROVED' | 'PENDING';
 
 export const approvalDecisionLabels: Record<
   ImprovementActionApprovalDecision,
   string
 > = {
-  APPROVED: "Aprobada",
-  PENDING: "Pendiente",
+  APPROVED: 'Aprobada',
+  PENDING: 'Pendiente',
 };
 
 export interface ImprovementActionApprovalStepDto {
@@ -46,6 +43,23 @@ export interface ImprovementActionApprovalStepDto {
 export interface CreateImprovementActionApprovalStepDto {
   observation: string;
   decision: ImprovementActionApprovalDecision;
+}
+
+export const actionFollowUpStatus = {
+  PENDING: 'Pendiente',
+  COMPLETED: 'Completada',
+  OVERDUE: 'Vencida',
+} as const;
+
+export type ActionFollowUpStatus = keyof typeof actionFollowUpStatus;
+
+export interface ImprovementActionFollowUp {
+  id: number;
+  scheduledAt: string;
+  status: ActionFollowUpStatus;
+  evidences?: EvidenceDto[];
+  observations?: string;
+  permissions?: string[];
 }
 
 export interface ImprovementActionDto {
@@ -65,7 +79,7 @@ export interface ImprovementActionDto {
   wasEffective?: boolean | null;
   ineffectivenessJustification?: string;
   employee?: Employee;
-  evidences?: EvidenceDto[];
+  followUp: ImprovementActionFollowUp[];
   lastApprovalStep?: ImprovementActionApprovalStepDto;
   createdAt?: string;
   updatedAt?: string;
@@ -76,7 +90,6 @@ export interface CreateImprovementActionDto {
   objectiveDescription: string;
   actionDescription: string;
   pdcaPhases: PdcaPhase[];
-  target: number;
   executionFrequency: ExecutionFrequency;
   indicator: string;
   startDate: string;

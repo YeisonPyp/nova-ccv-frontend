@@ -1,21 +1,21 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpEvent, HttpRequest } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { environment } from "../../../../environments/environment";
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import {
   EvidenceDto,
   CreateEvidenceDto,
-} from "../../models/improvement-plan/evidence.model";
-import { ApiResponse } from "../../models/api-response.model";
-import { APIPage } from "../../models/api-page.model";
+} from '../../models/improvement-plan/evidence.model';
+import { ApiResponse } from '../../models/api-response.model';
+import { APIPage } from '../../models/api-page.model';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class EvidenceService {
   private apiUrl = `${environment.apiUrl}/evidence`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   findElements(
     page: number = 0,
@@ -30,16 +30,17 @@ export class EvidenceService {
     return this.http.get<ApiResponse<EvidenceDto>>(`${this.apiUrl}/${id}`);
   }
 
-  create(dto: CreateEvidenceDto): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
+  create(
+    dto: CreateEvidenceDto,
+  ): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
     const formData = new FormData();
-    formData.append('actionId', dto.actionId + '');
-    if (dto.description)
-      formData.append('description', dto.description);
+    formData.append('actionId', dto.followUpId + '');
+    if (dto.description) formData.append('description', dto.description);
     formData.append('file', dto.file);
 
     const req = new HttpRequest('POST', this.apiUrl, formData, {
       reportProgress: true,
-      responseType: 'json'
+      responseType: 'json',
     });
 
     return this.http.request<ApiResponse<EvidenceDto>>(req);
@@ -50,14 +51,13 @@ export class EvidenceService {
     dto: CreateEvidenceDto,
   ): Observable<HttpEvent<ApiResponse<EvidenceDto>>> {
     const formData = new FormData();
-    formData.append('actionId', dto.actionId + '');
-    if (dto.description)
-      formData.append('description', dto.description);
+    formData.append('followUpId', dto.followUpId + '');
+    if (dto.description) formData.append('description', dto.description);
     formData.append('file', dto.file);
 
     const req = new HttpRequest('PUT', `${this.apiUrl}/${id}`, formData, {
       reportProgress: true,
-      responseType: 'json'
+      responseType: 'json',
     });
 
     return this.http.request<ApiResponse<EvidenceDto>>(req);

@@ -1,48 +1,58 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, input, OnInit, output, signal } from "@angular/core";
-import { EvidenceItemComponent } from "@/app/features/improvement-plan/pages/improvement-plan/components/evidence-item/evidence-item.component";
-import { ImprovementActionDto } from "@/app/core/models/improvement-plan/improvement-action.model";
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
+import { EvidenceItemComponent } from '@/app/features/improvement-plan/pages/improvement-plan/components/evidence-item/evidence-item.component';
+import {
+  ImprovementActionDto,
+  ImprovementActionFollowUp,
+} from '@/app/core/models/improvement-plan/improvement-action.model';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
+} from '@angular/forms';
 import {
   ImprovementActionService,
   improvementActionStatus,
   ImprovementActionStatus,
-} from "@/app/core/services/improvement-plan/improvement-action.service";
+} from '@/app/core/services/improvement-plan/improvement-action.service';
 import {
   PdcaPhase,
   pdcaPhaseLabels,
   ExecutionFrequency,
   executionFrequencyLabels,
-} from "@/app/core/models/improvement-plan/improvement-action.model";
-import { debounceTime, distinctUntilChanged, filter, switchMap } from "rxjs";
-import { EvidenceDto } from "@/app/core/models/improvement-plan/evidence.model";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { AutosizeTextareaDirective } from "@/app/shared/directives/autosize-textarea.directive";
-import { AuthService } from "@/app/core/services/auth.service";
-import { ApprovalFlowModalComponent } from "./approval-flow-modal/approval-flow-modal.component";
+} from '@/app/core/models/improvement-plan/improvement-action.model';
+import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { AutosizeTextareaDirective } from '@/app/shared/directives/autosize-textarea.directive';
+import { AuthService } from '@/app/core/services/auth.service';
+import { ApprovalFlowModalComponent } from './approval-flow-modal/approval-flow-modal.component';
+import { ActionFollowUpComponent } from './followup/action-followup.component';
 
 @Component({
-  selector: "app-action-details",
+  selector: 'app-action-details',
   standalone: true,
   imports: [
     CommonModule,
-    EvidenceItemComponent,
     ReactiveFormsModule,
     AutosizeTextareaDirective,
     ApprovalFlowModalComponent,
+    ActionFollowUpComponent,
   ],
-  templateUrl: "./action-details.component.html",
-  styleUrl: "./action-details.component.scss",
+  templateUrl: './action-details.component.html',
+  styleUrl: './action-details.component.scss',
 })
 export class ActionDetailsComponent implements OnInit {
   action = input.required<ImprovementActionDto>();
 
-  evidences = signal<EvidenceDto[]>([]);
+  followup = signal<ImprovementActionFollowUp[]>([]);
   approvalModalOpen = signal(false);
 
   onDelete = output<ImprovementActionDto>();
@@ -54,15 +64,13 @@ export class ActionDetailsComponent implements OnInit {
   formGroup: FormGroup;
 
   getActionStatusName(k: string) {
-    return (
-      improvementActionStatus[k as ImprovementActionStatus] ?? k
-    );
+    return improvementActionStatus[k as ImprovementActionStatus] ?? k;
   }
 
   get isLocked(): boolean {
     return (
-      this.action().status === "COMPLETED" &&
-      !this.authService.hasPermission("PLAN_AUDITOR_ROLE")
+      this.action().status === 'COMPLETED' &&
+      !this.authService.hasPermission('PLAN_AUDITOR_ROLE')
     );
   }
 
@@ -84,22 +92,22 @@ export class ActionDetailsComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.formGroup = this.fb.group({
-      objectiveDescription: ["", Validators.required],
-      actionDescription: ["", Validators.required],
+      objectiveDescription: ['', Validators.required],
+      actionDescription: ['', Validators.required],
       pdcaPhases: [[] as PdcaPhase[]],
       target: [1, Validators.required],
-      executionFrequency: ["MONTHLY" as ExecutionFrequency],
-      indicator: [""],
-      startDate: [""],
-      closeDate: [""],
-      followUpObservations: [""],
-      actualCloseDate: [""],
-      wasEffective: [""],
-      ineffectivenessJustification: [""],
+      executionFrequency: ['MONTHLY' as ExecutionFrequency],
+      indicator: [''],
+      startDate: [''],
+      closeDate: [''],
+      followUpObservations: [''],
+      actualCloseDate: [''],
+      wasEffective: [''],
+      ineffectivenessJustification: [''],
     });
 
     toObservable(this.action).subscribe((a) => {
-      this.evidences.set(a.evidences ?? []);
+      this.followup.set(a.followUp ?? []);
       this.formGroup.patchValue(
         {
           objectiveDescription: a.objectiveDescription,
@@ -114,11 +122,11 @@ export class ActionDetailsComponent implements OnInit {
           actualCloseDate: a.actualCloseDate,
           wasEffective:
             a.wasEffective === true
-              ? "true"
+              ? 'true'
               : a.wasEffective === false
-                ? "false"
-                : "",
-          ineffectivenessJustification: a.ineffectivenessJustification ?? "",
+                ? 'false'
+                : '',
+          ineffectivenessJustification: a.ineffectivenessJustification ?? '',
         },
         { emitEvent: false },
       );
@@ -143,12 +151,14 @@ export class ActionDetailsComponent implements OnInit {
           this.service.update(this.action().id, {
             ...values,
             wasEffective:
-              values.wasEffective === "" ? undefined : values.wasEffective === "true",
+              values.wasEffective === ''
+                ? undefined
+                : values.wasEffective === 'true',
           }),
         ),
       )
       .subscribe({
-        error: (err) => console.error("Error al guardar la acción:", err),
+        error: (err) => console.error('Error al guardar la acción:', err),
       });
   }
 
@@ -165,15 +175,15 @@ export class ActionDetailsComponent implements OnInit {
   }
 
   togglePhase(phase: PdcaPhase): void {
-    const current: PdcaPhase[] = this.formGroup.get("pdcaPhases")?.value ?? [];
+    const current: PdcaPhase[] = this.formGroup.get('pdcaPhases')?.value ?? [];
     const next = current.includes(phase)
       ? current.filter((p) => p !== phase)
       : [...current, phase];
-    this.formGroup.get("pdcaPhases")?.setValue(next);
+    this.formGroup.get('pdcaPhases')?.setValue(next);
   }
 
   isPhaseSelected(phase: PdcaPhase): boolean {
-    const current: PdcaPhase[] = this.formGroup.get("pdcaPhases")?.value ?? [];
+    const current: PdcaPhase[] = this.formGroup.get('pdcaPhases')?.value ?? [];
     return current.includes(phase);
   }
 
@@ -185,26 +195,9 @@ export class ActionDetailsComponent implements OnInit {
     });
   }
 
-  onSaveEvidence(e: EvidenceDto) {
-    const ev = this.evidences().reduce(
-      (prev, curr) => {
-        prev[curr.id] = curr;
-        return prev;
-      },
-      {} as Record<number, EvidenceDto>,
-    );
-    ev[e.id] = e;
-
-    this.evidences.set(Object.values(ev));
-  }
-
-  onRemoveEvidence(ev: EvidenceDto) {
-    this.evidences.set(this.evidences().filter((e) => e.id !== ev.id));
-  }
-
   get assignedEmployeeFullName() {
     return [this.action().employee?.name, this.action().employee?.lastName]
       .filter((i) => i)
-      .join(" ");
+      .join(' ');
   }
 }

@@ -43,7 +43,7 @@
 
     <div class="space-y-8">
       <section
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-gray-50/80 p-6 rounded-2xl border border-gray-200/60 shadow-sm"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 bg-gray-50/80 p-6 rounded-2xl border border-gray-200/60 shadow-sm"
       >
         <div class="flex flex-col gap-2">
           <label
@@ -135,6 +135,37 @@
             (onRemove)="searchSelectControlEntityContext.remove($event)"
             (onSearch)="searchSelectControlEntityContext.search($event)"
             (onSelect)="searchSelectControlEntityContext.select($event)"
+          ></app-select-search>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label
+            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
+          >
+            <svg
+              class="w-3 h-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                d="M20 7h-9m3-3l3 3-3 3M4 17h9m-3-3l-3 3 3 3"
+                stroke-width="2.5"
+              />
+            </svg>
+            Proceso
+          </label>
+          <app-select-search
+            class="w-full"
+            [emptyMessage]="searchSelectProcessContext.op?.emptyMessage ?? ''"
+            [items]="searchSelectProcessContext.options()"
+            [selectedItems]="searchSelectProcessContext.selectedOptions()"
+            [maxElements]="searchSelectProcessContext.op?.maxItems ?? 1"
+            [required]="searchSelectProcessContext.op?.isRequired ?? false"
+            [disabled]="!canSetPlanProperties()"
+            (onRemove)="searchSelectProcessContext.remove($event)"
+            (onSearch)="searchSelectProcessContext.search($event)"
+            (onSelect)="searchSelectProcessContext.select($event)"
           ></app-select-search>
         </div>
 

@@ -1,0 +1,30 @@
+<div class="flex flex-row gap-6">
+  <div class="flex flex-wrap gap-5">
+    @for (evidence of evidences(); track evidence.id) {
+      <app-evidence-item
+        [evidence]="evidence"
+        [followUpId]="followup().id"
+        (onSaved)="onSaveEvidence($event)"
+        (onRemoved)="onRemoveEvidence($event)"
+      ></app-evidence-item>
+    }
+
+    @if (canUploadEvidence()) {
+      <app-evidence-item
+        [followUpId]="followup().id"
+        (onSaved)="onSaveEvidence($event)"
+        (onRemoved)="onRemoveEvidence($event)"
+      ></app-evidence-item>
+    }
+  </div>
+  <div class="" [formGroup]="form">
+    <select
+      formControlName="status"
+      app-selector
+      [options]="statusOptions"
+    ></select>
+    <!--scheduledDate-->
+    <input type="date" formControlName="scheduledDate" />
+    <textarea type="text" formControlName="observations" rows="6"></textarea>
+  </div>
+</div>

@@ -11,9 +11,9 @@ export interface EvidenceDto {
 }
 
 export interface CreateEvidenceDto {
-  actionId: number;
+  followUpId: number;
   file: File;
-  description?: string;
+  description?: string | null;
 }
 
 export interface UpdateEvidenceDto {

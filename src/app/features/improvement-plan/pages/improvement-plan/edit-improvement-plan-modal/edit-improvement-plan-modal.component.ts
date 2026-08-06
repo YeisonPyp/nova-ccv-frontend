@@ -15,11 +15,13 @@ import {
 import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
 import { EmployeeService } from '@/app/core/services/assessment/employee.service';
 import { ControlEntityService } from '@/app/core/services/improvement-plan/control-entity.service';
+import { ImprovementProcessService } from '@/app/core/services/improvement-plan/improvement-process.service';
 import { SearchSelectComponent } from '@/app/shared/components/search-select/search-select.component';
 import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
 import { ImprovementPlan } from '@/app/core/models/improvement-plan/improvement-plan.model';
 import { Employee } from '@/app/core/models/assessment/employee.model';
 import { ControlEntity } from '@/app/core/models/improvement-plan/control-entity.model';
+import { ImprovementProcess } from '@/app/core/models/improvement-plan/improvement-process.model';
 import { Router } from '@angular/router';
 import { HasPermissionDirective } from '@/app/shared/directives/has-permission.directive';
 
@@ -43,6 +45,7 @@ export class EditImprovementPlanModalComponent {
   private service = inject(ImprovementPlanService);
   private employeeService = inject(EmployeeService);
   private controlEntityService = inject(ControlEntityService);
+  private processService = inject(ImprovementProcessService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
@@ -65,6 +68,17 @@ export class EditImprovementPlanModalComponent {
         isRequired: true,
         placeholder: 'Entidad encargada',
         label: 'Entidad',
+      },
+    );
+
+  searchSelectProcessContext =
+    this.processService.newSearchSelectProcessContext(
+      (p) => this.updateProcess(p),
+      {
+        maxItems: 1,
+        isRequired: true,
+        placeholder: 'Proceso',
+        label: 'Proceso',
       },
     );
 
@@ -113,6 +127,7 @@ export class EditImprovementPlanModalComponent {
             expiresAt,
             controlEntity,
             employee,
+            process,
             startsAt,
           } = res.data;
           this.form.patchValue(
@@ -132,6 +147,9 @@ export class EditImprovementPlanModalComponent {
             this.searchSelectControlEntityContext.selectResults([
               controlEntity,
             ]);
+          }
+          if (process) {
+            this.searchSelectProcessContext.selectResults([process]);
           }
           if (!this.canSetPlanProperties()) {
             this.form.disable({ emitEvent: false });
@@ -206,19 +224,37 @@ export class EditImprovementPlanModalComponent {
     }
   }
 
+  updateProcess(process: ImprovementProcess) {
+    const p = this.plan();
+    if (p && process.id !== p.process?.id) {
+      this.service
+        .update(p.id, {
+          processId: process.id,
+        })
+        .subscribe((r) => {
+          if (r.success && r.data) {
+            this.plan.set(r.data);
+          }
+        });
+    }
+  }
+
   onSavePlan() {
     const p = this.plan();
     const controlEntity =
       this.searchSelectControlEntityContext.selectedOptions()[0];
+    const process = this.searchSelectProcessContext.selectedOptions()[0];
     const employee = this.searchSelectEmployeesContext.selectedOptions()[0];
     const { description, expiresAt, name, startsAt } = this.form.value;
     const controlEntityId = controlEntity?.id as number;
     const controlEntityName = controlEntity.title;
+    const processId = process?.id as number;
     if (p) {
       this.service
         .update(p.id, {
           controlEntityId,
           controlEntityName,
+          processId,
           description,
           expiresAt,
           name,
@@ -231,6 +267,7 @@ export class EditImprovementPlanModalComponent {
       this.service
         .create({
           controlEntityId,
+          processId,
           employeeId: employee.id as number,
           description,
           expiresAt,

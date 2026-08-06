@@ -7,6 +7,7 @@ import {
   ImprovementPlan,
   CreateImprovementPlanDto,
   UpdateImprovementPlanDto,
+  ImprovementPlanFilters,
 } from "../../models/improvement-plan/improvement-plan.model";
 import { APIPage } from "../../models/api-page.model";
 
@@ -25,6 +26,7 @@ export class ImprovementPlanService {
     page: number = 0,
     size: number = 10,
     employeeId?: number,
+    filters?: ImprovementPlanFilters,
   ): Observable<ApiResponse<APIPage<ImprovementPlan>>> {
     let params = new HttpParams()
       .set("page", page.toString())
@@ -32,6 +34,18 @@ export class ImprovementPlanService {
 
     if (employeeId) {
       params = params.set("employeeId", employeeId.toString());
+    }
+    if (filters?.processId != null) {
+      params = params.set("processId", filters.processId.toString());
+    }
+    if (filters?.controlEntityId != null) {
+      params = params.set("controlEntityId", filters.controlEntityId.toString());
+    }
+    if (filters?.status) {
+      params = params.set("status", filters.status);
+    }
+    if (filters?.year != null) {
+      params = params.set("year", filters.year.toString());
     }
 
     return this.http.get<ApiResponse<APIPage<ImprovementPlan>>>(this.apiUrl, {

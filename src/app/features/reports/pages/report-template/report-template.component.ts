@@ -16,9 +16,10 @@ import { ReportService } from '@/app/core/services/reports/report.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { ReportTemplateVariable } from '@/app/core/models/reports/report-template-variable.model';
 
 interface VariableOptionSelected {
-  [variableId: number]: string;
+  [variableId: number]: string | null;
 }
 
 type TabKey = 'create' | 'reports';
@@ -50,7 +51,7 @@ export class ReportTemplateComponent {
 
   template = signal<ReportTemplate | null>(null);
   isLoading = signal(false);
-  variables = computed(() => this.template()?.variables || []);
+  variables = signal<ReportTemplateVariable[]>([]);
 
   tabs: Tab[] = [
     { key: 'create', label: 'Nuevo informe' },
@@ -70,6 +71,7 @@ export class ReportTemplateComponent {
       this.isLoading.set(true);
       this.service.findById(this.templateId()).subscribe((res) => {
         this.template.set(res.data);
+        this.variables.set(res.data.variables || []);
         this.isLoading.set(false);
       });
     });
@@ -95,6 +97,10 @@ export class ReportTemplateComponent {
       prev[variableId] = o.value;
       return { ...prev };
     });
+  }
+
+  onNoOptions(id: number) {
+    this.variables.set(this.variables().filter((v) => v.id !== id));
   }
 
   clearVariable(variableId: number) {

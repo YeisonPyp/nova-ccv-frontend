@@ -32,7 +32,7 @@ export class ReportVariableComponent {
   private readonly service = inject(ReportTemplateVariableService);
 
   variable = input.required<ReportTemplateVariable>();
-
+  noOptions = output<number>();
   onSelectOption = output<GoalOption>();
 
   size = signal(10);
@@ -41,7 +41,10 @@ export class ReportVariableComponent {
   isLoading = signal(false);
   elements = signal<GoalOption[]>([]);
 
-  columns: TableColumn[] = [{ key: 'label', label: 'Opción' }];
+  columns: TableColumn[] = [
+    { key: 'label', label: 'Opción' },
+    { key: 'value', label: 'Valor' },
+  ];
 
   constructor() {
     effect(() => {
@@ -56,6 +59,10 @@ export class ReportVariableComponent {
           this.isLoading.set(false);
           this.elements.set(res.data.content);
           this.pages.set(res.data.totalPages);
+
+          if (res.data.totalElements === 0) {
+            this.noOptions.emit(this.variable().id);
+          }
         });
     });
   }

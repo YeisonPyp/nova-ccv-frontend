@@ -1,64 +1,82 @@
 import {
   Component,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { HttpEventType } from "@angular/common/http";
-import { EvidenceService } from "@/app/core/services/improvement-plan/evidence.service";
-import { EvidenceDto } from "@/app/core/models/improvement-plan/evidence.model";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpEventType } from '@angular/common/http';
+import { EvidenceService } from '@/app/core/services/improvement-plan/evidence.service';
+import {
+  CreateEvidenceDto,
+  EvidenceDto,
+} from '@/app/core/models/improvement-plan/evidence.model';
 import {
   FileItemComponent,
   FileResource,
-} from "@/app/shared/components/file-item/file-item.component";
+} from '@/app/shared/components/file-item/file-item.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: "app-evidence-item",
+  selector: 'app-evidence-item',
   standalone: true,
-  imports: [CommonModule, FileItemComponent],
+  imports: [CommonModule, FileItemComponent, FormsModule],
   template: `
-    <app-file-item
-      [file]="fileResource()"
-      [loading]="loading()"
-      [uploadProgress]="uploadProgress()"
-      label="Añadir evidencia"
-      accept="image/*,.pdf"
-      (fileSelected)="onFileSelected($event)"
-      (deleteRequested)="onDeleteRequested()"
-    />
+    <div class="flex flex-col gap-5 w-full">
+      <app-file-item
+        [file]="fileResource()"
+        [loading]="loading()"
+        [uploadProgress]="uploadProgress()"
+        label="Añadir evidencia"
+        accept="image/*,.pdf"
+        (fileSelected)="onFileSelected($event)"
+        (deleteRequested)="onDeleteRequested()"
+      />
+      <input class="form-control" type="text" [(ngModel)]="description" />
+    </div>
   `,
-  styleUrls: ["./evidence-item.component.scss"],
+  styleUrls: ['./evidence-item.component.scss'],
 })
 export class EvidenceItemComponent {
   private readonly evidenceService = inject(EvidenceService);
 
   evidence = input<EvidenceDto | null>(null);
-  actionId = input.required<number>();
+  followUpId = input.required<number>();
 
   onSaved = output<EvidenceDto>();
   onRemoved = output<EvidenceDto>();
 
   loading = signal(false);
   uploadProgress = signal(0);
+  description = signal<string | null>(null);
 
   fileResource = computed((): FileResource | null => {
     const e = this.evidence();
     if (!e) return null;
     return {
       id: e.id,
-      bucketName: e.bucketName ?? "",
-      fileName: e.objectName ?? "",
+      bucketName: e.bucketName ?? '',
+      fileName: e.objectName ?? '',
       description: e.description,
       createdAt: e.createdAt,
     };
   });
+  constructor() {
+    effect(() => {
+      this.description.set(this.evidence()?.description || null);
+    });
+  }
 
   onFileSelected(file: File): void {
     const prev = this.evidence();
-    const dto = { actionId: this.actionId(), file };
+    const dto: CreateEvidenceDto = {
+      followUpId: this.followUpId(),
+      file,
+      description: this.description(),
+    };
     const obs$ = prev?.id
       ? this.evidenceService.update(prev.id, dto)
       : this.evidenceService.create(dto);

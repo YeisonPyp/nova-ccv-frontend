@@ -1,23 +1,32 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, input, output } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { EmployeeService } from "@/app/core/services/assessment/employee.service";
-import { SelectSearchComponent } from "@/app/shared/components/select-search/select-search.component";
-import { ImprovementActionService } from "@/app/core/services/improvement-plan/improvement-action.service";
-import { ImprovementActionDto } from "@/app/core/models/improvement-plan/improvement-action.model";
+import { CommonModule } from '@angular/common';
+import { Component, inject, input, output } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { EmployeeService } from '@/app/core/services/assessment/employee.service';
+import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
+import { ImprovementActionService } from '@/app/core/services/improvement-plan/improvement-action.service';
+import { ImprovementActionDto } from '@/app/core/models/improvement-plan/improvement-action.model';
 import {
   PdcaPhase,
   pdcaPhaseLabels,
   ExecutionFrequency,
   executionFrequencyLabels,
-} from "@/app/core/models/improvement-plan/improvement-action.model";
+} from '@/app/core/models/improvement-plan/improvement-action.model';
+import {
+  Option,
+  SelectorComponent,
+} from '@/app/shared/components/selector/selector.component';
 
 @Component({
-  selector: "app-new-action",
+  selector: 'app-new-action',
   standalone: true,
-  imports: [CommonModule, SelectSearchComponent, ReactiveFormsModule],
-  templateUrl: "./new-action.component.html",
-  styleUrl: "./new-action.component.scss",
+  imports: [
+    CommonModule,
+    SelectSearchComponent,
+    ReactiveFormsModule,
+    SelectorComponent,
+  ],
+  templateUrl: './new-action.component.html',
+  styleUrl: './new-action.component.scss',
 })
 export class NewActionComponent {
   employeeService = inject(EmployeeService);
@@ -29,13 +38,12 @@ export class NewActionComponent {
   onCreated = output<ImprovementActionDto>();
 
   form = this.fb.group({
-    objectiveDescription: ["", Validators.required],
-    actionDescription: ["", Validators.required],
-    target: [1, Validators.required],
-    executionFrequency: ["MONTHLY" as ExecutionFrequency, Validators.required],
-    indicator: ["", Validators.required],
-    startDate: ["", Validators.required],
-    closeDate: ["", Validators.required],
+    objectiveDescription: ['', Validators.required],
+    actionDescription: ['', Validators.required],
+    executionFrequency: ['MONTHLY' as ExecutionFrequency, Validators.required],
+    indicator: ['', Validators.required],
+    startDate: ['', Validators.required],
+    closeDate: ['', Validators.required],
     employeeId: [0],
   });
 
@@ -48,7 +56,7 @@ export class NewActionComponent {
       },
       {
         maxItems: 1,
-        placeholder: "Responsable...",
+        placeholder: 'Responsable...',
         isRequired: false,
       },
     );
@@ -61,12 +69,11 @@ export class NewActionComponent {
     return pdcaPhaseLabels[phase];
   }
 
-  get executionFrequencies(): ExecutionFrequency[] {
-    return Object.keys(executionFrequencyLabels) as ExecutionFrequency[];
-  }
-
-  getExecutionFrequencyLabel(f: ExecutionFrequency): string {
-    return executionFrequencyLabels[f];
+  get executionFrequencies(): Option[] {
+    return Object.entries(executionFrequencyLabels).map(([value, label]) => ({
+      value,
+      label,
+    }));
   }
 
   togglePhase(phase: PdcaPhase): void {
@@ -86,7 +93,6 @@ export class NewActionComponent {
     const {
       objectiveDescription,
       actionDescription,
-      target,
       executionFrequency,
       indicator,
       startDate,
@@ -100,7 +106,6 @@ export class NewActionComponent {
         objectiveDescription: objectiveDescription!,
         actionDescription: actionDescription!,
         pdcaPhases: Array.from(this.selectedPhases),
-        target: target!,
         executionFrequency: executionFrequency!,
         indicator: indicator!,
         startDate: startDate!,
@@ -111,13 +116,12 @@ export class NewActionComponent {
         if (r.success) {
           this.onCreated.emit(r.data);
           this.form.reset({
-            objectiveDescription: "",
-            actionDescription: "",
-            target: 1,
-            executionFrequency: "MONTHLY",
-            indicator: "",
-            startDate: "",
-            closeDate: "",
+            objectiveDescription: '',
+            actionDescription: '',
+            executionFrequency: 'MONTHLY',
+            indicator: '',
+            startDate: '',
+            closeDate: '',
             employeeId: 0,
           });
           this.selectedPhases.clear();
