@@ -23,8 +23,6 @@ export interface CreatePatProgramDto {
   adendaId: number;
   startsAt: string;
   endsAt: string;
-  unitMeasureId: number;
-  goalValue?: number;
   description?: string;
 }
 

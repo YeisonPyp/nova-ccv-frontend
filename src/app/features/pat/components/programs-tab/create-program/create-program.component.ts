@@ -13,12 +13,7 @@ import {
   CreatePatProgramDto,
   PatProgramService,
 } from "@/app/core/services/pat/pat-program.service";
-import { PatUnitMeasureService } from "@/app/core/services/pat/pat-unit-measure.service";
-import {
-  PatStrategicProgram,
-  PatUnitMeasure,
-} from "@/app/core/models/pat/pat-models";
-import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
+import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
 import { ContextSearchSelectComponent } from "@/app/shared/components/context-search-select/context-search-select.component";
 import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-error.directive";
 
@@ -43,7 +38,6 @@ export class CreatePatProgramComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatProgramService);
-  private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
@@ -64,16 +58,7 @@ export class CreatePatProgramComponent {
     description: ["", Validators.maxLength(1000)],
     startsAt: ["", Validators.required],
     endsAt: ["", Validators.required],
-    unitMeasureId: [null as number | null, Validators.required],
-    goalValue: [0],
   });
-
-  unitMeasureCtx: SearchSelectContextFactory<PatUnitMeasure> =
-    this.unitMeasureService.newSearchSelectContext(
-      (u) => this.form.patchValue({ unitMeasureId: u.id }),
-      { isRequired: true, maxItems: 1 },
-      () => this.form.patchValue({ unitMeasureId: null }),
-    );
 
   constructor() {
     effect(() => {
@@ -87,14 +72,7 @@ export class CreatePatProgramComponent {
           description: p.description ?? "",
           startsAt: p.startsAt,
           endsAt: p.endsAt,
-          unitMeasureId: p.unitMeasure?.id ?? null,
-          goalValue: p.goalValue ?? 0,
         });
-        if (p.unitMeasure) {
-          this.unitMeasureCtx.selectedOptions.set([
-            { id: p.unitMeasure.id, title: p.unitMeasure.name },
-          ]);
-        }
       } else {
         this.form.reset({
           name: "",
@@ -102,10 +80,7 @@ export class CreatePatProgramComponent {
           description: "",
           startsAt: "",
           endsAt: "",
-          unitMeasureId: null,
-          goalValue: 0,
         });
-        this.unitMeasureCtx.clear();
       }
     });
   }
@@ -130,8 +105,6 @@ export class CreatePatProgramComponent {
       adendaId: this.adendaId(),
       startsAt: v.startsAt!,
       endsAt: v.endsAt!,
-      unitMeasureId: v.unitMeasureId!,
-      goalValue: v.goalValue ?? undefined,
     };
 
     const p = this.program();

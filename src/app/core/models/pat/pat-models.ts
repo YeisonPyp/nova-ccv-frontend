@@ -38,14 +38,8 @@ export interface PatStrategicProgram {
   adenda?: PatAdenda;
   startsAt: string;
   endsAt: string;
-  unitMeasure?: PatUnitMeasure;
-  goalValue: number;
   description?: string;
-  /**
-   * @deprecated The backend no longer populates this — programs-tab's
-   * create-program form still targets the old pillar-based shape and needs
-   * a follow-up pass to the new adenda/code/dates/unitMeasure/goal fields.
-   */
+  /** @deprecated The backend no longer populates this. */
   pillar?: PatPillar;
 }
 

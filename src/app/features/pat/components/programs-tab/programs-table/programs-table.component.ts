@@ -33,8 +33,6 @@ export class ProgramsTableComponent {
     { key: "code", label: "Código" },
     { key: "startsAt", label: "Inicio" },
     { key: "endsAt", label: "Fin" },
-    { key: "unitMeasure.name", label: "Unidad de medida" },
-    { key: "goalValue", label: "Meta" },
   ];
 
   constructor() {
