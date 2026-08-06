@@ -34,6 +34,7 @@ export class PatTasksTabComponent {
 
   readonly columns: TableColumn[] = [
     { key: 'name', label: 'Nombre' },
+    { key: 'description', label: 'Descripción' },
     { key: 'area.name', label: 'Área' },
     { key: 'costCenter.name', label: 'Centro de Costo' },
   ];

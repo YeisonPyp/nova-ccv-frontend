@@ -3,11 +3,12 @@ import { Component, OnInit, inject, output, signal } from '@angular/core';
 import { PatAdendaService } from '@/app/core/services/pat/pat-adenda.service';
 import { PatAdenda } from '@/app/core/models/pat/pat-models';
 import { AdendaUpsertModalComponent } from './components/adenda-upsert-modal.component';
+import { EditIconComponent } from '@/app/shared/components/edit-icon/edit-icon.component';
 
 @Component({
   selector: 'app-adenda-list',
   standalone: true,
-  imports: [CommonModule, AdendaUpsertModalComponent],
+  imports: [CommonModule, AdendaUpsertModalComponent, EditIconComponent],
   templateUrl: './adenda-list.component.html',
 })
 export class AdendaListComponent implements OnInit {

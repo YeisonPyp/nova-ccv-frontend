@@ -1,6 +1,8 @@
 <div class="flex flex-col gap-3 h-full">
   <div class="flex items-center justify-between">
-    <h3 class="text-sm font-semibold text-secondary uppercase tracking-wider m-0">
+    <h3
+      class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+    >
       Adendas
     </h3>
     <button
@@ -36,7 +38,7 @@
               class="text-xs text-gray-400 hover:text-primary"
               (click)="openEdit(adenda, $event)"
             >
-              ✏️
+              <app-edit-icon />
             </span>
           </button>
         </li>
