@@ -15,19 +15,15 @@ import { APIPage } from '../../models/api-page.model';
 export interface CreatePatActivity {
   name: string;
   code?: string;
-  employeeId: number;
   tacticalActivityId: number;
-  costCenterId: number;
-  measurement: string;
   startsAt: string;
   endsAt: string;
 
   description?: string | null;
   policyId?: number | null;
   programId?: number | null;
-  measurementGoal?: number | null;
-  parentId?: number | null;
-  colorHex?: string | null;
+  unitMeasureId?: number | null;
+  unitMeasureGoal?: number | null;
 }
 
 @Injectable({

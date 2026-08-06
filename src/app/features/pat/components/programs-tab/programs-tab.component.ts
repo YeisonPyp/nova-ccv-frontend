@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, signal } from "@angular/core";
+import { Component, ViewChild, input, signal } from "@angular/core";
 import { ProgramsTableComponent } from "./programs-table/programs-table.component";
 import { CreatePatProgramComponent } from "./create-program/create-program.component";
 import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
@@ -11,7 +11,10 @@ import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
   templateUrl: "./programs-tab.component.html",
 })
 export class ProgramsTabComponent {
-  year = input.required<number>();
+  adendaId = input.required<number | null>();
+
+  @ViewChild(ProgramsTableComponent) table?: ProgramsTableComponent;
+
   modalOpen = signal(false);
   editing = signal<PatStrategicProgram | null>(null);
 
@@ -32,5 +35,6 @@ export class ProgramsTabComponent {
 
   onSaved() {
     this.closeModal();
+    this.table?.reload();
   }
 }

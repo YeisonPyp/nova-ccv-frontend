@@ -31,6 +31,8 @@ export class MonthlyValuesGridComponent {
   readonly title = input<string>('');
   readonly values = input.required<MonthlyValue[]>();
   readonly disabled = input<boolean>(false);
+  readonly referenceLabel = input<string>('Planeado');
+  readonly referenceValues = input<MonthlyValue[]>([]);
 
   readonly save = output<{ month: number; value: number }>();
 
@@ -38,6 +40,10 @@ export class MonthlyValuesGridComponent {
 
   valueFor(month: number): number | null {
     return this.values().find((v) => v.month === month)?.value ?? null;
+  }
+
+  referenceValueFor(month: number): number | null {
+    return this.referenceValues().find((v) => v.month === month)?.value ?? null;
   }
 
   onBlur(month: number, raw: string): void {

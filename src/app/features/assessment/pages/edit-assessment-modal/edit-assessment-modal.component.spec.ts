@@ -8,6 +8,7 @@ describe("EditAssessmentModalComponent", () => {
   let fixture: ComponentFixture<EditAssessmentModalComponent>;
   let assesment: Assessment = {
     id: 1,
+    type: "SELF",
     finalScoreCompetencies: 0,
     area: {
       id: 1,
@@ -19,6 +20,8 @@ describe("EditAssessmentModalComponent", () => {
         impactFactor: 0,
         score: 0,
         weightedScore: 0,
+        minScore: 0,
+        maxScore: 5,
         competency: {
           id: 1,
           name: "Example Competency",
@@ -30,6 +33,8 @@ describe("EditAssessmentModalComponent", () => {
         impactFactor: 0,
         score: 0,
         weightedScore: 0,
+        minScore: 0,
+        maxScore: 5,
         competency: {
           id: 1,
           name: "Example Competency",
@@ -61,6 +66,7 @@ describe("EditAssessmentModalComponent", () => {
       id: 1,
       name: "Example Period",
       averageScore: 0,
+      isActive: true,
     },
     position: {
       id: 1,

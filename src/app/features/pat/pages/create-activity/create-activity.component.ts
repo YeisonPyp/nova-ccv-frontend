@@ -1,7 +1,6 @@
 import {
   Component,
   computed,
-  effect,
   inject,
   input,
   signal,
@@ -25,12 +24,10 @@ import { SearchSelectContextFactory } from '@/app/shared/components/search-selec
 import { PatTacticalActivityService } from '@/app/core/services/pat/tactical-activity.service';
 import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
 import { PolicyService } from '@/app/core/services/pat/policy.service';
-import { CostCenterService } from '@/app/core/services/cost-center/cost-center.service';
-import { CostCenter } from '@/app/core/models/cost-center/cost-center.models';
-import { PatPolicy, PatTacticalActivity } from '@/app/core/models/pat/pat-models';
+import { PatUnitMeasureService } from '@/app/core/services/pat/pat-unit-measure.service';
+import { PatPolicy, PatTacticalActivity, PatUnitMeasure } from '@/app/core/models/pat/pat-models';
 import { Observable, of } from 'rxjs';
 import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
-import { EmployeeService } from '@/app/core/services/assessment/employee.service';
 
 function matchesYear(
   targetYear: number,
@@ -75,8 +72,7 @@ export class CreatePatActivityComponent {
   private readonly tacticalActivityService = inject(PatTacticalActivityService);
   private readonly programService = inject(PatProgramService);
   private readonly policyService = inject(PolicyService);
-  private readonly costCenterService = inject(CostCenterService);
-  private readonly employeeService = inject(EmployeeService);
+  private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   year = input.required<number>();
 
@@ -101,7 +97,7 @@ export class CreatePatActivityComponent {
 
   programCtx = computed(() =>
     this.programService
-      .getServiceByYear(this.year())
+      .getServiceByAdenda(null)
       .newSearchSelectContext(
         (p) => this.form.patchValue({ programId: p.id }),
         undefined,
@@ -116,29 +112,21 @@ export class CreatePatActivityComponent {
       () => this.form.patchValue({ policyId: null }),
     );
 
-  costCenterCtx: SearchSelectContextFactory<CostCenter> =
-    this.costCenterService.newSearchSelectContext(
-      (cc) => this.form.patchValue({ costCenterId: cc.id }),
-      { isRequired: true, label: 'Centro de costo' },
-      () => this.form.patchValue({ costCenterId: null }),
+  unitMeasureCtx: SearchSelectContextFactory<PatUnitMeasure> =
+    this.unitMeasureService.newSearchSelectContext(
+      (u) => this.form.patchValue({ unitMeasureId: u.id }),
+      { isRequired: false, label: 'Unidad de medida' },
+      () => this.form.patchValue({ unitMeasureId: null }),
     );
-
-  employeeCtx = this.employeeService.newSearchSelectEmployeeContext(
-    (e) => this.form.patchValue({ employeeId: e.id }),
-    { isRequired: true, label: 'Empleado responsable' },
-    () => this.form.patchValue({ employeeId: null }),
-  );
 
   form: FormGroup = this.fb.group({
     code: [''],
     name: ['', Validators.required],
-    employeeId: [null, Validators.required],
     tacticalActivityId: [null, Validators.required],
-    costCenterId: [null, Validators.required],
     policyId: [null],
     programId: [null],
-    measurement: ['', Validators.required],
-    measurementGoal: [null],
+    unitMeasureId: [null],
+    unitMeasureGoal: [null],
     description: [''],
     starts: [
       '',
@@ -175,13 +163,11 @@ export class CreatePatActivityComponent {
     const dto: CreatePatActivity = {
       code: v.code || undefined,
       name: v.name,
-      employeeId: v.employeeId,
       tacticalActivityId: v.tacticalActivityId,
-      costCenterId: v.costCenterId,
       policyId: v.policyId || null,
       programId: v.programId || null,
-      measurement: v.measurement,
-      measurementGoal: v.measurementGoal ?? null,
+      unitMeasureId: v.unitMeasureId || null,
+      unitMeasureGoal: v.unitMeasureGoal ?? null,
       description: v.description || undefined,
       startsAt: v.starts,
       endsAt: v.ends,

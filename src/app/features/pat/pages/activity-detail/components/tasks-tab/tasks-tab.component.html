@@ -1,14 +1,17 @@
 <app-project-section-card
-  title="Indicadores"
-  addLabel="+ Nuevo indicador"
+  title="Tareas / Actividades a Desarrollar"
+  addLabel="+ Nueva tarea"
   (onAdd)="openCreate()"
 >
   <app-dynamic-table
-    [data]="indicators()"
+    [data]="tasks()"
     [columns]="columns"
-    emptyMessage="Sin indicadores registrados."
+    emptyMessage="Sin tareas registradas."
   >
     <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openDetail(item)">
+        Ver detalle
+      </button>
       <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
         Editar
       </button>
@@ -22,10 +25,10 @@
   </app-dynamic-table>
 </app-project-section-card>
 
-<app-indicator-upsert-modal
+<app-task-upsert-modal
   [isOpen]="upsertModalOpen()"
   [activityId]="activityId()"
-  [indicator]="editingIndicator()"
+  [task]="editingTask()"
   (onClose)="closeUpsertModal()"
   (onSaved)="onSaved($event)"
 />

@@ -7,7 +7,7 @@
     >
       <div class="modal-header">
         <h2 class="modal-title">
-          {{ product() ? "Editar producto" : "Nuevo producto" }}
+          {{ task() ? "Editar tarea" : "Nueva tarea" }}
         </h2>
         <button type="button" class="close-btn" (click)="close()">×</button>
       </div>
@@ -23,33 +23,39 @@
 
         <form
           [formGroup]="form"
-          id="product-form"
+          id="task-form"
           (ngSubmit)="submit()"
           class="flex flex-col gap-4"
         >
+          <div class="form-group">
+            <label>Nombre <span class="required">*</span></label>
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('name')"
+            />
+          </div>
+
           <app-context-search-select
-            [ctx]="productCtx"
-            label="Producto"
+            [ctx]="areaCtx"
+            label="Área"
             [required]="true"
           />
 
-          <div class="form-row">
-            <div class="half-width form-group">
-              <label>Cantidad meta <span class="required">*</span></label>
-              <input
-                type="number"
-                formControlName="targetQuantity"
-                class="form-control"
-                min="0"
-              />
-            </div>
-            <div class="half-width">
-              <app-context-search-select
-                [ctx]="unitMeasureCtx"
-                label="Unidad de medida"
-                [required]="false"
-              />
-            </div>
+          <app-context-search-select
+            [ctx]="costCenterCtx"
+            label="Centro de costo"
+            [required]="true"
+          />
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              rows="2"
+            ></textarea>
           </div>
         </form>
       </div>
@@ -60,14 +66,14 @@
         </button>
         <button
           type="submit"
-          form="product-form"
+          form="task-form"
           class="btn btn-primary"
           [disabled]="submitting()"
         >
           @if (submitting()) {
             Guardando...
           } @else {
-            {{ product() ? "Guardar cambios" : "Crear producto" }}
+            {{ task() ? "Guardar cambios" : "Crear tarea" }}
           }
         </button>
       </div>

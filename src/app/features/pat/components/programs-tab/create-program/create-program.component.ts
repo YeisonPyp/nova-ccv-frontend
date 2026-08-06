@@ -13,10 +13,10 @@ import {
   CreatePatProgramDto,
   PatProgramService,
 } from "@/app/core/services/pat/pat-program.service";
-import { PillarService } from "@/app/core/services/pat/pillar.service";
+import { PatUnitMeasureService } from "@/app/core/services/pat/pat-unit-measure.service";
 import {
-  PatPillar,
   PatStrategicProgram,
+  PatUnitMeasure,
 } from "@/app/core/models/pat/pat-models";
 import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
 import { ContextSearchSelectComponent } from "@/app/shared/components/context-search-select/context-search-select.component";
@@ -35,7 +35,7 @@ import { FormFieldErrorDirective } from "@/app/shared/directives/form-field-erro
 })
 export class CreatePatProgramComponent {
   readonly isOpen = input<boolean>(false);
-  readonly year = input.required<number>();
+  readonly adendaId = input.required<number>();
   readonly program = input<PatStrategicProgram | null>(null);
 
   readonly onClose = output<void>();
@@ -43,7 +43,7 @@ export class CreatePatProgramComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatProgramService);
-  private readonly pillarService = inject(PillarService);
+  private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
@@ -60,15 +60,19 @@ export class CreatePatProgramComponent {
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.maxLength(300)]],
+    code: ["", Validators.maxLength(50)],
     description: ["", Validators.maxLength(1000)],
-    pillarId: [null as number | null, Validators.required],
+    startsAt: ["", Validators.required],
+    endsAt: ["", Validators.required],
+    unitMeasureId: [null as number | null, Validators.required],
+    goalValue: [0],
   });
 
-  pillarCtx: SearchSelectContextFactory<PatPillar> =
-    this.pillarService.newSearchSelectContext(
-      (p) => this.form.patchValue({ pillarId: p.id }),
+  unitMeasureCtx: SearchSelectContextFactory<PatUnitMeasure> =
+    this.unitMeasureService.newSearchSelectContext(
+      (u) => this.form.patchValue({ unitMeasureId: u.id }),
       { isRequired: true, maxItems: 1 },
-      () => this.form.patchValue({ pillarId: null }),
+      () => this.form.patchValue({ unitMeasureId: null }),
     );
 
   constructor() {
@@ -79,21 +83,29 @@ export class CreatePatProgramComponent {
       if (p) {
         this.form.reset({
           name: p.name,
+          code: p.code ?? "",
           description: p.description ?? "",
-          pillarId: p.pillar?.id ?? null,
+          startsAt: p.startsAt,
+          endsAt: p.endsAt,
+          unitMeasureId: p.unitMeasure?.id ?? null,
+          goalValue: p.goalValue ?? 0,
         });
-        if (p.pillar) {
-          this.pillarCtx.selectedOptions.set([
-            { id: p.pillar.id, title: p.pillar.name },
+        if (p.unitMeasure) {
+          this.unitMeasureCtx.selectedOptions.set([
+            { id: p.unitMeasure.id, title: p.unitMeasure.name },
           ]);
         }
       } else {
         this.form.reset({
           name: "",
+          code: "",
           description: "",
-          pillarId: null,
+          startsAt: "",
+          endsAt: "",
+          unitMeasureId: null,
+          goalValue: 0,
         });
-        this.pillarCtx.clear();
+        this.unitMeasureCtx.clear();
       }
     });
   }
@@ -113,9 +125,13 @@ export class CreatePatProgramComponent {
     const v = this.form.value;
     const dto: CreatePatProgramDto = {
       name: v.name!,
+      code: v.code || undefined,
       description: v.description ?? undefined,
-      year: this.year(),
-      pillarId: v.pillarId!,
+      adendaId: this.adendaId(),
+      startsAt: v.startsAt!,
+      endsAt: v.endsAt!,
+      unitMeasureId: v.unitMeasureId!,
+      goalValue: v.goalValue ?? undefined,
     };
 
     const p = this.program();

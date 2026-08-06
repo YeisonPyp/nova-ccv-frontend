@@ -3,24 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import {
-  PatActivityIndicator,
-  PatActivityIndicatorExecution,
-  PatActivityIndicatorMonthlyPlan,
-} from '../../models/pat/pat-models';
+import { PatActivityIndicator } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityIndicatorDto {
-  name: string;
-  description?: string;
-  unitMeasure?: string;
-  targetValue?: number | null;
+  managementIndicatorId: number;
+  baseValue?: number | null;
+  goalValue?: number | null;
 }
 
 export interface UpdatePatActivityIndicatorDto {
-  name?: string;
-  description?: string;
-  unitMeasure?: string;
-  targetValue?: number | null;
+  managementIndicatorId?: number;
+  baseValue?: number | null;
+  goalValue?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -59,45 +53,6 @@ export class PatActivityIndicatorService {
   delete(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
       `${this.baseUrl}/indicators/${id}`,
-    );
-  }
-
-  findMonthlyPlan(
-    id: number,
-  ): Observable<ApiResponse<PatActivityIndicatorMonthlyPlan[]>> {
-    return this.http.get<ApiResponse<PatActivityIndicatorMonthlyPlan[]>>(
-      `${this.baseUrl}/indicators/${id}/monthly-plan`,
-    );
-  }
-
-  upsertMonthlyPlan(
-    id: number,
-    month: number,
-    plannedValue: number,
-  ): Observable<ApiResponse<PatActivityIndicatorMonthlyPlan>> {
-    return this.http.put<ApiResponse<PatActivityIndicatorMonthlyPlan>>(
-      `${this.baseUrl}/indicators/${id}/monthly-plan`,
-      { month, plannedValue },
-    );
-  }
-
-  findExecution(
-    id: number,
-  ): Observable<ApiResponse<PatActivityIndicatorExecution[]>> {
-    return this.http.get<ApiResponse<PatActivityIndicatorExecution[]>>(
-      `${this.baseUrl}/indicators/${id}/execution`,
-    );
-  }
-
-  upsertExecution(
-    id: number,
-    month: number,
-    executedValue: number,
-    description?: string,
-  ): Observable<ApiResponse<PatActivityIndicatorExecution>> {
-    return this.http.put<ApiResponse<PatActivityIndicatorExecution>>(
-      `${this.baseUrl}/indicators/${id}/execution`,
-      { month, executedValue, description },
     );
   }
 }

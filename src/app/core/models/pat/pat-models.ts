@@ -1,5 +1,6 @@
 import { Area } from '../assessment/area.model';
 import { Employee } from '../assessment/employee.model';
+import { Position } from '../assessment/position.model';
 import { CostCenter } from '../cost-center/cost-center.models';
 
 export interface PatPillar {
@@ -8,12 +9,44 @@ export interface PatPillar {
   description: string;
 }
 
+export interface PatAdenda {
+  id: number;
+  name: string;
+}
+
+export interface PatUnitMeasure {
+  id: number;
+  name: string;
+}
+
+export interface PatManagementIndicator {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+export interface PatProduct {
+  id: number;
+  name: string;
+  description?: string;
+}
+
 export interface PatStrategicProgram {
   id: number;
   name: string;
-  description: string;
-  year: number;
-  pillar: PatPillar;
+  code?: string;
+  adenda?: PatAdenda;
+  startsAt: string;
+  endsAt: string;
+  unitMeasure?: PatUnitMeasure;
+  goalValue: number;
+  description?: string;
+  /**
+   * @deprecated The backend no longer populates this — programs-tab's
+   * create-program form still targets the old pillar-based shape and needs
+   * a follow-up pass to the new adenda/code/dates/unitMeasure/goal fields.
+   */
+  pillar?: PatPillar;
 }
 
 export interface PatPolicy {
@@ -53,20 +86,19 @@ export interface PatBenefitType {
   name: string;
 }
 
+// ─── Actividad (formulación anual de una actividad táctica) ──────────────
+
 export interface PatActivity {
   id: number;
-  code: string;
+  code?: string;
   name: string;
   year: number;
   description?: string;
-  measurement: string;
-  measurementGoal?: number;
+  unitMeasure?: PatUnitMeasure;
+  unitMeasureGoal?: number;
   program?: PatStrategicProgram;
   policy?: PatPolicy;
   pillar?: PatPillar;
-  area?: Area;
-  employee?: Employee;
-  costCenter?: CostCenter;
   tacticalActivity?: PatTacticalActivity;
   startsAt: string;
   endsAt: string;
@@ -76,7 +108,7 @@ export interface PatActivity {
   approvedBudget?: number;
   executedBudget?: number;
 
-  executions?: PatActivityExecution[];
+  tasks?: PatActivityTask[];
   budgetMatrix?: PatActivityBudgetMatrix[];
 }
 
@@ -101,61 +133,85 @@ export interface BudgetAmount {
   amount: number;
 }
 
-export interface PatActivityExecution {
+// ─── Actividad a desarrollar ("tarea") ────────────────────────────────────
+
+export interface PatActivityTask {
   id: number;
   activityId: number;
-  executedBudget: number;
-  month: number;
+  activityName?: string;
+  activityYear?: number;
+  name: string;
+  area: Area;
+  costCenter: CostCenter;
   description?: string;
-  budgetExecutions?: ActivityBudgetExecution[];
   createdAt: string;
 }
 
-export interface ActivityBudgetExecution {
+export interface PatActivityTaskBudgetPlan {
   id: number;
-  executionId: number;
-  amount: number;
-  budgetCategory: BudgetCategory;
+  taskId: number;
+  presupuestalCategory: BudgetCategory;
+  month: number;
+  plannedAmount: number;
+  position: Position;
+  employee?: Employee;
+  createdAt: string;
 }
 
-// ─── Indicadores por actividad (con planeación/ejecución mensual) ─────────
+export interface PatActivityTaskBudgetExecution {
+  id: number;
+  taskId: number;
+  presupuestalCategory: BudgetCategory;
+  month: number;
+  amount: number;
+  position: Position;
+  employee?: Employee;
+  description?: string;
+  createdAt: string;
+}
+
+export interface PatActivityTaskIndicatorMonthlyPlan {
+  id: number;
+  taskId: number;
+  activityIndicatorId: number;
+  month: number;
+  plannedValue: number;
+  position: Position;
+  employee?: Employee;
+  createdAt: string;
+}
+
+export interface PatActivityTaskIndicatorExecution {
+  id: number;
+  taskId: number;
+  activityIndicatorId: number;
+  month: number;
+  executedValue: number;
+  position: Position;
+  employee?: Employee;
+  description?: string;
+  createdAt: string;
+}
+
+// ─── Indicadores de gestión por actividad (catálogo + línea base/meta) ────
 
 export interface PatActivityIndicator {
   id: number;
   activityId: number;
-  name: string;
-  description?: string;
-  unitMeasure?: string;
-  targetValue: number;
+  managementIndicator: PatManagementIndicator;
+  baseValue: number;
+  goalValue: number;
   createdAt: string;
 }
 
-export interface PatActivityIndicatorMonthlyPlan {
-  id: number;
-  indicatorId: number;
-  month: number;
-  plannedValue: number;
-}
-
-export interface PatActivityIndicatorExecution {
-  id: number;
-  indicatorId: number;
-  month: number;
-  executedValue: number;
-  description?: string;
-  createdAt: string;
-}
-
-// ─── Productos por actividad (con planeación/ejecución mensual) ──────────
+// ─── Productos por actividad (catálogo + planeación/ejecución mensual) ───
 
 export interface PatActivityProduct {
   id: number;
   activityId: number;
-  code: string;
-  name: string;
-  description?: string;
+  product: PatProduct;
   targetQuantity: number;
-  unitMeasure: string;
+  unitMeasure?: PatUnitMeasure;
   createdAt: string;
 }
 
@@ -201,4 +257,3 @@ export interface PatActivityBenefitExecution {
   description?: string;
   createdAt: string;
 }
-

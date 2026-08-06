@@ -1,4 +1,4 @@
-<app-pagination-table [service]="service" [tableColumns]="columns">
+<app-pagination-table [service]="service()" [tableColumns]="columns">
   <ng-template #actions let-item>
     <button
       type="button"

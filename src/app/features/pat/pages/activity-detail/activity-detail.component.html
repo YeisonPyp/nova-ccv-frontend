@@ -33,28 +33,6 @@
         <p
           class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
         >
-          Empleado
-        </p>
-        <p class="text-sm font-medium text-gray-700">
-          {{ a.employee?.name }} {{ a.employee?.lastName }}
-        </p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <p
-          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
-        >
-          Centro de Costo
-        </p>
-        <p class="text-sm font-medium text-gray-700">
-          {{ a.costCenter?.name ?? "—" }}
-        </p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <p
-          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
-        >
           Actividad táctica
         </p>
         <p class="text-sm font-medium text-gray-700">
@@ -66,11 +44,22 @@
         <p
           class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
         >
+          Programa Estratégico
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ a.program?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
           Unidad de medida
         </p>
         <p class="text-sm font-medium text-gray-700">
-          {{ a.measurement }} @if (a.measurementGoal != null) {
-            (meta: {{ a.measurementGoal }})
+          {{ a.unitMeasure?.name ?? "—" }} @if (a.unitMeasureGoal != null) {
+            (meta: {{ a.unitMeasureGoal }})
           }
         </p>
       </div>

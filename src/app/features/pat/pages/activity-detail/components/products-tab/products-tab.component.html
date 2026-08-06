@@ -10,22 +10,21 @@
   >
     <ng-template #customCell let-item let-col="column">
       @switch (col.key) {
-        @case ("code") {
-          <span class="text-xs font-mono text-gray-400">{{ item.code }}</span>
-        }
-        @case ("name") {
-          <div class="font-medium text-sm text-gray-800">{{ item.name }}</div>
-          @if (item.description) {
+        @case ("product.name") {
+          <div class="font-medium text-sm text-gray-800">
+            {{ item.product?.name }}
+          </div>
+          @if (item.product?.description) {
             <div class="text-xs text-gray-400 mt-0.5">
-              {{ item.description }}
+              {{ item.product.description }}
             </div>
           }
         }
         @case ("targetQuantity") {
           {{ item.targetQuantity }}
         }
-        @case ("unitMeasure") {
-          {{ item.unitMeasure }}
+        @case ("unitMeasure.name") {
+          {{ item.unitMeasure?.name ?? "—" }}
         }
       }
     </ng-template>

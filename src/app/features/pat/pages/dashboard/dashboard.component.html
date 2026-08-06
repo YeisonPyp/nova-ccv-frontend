@@ -24,10 +24,7 @@
     </div>
   </div>
 
-  <app-area-budget-report
-    [year]="year() || null"
-    (selectedAreaIds)="onAreaSelected($event)"
-  />
+  <app-area-budget-report [year]="year() || null" />
   <!-- Tabs -->
   <div
     class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"

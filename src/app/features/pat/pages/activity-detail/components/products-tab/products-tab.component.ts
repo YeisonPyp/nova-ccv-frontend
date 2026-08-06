@@ -33,10 +33,9 @@ export class PatProductsTabComponent {
   editingProduct = signal<PatActivityProduct | null>(null);
 
   readonly columns: TableColumn[] = [
-    { key: 'code', label: 'Código' },
-    { key: 'name', label: 'Nombre' },
+    { key: 'product.name', label: 'Producto' },
     { key: 'targetQuantity', label: 'Meta' },
-    { key: 'unitMeasure', label: 'Unidad' },
+    { key: 'unitMeasure.name', label: 'Unidad' },
   ];
 
   constructor() {

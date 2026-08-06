@@ -7,7 +7,6 @@ import {
 import { PatActivityIndicatorService } from '@/app/core/services/pat/pat-activity-indicator.service';
 import { PatActivityIndicator } from '@/app/core/models/pat/pat-models';
 import { IndicatorUpsertModalComponent } from './components/indicator-upsert-modal.component';
-import { IndicatorMonthlyModalComponent } from './components/indicator-monthly-modal.component';
 import { ProjectSectionCardComponent } from '@/app/features/projects/pages/project-detail/components/project-section-card/project-section-card.component';
 
 @Component({
@@ -17,7 +16,6 @@ import { ProjectSectionCardComponent } from '@/app/features/projects/pages/proje
     CommonModule,
     DynamicTableComponent,
     IndicatorUpsertModalComponent,
-    IndicatorMonthlyModalComponent,
     ProjectSectionCardComponent,
   ],
   templateUrl: './indicators-tab.component.html',
@@ -29,13 +27,12 @@ export class PatIndicatorsTabComponent {
   indicators = signal<PatActivityIndicator[]>([]);
 
   upsertModalOpen = signal(false);
-  monthlyModalOpen = signal(false);
   editingIndicator = signal<PatActivityIndicator | null>(null);
 
   readonly columns: TableColumn[] = [
-    { key: 'name', label: 'Nombre' },
-    { key: 'unitMeasure', label: 'Unidad' },
-    { key: 'targetValue', label: 'Meta' },
+    { key: 'managementIndicator.name', label: 'Indicador' },
+    { key: 'baseValue', label: 'Línea base' },
+    { key: 'goalValue', label: 'Meta' },
   ];
 
   constructor() {
@@ -56,18 +53,8 @@ export class PatIndicatorsTabComponent {
     this.upsertModalOpen.set(true);
   }
 
-  openMonthly(indicator: PatActivityIndicator): void {
-    this.editingIndicator.set(indicator);
-    this.monthlyModalOpen.set(true);
-  }
-
   closeUpsertModal(): void {
     this.upsertModalOpen.set(false);
-    this.editingIndicator.set(null);
-  }
-
-  closeMonthlyModal(): void {
-    this.monthlyModalOpen.set(false);
     this.editingIndicator.set(null);
   }
 

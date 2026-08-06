@@ -22,7 +22,6 @@ export interface ActivityIndicatorMonthly {
   indicatorId: number;
   activityId: number;
   indicatorName: string;
-  unitMeasure: string | null;
   targetValue: number;
   month: number;
   plannedValue: number;
@@ -32,9 +31,8 @@ export interface ActivityIndicatorMonthly {
 export interface ActivityProductMonthly {
   productId: number;
   activityId: number;
-  code: string;
   productName: string;
-  unitMeasure: string;
+  unitMeasure: string | null;
   targetQuantity: number;
   month: number;
   plannedQuantity: number;

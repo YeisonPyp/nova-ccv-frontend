@@ -19,9 +19,13 @@ import { map } from "rxjs";
 
 export interface CreatePatProgramDto {
   name: string;
+  code?: string;
+  adendaId: number;
+  startsAt: string;
+  endsAt: string;
+  unitMeasureId: number;
+  goalValue?: number;
   description?: string;
-  year?: number;
-  pillarId: number;
 }
 
 @Injectable({ providedIn: "root" })
@@ -33,24 +37,24 @@ export class PatProgramService extends FilterServiceSpecImpl<
     super("pat/v2/strategic-programs");
   }
 
-  getServiceByYear(year: number) {
-    return new PatProgramByYearService(this, year);
+  getServiceByAdenda(adendaId: number | null | undefined) {
+    return new PatProgramByAdendaService(this, adendaId);
   }
 }
 
-export class PatProgramByYearService implements FilterServiceSpec {
+export class PatProgramByAdendaService implements FilterServiceSpec {
   constructor(
     private service: PatProgramService,
-    private year?: number,
+    private adendaId?: number | null,
   ) {}
 
   findAll(
     pageable: PageableQueryWithRsql,
   ): Observable<ApiResponse<APIPage<PatStrategicProgram>>> {
-    if (this.year) {
+    if (this.adendaId) {
       pageable.rsqlQuery = pageable.rsqlQuery
-        ? `${pageable.rsqlQuery} and year==${this.year}`
-        : `year==${this.year}`;
+        ? `${pageable.rsqlQuery} and adenda.id==${this.adendaId}`
+        : `adenda.id==${this.adendaId}`;
     }
     return this.service.findAll(pageable);
   }
@@ -62,12 +66,15 @@ export class PatProgramByYearService implements FilterServiceSpec {
   ) {
     return new SearchSelectContextFactory<PatStrategicProgram>(
       (term) => {
-        const b = builder.or(builder.eq("name", `*${term}*`));
-        return this.findAll({ rsqlQuery: emit(b) }).pipe(
-          map((res) => res?.data?.content ?? []),
-        );
+        const nameFilter = builder.eq("name", `*${term}*`);
+        const b = this.adendaId
+          ? builder.and(nameFilter, builder.eq("adenda.id", `${this.adendaId}`))
+          : nameFilter;
+        return this.service
+          .findAll({ rsqlQuery: emit(b) })
+          .pipe(map((res) => res?.data?.content ?? []));
       },
-      (e) => ({ id: e.id, title: `${e.name ?? ""}` }),
+      (e) => ({ id: e.id, title: e.name }),
       onSelectCallback,
       op,
       onRemoveCallback,

@@ -1,10 +1,15 @@
 import { PaginationTableComponent } from "@/app/shared/components/pagination-table/pagination-table.component";
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, output } from "@angular/core";
 import {
-  PatProgramByYearService,
-  PatProgramService,
-} from "@/app/core/services/pat/pat-program.service";
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  ViewChild,
+} from "@angular/core";
+import { PatProgramService } from "@/app/core/services/pat/pat-program.service";
 import { TableColumn } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
 
@@ -16,15 +21,30 @@ import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
 })
 export class ProgramsTableComponent {
   #service = inject(PatProgramService);
-  year = input<number | undefined>();
-  service = new PatProgramByYearService(this.#service, this.year());
+  adendaId = input<number | null>(null);
+  service = computed(() => this.#service.getServiceByAdenda(this.adendaId()));
+
+  @ViewChild(PaginationTableComponent) table?: PaginationTableComponent<PatStrategicProgram>;
 
   onEdit = output<PatStrategicProgram>();
 
   columns: TableColumn[] = [
     { key: "name", label: "Nombre" },
-    { key: "description", label: "Descripción" },
-    { key: "year", label: "Año" },
-    { key: "pillar.name", label: "Pilar" },
+    { key: "code", label: "Código" },
+    { key: "startsAt", label: "Inicio" },
+    { key: "endsAt", label: "Fin" },
+    { key: "unitMeasure.name", label: "Unidad de medida" },
+    { key: "goalValue", label: "Meta" },
   ];
+
+  constructor() {
+    effect(() => {
+      this.service();
+      this.table?.load(1);
+    });
+  }
+
+  reload(): void {
+    this.table?.load(this.table.currentPage());
+  }
 }

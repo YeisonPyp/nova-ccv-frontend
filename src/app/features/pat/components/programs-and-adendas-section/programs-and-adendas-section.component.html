@@ -1,0 +1,9 @@
+<div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+    <app-adenda-list (onSelect)="onSelectAdenda($event)" />
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+    <app-programs-tab [adendaId]="selectedAdenda()?.id ?? null" />
+  </div>
+</div>

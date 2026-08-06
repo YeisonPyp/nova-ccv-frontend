@@ -10,19 +10,15 @@ import {
 } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityProductDto {
-  code: string;
-  name: string;
-  description?: string;
+  productId: number;
   targetQuantity: number;
-  unitMeasure: string;
+  unitMeasureId?: number | null;
 }
 
 export interface UpdatePatActivityProductDto {
-  code?: string;
-  name?: string;
-  description?: string;
+  productId?: number;
   targetQuantity?: number;
-  unitMeasure?: string;
+  unitMeasureId?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })

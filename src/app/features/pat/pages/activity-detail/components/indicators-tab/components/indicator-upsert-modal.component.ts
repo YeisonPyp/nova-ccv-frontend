@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PatActivityIndicatorService } from '@/app/core/services/pat/pat-activity-indicator.service';
 import { PatActivityIndicator } from '@/app/core/models/pat/pat-models';
+import { PatManagementIndicatorService } from '@/app/core/services/pat/pat-management-indicator.service';
+import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
 
 @Component({
   selector: 'app-indicator-upsert-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ContextSearchSelectComponent],
   templateUrl: './indicator-upsert-modal.component.html',
 })
 export class IndicatorUpsertModalComponent {
@@ -20,15 +22,23 @@ export class IndicatorUpsertModalComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatActivityIndicatorService);
+  private readonly managementIndicatorService = inject(
+    PatManagementIndicatorService,
+  );
 
   submitting = signal(false);
   error = signal<string | null>(null);
 
+  managementIndicatorCtx = this.managementIndicatorService.newSearchSelectContext(
+    (mi) => this.form.patchValue({ managementIndicatorId: mi.id }),
+    { isRequired: true, label: 'Indicador de gestión' },
+    () => this.form.patchValue({ managementIndicatorId: null }),
+  );
+
   form: FormGroup = this.fb.group({
-    name: ['', Validators.required],
-    description: [''],
-    unitMeasure: [''],
-    targetValue: [null],
+    managementIndicatorId: [null, Validators.required],
+    baseValue: [null],
+    goalValue: [null],
   });
 
   constructor() {
@@ -37,11 +47,13 @@ export class IndicatorUpsertModalComponent {
         this.error.set(null);
         const i = this.indicator();
         this.form.reset({
-          name: i?.name ?? '',
-          description: i?.description ?? '',
-          unitMeasure: i?.unitMeasure ?? '',
-          targetValue: i?.targetValue ?? null,
+          managementIndicatorId: i?.managementIndicator?.id ?? null,
+          baseValue: i?.baseValue ?? null,
+          goalValue: i?.goalValue ?? null,
         });
+        if (i?.managementIndicator) {
+          this.managementIndicatorCtx.selectResults([i.managementIndicator]);
+        }
       }
     });
   }

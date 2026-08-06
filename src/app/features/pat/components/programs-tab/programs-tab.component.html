@@ -3,25 +3,34 @@
     <h3
       class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
     >
-      Programas {{ year() }}
+      Programas Estratégicos
     </h3>
 
     <button
       type="button"
-      class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+      class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
+      [disabled]="adendaId() == null"
       (click)="openCreate()"
     >
       + Nuevo programa
     </button>
   </div>
 
-  <app-programs-table [year]="year()" (onEdit)="openEdit($event)" />
+  @if (adendaId() == null) {
+    <p class="text-sm text-gray-400 text-center py-8">
+      Selecciona una adenda para ver sus programas estratégicos.
+    </p>
+  } @else {
+    <app-programs-table [adendaId]="adendaId()" (onEdit)="openEdit($event)" />
+  }
 </div>
 
-<app-create-pat-program
-  [isOpen]="modalOpen()"
-  [year]="year()"
-  [program]="editing()"
-  (onClose)="closeModal()"
-  (onSaved)="onSaved()"
-/>
+@if (adendaId() != null) {
+  <app-create-pat-program
+    [isOpen]="modalOpen()"
+    [adendaId]="adendaId()!"
+    [program]="editing()"
+    (onClose)="closeModal()"
+    (onSaved)="onSaved()"
+  />
+}

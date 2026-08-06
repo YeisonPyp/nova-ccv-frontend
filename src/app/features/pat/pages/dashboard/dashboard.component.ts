@@ -2,20 +2,20 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { CommonModule, NgComponentOutlet } from '@angular/common';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { AuthService } from '../../../../core/services/auth.service';
-import { ProgramsTabComponent } from '../../components/programs-tab/programs-tab.component';
-import { ActivitiesTabComponent } from '../../components/activities-tab/activities-tab.component';
+import { ProgramsAndAdendasSectionComponent } from '../../components/programs-and-adendas-section/programs-and-adendas-section.component';
+import { TacticalActivitiesTabComponent } from '../../components/tactical-activities-tab/tactical-activities-tab.component';
 import { AreaBudgetReportComponent } from '../activity-report/components/area-budget-report/area-budget-report.component';
 import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
 
-type TabKey = 'programs' | 'activities';
+type TabKey = 'programs' | 'tacticalActivities';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    ProgramsTabComponent,
-    ActivitiesTabComponent,
+    ProgramsAndAdendasSectionComponent,
+    TacticalActivitiesTabComponent,
     AreaBudgetReportComponent,
     NgComponentOutlet,
   ],
@@ -25,30 +25,27 @@ type TabKey = 'programs' | 'activities';
 export class DashboardComponent {
   readonly auth = inject(AuthService);
   private readonly activityService = inject(PatActivityService);
-  readonly activeTab = signal<TabKey>('activities');
+  readonly activeTab = signal<TabKey>('tacticalActivities');
 
   year = input.required<number>();
-
-  selectedAreaIds = signal<number[]>([]);
 
   uploading = signal(false);
   uploadError = signal<string | null>(null);
 
   readonly tabs: { key: TabKey; label: string }[] = [
-    { key: 'activities', label: 'Actividades' },
-    { key: 'programs', label: 'Programas' },
+    { key: 'tacticalActivities', label: 'Actividades Tácticas' },
+    { key: 'programs', label: 'Programas Estratégicos' },
   ];
 
   readonly tabsComponent = {
-    programs: ProgramsTabComponent,
-    activities: ActivitiesTabComponent,
+    programs: ProgramsAndAdendasSectionComponent,
+    tacticalActivities: TacticalActivitiesTabComponent,
   };
 
   readonly tabsInputs = computed<Record<TabKey, any>>(() => {
-    const base = { year: this.year() };
     return {
-      programs: base,
-      activities: { ...base, areaIds: this.selectedAreaIds() },
+      programs: {},
+      tacticalActivities: { year: this.year() },
     };
   });
 
@@ -58,11 +55,6 @@ export class DashboardComponent {
 
   setTab(t: TabKey) {
     this.activeTab.set(t);
-  }
-
-  onAreaSelected(ids: number[]): void {
-    this.selectedAreaIds.set(ids);
-    this.activeTab.set('activities');
   }
 
   onSeedFileSelected(event: Event): void {

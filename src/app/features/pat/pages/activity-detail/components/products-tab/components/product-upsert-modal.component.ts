@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PatActivityProductService } from '@/app/core/services/pat/pat-activity-product.service';
 import { PatActivityProduct } from '@/app/core/models/pat/pat-models';
+import { PatProductService } from '@/app/core/services/pat/pat-product.service';
+import { PatUnitMeasureService } from '@/app/core/services/pat/pat-unit-measure.service';
+import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
 
 @Component({
   selector: 'app-pat-product-upsert-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ContextSearchSelectComponent],
   templateUrl: './product-upsert-modal.component.html',
 })
 export class PatProductUpsertModalComponent {
@@ -20,16 +23,28 @@ export class PatProductUpsertModalComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatActivityProductService);
+  private readonly productCatalogService = inject(PatProductService);
+  private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
 
+  productCtx = this.productCatalogService.newSearchSelectContext(
+    (p) => this.form.patchValue({ productId: p.id }),
+    { isRequired: true, label: 'Producto' },
+    () => this.form.patchValue({ productId: null }),
+  );
+
+  unitMeasureCtx = this.unitMeasureService.newSearchSelectContext(
+    (u) => this.form.patchValue({ unitMeasureId: u.id }),
+    { isRequired: false, label: 'Unidad de medida' },
+    () => this.form.patchValue({ unitMeasureId: null }),
+  );
+
   form: FormGroup = this.fb.group({
-    code: ['', Validators.required],
-    name: ['', Validators.required],
-    description: [''],
+    productId: [null, Validators.required],
     targetQuantity: [0, [Validators.required, Validators.min(0)]],
-    unitMeasure: ['', Validators.required],
+    unitMeasureId: [null],
   });
 
   constructor() {
@@ -38,12 +53,12 @@ export class PatProductUpsertModalComponent {
         this.error.set(null);
         const p = this.product();
         this.form.reset({
-          code: p?.code ?? '',
-          name: p?.name ?? '',
-          description: p?.description ?? '',
+          productId: p?.product?.id ?? null,
           targetQuantity: p?.targetQuantity ?? 0,
-          unitMeasure: p?.unitMeasure ?? '',
+          unitMeasureId: p?.unitMeasure?.id ?? null,
         });
+        if (p?.product) this.productCtx.selectResults([p.product]);
+        if (p?.unitMeasure) this.unitMeasureCtx.selectResults([p.unitMeasure]);
       }
     });
   }

@@ -17,6 +17,11 @@
         [value]="valueFor(i + 1)"
         (blur)="onBlur(i + 1, $any($event.target).value)"
       />
+      @if (referenceValues().length) {
+        <span class="text-[0.65rem] text-gray-400">
+          {{ referenceLabel() }}: {{ referenceValueFor(i + 1) ?? 0 }}
+        </span>
+      }
     </div>
   }
 </div>

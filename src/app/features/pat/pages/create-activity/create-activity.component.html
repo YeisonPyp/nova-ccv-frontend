@@ -61,18 +61,6 @@
         />
 
         <app-context-search-select
-          [ctx]="employeeCtx"
-          label="Empleado responsable"
-          [required]="true"
-        />
-
-        <app-context-search-select
-          [ctx]="costCenterCtx"
-          label="Centro de costo"
-          [required]="true"
-        />
-
-        <app-context-search-select
           [ctx]="programCtx()"
           label="Programa estratégico"
           [required]="false"
@@ -94,22 +82,17 @@
         Medición
       </h5>
       <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-        <div class="form-group">
-          <label>Unidad de medida <span class="required">*</span></label>
-          <input
-            type="text"
-            formControlName="measurement"
-            class="form-control"
-            [class.is-invalid]="isFieldInvalid('measurement')"
-            placeholder="Ej. Documentos publicados"
-          />
-        </div>
+        <app-context-search-select
+          [ctx]="unitMeasureCtx"
+          label="Unidad de medida"
+          [required]="false"
+        />
 
         <div class="form-group">
           <label>Meta</label>
           <input
             type="number"
-            formControlName="measurementGoal"
+            formControlName="unitMeasureGoal"
             class="form-control"
             step="0.01"
           />

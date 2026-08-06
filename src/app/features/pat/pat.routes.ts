@@ -37,24 +37,6 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
       },
       {
-        path: "programs",
-        loadComponent: () =>
-          import("./pages/programs/programs.component").then(
-            (m) => m.ProgramsComponent,
-          ),
-        title: "PAT — Programas",
-        canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
-      },
-      {
-        path: "programs/:id",
-        loadComponent: () =>
-          import("./pages/program-detail/program-detail.component").then(
-            (m) => m.ProgramDetailComponent,
-          ),
-        title: "PAT — Detalle de Programa",
-        canActivate: [hasPermissionGuard(["PAT_PROGRAMS_READ"])],
-      },
-      {
         path: "activities/create",
         loadComponent: () =>
           import("./pages/create-activity/create-activity.component").then(
@@ -73,12 +55,13 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
       {
-        path: "reports",
+        path: "tasks/:id",
         loadComponent: () =>
-          import("./pages/reports/reports.component").then(
-            (m) => m.ReportsComponent,
+          import("./pages/task-detail/task-detail.component").then(
+            (m) => m.PatTaskDetailComponent,
           ),
-        title: "PAT — Reportes",
+        title: "PAT — Detalle de Tarea",
+        canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
     ],

@@ -7,16 +7,10 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
 @Component({
   selector: "app-control-entity-list",
   standalone: true,
-  imports: [
-    CommonModule,
-    DynamicTableComponent,
-    PaginationComponent,
-    ControlEntityModalComponent,
-  ],
+  imports: [CommonModule, DynamicTableComponent, ControlEntityModalComponent],
   templateUrl: "./control-entity-list.component.html",
   styleUrls: ["./control-entity-list.component.scss"],
 })
@@ -24,9 +18,6 @@ export class ControlEntityListComponent implements OnInit {
   private readonly controlEntityService = inject(ControlEntityService);
 
   entities = signal<ControlEntity[]>([]);
-  currentPage = signal<number>(0);
-  totalPages = signal<number>(0);
-  pageSize = 10;
 
   loading = signal(false);
   error = signal<String | null>(null);
@@ -43,23 +34,20 @@ export class ControlEntityListComponent implements OnInit {
     this.loadEntities();
   }
 
-  loadEntities(page: number = 1): void {
-    this.controlEntityService
-      .findAll({ page: page - 1, size: this.pageSize })
-      .subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.entities.set(response.data.content);
-            this.currentPage.set(response.data.pageable.pageNumber);
-            this.totalPages.set(response.data.totalPages);
-          }
-        },
-        error: (err) => console.error("Error loading control entities:", err),
-      });
-  }
-
-  onPageChange(page: number): void {
-    this.loadEntities(page);
+  loadEntities(): void {
+    this.loading.set(true);
+    this.controlEntityService.findAll().subscribe({
+      next: (response) => {
+        this.loading.set(false);
+        if (response.success && response.data) {
+          this.entities.set(response.data);
+        }
+      },
+      error: (err) => {
+        this.loading.set(false);
+        console.error("Error loading control entities:", err);
+      },
+    });
   }
 
   openModal(entity?: ControlEntity): void {
@@ -71,7 +59,7 @@ export class ControlEntityListComponent implements OnInit {
     this.isModalOpen.set(false);
     this.selectedEntity.set(null);
     if (shouldReload) {
-      this.loadEntities(this.currentPage());
+      this.loadEntities();
     }
   }
 
@@ -80,7 +68,7 @@ export class ControlEntityListComponent implements OnInit {
       this.controlEntityService.delete(entity.id).subscribe({
         next: (res) => {
           if (res.success) {
-            this.loadEntities(this.currentPage());
+            this.loadEntities();
           }
         },
         error: (err) => console.error("Error deleting entity:", err),
