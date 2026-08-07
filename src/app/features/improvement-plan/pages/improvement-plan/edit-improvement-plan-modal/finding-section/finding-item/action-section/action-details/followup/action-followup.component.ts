@@ -1,9 +1,9 @@
 import { EvidenceDto } from '@/app/core/models/improvement-plan/evidence.model';
-import { ImprovementActionFollowUp } from '@/app/core/models/improvement-plan/improvement-action.model';
 import {
-  ImprovementActionService,
-  improvementActionStatus,
-} from '@/app/core/services/improvement-plan/improvement-action.service';
+  actionFollowUpStatus,
+  ImprovementActionFollowUp,
+} from '@/app/core/models/improvement-plan/improvement-action.model';
+import { ImprovementActionService } from '@/app/core/services/improvement-plan/improvement-action.service';
 import { EvidenceItemComponent } from '@/app/features/improvement-plan/pages/improvement-plan/components/evidence-item/evidence-item.component';
 import {
   Option,
@@ -17,11 +17,16 @@ import {
   inject,
   input,
   OnInit,
-  output,
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+
+const STATUS_BADGE_CLASSES: Record<string, string> = {
+  PENDING: 'bg-amber-50 text-amber-700 border-amber-200',
+  COMPLETED: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  OVERDUE: 'bg-red-50 text-red-700 border-red-200',
+};
 
 @Component({
   selector: 'app-action-followup',
@@ -56,17 +61,33 @@ export class ActionFollowUpComponent implements OnInit {
     this.permissionsSet().has('UPLOAD_EVIDENCE'),
   );
 
+  statusLabel = computed(
+    () =>
+      actionFollowUpStatus[this.followup().status] ?? this.followup().status,
+  );
+
+  statusBadgeClass = computed(
+    () =>
+      STATUS_BADGE_CLASSES[this.followup().status] ??
+      'bg-gray-100 text-tertiary border-gray-200',
+  );
+
   constructor() {
     effect(() => {
       const f = this.followup();
       this.evidences.set(f.evidences ?? []);
-      this.form.patchValue({ observations: f.observations, status: f.status });
-      this.form.disable();
+      this.form.patchValue({
+        observations: f.observations,
+        status: f.status,
+        scheduledDate: f.scheduledAt?.slice(0, 10),
+      });
     });
 
     effect(() => {
       if (this.canEdit()) {
         this.form.enable();
+      } else {
+        this.form.disable();
       }
     });
   }
@@ -101,7 +122,7 @@ export class ActionFollowUpComponent implements OnInit {
   }
 
   get statusOptions(): Option[] {
-    return Object.entries(improvementActionStatus).map(([key, value]) => ({
+    return Object.entries(actionFollowUpStatus).map(([key, value]) => ({
       value: key,
       label: value,
     }));

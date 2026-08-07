@@ -35,6 +35,7 @@ import { FormsModule } from '@angular/forms';
         (fileSelected)="onFileSelected($event)"
         (deleteRequested)="onDeleteRequested()"
       />
+      <label class="form-label">Descripción:</label>
       <input class="form-control" type="text" [(ngModel)]="description" />
     </div>
   `,
