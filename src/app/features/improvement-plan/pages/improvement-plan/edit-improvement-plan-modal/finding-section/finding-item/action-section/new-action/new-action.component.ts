@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EmployeeService } from '@/app/core/services/assessment/employee.service';
+import { PositionService } from '@/app/core/services/assessment/position.service';
 import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
 import { ImprovementActionService } from '@/app/core/services/improvement-plan/improvement-action.service';
 import { ImprovementActionDto } from '@/app/core/models/improvement-plan/improvement-action.model';
@@ -29,7 +29,7 @@ import {
   styleUrl: './new-action.component.scss',
 })
 export class NewActionComponent {
-  employeeService = inject(EmployeeService);
+  positionService = inject(PositionService);
   service = inject(ImprovementActionService);
   private readonly fb = inject(FormBuilder);
 
@@ -44,22 +44,16 @@ export class NewActionComponent {
     indicator: ['', Validators.required],
     startDate: ['', Validators.required],
     closeDate: ['', Validators.required],
-    employeeId: [0],
   });
 
   selectedPhases = new Set<PdcaPhase>();
 
-  searchSelectEmployeeContext =
-    this.employeeService.newSearchSelectEmployeeContext(
-      (e) => {
-        this.form.patchValue({ employeeId: e.id });
-      },
-      {
-        maxItems: 1,
-        placeholder: 'Responsable...',
-        isRequired: false,
-      },
-    );
+  positionsCtx = this.positionService.newSearchSelectContext(undefined, {
+    maxItems: 0,
+    placeholder: 'Cargos responsables...',
+    label: 'Cargos responsables',
+    isRequired: false,
+  });
 
   get pdcaPhases(): PdcaPhase[] {
     return Object.keys(pdcaPhaseLabels) as PdcaPhase[];
@@ -97,7 +91,6 @@ export class NewActionComponent {
       indicator,
       startDate,
       closeDate,
-      employeeId,
     } = this.form.value;
 
     this.service
@@ -110,7 +103,9 @@ export class NewActionComponent {
         indicator: indicator!,
         startDate: startDate!,
         closeDate: closeDate!,
-        employeeId: employeeId || undefined,
+        positionIds: this.positionsCtx
+          .selectedOptions()
+          .map((o) => o.id as number),
       })
       .subscribe((r) => {
         if (r.success) {
@@ -122,10 +117,9 @@ export class NewActionComponent {
             indicator: '',
             startDate: '',
             closeDate: '',
-            employeeId: 0,
           });
           this.selectedPhases.clear();
-          this.searchSelectEmployeeContext.clear();
+          this.positionsCtx.clear();
         }
       });
   }

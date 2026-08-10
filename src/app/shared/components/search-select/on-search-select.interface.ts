@@ -13,6 +13,7 @@ export interface SearchSelectContext<T extends SearchOptionWithId> {
   selectedOptions: Signal<SearchSelectOption[]>;
   options: Signal<SearchSelectOption[]>;
   results: Signal<Array<T>>;
+  op?: SearchSelectContextFactoryOptions;
   search(term: string): void;
   select(item: SearchSelectOption): void;
   remove(item: SearchSelectOption): void;

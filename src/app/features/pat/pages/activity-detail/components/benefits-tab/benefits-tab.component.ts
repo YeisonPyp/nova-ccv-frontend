@@ -7,7 +7,6 @@ import {
 import { PatActivityBenefitService } from '@/app/core/services/pat/pat-activity-benefit.service';
 import { PatActivityBenefit } from '@/app/core/models/pat/pat-models';
 import { PatBenefitUpsertModalComponent } from './components/benefit-upsert-modal.component';
-import { PatBenefitMonthlyModalComponent } from './components/benefit-monthly-modal.component';
 import { ProjectSectionCardComponent } from '@/app/features/projects/pages/project-detail/components/project-section-card/project-section-card.component';
 
 @Component({
@@ -17,7 +16,6 @@ import { ProjectSectionCardComponent } from '@/app/features/projects/pages/proje
     CommonModule,
     DynamicTableComponent,
     PatBenefitUpsertModalComponent,
-    PatBenefitMonthlyModalComponent,
     ProjectSectionCardComponent,
   ],
   templateUrl: './benefits-tab.component.html',
@@ -29,7 +27,6 @@ export class PatBenefitsTabComponent {
   benefits = signal<PatActivityBenefit[]>([]);
 
   upsertModalOpen = signal(false);
-  monthlyModalOpen = signal(false);
   editingBenefit = signal<PatActivityBenefit | null>(null);
 
   readonly columns: TableColumn[] = [
@@ -55,18 +52,8 @@ export class PatBenefitsTabComponent {
     this.upsertModalOpen.set(true);
   }
 
-  openMonthly(benefit: PatActivityBenefit): void {
-    this.editingBenefit.set(benefit);
-    this.monthlyModalOpen.set(true);
-  }
-
   closeUpsertModal(): void {
     this.upsertModalOpen.set(false);
-    this.editingBenefit.set(null);
-  }
-
-  closeMonthlyModal(): void {
-    this.monthlyModalOpen.set(false);
     this.editingBenefit.set(null);
   }
 

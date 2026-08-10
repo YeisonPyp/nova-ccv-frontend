@@ -29,9 +29,6 @@
       }
     </ng-template>
     <ng-template #actions let-item>
-      <button class="btn btn-sm btn-outline text-xs" (click)="openMonthly(item)">
-        Planeación
-      </button>
       <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
         Editar
       </button>
@@ -51,10 +48,4 @@
   [product]="editingProduct()"
   (onClose)="closeUpsertModal()"
   (onSaved)="onSaved($event)"
-/>
-
-<app-pat-product-monthly-modal
-  [isOpen]="monthlyModalOpen()"
-  [product]="editingProduct()"
-  (onClose)="closeMonthlyModal()"
 />

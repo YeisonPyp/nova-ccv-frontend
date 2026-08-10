@@ -1,0 +1,82 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <h5 class="text-sm font-semibold text-secondary m-0">{{ monthLabel() }}</h5>
+    <button
+      type="button"
+      class="text-xs font-medium text-primary hover:underline"
+      (click)="onRegister.emit(data().month)"
+    >
+      Registrar
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+    <div class="flex flex-col gap-1">
+      <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        Presupuesto
+      </p>
+      @if (data().budgets.length === 0) {
+        <p class="text-gray-400">Sin rubros</p>
+      } @else {
+        @for (b of data().budgets; track b.budget.id) {
+          <div class="flex justify-between gap-2">
+            <span class="text-gray-600 truncate">{{ b.budget.name }}</span>
+            <span class="font-medium text-secondary">{{ valueOf(b) | number }}</span>
+          </div>
+        }
+        <div class="flex justify-between gap-2 pt-1 border-t border-gray-100 font-semibold">
+          <span class="text-gray-700">Total</span>
+          <span class="text-secondary">{{ budgetTotal() | number }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        Productos
+      </p>
+      @if (data().products.length === 0) {
+        <p class="text-gray-400">Sin productos</p>
+      } @else {
+        @for (p of data().products; track p.product.id) {
+          <div class="flex justify-between gap-2">
+            <span class="text-gray-600 truncate">{{ p.product.name }}</span>
+            <span class="font-medium text-secondary">{{ valueOf(p) | number }}</span>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        Impacto
+      </p>
+      @if (data().benefits.length === 0) {
+        <p class="text-gray-400">Sin beneficios</p>
+      } @else {
+        @for (b of data().benefits; track b.benefit.id) {
+          <div class="flex justify-between gap-2">
+            <span class="text-gray-600 truncate">{{ b.benefit.benefitTypeName }}</span>
+            <span class="font-medium text-secondary">{{ valueOf(b) | number }}</span>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        Indicadores
+      </p>
+      @if (data().indicators.length === 0) {
+        <p class="text-gray-400">Sin indicadores</p>
+      } @else {
+        @for (i of data().indicators; track i.indicator.id) {
+          <div class="flex justify-between gap-2">
+            <span class="text-gray-600 truncate">{{ i.indicator.managementIndicator.name }}</span>
+            <span class="font-medium text-secondary">{{ valueOf(i) | number }}</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

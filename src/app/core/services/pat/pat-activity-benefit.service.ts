@@ -3,11 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import {
-  PatActivityBenefit,
-  PatActivityBenefitExecution,
-  PatActivityBenefitMonthlyPlan,
-} from '../../models/pat/pat-models';
+import { PatActivityBenefit } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityBenefitDto {
   benefitTypeId: number;
@@ -55,45 +51,6 @@ export class PatActivityBenefitService {
   delete(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
       `${this.baseUrl}/benefits/${id}`,
-    );
-  }
-
-  findMonthlyPlan(
-    id: number,
-  ): Observable<ApiResponse<PatActivityBenefitMonthlyPlan[]>> {
-    return this.http.get<ApiResponse<PatActivityBenefitMonthlyPlan[]>>(
-      `${this.baseUrl}/benefits/${id}/monthly-plan`,
-    );
-  }
-
-  upsertMonthlyPlan(
-    id: number,
-    month: number,
-    plannedValue: number,
-  ): Observable<ApiResponse<PatActivityBenefitMonthlyPlan>> {
-    return this.http.put<ApiResponse<PatActivityBenefitMonthlyPlan>>(
-      `${this.baseUrl}/benefits/${id}/monthly-plan`,
-      { month, plannedValue },
-    );
-  }
-
-  findExecution(
-    id: number,
-  ): Observable<ApiResponse<PatActivityBenefitExecution[]>> {
-    return this.http.get<ApiResponse<PatActivityBenefitExecution[]>>(
-      `${this.baseUrl}/benefits/${id}/execution`,
-    );
-  }
-
-  upsertExecution(
-    id: number,
-    month: number,
-    executedValue: number,
-    description?: string,
-  ): Observable<ApiResponse<PatActivityBenefitExecution>> {
-    return this.http.put<ApiResponse<PatActivityBenefitExecution>>(
-      `${this.baseUrl}/benefits/${id}/execution`,
-      { month, executedValue, description },
     );
   }
 }

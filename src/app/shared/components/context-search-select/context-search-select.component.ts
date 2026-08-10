@@ -11,6 +11,7 @@ import { SearchSelectContext } from "../search-select/on-search-select.interface
     <app-select-search
       [label]="label()"
       [required]="required()"
+      [maxElements]="ctx().op?.maxItems ?? 1"
       [items]="ctx().options()"
       [selectedItems]="ctx().selectedOptions()"
       (onSearch)="ctx().search($event)"

@@ -7,7 +7,6 @@ import {
 import { PatActivityProductService } from '@/app/core/services/pat/pat-activity-product.service';
 import { PatActivityProduct } from '@/app/core/models/pat/pat-models';
 import { PatProductUpsertModalComponent } from './components/product-upsert-modal.component';
-import { PatProductMonthlyModalComponent } from './components/product-monthly-modal.component';
 import { ProjectSectionCardComponent } from '@/app/features/projects/pages/project-detail/components/project-section-card/project-section-card.component';
 
 @Component({
@@ -17,7 +16,6 @@ import { ProjectSectionCardComponent } from '@/app/features/projects/pages/proje
     CommonModule,
     DynamicTableComponent,
     PatProductUpsertModalComponent,
-    PatProductMonthlyModalComponent,
     ProjectSectionCardComponent,
   ],
   templateUrl: './products-tab.component.html',
@@ -29,7 +27,6 @@ export class PatProductsTabComponent {
   products = signal<PatActivityProduct[]>([]);
 
   upsertModalOpen = signal(false);
-  monthlyModalOpen = signal(false);
   editingProduct = signal<PatActivityProduct | null>(null);
 
   readonly columns: TableColumn[] = [
@@ -56,18 +53,8 @@ export class PatProductsTabComponent {
     this.upsertModalOpen.set(true);
   }
 
-  openMonthly(product: PatActivityProduct): void {
-    this.editingProduct.set(product);
-    this.monthlyModalOpen.set(true);
-  }
-
   closeUpsertModal(): void {
     this.upsertModalOpen.set(false);
-    this.editingProduct.set(null);
-  }
-
-  closeMonthlyModal(): void {
-    this.monthlyModalOpen.set(false);
     this.editingProduct.set(null);
   }
 

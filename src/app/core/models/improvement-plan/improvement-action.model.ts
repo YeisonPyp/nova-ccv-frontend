@@ -1,4 +1,5 @@
 import { Employee } from '../assessment/employee.model';
+import { Position } from '../assessment/position.model';
 import { EvidenceDto } from './evidence.model';
 
 export type PdcaPhase = 'PLAN' | 'DO' | 'CHECK' | 'ACT';
@@ -79,6 +80,7 @@ export interface ImprovementActionDto {
   wasEffective?: boolean | null;
   ineffectivenessJustification?: string;
   employee?: Employee;
+  positions?: Position[];
   followUp: ImprovementActionFollowUp[];
   lastApprovalStep?: ImprovementActionApprovalStepDto;
   createdAt?: string;
@@ -95,6 +97,7 @@ export interface CreateImprovementActionDto {
   startDate: string;
   closeDate: string;
   employeeId?: number;
+  positionIds?: number[];
 }
 
 export interface UpdateImprovementActionDto {
@@ -107,6 +110,7 @@ export interface UpdateImprovementActionDto {
   startDate?: string;
   closeDate?: string;
   employeeId?: number;
+  positionIds?: number[];
   followUpObservations?: string;
   actualCloseDate?: string;
   wasEffective?: boolean;

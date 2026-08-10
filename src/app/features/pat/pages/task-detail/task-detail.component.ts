@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { PatActivityTaskService } from '@/app/core/services/pat/pat-activity-task.service';
-import { PatActivityTaskBudgetService } from '@/app/core/services/pat/pat-activity-task-budget.service';
-import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
+import { PatTaskMonthlyOverviewService } from '@/app/core/services/pat/pat-task-monthly-overview.service';
 import {
-  BudgetCategory,
+  ExecutionOrPlaning,
   PatActivityTask,
 } from '@/app/core/models/pat/pat-models';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execution-pie-chart/execution-pie-chart.component';
-import { TaskBudgetMonthlyTabComponent } from './components/budget-monthly-tab/budget-monthly-tab.component';
+import { MonthlyOverviewGridComponent } from './components/monthly-overview-grid/monthly-overview-grid.component';
+import { RegisterMonthlyOverviewModalComponent } from './components/register-monthly-overview-modal/register-monthly-overview-modal.component';
 
 type TabKey = 'execution' | 'plan';
 
@@ -22,7 +22,8 @@ type TabKey = 'execution' | 'plan';
     CommonModule,
     LoadingSpinnerComponent,
     ExecutionPieChartComponent,
-    TaskBudgetMonthlyTabComponent,
+    MonthlyOverviewGridComponent,
+    RegisterMonthlyOverviewModalComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './task-detail.component.html',
@@ -31,21 +32,48 @@ export class PatTaskDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly taskService = inject(PatActivityTaskService);
-  private readonly taskBudgetService = inject(PatActivityTaskBudgetService);
-  private readonly activityService = inject(PatActivityService);
+  private readonly overviewService = inject(PatTaskMonthlyOverviewService);
 
   task = signal<PatActivityTask | null>(null);
-  rubros = signal<BudgetCategory[]>([]);
+  overview = signal<ExecutionOrPlaning[]>([]);
   loading = signal(true);
 
-  plannedTotal = signal(0);
-  executedTotal = signal(0);
+  plannedTotal = computed(() =>
+    this.overview().reduce(
+      (sum, m) =>
+        sum + m.budgets.reduce((s, b) => s + (b.planning?.amount ?? 0), 0),
+      0,
+    ),
+  );
+  executedTotal = computed(() =>
+    this.overview().reduce(
+      (sum, m) =>
+        sum + m.budgets.reduce((s, b) => s + (b.execution?.amount ?? 0), 0),
+      0,
+    ),
+  );
 
   activeTab = signal<TabKey>('execution');
   tabs: { key: TabKey; label: string }[] = [
     { key: 'execution', label: 'Ejecuciones' },
     { key: 'plan', label: 'Planeaciones' },
   ];
+
+  registerModalOpen = signal(false);
+  registerMonth = signal(1);
+
+  registerData = computed(() => {
+    const month = this.registerMonth();
+    return (
+      this.overview().find((m) => m.month === month) ?? {
+        month,
+        budgets: [],
+        products: [],
+        benefits: [],
+        indicators: [],
+      }
+    );
+  });
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -54,8 +82,6 @@ export class PatTaskDetailComponent implements OnInit {
       next: (res) => {
         if (res.success) {
           this.task.set(res.data);
-          this.loadRubros(res.data.activityId);
-          this.loadTotals(id);
         }
         this.loading.set(false);
       },
@@ -63,31 +89,25 @@ export class PatTaskDetailComponent implements OnInit {
         this.loading.set(false);
       },
     });
-  }
 
-  private loadRubros(activityId: number): void {
-    this.activityService.findPresupuestalMatrix(activityId).subscribe((res) => {
-      if (res.success) {
-        this.rubros.set(res.data.map((m) => m.budgetCategory));
-      }
+    this.overviewService.findOverview(id).subscribe((res) => {
+      if (res.success) this.overview.set(res.data);
     });
   }
 
-  private loadTotals(taskId: number): void {
-    this.taskBudgetService.findPlan(taskId).subscribe((res) => {
-      if (res.success) {
-        this.plannedTotal.set(
-          res.data.reduce((sum, r) => sum + r.plannedAmount, 0),
-        );
-      }
-    });
-    this.taskBudgetService.findExecution(taskId).subscribe((res) => {
-      if (res.success) {
-        this.executedTotal.set(
-          res.data.reduce((sum, r) => sum + r.amount, 0),
-        );
-      }
-    });
+  openRegister(month: number): void {
+    this.registerMonth.set(month);
+    this.registerModalOpen.set(true);
+  }
+
+  closeRegister(): void {
+    this.registerModalOpen.set(false);
+  }
+
+  onOverviewSaved(updated: ExecutionOrPlaning): void {
+    this.overview.update((list) =>
+      list.map((m) => (m.month === updated.month ? updated : m)),
+    );
   }
 
   goBack(): void {

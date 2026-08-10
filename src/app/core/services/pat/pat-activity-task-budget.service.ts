@@ -12,16 +12,12 @@ export interface UpsertPatActivityTaskBudgetPlanDto {
   presupuestalCategoryId: number;
   month: number;
   plannedAmount: number;
-  positionId: number;
-  employeeId?: number | null;
 }
 
 export interface UpsertPatActivityTaskBudgetExecutionDto {
   presupuestalCategoryId: number;
   month: number;
   amount: number;
-  positionId: number;
-  employeeId?: number | null;
   description?: string | null;
 }
 

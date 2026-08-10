@@ -195,9 +195,7 @@ export class ActionDetailsComponent implements OnInit {
     });
   }
 
-  get assignedEmployeeFullName() {
-    return [this.action().employee?.name, this.action().employee?.lastName]
-      .filter((i) => i)
-      .join(' ');
+  get assignedPositionNames(): string[] {
+    return this.action().positions?.map((p) => p.name) ?? [];
   }
 }

@@ -76,11 +76,14 @@ export class ActionFollowUpComponent implements OnInit {
     effect(() => {
       const f = this.followup();
       this.evidences.set(f.evidences ?? []);
-      this.form.patchValue({
-        observations: f.observations,
-        status: f.status,
-        scheduledDate: f.scheduledAt?.slice(0, 10),
-      });
+      this.form.patchValue(
+        {
+          observations: f.observations,
+          status: f.status,
+          scheduledDate: f.scheduledAt?.slice(0, 10),
+        },
+        { emitEvent: false },
+      );
     });
 
     effect(() => {
@@ -96,11 +99,13 @@ export class ActionFollowUpComponent implements OnInit {
     this.form.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((f) => {
-        this.service.updateFollowUp(this.followup().id, {
-          observations: f.observations!,
-          scheduledDate: f.scheduledDate!,
-          status: f.status!,
-        });
+        this.service
+          .updateFollowUp(this.followup().id, {
+            observations: f.observations!,
+            scheduledDate: f.scheduledDate!,
+            status: f.status!,
+          })
+          .subscribe();
       });
   }
 

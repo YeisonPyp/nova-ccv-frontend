@@ -3,11 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import {
-  PatActivityProduct,
-  PatActivityProductExecution,
-  PatActivityProductMonthlyPlan,
-} from '../../models/pat/pat-models';
+import { PatActivityProduct } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityProductDto {
   productId: number;
@@ -57,45 +53,6 @@ export class PatActivityProductService {
   delete(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
       `${this.baseUrl}/products/${id}`,
-    );
-  }
-
-  findMonthlyPlan(
-    id: number,
-  ): Observable<ApiResponse<PatActivityProductMonthlyPlan[]>> {
-    return this.http.get<ApiResponse<PatActivityProductMonthlyPlan[]>>(
-      `${this.baseUrl}/products/${id}/monthly-plan`,
-    );
-  }
-
-  upsertMonthlyPlan(
-    id: number,
-    month: number,
-    plannedQuantity: number,
-  ): Observable<ApiResponse<PatActivityProductMonthlyPlan>> {
-    return this.http.put<ApiResponse<PatActivityProductMonthlyPlan>>(
-      `${this.baseUrl}/products/${id}/monthly-plan`,
-      { month, plannedQuantity },
-    );
-  }
-
-  findExecution(
-    id: number,
-  ): Observable<ApiResponse<PatActivityProductExecution[]>> {
-    return this.http.get<ApiResponse<PatActivityProductExecution[]>>(
-      `${this.baseUrl}/products/${id}/execution`,
-    );
-  }
-
-  upsertExecution(
-    id: number,
-    month: number,
-    executedQuantity: number,
-    description?: string,
-  ): Observable<ApiResponse<PatActivityProductExecution>> {
-    return this.http.put<ApiResponse<PatActivityProductExecution>>(
-      `${this.baseUrl}/products/${id}/execution`,
-      { month, executedQuantity, description },
     );
   }
 }

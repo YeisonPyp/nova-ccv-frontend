@@ -1,6 +1,4 @@
 import { Area } from '../assessment/area.model';
-import { Employee } from '../assessment/employee.model';
-import { Position } from '../assessment/position.model';
 import { CostCenter } from '../cost-center/cost-center.models';
 
 export interface PatPillar {
@@ -147,8 +145,6 @@ export interface PatActivityTaskBudgetPlan {
   presupuestalCategory: BudgetCategory;
   month: number;
   plannedAmount: number;
-  position: Position;
-  employee?: Employee;
   createdAt: string;
 }
 
@@ -158,8 +154,6 @@ export interface PatActivityTaskBudgetExecution {
   presupuestalCategory: BudgetCategory;
   month: number;
   amount: number;
-  position: Position;
-  employee?: Employee;
   description?: string;
   createdAt: string;
 }
@@ -170,8 +164,6 @@ export interface PatActivityTaskIndicatorMonthlyPlan {
   activityIndicatorId: number;
   month: number;
   plannedValue: number;
-  position: Position;
-  employee?: Employee;
   createdAt: string;
 }
 
@@ -181,8 +173,44 @@ export interface PatActivityTaskIndicatorExecution {
   activityIndicatorId: number;
   month: number;
   executedValue: number;
-  position: Position;
-  employee?: Employee;
+  description?: string;
+  createdAt: string;
+}
+
+export interface PatActivityTaskProductMonthlyPlan {
+  id: number;
+  taskId: number;
+  productId: number;
+  month: number;
+  plannedQuantity: number;
+  createdAt: string;
+}
+
+export interface PatActivityTaskProductExecution {
+  id: number;
+  taskId: number;
+  productId: number;
+  month: number;
+  executedQuantity: number;
+  description?: string;
+  createdAt: string;
+}
+
+export interface PatActivityTaskBenefitMonthlyPlan {
+  id: number;
+  taskId: number;
+  benefitId: number;
+  month: number;
+  plannedValue: number;
+  createdAt: string;
+}
+
+export interface PatActivityTaskBenefitExecution {
+  id: number;
+  taskId: number;
+  benefitId: number;
+  month: number;
+  executedValue: number;
   description?: string;
   createdAt: string;
 }
@@ -198,7 +226,8 @@ export interface PatActivityIndicator {
   createdAt: string;
 }
 
-// ─── Productos por actividad (catálogo + planeación/ejecución mensual) ───
+// ─── Productos por actividad (catálogo; planeación/ejecución mensual vive
+// ahora por tarea, ver ExecutionOrPlaningProduct) ──────────────────────────
 
 export interface PatActivityProduct {
   id: number;
@@ -209,23 +238,8 @@ export interface PatActivityProduct {
   createdAt: string;
 }
 
-export interface PatActivityProductMonthlyPlan {
-  id: number;
-  productId: number;
-  month: number;
-  plannedQuantity: number;
-}
-
-export interface PatActivityProductExecution {
-  id: number;
-  productId: number;
-  month: number;
-  executedQuantity: number;
-  description?: string;
-  createdAt: string;
-}
-
-// ─── Beneficios/beneficiarios por actividad (con planeación/ejecución mensual) ─
+// ─── Beneficios/beneficiarios por actividad (catálogo; planeación/ejecución
+// mensual vive ahora por tarea, ver ExecutionOrPlaningBenefit) ─────────────
 
 export interface PatActivityBenefit {
   id: number;
@@ -236,18 +250,34 @@ export interface PatActivityBenefit {
   createdAt: string;
 }
 
-export interface PatActivityBenefitMonthlyPlan {
-  id: number;
-  benefitId: number;
-  month: number;
-  plannedValue: number;
+export interface ExecutionOrPlaningBudget {
+  budget: BudgetCategory;
+  planning?: BudgetAmount;
+  execution?: BudgetAmount;
 }
 
-export interface PatActivityBenefitExecution {
-  id: number;
-  benefitId: number;
+export interface ExecutionOrPlaningProduct {
+  product: PatProduct;
+  planning?: BudgetAmount;
+  execution?: BudgetAmount;
+}
+
+export interface ExecutionOrPlaningBenefit {
+  benefit: PatActivityBenefit;
+  planning?: BudgetAmount;
+  execution?: BudgetAmount;
+}
+
+export interface ExecutionOrPlaningIndicator {
+  indicator: PatActivityIndicator;
+  planning?: BudgetAmount;
+  execution?: BudgetAmount;
+}
+
+export interface ExecutionOrPlaning {
   month: number;
-  executedValue: number;
-  description?: string;
-  createdAt: string;
+  budgets: ExecutionOrPlaningBudget[];
+  products: ExecutionOrPlaningProduct[];
+  benefits: ExecutionOrPlaningBenefit[];
+  indicators: ExecutionOrPlaningIndicator[];
 }

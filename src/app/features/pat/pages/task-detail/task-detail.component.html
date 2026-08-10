@@ -67,12 +67,21 @@
       </div>
 
       <div class="p-6">
-        <app-task-budget-monthly-tab
-          [taskId]="t.id"
-          [mode]="activeTab()"
-          [rubros]="rubros()"
+        <app-monthly-overview-grid
+          [overview]="overview()"
+          [mode]="activeTab() === 'plan' ? 'plan' : 'execution'"
+          (onRegister)="openRegister($event)"
         />
       </div>
     </div>
+
+    <app-register-monthly-overview-modal
+      [isOpen]="registerModalOpen()"
+      [taskId]="t.id"
+      [mode]="activeTab() === 'plan' ? 'plan' : 'execution'"
+      [data]="registerData()"
+      (onClose)="closeRegister()"
+      (onSaved)="onOverviewSaved($event)"
+    />
   }
 </div>

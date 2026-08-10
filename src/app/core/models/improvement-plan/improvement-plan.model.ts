@@ -1,4 +1,5 @@
 import { Employee } from '../assessment/employee.model';
+import { Position } from '../assessment/position.model';
 import { ControlEntity } from './control-entity.model';
 import { ImprovementProcess } from './improvement-process.model';
 
@@ -28,6 +29,8 @@ export interface ImprovementPlan {
   createdAt: string;
   updatedAt: string;
   employee?: Employee;
+  positions?: Position[];
+  alertDaysBeforeEnd?: number;
   controlEntity?: ControlEntity;
   process?: ImprovementProcess;
   actionStatusCounts?: ActionStatusCount[];
@@ -40,7 +43,9 @@ export interface CreateImprovementPlanDto {
   description: string;
   controlEntityId: number;
   processId: number;
-  employeeId: number;
+  employeeId?: number;
+  positionIds?: number[];
+  alertDaysBeforeEnd?: number;
   startsAt: string;
   expiresAt: string;
 }
@@ -52,6 +57,8 @@ export interface UpdateImprovementPlanDto {
   controlEntityName?: string;
   processId?: number;
   employeeId?: number;
+  positionIds?: number[];
+  alertDaysBeforeEnd?: number;
   completedAt?: string;
   expiresAt?: string;
 }
