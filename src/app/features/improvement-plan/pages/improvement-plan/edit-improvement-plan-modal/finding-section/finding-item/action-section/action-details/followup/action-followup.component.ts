@@ -80,7 +80,7 @@ export class ActionFollowUpComponent implements OnInit {
         {
           observations: f.observations,
           status: f.status,
-          scheduledDate: f.scheduledAt?.slice(0, 10),
+          scheduledDate: f.scheduledAt,
         },
         { emitEvent: false },
       );

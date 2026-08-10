@@ -10,6 +10,7 @@ import {
 } from '@/app/core/models/pat/pat-models';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execution-pie-chart/execution-pie-chart.component';
+import { PlannedExecutedLineChartComponent } from '@/app/shared/components/charts/planned-executed-line-chart/planned-executed-line-chart.component';
 import { MonthlyOverviewGridComponent } from './components/monthly-overview-grid/monthly-overview-grid.component';
 
 type TabKey = 'execution' | 'plan';
@@ -21,6 +22,7 @@ type TabKey = 'execution' | 'plan';
     CommonModule,
     LoadingSpinnerComponent,
     ExecutionPieChartComponent,
+    PlannedExecutedLineChartComponent,
     MonthlyOverviewGridComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
@@ -50,6 +52,27 @@ export class PatTaskDetailComponent implements OnInit {
       0,
     ),
   );
+
+  plannedByMonth = computed(() => {
+    const values = new Array(12).fill(0);
+    for (const m of this.overview()) {
+      values[m.month - 1] = m.budgets.reduce(
+        (s, b) => s + (b.planning?.amount ?? 0),
+        0,
+      );
+    }
+    return values;
+  });
+  executedByMonth = computed(() => {
+    const values = new Array(12).fill(0);
+    for (const m of this.overview()) {
+      values[m.month - 1] = m.budgets.reduce(
+        (s, b) => s + (b.execution?.amount ?? 0),
+        0,
+      );
+    }
+    return values;
+  });
 
   activeTab = signal<TabKey>('execution');
   tabs: { key: TabKey; label: string }[] = [

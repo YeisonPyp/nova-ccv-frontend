@@ -36,14 +36,26 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-      <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3">
-        Presupuesto Planeado vs. Ejecutado
-      </h5>
-      <div class="max-w-xs mx-auto">
-        <app-execution-pie-chart
-          [planned]="plannedTotal()"
-          [executed]="executedTotal()"
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3">
+          Presupuesto Planeado vs. Ejecutado
+        </h5>
+        <div class="max-w-xs mx-auto">
+          <app-execution-pie-chart
+            [planned]="plannedTotal()"
+            [executed]="executedTotal()"
+          />
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3">
+          Presupuesto por Mes
+        </h5>
+        <app-planned-executed-line-chart
+          [plannedValues]="plannedByMonth()"
+          [executedValues]="executedByMonth()"
         />
       </div>
     </div>
