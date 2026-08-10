@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExecutionOrPlaning } from '@/app/core/models/pat/pat-models';
 import { MonthlyOverviewCardComponent } from '../monthly-overview-card/monthly-overview-card.component';
@@ -12,6 +12,6 @@ import { MonthlyOverviewCardComponent } from '../monthly-overview-card/monthly-o
 export class MonthlyOverviewGridComponent {
   overview = input.required<ExecutionOrPlaning[]>();
   mode = input.required<'plan' | 'execution'>();
-
-  onRegister = output<number>();
+  year = input.required<number>();
+  taskId = input.required<number>();
 }

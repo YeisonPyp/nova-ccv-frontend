@@ -3,7 +3,8 @@
     <app-monthly-overview-card
       [data]="item"
       [mode]="mode()"
-      (onRegister)="onRegister.emit($event)"
+      [year]="year()"
+      [taskId]="taskId()"
     />
   }
 </div>

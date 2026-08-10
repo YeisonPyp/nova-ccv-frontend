@@ -1,25 +1,29 @@
-@if (isOpen() && local(); as d) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-    (click)="close()"
-  >
-    <div
-      class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6 m-4"
-      (click)="$event.stopPropagation()"
-    >
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-semibold text-secondary m-0">
-          {{ title() }}
-        </h3>
+<div class="w-full p-6">
+  <button class="btn btn-link text-sm text-gray-500 mb-4 ps-0" (click)="goBack()">
+    ← Volver a la tarea
+  </button>
+
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading() && data(); as d) {
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-secondary m-0">{{ title() }}</h1>
+      <div class="flex items-center gap-3">
+        @if (saved() && !dirty()) {
+          <span class="text-xs text-green-600">Guardado</span>
+        }
         <button
           type="button"
-          class="text-gray-400 hover:text-gray-600 text-xl leading-none"
-          (click)="close()"
+          class="px-4 py-1.5 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 disabled:opacity-50"
+          [disabled]="!dirty() || saving()"
+          (click)="saveAll()"
         >
-          ×
+          {{ saving() ? "Guardando..." : "Guardar" }}
         </button>
       </div>
+    </div>
 
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="flex flex-col gap-1">
           <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
@@ -33,8 +37,10 @@
                 [label]="b.budget.name"
                 [value]="valueOf(b)"
                 [referenceValue]="referenceOf(b)"
+                [targetValue]="availableOf(b)"
+                [targetLabel]="'Disponible'"
                 [currency]="true"
-                (save)="saveBudget(b.budget.id, $event)"
+                (save)="stageBudget(b.budget.id, $event)"
               />
             }
           }
@@ -52,7 +58,8 @@
                 [label]="p.product.name"
                 [value]="valueOf(p)"
                 [referenceValue]="referenceOf(p)"
-                (save)="saveProduct(p.product.id, $event)"
+                [targetValue]="p.targetQuantity ?? null"
+                (save)="stageProduct(p.product.id, $event)"
               />
             }
           }
@@ -70,7 +77,8 @@
                 [label]="b.benefit.benefitTypeName"
                 [value]="valueOf(b)"
                 [referenceValue]="referenceOf(b)"
-                (save)="saveBenefit(b.benefit.id, $event)"
+                [targetValue]="b.benefit.targetValue"
+                (save)="stageBenefit(b.benefit.id, $event)"
               />
             }
           }
@@ -88,22 +96,13 @@
                 [label]="i.indicator.managementIndicator.name"
                 [value]="valueOf(i)"
                 [referenceValue]="referenceOf(i)"
-                (save)="saveIndicator(i.indicator.id, $event)"
+                [targetValue]="i.indicator.goalValue"
+                (save)="stageIndicator(i.indicator.id, $event)"
               />
             }
           }
         </div>
       </div>
-
-      <div class="flex justify-end pt-4 mt-4 border-t border-gray-100">
-        <button
-          type="button"
-          class="px-4 py-1.5 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90"
-          (click)="close()"
-        >
-          Listo
-        </button>
-      </div>
     </div>
-  </div>
-}
+  }
+</div>

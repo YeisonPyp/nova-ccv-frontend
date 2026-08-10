@@ -2,6 +2,8 @@ import { Component } from "@angular/core";
 import { PillarSectionComponent } from "./components/pillar-section.component";
 import { PolicySectionComponent } from "./components/policy-section.component";
 import { BenefitTypeSectionComponent } from "./components/benefit-type-section.component";
+import { ProductSectionComponent } from "./components/product-section.component";
+import { ManagementIndicatorSectionComponent } from "./components/management-indicator-section.component";
 
 @Component({
   selector: "app-pat-param",
@@ -10,6 +12,8 @@ import { BenefitTypeSectionComponent } from "./components/benefit-type-section.c
     PillarSectionComponent,
     PolicySectionComponent,
     BenefitTypeSectionComponent,
+    ProductSectionComponent,
+    ManagementIndicatorSectionComponent,
   ],
   template: `
     <div class="max-w-7xl mx-auto">
@@ -21,6 +25,8 @@ import { BenefitTypeSectionComponent } from "./components/benefit-type-section.c
         <app-pillar-section />
         <app-policy-section />
         <app-benefit-type-section />
+        <app-product-section />
+        <app-management-indicator-section />
       </div>
     </div>
   `,

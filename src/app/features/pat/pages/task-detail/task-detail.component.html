@@ -70,18 +70,10 @@
         <app-monthly-overview-grid
           [overview]="overview()"
           [mode]="activeTab() === 'plan' ? 'plan' : 'execution'"
-          (onRegister)="openRegister($event)"
+          [year]="t.activityYear!"
+          [taskId]="t.id"
         />
       </div>
     </div>
-
-    <app-register-monthly-overview-modal
-      [isOpen]="registerModalOpen()"
-      [taskId]="t.id"
-      [mode]="activeTab() === 'plan' ? 'plan' : 'execution'"
-      [data]="registerData()"
-      (onClose)="closeRegister()"
-      (onSaved)="onOverviewSaved($event)"
-    />
   }
 </div>

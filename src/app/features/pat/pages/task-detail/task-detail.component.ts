@@ -11,7 +11,6 @@ import {
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execution-pie-chart/execution-pie-chart.component';
 import { MonthlyOverviewGridComponent } from './components/monthly-overview-grid/monthly-overview-grid.component';
-import { RegisterMonthlyOverviewModalComponent } from './components/register-monthly-overview-modal/register-monthly-overview-modal.component';
 
 type TabKey = 'execution' | 'plan';
 
@@ -23,7 +22,6 @@ type TabKey = 'execution' | 'plan';
     LoadingSpinnerComponent,
     ExecutionPieChartComponent,
     MonthlyOverviewGridComponent,
-    RegisterMonthlyOverviewModalComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './task-detail.component.html',
@@ -59,22 +57,6 @@ export class PatTaskDetailComponent implements OnInit {
     { key: 'plan', label: 'Planeaciones' },
   ];
 
-  registerModalOpen = signal(false);
-  registerMonth = signal(1);
-
-  registerData = computed(() => {
-    const month = this.registerMonth();
-    return (
-      this.overview().find((m) => m.month === month) ?? {
-        month,
-        budgets: [],
-        products: [],
-        benefits: [],
-        indicators: [],
-      }
-    );
-  });
-
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -93,21 +75,6 @@ export class PatTaskDetailComponent implements OnInit {
     this.overviewService.findOverview(id).subscribe((res) => {
       if (res.success) this.overview.set(res.data);
     });
-  }
-
-  openRegister(month: number): void {
-    this.registerMonth.set(month);
-    this.registerModalOpen.set(true);
-  }
-
-  closeRegister(): void {
-    this.registerModalOpen.set(false);
-  }
-
-  onOverviewSaved(updated: ExecutionOrPlaning): void {
-    this.overview.update((list) =>
-      list.map((m) => (m.month === updated.month ? updated : m)),
-    );
   }
 
   goBack(): void {

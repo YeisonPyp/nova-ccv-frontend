@@ -254,10 +254,13 @@ export interface ExecutionOrPlaningBudget {
   budget: BudgetCategory;
   planning?: BudgetAmount;
   execution?: BudgetAmount;
+  availableForPlanning?: number;
+  availableForExecution?: number;
 }
 
 export interface ExecutionOrPlaningProduct {
   product: PatProduct;
+  targetQuantity?: number;
   planning?: BudgetAmount;
   execution?: BudgetAmount;
 }
@@ -280,4 +283,20 @@ export interface ExecutionOrPlaning {
   products: ExecutionOrPlaningProduct[];
   benefits: ExecutionOrPlaningBenefit[];
   indicators: ExecutionOrPlaningIndicator[];
+}
+
+export interface RegisterMonthlyOverviewPage {
+  task: PatActivityTask;
+  overview: ExecutionOrPlaning;
+}
+
+export type PatRegisterMode = 'PLAN' | 'EXECUTION';
+
+export interface RegisterMonthlyOverview {
+  month: number;
+  mode: PatRegisterMode;
+  budgets: { presupuestalCategoryId: number; amount: number }[];
+  products: { productId: number; quantity: number }[];
+  benefits: { benefitId: number; value: number }[];
+  indicators: { activityIndicatorId: number; value: number }[];
 }

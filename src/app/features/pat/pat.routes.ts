@@ -63,6 +63,15 @@ export const PAT_ROUTES: Routes = [
         title: "PAT — Detalle de Tarea",
         canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
+      {
+        path: "tasks/:taskId/register/:month/:mode",
+        loadComponent: () =>
+          import(
+            "./pages/register-monthly-overview/register-monthly-overview.component"
+          ).then((m) => m.RegisterMonthlyOverviewComponent),
+        title: "PAT — Registrar mes",
+        canActivate: [hasPermissionGuard(["PAT_ACTIVITY_UPDATE"])],
+      },
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
     ],
   },

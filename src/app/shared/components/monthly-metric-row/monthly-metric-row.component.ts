@@ -23,6 +23,8 @@ export class MonthlyMetricRowComponent implements OnInit {
   value = input<number | null>(null);
   referenceValue = input<number | null>(null);
   referenceLabel = input<string>('Planeado');
+  targetValue = input<number | null>(null);
+  targetLabel = input<string>('Meta');
   currency = input<boolean>(false);
   disabled = input<boolean>(false);
 
