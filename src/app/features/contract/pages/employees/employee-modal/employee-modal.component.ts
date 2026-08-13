@@ -47,10 +47,6 @@ export class EmployeeModalComponent implements OnChanges {
   private positionService = inject(PositionService);
 
   positions = signal<SearchSelectOption[]>([]);
-  employees = signal<SearchSelectOption[]>([]);
-
-  selectedEmployees = signal<SearchSelectOption[]>([]);
-  private employeeService = inject(EmployeeService);
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -58,7 +54,6 @@ export class EmployeeModalComponent implements OnChanges {
       lastName: ["", [Validators.required]],
       email: ["", [Validators.required, Validators.email]],
       positionId: [null, [Validators.required]],
-      employeeReportsToId: [null],
     });
   }
 
@@ -72,31 +67,6 @@ export class EmployeeModalComponent implements OnChanges {
           );
         }
       });
-  }
-
-  findEmployees(q: string) {
-    this.employeeService.findEmployees({ nameOrEmail: q }).subscribe((r) => {
-      if (r.data && r.success) {
-        this.employees.set(
-          r.data.content
-            .filter((e) => e.id !== this.employeeData?.id)
-            .map((e) => ({
-              id: e.id,
-              title: `${e.name} ${e.lastName} (${e.email})`,
-            })),
-        );
-      }
-    });
-  }
-
-  onSelectReportsTo(o: SearchSelectOption) {
-    this.selectedEmployees.set([o]);
-    this.form.patchValue({ employeeReportsToId: o.id });
-  }
-
-  onRemoveReportsTo(o: SearchSelectOption) {
-    this.selectedEmployees.set([]);
-    this.form.patchValue({ employeeReportsToId: null });
   }
 
   onRemovePosition(o: SearchSelectOption) {
@@ -113,7 +83,6 @@ export class EmployeeModalComponent implements OnChanges {
     if (changes["isOpen"] && !changes["isOpen"].currentValue) {
       this.form.reset();
       this.selectedPositions.set([]);
-      this.selectedEmployees.set([]);
     }
     if (changes["employeeData"] && this.employeeData && this.isOpen) {
       this.form.patchValue({
@@ -121,7 +90,6 @@ export class EmployeeModalComponent implements OnChanges {
         lastName: this.employeeData.lastName || "",
         email: this.employeeData.email || "",
         positionId: this.employeeData.position?.id || null,
-        employeeReportsToId: this.employeeData.reportsTo || null,
       });
       if (this.employeeData.position) {
         this.selectedPositions.set([
@@ -129,12 +97,6 @@ export class EmployeeModalComponent implements OnChanges {
             id: this.employeeData.position.id,
             title: this.employeeData.position.name,
           },
-        ]);
-      }
-      if (this.employeeData.reportsTo) {
-        const e = this.employeeData.reportsTo;
-        this.selectedEmployees.set([
-          { id: e.id, title: `${e.name} ${e.lastName} (${e.email})` },
         ]);
       }
     }

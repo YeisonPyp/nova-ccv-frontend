@@ -33,6 +33,7 @@ import { ImprovementProcessModalComponent } from './components/improvement-proce
 import { GenerateReportModalComponent } from './components/generate-report-modal/generate-report-modal.component';
 import { EditIconComponent } from '@/app/shared/components/edit-icon/edit-icon.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
+import { UpcomingActionsWidgetComponent } from './components/upcoming-actions-widget/upcoming-actions-widget.component';
 
 Chart.register(...registerables);
 
@@ -66,6 +67,7 @@ const STATUS_COLORS: Record<string, string> = {
     GenerateReportModalComponent,
     EditIconComponent,
     LoadingSpinnerComponent,
+    UpcomingActionsWidgetComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './improvement-plan-list.component.html',

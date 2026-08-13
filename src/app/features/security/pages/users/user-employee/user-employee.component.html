@@ -39,9 +39,7 @@
         </div>
       </form>
 
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-gray-100"
-      >
+      <div class="mt-4 pt-4 border-t border-gray-100">
         <div class="form-group">
           <app-search-select
             [label]="positionCtx.op?.label ?? 'Cargo asignado'"
@@ -52,19 +50,6 @@
             (onSearch)="positionCtx.search($event)"
             (onSelect)="onPositionSelect($event)"
             (onRemove)="onPositionRemove($event)"
-          />
-        </div>
-
-        <div class="form-group">
-          <app-search-select
-            [label]="reportsToCtx.op?.label ?? 'Reporta a (Jefe directo)'"
-            [placeholder]="reportsToCtx.op?.placeholder ?? 'Buscar empleado...'"
-            [maxElements]="1"
-            [items]="reportsToCtx.options()"
-            [selectedItems]="reportsToCtx.selectedOptions()"
-            (onSearch)="reportsToCtx.search($event)"
-            (onSelect)="onReportsToSelect($event)"
-            (onRemove)="onReportsToRemove($event)"
           />
         </div>
       </div>

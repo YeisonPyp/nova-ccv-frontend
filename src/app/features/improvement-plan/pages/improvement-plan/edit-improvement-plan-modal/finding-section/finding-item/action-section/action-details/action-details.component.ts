@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  computed,
   inject,
   input,
   OnInit,
   output,
   signal,
 } from '@angular/core';
-import { EvidenceItemComponent } from '@/app/features/improvement-plan/pages/improvement-plan/components/evidence-item/evidence-item.component';
 import {
   ImprovementActionDto,
   ImprovementActionFollowUp,
@@ -28,7 +28,12 @@ import {
   pdcaPhaseLabels,
   ExecutionFrequency,
   executionFrequencyLabels,
+  ActionType,
+  actionTypeLabels,
+  actionTypeBadgeClasses,
+  allowedActionTypesFor,
 } from '@/app/core/models/improvement-plan/improvement-action.model';
+import { FindingType } from '@/app/core/models/improvement-plan/finding.model';
 import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AutosizeTextareaDirective } from '@/app/shared/directives/autosize-textarea.directive';
@@ -51,9 +56,12 @@ import { ActionFollowUpComponent } from './followup/action-followup.component';
 })
 export class ActionDetailsComponent implements OnInit {
   action = input.required<ImprovementActionDto>();
+  findingType = input.required<FindingType>();
+  initiallyOpen = input<boolean>(false);
 
   followup = signal<ImprovementActionFollowUp[]>([]);
   approvalModalOpen = signal(false);
+  isOpen = signal(false);
 
   onDelete = output<ImprovementActionDto>();
   onUpdated = output<ImprovementActionDto>();
@@ -63,9 +71,21 @@ export class ActionDetailsComponent implements OnInit {
 
   formGroup: FormGroup;
 
+  allowedActionTypes = computed(() =>
+    allowedActionTypesFor(this.findingType()),
+  );
+
   getActionStatusName(k: string) {
     return improvementActionStatus[k as ImprovementActionStatus] ?? k;
   }
+
+  getActionTypeLabel(t: ActionType): string {
+    return actionTypeLabels[t];
+  }
+
+  actionTypeBadgeClass = computed(
+    () => actionTypeBadgeClasses[this.action().actionType],
+  );
 
   get isLocked(): boolean {
     return (
@@ -94,6 +114,7 @@ export class ActionDetailsComponent implements OnInit {
     this.formGroup = this.fb.group({
       objectiveDescription: ['', Validators.required],
       actionDescription: ['', Validators.required],
+      actionType: ['' as ActionType | ''],
       pdcaPhases: [[] as PdcaPhase[]],
       target: [1, Validators.required],
       executionFrequency: ['MONTHLY' as ExecutionFrequency],
@@ -112,6 +133,7 @@ export class ActionDetailsComponent implements OnInit {
         {
           objectiveDescription: a.objectiveDescription,
           actionDescription: a.actionDescription,
+          actionType: a.actionType,
           pdcaPhases: a.pdcaPhases ?? [],
           target: a.target,
           executionFrequency: a.executionFrequency,

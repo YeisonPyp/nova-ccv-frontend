@@ -58,15 +58,12 @@ export class EmployeeFormComponent implements OnInit {
 
   positions = signal<SearchSelectOption[]>([]);
   selectedPositions = signal<SearchSelectOption[]>([]);
-  employees = signal<SearchSelectOption[]>([]);
-  selectedEmployees = signal<SearchSelectOption[]>([]);
 
   form: FormGroup = this.fb.group({
     name: ["", [Validators.required]],
     lastName: ["", [Validators.required]],
     email: ["", [Validators.required, Validators.email]],
     positionId: [null, [Validators.required]],
-    employeeReportsToId: [null],
   });
 
   scheduleForm: FormGroup = this.fb.group({
@@ -121,17 +118,10 @@ export class EmployeeFormComponent implements OnInit {
       lastName: employee.lastName,
       email: employee.email,
       positionId: employee.position?.id ?? null,
-      employeeReportsToId: employee.reportsTo?.id ?? null,
     });
     if (employee.position) {
       this.selectedPositions.set([
         { id: employee.position.id, title: employee.position.name },
-      ]);
-    }
-    if (employee.reportsTo) {
-      const r = employee.reportsTo as Employee;
-      this.selectedEmployees.set([
-        { id: r.id, title: `${r.name} ${r.lastName} (${r.email})` },
       ]);
     }
   }
@@ -159,21 +149,6 @@ export class EmployeeFormComponent implements OnInit {
       });
   }
 
-  findEmployees(q: string) {
-    this.employeeService.findEmployees({ nameOrEmail: q }).subscribe((r) => {
-      if (r.data && r.success) {
-        this.employees.set(
-          r.data.content
-            .filter((e) => e.id !== this.employeeId())
-            .map((e) => ({
-              id: e.id,
-              title: `${e.name} ${e.lastName} (${e.email})`,
-            })),
-        );
-      }
-    });
-  }
-
   onSelectPosition(o: SearchSelectOption) {
     this.selectedPositions.set([o]);
     this.form.patchValue({ positionId: o.id });
@@ -182,16 +157,6 @@ export class EmployeeFormComponent implements OnInit {
   onRemovePosition(_o: SearchSelectOption) {
     this.selectedPositions.set([]);
     this.form.patchValue({ positionId: null });
-  }
-
-  onSelectReportsTo(o: SearchSelectOption) {
-    this.selectedEmployees.set([o]);
-    this.form.patchValue({ employeeReportsToId: o.id });
-  }
-
-  onRemoveReportsTo(_o: SearchSelectOption) {
-    this.selectedEmployees.set([]);
-    this.form.patchValue({ employeeReportsToId: null });
   }
 
   onSubmit() {
@@ -208,7 +173,6 @@ export class EmployeeFormComponent implements OnInit {
         lastName: val.lastName,
         email: val.email,
         positionId: val.positionId,
-        employeeReportsToId: val.employeeReportsToId,
       };
       this.employeeService.updateEmployee(this.employeeId()!, dto).subscribe({
         next: () => {
@@ -223,7 +187,6 @@ export class EmployeeFormComponent implements OnInit {
         lastName: val.lastName,
         email: val.email,
         positionId: val.positionId,
-        employeeReportsToId: val.employeeReportsToId,
       };
       this.employeeService.createEmployee(dto).subscribe({
         next: () => {

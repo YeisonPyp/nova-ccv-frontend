@@ -22,10 +22,8 @@ import {
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
 import { SearchSelectContextFactory } from '@/app/shared/components/search-select/on-search-select.interface';
 import { PatTacticalActivityService } from '@/app/core/services/pat/tactical-activity.service';
-import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
-import { PolicyService } from '@/app/core/services/pat/policy.service';
 import { PatUnitMeasureService } from '@/app/core/services/pat/pat-unit-measure.service';
-import { PatPolicy, PatTacticalActivity, PatUnitMeasure } from '@/app/core/models/pat/pat-models';
+import { PatTacticalActivity, PatUnitMeasure } from '@/app/core/models/pat/pat-models';
 import { Observable, of } from 'rxjs';
 import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
 
@@ -70,8 +68,6 @@ export class CreatePatActivityComponent {
   private readonly router = inject(Router);
   private readonly activityService = inject(PatActivityService);
   private readonly tacticalActivityService = inject(PatTacticalActivityService);
-  private readonly programService = inject(PatProgramService);
-  private readonly policyService = inject(PolicyService);
   private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   year = input.required<number>();
@@ -95,23 +91,6 @@ export class CreatePatActivityComponent {
     ),
   );
 
-  programCtx = computed(() =>
-    this.programService
-      .getServiceByAdenda(null)
-      .newSearchSelectContext(
-        (p) => this.form.patchValue({ programId: p.id }),
-        undefined,
-        () => this.form.patchValue({ programId: null }),
-      ),
-  );
-
-  policyCtx: SearchSelectContextFactory<PatPolicy> =
-    this.policyService.newSearchSelectContext(
-      (p) => this.form.patchValue({ policyId: p.id }),
-      undefined,
-      () => this.form.patchValue({ policyId: null }),
-    );
-
   unitMeasureCtx: SearchSelectContextFactory<PatUnitMeasure> =
     this.unitMeasureService.newSearchSelectContext(
       (u) => this.form.patchValue({ unitMeasureId: u.id }),
@@ -123,8 +102,6 @@ export class CreatePatActivityComponent {
     code: [''],
     name: ['', Validators.required],
     tacticalActivityId: [null, Validators.required],
-    policyId: [null],
-    programId: [null],
     unitMeasureId: [null],
     unitMeasureGoal: [null],
     description: [''],
@@ -164,8 +141,6 @@ export class CreatePatActivityComponent {
       code: v.code || undefined,
       name: v.name,
       tacticalActivityId: v.tacticalActivityId,
-      policyId: v.policyId || null,
-      programId: v.programId || null,
       unitMeasureId: v.unitMeasureId || null,
       unitMeasureGoal: v.unitMeasureGoal ?? null,
       description: v.description || undefined,

@@ -38,6 +38,15 @@ export class ImprovementActionService {
 
   constructor(private http: HttpClient) {}
 
+  findUpcoming(
+    limit = 8,
+  ): Observable<ApiResponse<ImprovementActionDto[]>> {
+    return this.http.get<ApiResponse<ImprovementActionDto[]>>(
+      `${this.apiUrl}/upcoming`,
+      { params: new HttpParams().set('limit', limit.toString()) },
+    );
+  }
+
   findByFindingId(
     findingId: number,
   ): Observable<ApiResponse<ImprovementActionDto[]>> {

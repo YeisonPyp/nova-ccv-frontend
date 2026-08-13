@@ -1,26 +1,34 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, input, OnInit, output, signal } from "@angular/core";
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { debounceTime, distinctUntilChanged, filter, switchMap } from "rxjs";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { FindingService } from "@/app/core/services/improvement-plan/finding.service";
+} from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { FindingService } from '@/app/core/services/improvement-plan/finding.service';
 import {
   FindingDto,
   FindingType,
   findingTypeLabels,
-} from "@/app/core/models/improvement-plan/finding.model";
-import { FindingDocumentDto } from "@/app/core/models/improvement-plan/finding-document.model";
-import { FindingDocumentItemComponent } from "@/app/features/improvement-plan/pages/improvement-plan/components/finding-document-item/finding-document-item.component";
-import { ActionSectionComponent } from "./action-section/action-section.component";
-import { AutosizeTextareaDirective } from "@/app/shared/directives/autosize-textarea.directive";
+} from '@/app/core/models/improvement-plan/finding.model';
+import { FindingDocumentDto } from '@/app/core/models/improvement-plan/finding-document.model';
+import { FindingDocumentItemComponent } from '@/app/features/improvement-plan/pages/improvement-plan/components/finding-document-item/finding-document-item.component';
+import { ActionSectionComponent } from './action-section/action-section.component';
+import { AutosizeTextareaDirective } from '@/app/shared/directives/autosize-textarea.directive';
 
 @Component({
-  selector: "app-finding-item",
+  selector: 'app-finding-item',
   standalone: true,
   imports: [
     CommonModule,
@@ -29,8 +37,8 @@ import { AutosizeTextareaDirective } from "@/app/shared/directives/autosize-text
     ActionSectionComponent,
     AutosizeTextareaDirective,
   ],
-  templateUrl: "./finding-item.component.html",
-  styleUrl: "./finding-item.component.scss",
+  templateUrl: './finding-item.component.html',
+  styleUrl: './finding-item.component.scss',
 })
 export class FindingItemComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -39,6 +47,8 @@ export class FindingItemComponent implements OnInit {
   finding = input.required<FindingDto>();
 
   onDelete = output<FindingDto>();
+
+  actions = computed(() => this.finding().actions ?? []);
 
   rootCauseDocuments = signal<FindingDocumentDto[]>([]);
 
@@ -54,10 +64,10 @@ export class FindingItemComponent implements OnInit {
 
   constructor() {
     this.formGroup = this.fb.group({
-      type: ["", Validators.required],
-      name: ["", [Validators.required, Validators.maxLength(255)]],
-      description: ["", Validators.required],
-      rootCauseNotes: [""],
+      type: ['', Validators.required],
+      name: ['', [Validators.required, Validators.maxLength(255)]],
+      description: ['', Validators.required],
+      rootCauseNotes: [''],
     });
 
     toObservable(this.finding).subscribe((f) => {
@@ -85,7 +95,7 @@ export class FindingItemComponent implements OnInit {
         switchMap((values) => this.service.update(this.finding().id, values)),
       )
       .subscribe({
-        error: (err) => console.error("Error al guardar el hallazgo:", err),
+        error: (err) => console.error('Error al guardar el hallazgo:', err),
       });
   }
 

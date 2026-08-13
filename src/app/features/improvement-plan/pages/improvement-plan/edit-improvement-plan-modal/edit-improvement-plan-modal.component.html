@@ -248,6 +248,8 @@
           <app-finding-section
             [planId]="plan()?.id!"
             [canCreate]="canCreateFindings()"
+            [initialFindingId]="findingId()"
+            [initialActionId]="actionId()"
           ></app-finding-section>
         </section>
       }

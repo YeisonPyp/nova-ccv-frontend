@@ -57,30 +57,5 @@
         }
       </span>
     </div>
-
-    <!-- Reports To -->
-    <div>
-      <span
-        class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1"
-      >
-        Reporta a
-      </span>
-      <div class="text-gray-900 dark:text-gray-200 flex items-center gap-2">
-        @if (employee().reportsTo) {
-          <div
-            class="h-6 w-6 shrink-0 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[10px] font-bold text-gray-600 dark:text-gray-300"
-          >
-            {{ employee().reportsTo!.name.charAt(0) | uppercase
-            }}{{ employee().reportsTo!.lastName.charAt(0) | uppercase }}
-          </div>
-          <span class="truncate"
-            >{{ employee().reportsTo!.name }}
-            {{ employee().reportsTo!.lastName }}</span
-          >
-        } @else {
-          <span class="text-gray-400 italic">N/A</span>
-        }
-      </div>
-    </div>
   </div>
 </div>

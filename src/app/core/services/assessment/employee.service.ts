@@ -24,7 +24,6 @@ export interface CreateEmployeeDto {
   lastName: string;
   email: string;
   positionId: number;
-  employeeReportsToId: number;
 }
 
 export interface UpdateEmployeeDto {
@@ -32,7 +31,6 @@ export interface UpdateEmployeeDto {
   lastName?: string;
   email?: string;
   positionId?: number;
-  employeeReportsToId?: number;
 }
 
 @Injectable({

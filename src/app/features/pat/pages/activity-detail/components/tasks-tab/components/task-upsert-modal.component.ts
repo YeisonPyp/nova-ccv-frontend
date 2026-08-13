@@ -5,6 +5,9 @@ import { PatActivityTaskService } from '@/app/core/services/pat/pat-activity-tas
 import { PatActivityTask } from '@/app/core/models/pat/pat-models';
 import { AreaService } from '@/app/core/services/assessment/area.service';
 import { CostCenterService } from '@/app/core/services/cost-center/cost-center.service';
+import { PillarService } from '@/app/core/services/pat/pillar.service';
+import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
+import { PolicyService } from '@/app/core/services/pat/policy.service';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
 
 @Component({
@@ -25,6 +28,9 @@ export class PatTaskUpsertModalComponent {
   private readonly service = inject(PatActivityTaskService);
   private readonly areaService = inject(AreaService);
   private readonly costCenterService = inject(CostCenterService);
+  private readonly pillarService = inject(PillarService);
+  private readonly programService = inject(PatProgramService);
+  private readonly policyService = inject(PolicyService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
@@ -41,10 +47,31 @@ export class PatTaskUpsertModalComponent {
     () => this.form.patchValue({ costCenterId: null }),
   );
 
+  pillarCtx = this.pillarService.newSearchSelectContext(
+    (p) => this.form.patchValue({ pillarId: p.id }),
+    { isRequired: false, label: 'Pilar' },
+    () => this.form.patchValue({ pillarId: null }),
+  );
+
+  programCtx = this.programService.newSearchSelectContext(
+    (p) => this.form.patchValue({ programId: p.id }),
+    { isRequired: false, label: 'Programa estratégico' },
+    () => this.form.patchValue({ programId: null }),
+  );
+
+  policyCtx = this.policyService.newSearchSelectContext(
+    (p) => this.form.patchValue({ policyId: p.id }),
+    { isRequired: false, label: 'Política' },
+    () => this.form.patchValue({ policyId: null }),
+  );
+
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
     areaId: [null, Validators.required],
     costCenterId: [null, Validators.required],
+    pillarId: [null],
+    programId: [null],
+    policyId: [null],
     description: [''],
   });
 
@@ -57,10 +84,16 @@ export class PatTaskUpsertModalComponent {
           name: t?.name ?? '',
           areaId: t?.area?.id ?? null,
           costCenterId: t?.costCenter?.id ?? null,
+          pillarId: t?.pillar?.id ?? null,
+          programId: t?.program?.id ?? null,
+          policyId: t?.policy?.id ?? null,
           description: t?.description ?? '',
         });
         if (t?.area) this.areaCtx.selectResults([t.area]);
         if (t?.costCenter) this.costCenterCtx.selectResults([t.costCenter]);
+        if (t?.pillar) this.pillarCtx.selectResults([t.pillar]);
+        if (t?.program) this.programCtx.selectResults([t.program]);
+        if (t?.policy) this.policyCtx.selectResults([t.policy]);
       }
     });
   }

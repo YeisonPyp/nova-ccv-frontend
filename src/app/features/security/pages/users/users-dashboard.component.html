@@ -7,9 +7,16 @@
         <h1 class="text-2xl font-bold text-secondary">Usuarios</h1>
         <p class="text-tertiary text-sm">Gestión de usuarios del sistema</p>
       </div>
-      <button class="btn btn-primary" (click)="onCreateClicked()">
-        <i class="fas fa-plus"></i> Nuevo Usuario
-      </button>
+      <div class="flex items-center gap-2">
+        @if (canCreate) {
+          <button class="btn btn-outline" (click)="openSeedModal()">
+            <i class="fas fa-file-excel"></i> Sembrar usuarios
+          </button>
+        }
+        <button class="btn btn-primary" (click)="onCreateClicked()">
+          <i class="fas fa-plus"></i> Nuevo Usuario
+        </button>
+      </div>
     </div>
 
     <app-dynamic-table
@@ -33,4 +40,11 @@
       (pageChange)="page.set($event)"
     />
   </div>
+
+  @if (seedModalOpen()) {
+    <app-seed-users-modal
+      (onClose)="closeSeedModal()"
+      (onSeeded)="onUsersSeeded()"
+    />
+  }
 }

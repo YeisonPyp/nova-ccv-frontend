@@ -1,21 +1,30 @@
-import { Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { ReportTemplateService } from "@/app/core/services/reports/report-template.service";
-import { ReportService } from "@/app/core/services/reports/report.service";
-import { Report } from "@/app/core/models/reports/report.model";
-import { ImprovementProcess } from "@/app/core/models/improvement-plan/improvement-process.model";
-import { ControlEntity } from "@/app/core/models/improvement-plan/control-entity.model";
-import { actionEffectiveStatusLabels } from "@/app/core/models/improvement-plan/improvement-plan.model";
-import { FileItemComponent } from "@/app/shared/components/file-item/file-item.component";
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReportTemplateService } from '@/app/core/services/reports/report-template.service';
+import { ReportService } from '@/app/core/services/reports/report.service';
+import { Report } from '@/app/core/models/reports/report.model';
+import { ImprovementProcess } from '@/app/core/models/improvement-plan/improvement-process.model';
+import { ControlEntity } from '@/app/core/models/improvement-plan/control-entity.model';
+import { actionEffectiveStatusLabels } from '@/app/core/models/improvement-plan/improvement-plan.model';
+import { FileItemComponent } from '@/app/shared/components/file-item/file-item.component';
 
-const REPORT_TEMPLATE_NAME = "Informe de Planes de Mejoramiento";
+const REPORT_TEMPLATE_NAME = 'Informe de Planes de Mejoramiento';
 
 @Component({
-  selector: "app-generate-report-modal",
+  selector: 'app-generate-report-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, FileItemComponent],
-  templateUrl: "./generate-report-modal.component.html",
+  templateUrl: './generate-report-modal.component.html',
 })
 export class GenerateReportModalComponent implements OnChanges {
   private readonly reportTemplateService = inject(ReportTemplateService);
@@ -39,7 +48,7 @@ export class GenerateReportModalComponent implements OnChanges {
   generatedReport = signal<Report | null>(null);
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["isOpen"]?.currentValue) {
+    if (changes['isOpen']?.currentValue) {
       this.filterProcessId.set(null);
       this.filterControlEntityId.set(null);
       this.filterStatus.set(null);
@@ -63,16 +72,16 @@ export class GenerateReportModalComponent implements OnChanges {
         next: (res) => {
           const template = res.data?.content?.[0];
           if (!template) {
-            this.error.set("No se encontró la plantilla del informe");
+            this.error.set('No se encontró la plantilla del informe');
             this.generating.set(false);
             return;
           }
 
           const vars = {
-            processId: (this.filterProcessId() ?? -1).toString(),
-            controlEntityId: (this.filterControlEntityId() ?? -1).toString(),
-            status: this.filterStatus() ?? "ALL",
-            year: (this.filterYear() ?? -1).toString(),
+            processId: this.filterProcessId()?.toString(),
+            controlEntityId: this.filterControlEntityId()?.toString(),
+            status: this.filterStatus(),
+            year: this.filterYear()?.toString(),
           };
 
           this.reportService
@@ -87,18 +96,18 @@ export class GenerateReportModalComponent implements OnChanges {
                 if (createRes.success && createRes.data) {
                   this.generatedReport.set(createRes.data);
                 } else {
-                  this.error.set("No se pudo generar el informe");
+                  this.error.set('No se pudo generar el informe');
                 }
               },
               error: () => {
                 this.generating.set(false);
-                this.error.set("No se pudo generar el informe");
+                this.error.set('No se pudo generar el informe');
               },
             });
         },
         error: () => {
           this.generating.set(false);
-          this.error.set("No se encontró la plantilla del informe");
+          this.error.set('No se encontró la plantilla del informe');
         },
       });
   }

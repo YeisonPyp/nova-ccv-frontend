@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PositionService } from '@/app/core/services/assessment/position.service';
 import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
@@ -10,7 +10,11 @@ import {
   pdcaPhaseLabels,
   ExecutionFrequency,
   executionFrequencyLabels,
+  ActionType,
+  actionTypeLabels,
+  allowedActionTypesFor,
 } from '@/app/core/models/improvement-plan/improvement-action.model';
+import { FindingType } from '@/app/core/models/improvement-plan/finding.model';
 import {
   Option,
   SelectorComponent,
@@ -34,17 +38,35 @@ export class NewActionComponent {
   private readonly fb = inject(FormBuilder);
 
   findingId = input.required<number>();
+  findingType = input.required<FindingType>();
 
   onCreated = output<ImprovementActionDto>();
+
+  allowedActionTypes = computed(() => allowedActionTypesFor(this.findingType()));
+
+  getActionTypeLabel(t: ActionType): string {
+    return actionTypeLabels[t];
+  }
 
   form = this.fb.group({
     objectiveDescription: ['', Validators.required],
     actionDescription: ['', Validators.required],
+    actionType: ['' as ActionType | '', Validators.required],
     executionFrequency: ['MONTHLY' as ExecutionFrequency, Validators.required],
     indicator: ['', Validators.required],
     startDate: ['', Validators.required],
     closeDate: ['', Validators.required],
   });
+
+  constructor() {
+    effect(() => {
+      const allowed = this.allowedActionTypes();
+      const current = this.form.get('actionType')?.value;
+      if (allowed.length && (!current || !allowed.includes(current as ActionType))) {
+        this.form.get('actionType')?.setValue(allowed[0], { emitEvent: false });
+      }
+    });
+  }
 
   selectedPhases = new Set<PdcaPhase>();
 
@@ -87,6 +109,7 @@ export class NewActionComponent {
     const {
       objectiveDescription,
       actionDescription,
+      actionType,
       executionFrequency,
       indicator,
       startDate,
@@ -98,6 +121,7 @@ export class NewActionComponent {
         findingId: this.findingId(),
         objectiveDescription: objectiveDescription!,
         actionDescription: actionDescription!,
+        actionType: actionType as ActionType,
         pdcaPhases: Array.from(this.selectedPhases),
         executionFrequency: executionFrequency!,
         indicator: indicator!,
@@ -113,6 +137,7 @@ export class NewActionComponent {
           this.form.reset({
             objectiveDescription: '',
             actionDescription: '',
+            actionType: this.allowedActionTypes()[0] ?? '',
             executionFrequency: 'MONTHLY',
             indicator: '',
             startDate: '',

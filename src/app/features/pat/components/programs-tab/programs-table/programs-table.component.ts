@@ -1,14 +1,6 @@
 import { PaginationTableComponent } from "@/app/shared/components/pagination-table/pagination-table.component";
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  output,
-  ViewChild,
-} from "@angular/core";
+import { Component, inject, output, ViewChild } from "@angular/core";
 import { PatProgramService } from "@/app/core/services/pat/pat-program.service";
 import { TableColumn } from "@/app/shared/components/dynamic-table/dynamic-table.component";
 import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
@@ -20,27 +12,18 @@ import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
   templateUrl: "./programs-table.component.html",
 })
 export class ProgramsTableComponent {
-  #service = inject(PatProgramService);
-  adendaId = input<number | null>(null);
-  service = computed(() => this.#service.getServiceByAdenda(this.adendaId()));
+  service = inject(PatProgramService);
 
   @ViewChild(PaginationTableComponent) table?: PaginationTableComponent<PatStrategicProgram>;
 
   onEdit = output<PatStrategicProgram>();
 
   columns: TableColumn[] = [
-    { key: "name", label: "Nombre" },
-    { key: "code", label: "Código" },
+    { key: "year", label: "Año" },
     { key: "startsAt", label: "Inicio" },
     { key: "endsAt", label: "Fin" },
+    { key: "description", label: "Descripción" },
   ];
-
-  constructor() {
-    effect(() => {
-      this.service();
-      this.table?.load(1);
-    });
-  }
 
   reload(): void {
     this.table?.load(this.table.currentPage());

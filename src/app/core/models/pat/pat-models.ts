@@ -10,6 +10,14 @@ export interface PatPillar {
 export interface PatAdenda {
   id: number;
   name: string;
+  year?: number;
+}
+
+export interface PatAdendaContext {
+  id: number;
+  year: number;
+  name: string;
+  programPrefix: string;
 }
 
 export interface PatUnitMeasure {
@@ -31,14 +39,25 @@ export interface PatProduct {
 
 export interface PatStrategicProgram {
   id: number;
-  name: string;
-  code?: string;
-  adenda?: PatAdenda;
+  year: number;
   startsAt: string;
   endsAt: string;
   description?: string;
-  /** @deprecated The backend no longer populates this. */
-  pillar?: PatPillar;
+}
+
+export interface PatAdendaProgramSummary {
+  id: string;
+  programId: number;
+  description?: string;
+  adendaId: number;
+  year: number;
+  adendaName: string;
+  contextId?: number;
+  contextName?: string;
+  unitMeasureId?: number;
+  unitMeasureName?: string;
+  unitMeasureGoal: number;
+  programCode: string;
 }
 
 export interface PatPolicy {
@@ -88,9 +107,6 @@ export interface PatActivity {
   description?: string;
   unitMeasure?: PatUnitMeasure;
   unitMeasureGoal?: number;
-  program?: PatStrategicProgram;
-  policy?: PatPolicy;
-  pillar?: PatPillar;
   tacticalActivity?: PatTacticalActivity;
   startsAt: string;
   endsAt: string;
@@ -135,6 +151,10 @@ export interface PatActivityTask {
   name: string;
   area: Area;
   costCenter: CostCenter;
+  pillar?: PatPillar;
+  program?: PatStrategicProgram;
+  policy?: PatPolicy;
+  adenda?: PatAdenda;
   description?: string;
   createdAt: string;
 }

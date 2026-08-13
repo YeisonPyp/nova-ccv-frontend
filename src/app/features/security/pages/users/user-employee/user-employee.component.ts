@@ -42,11 +42,6 @@ export class UserEmployeeComponent implements OnInit, OnDestroy {
     maxItems: 1,
   });
 
-  reportsToCtx = this.employeeService.newSearchSelectEmployeeContext(undefined, {
-    placeholder: "Buscar empleado...",
-    maxItems: 1,
-  });
-
   form = this.fb.group({
     email: [""],
   });
@@ -62,9 +57,6 @@ export class UserEmployeeComponent implements OnInit, OnDestroy {
 
     if (emp.position) {
       this.positionCtx.selectResults([emp.position]);
-    }
-    if (emp.reportsTo) {
-      this.reportsToCtx.selectResults([emp.reportsTo]);
     }
 
     this.setupDebounce();
@@ -84,11 +76,9 @@ export class UserEmployeeComponent implements OnInit, OnDestroy {
           if (!emp) return [];
           this.autoSaving.set(true);
           const posSelected = this.positionCtx.selectedOptions()[0];
-          const reportsSelected = this.reportsToCtx.selectedOptions()[0];
           return this.employeeService.updateEmployee(emp.id, {
             email: this.form.value.email ?? undefined,
             positionId: posSelected ? Number(posSelected.id) : undefined,
-            employeeReportsToId: reportsSelected ? Number(reportsSelected.id) : undefined,
           });
         }),
       )
@@ -110,16 +100,6 @@ export class UserEmployeeComponent implements OnInit, OnDestroy {
 
   onPositionRemove(option: SearchSelectOption): void {
     this.positionCtx.remove(option);
-    this.debounce$.next();
-  }
-
-  onReportsToSelect(option: SearchSelectOption): void {
-    this.reportsToCtx.select(option);
-    this.debounce$.next();
-  }
-
-  onReportsToRemove(option: SearchSelectOption): void {
-    this.reportsToCtx.remove(option);
     this.debounce$.next();
   }
 }

@@ -76,20 +76,6 @@
             (onSelect)="onSelectPosition($event)"
           />
         </div>
-
-        <div>
-          <app-search-select
-            [label]="'Reporta A (Jefe directo)'"
-            [placeholder]="'Selecciona un empleado'"
-            [maxElements]="1"
-            [required]="false"
-            [items]="employees()"
-            [selectedItems]="selectedEmployees()"
-            (onSearch)="findEmployees($event)"
-            (onRemove)="onRemoveReportsTo($event)"
-            (onSelect)="onSelectReportsTo($event)"
-          />
-        </div>
       </form>
     </div>
   </div>

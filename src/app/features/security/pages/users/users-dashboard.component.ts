@@ -11,6 +11,7 @@ import {
 import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
 import { ForbiddenComponent } from '@/app/shared/components/forbidden/forbidden.component';
 import { ExpressionNode } from '@rsql/ast';
+import { SeedUsersModalComponent } from './seed-users-modal/seed-users-modal.component';
 
 @Component({
   selector: 'app-users-dashboard',
@@ -20,6 +21,7 @@ import { ExpressionNode } from '@rsql/ast';
     DynamicTableComponent,
     PaginationComponent,
     ForbiddenComponent,
+    SeedUsersModalComponent,
   ],
   templateUrl: './users-dashboard.component.html',
 })
@@ -34,6 +36,7 @@ export class UsersDashboardComponent {
   totalPages = signal(0);
   loading = signal(false);
   searchNodes = signal<ExpressionNode[]>([]);
+  seedModalOpen = signal(false);
 
   columns: TableColumn[] = [
     {
@@ -73,24 +76,31 @@ export class UsersDashboardComponent {
 
   constructor() {
     effect(() => {
-      this.loading.set(true);
-      this.service
-        .getAllUsers({
-          page: this.page() - 1,
-          size: this.size(),
-          nodes: this.searchNodes(),
-        })
-        .subscribe({
-          next: (res) => {
-            if (res.success && res.data) {
-              this.users.set(res.data.content);
-              this.totalPages.set(res.data.totalPages);
-            }
-            this.loading.set(false);
-          },
-          error: () => this.loading.set(false),
-        });
+      this.page();
+      this.size();
+      this.searchNodes();
+      this.loadUsers();
     });
+  }
+
+  private loadUsers(): void {
+    this.loading.set(true);
+    this.service
+      .getAllUsers({
+        page: this.page() - 1,
+        size: this.size(),
+        nodes: this.searchNodes(),
+      })
+      .subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            this.users.set(res.data.content);
+            this.totalPages.set(res.data.totalPages);
+          }
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      });
   }
 
   get canRead() {
@@ -112,5 +122,22 @@ export class UsersDashboardComponent {
 
   onCreateClicked() {
     this.router.navigate(['/security/users/new']);
+  }
+
+  get canCreate() {
+    return this.auth.hasPermission('USERS_CREATE');
+  }
+
+  openSeedModal(): void {
+    this.seedModalOpen.set(true);
+  }
+
+  closeSeedModal(): void {
+    this.seedModalOpen.set(false);
+  }
+
+  onUsersSeeded(): void {
+    this.seedModalOpen.set(false);
+    this.loadUsers();
   }
 }

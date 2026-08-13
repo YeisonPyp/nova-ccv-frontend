@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EmployeeService } from '@/app/core/services/assessment/employee.service';
 import { PositionService } from '@/app/core/services/assessment/position.service';
 import { SelectSearchComponent } from '@/app/shared/components/select-search/select-search.component';
 import { SearchSelectOption } from '@/app/shared/components/search-select/on-search-select.interface';
@@ -33,7 +32,6 @@ import { map } from 'rxjs';
 })
 export class UserRegistryFormComponent {
   private readonly positionService = inject(PositionService);
-  private readonly employeeService = inject(EmployeeService);
   private readonly scheduleService = inject(ScheduleService);
   private readonly userService = inject(UserService);
   private readonly roleService = inject(RoleService);
@@ -42,8 +40,6 @@ export class UserRegistryFormComponent {
 
   selectedPositions = signal<SearchSelectOption[]>([]);
   positions = signal<SearchSelectOption[]>([]);
-  employees = signal<SearchSelectOption[]>([]);
-  selectedEmployees = signal<SearchSelectOption[]>([]);
   schedules = toSignal(
     this.scheduleService
       .findAll()
@@ -64,19 +60,6 @@ export class UserRegistryFormComponent {
   );
   creating = signal(false);
 
-  findEmployees(q: string) {
-    this.employeeService.findEmployees({ nameOrEmail: q }).subscribe((r) => {
-      if (r.data && r.success) {
-        this.employees.set(
-          r.data.content.map((e) => ({
-            id: e.id,
-            title: `${e.name} ${e.lastName} (${e.email})`,
-          })),
-        );
-      }
-    });
-  }
-
   findPositions(q: string) {
     this.positionService
       .findPositions({ page: 0, size: 10, name: q })
@@ -87,16 +70,6 @@ export class UserRegistryFormComponent {
           );
         }
       });
-  }
-
-  onSelectReportsTo(o: SearchSelectOption) {
-    this.selectedEmployees.set([o]);
-    this.form.patchValue({ reportsTo: o.id as number });
-  }
-
-  onRemoveReportsTo(_: SearchSelectOption) {
-    this.selectedEmployees.set([]);
-    this.form.patchValue({ reportsTo: null });
   }
 
   onRemovePosition(o: SearchSelectOption) {
@@ -119,8 +92,6 @@ export class UserRegistryFormComponent {
     upin: ['', [Validators.required]],
     positionId: [null as number | null, [Validators.required]],
     scheduleId: [null as number | null, [Validators.required]],
-    // optional direct boss, sent to the backend as RegisterRequest.reportsTo
-    reportsTo: [null as number | null],
   });
 
   submit() {

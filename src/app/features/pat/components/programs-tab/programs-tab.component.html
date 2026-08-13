@@ -8,29 +8,28 @@
 
     <button
       type="button"
-      class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
-      [disabled]="adendaId() == null"
+      class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
       (click)="openCreate()"
     >
       + Nuevo programa
     </button>
   </div>
 
-  @if (adendaId() == null) {
-    <p class="text-sm text-gray-400 text-center py-8">
-      Selecciona una adenda para ver sus programas estratégicos.
-    </p>
-  } @else {
-    <app-programs-table [adendaId]="adendaId()" (onEdit)="openEdit($event)" />
-  }
+  <app-programs-table (onEdit)="openEdit($event)" />
 </div>
 
-@if (adendaId() != null) {
-  <app-create-pat-program
-    [isOpen]="modalOpen()"
-    [adendaId]="adendaId()!"
-    [program]="editing()"
-    (onClose)="closeModal()"
-    (onSaved)="onSaved()"
-  />
-}
+<app-create-pat-program
+  [isOpen]="modalOpen()"
+  [program]="editing()"
+  [year]="year()"
+  (onClose)="closeModal()"
+  (onSaved)="onSaved()"
+/>
+
+<div class="mt-8 pt-6 border-t border-gray-200">
+  <app-adenda-context-section />
+</div>
+
+<div class="mt-8 pt-6 border-t border-gray-200">
+  <app-adenda-program-summary-section [year]="year()" />
+</div>

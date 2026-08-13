@@ -1,5 +1,8 @@
 <div class="w-full p-6">
-  <button class="btn btn-link text-sm text-gray-500 mb-4 ps-0" (click)="goBack()">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    (click)="goBack()"
+  >
     ← Volver al PAT
   </button>
 
@@ -14,11 +17,6 @@
             class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded"
             >{{ a.code }}</span
           >
-          @if (a.program) {
-            <span class="badge badge-outline text-xs">{{
-              a.program.name
-            }}</span>
-          }
         </div>
         <h1 class="text-2xl font-bold text-secondary m-0">{{ a.name }}</h1>
         @if (a.description) {
@@ -44,21 +42,11 @@
         <p
           class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
         >
-          Programa Estratégico
-        </p>
-        <p class="text-sm font-medium text-gray-700">
-          {{ a.program?.name ?? "—" }}
-        </p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <p
-          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
-        >
           Unidad de medida
         </p>
         <p class="text-sm font-medium text-gray-700">
-          {{ a.unitMeasure?.name ?? "—" }} @if (a.unitMeasureGoal != null) {
+          {{ a.unitMeasure?.name ?? "—" }}
+          @if (a.unitMeasureGoal != null) {
             (meta: {{ a.unitMeasureGoal }})
           }
         </p>

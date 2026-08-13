@@ -9,5 +9,4 @@ export interface Employee {
   isActive: boolean;
 
   position?: Position | undefined;
-  reportsTo?: Employee | null | undefined;
 }

@@ -2,6 +2,33 @@ import { Employee } from '../assessment/employee.model';
 import { Position } from '../assessment/position.model';
 import { EvidenceDto } from './evidence.model';
 
+import type { FindingType } from './finding.model';
+
+export type ActionType = 'CORRECTIVE' | 'MITIGATION' | 'IMPROVEMENT';
+
+export const actionTypeLabels: Record<ActionType, string> = {
+  CORRECTIVE: 'Correctiva',
+  MITIGATION: 'Mitigación',
+  IMPROVEMENT: 'Mejora',
+};
+
+export const actionTypeBadgeClasses: Record<ActionType, string> = {
+  CORRECTIVE: 'bg-red-50 text-red-700 border-red-200',
+  MITIGATION: 'bg-amber-50 text-amber-700 border-amber-200',
+  IMPROVEMENT: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+};
+
+const ALLOWED_ACTION_TYPES: Record<FindingType, ActionType[]> = {
+  NONCONFORMITY: ['CORRECTIVE'],
+  OBSERVATION: ['MITIGATION'],
+  IMPROVEMENT_OPPORTUNITY: ['IMPROVEMENT'],
+  FINDING: ['CORRECTIVE', 'MITIGATION', 'IMPROVEMENT'],
+};
+
+export function allowedActionTypesFor(findingType: FindingType): ActionType[] {
+  return ALLOWED_ACTION_TYPES[findingType] ?? [];
+}
+
 export type PdcaPhase = 'PLAN' | 'DO' | 'CHECK' | 'ACT';
 
 export const pdcaPhaseLabels: Record<PdcaPhase, string> = {
@@ -65,9 +92,14 @@ export interface ImprovementActionFollowUp {
 
 export interface ImprovementActionDto {
   id: number;
+  findingId?: number;
+  findingName?: string;
+  planId?: number;
+  planName?: string;
   letter: string;
   objectiveDescription: string;
   actionDescription: string;
+  actionType: ActionType;
   pdcaPhases: PdcaPhase[];
   target: number;
   executionFrequency: ExecutionFrequency;
@@ -91,6 +123,7 @@ export interface CreateImprovementActionDto {
   findingId: number;
   objectiveDescription: string;
   actionDescription: string;
+  actionType: ActionType;
   pdcaPhases: PdcaPhase[];
   executionFrequency: ExecutionFrequency;
   indicator: string;
@@ -103,6 +136,7 @@ export interface CreateImprovementActionDto {
 export interface UpdateImprovementActionDto {
   objectiveDescription?: string;
   actionDescription?: string;
+  actionType?: ActionType;
   pdcaPhases?: PdcaPhase[];
   target?: number;
   executionFrequency?: ExecutionFrequency;

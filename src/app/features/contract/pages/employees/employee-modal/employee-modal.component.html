@@ -83,17 +83,6 @@
             (onRemove)="onRemovePosition($event)"
             (onSelect)="onSelectPosition($event)"
           ></app-search-select>
-          <app-search-select
-            [label]="'Reporta A (Jefe directo)'"
-            [placeholder]="'Selecciona un empleado'"
-            [maxElements]="1"
-            [required]="false"
-            [items]="employees()"
-            [selectedItems]="selectedEmployees()"
-            (onSearch)="findEmployees($event)"
-            (onRemove)="onRemoveReportsTo($event)"
-            (onSelect)="onSelectReportsTo($event)"
-          ></app-search-select>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="onClose()">

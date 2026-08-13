@@ -88,9 +88,9 @@ export class ActionFollowUpComponent implements OnInit {
 
     effect(() => {
       if (this.canEdit()) {
-        this.form.enable();
+        this.form.enable({ emitEvent: false });
       } else {
-        this.form.disable();
+        this.form.disable({ emitEvent: false });
       }
     });
   }

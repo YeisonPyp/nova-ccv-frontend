@@ -2,16 +2,24 @@ import { CommonModule } from "@angular/common";
 import { Component, ViewChild, input, signal } from "@angular/core";
 import { ProgramsTableComponent } from "./programs-table/programs-table.component";
 import { CreatePatProgramComponent } from "./create-program/create-program.component";
+import { AdendaContextSectionComponent } from "./adenda-context-section/adenda-context-section.component";
+import { AdendaProgramSummarySectionComponent } from "./adenda-program-summary-section/adenda-program-summary-section.component";
 import { PatStrategicProgram } from "@/app/core/models/pat/pat-models";
 
 @Component({
   selector: "app-programs-tab",
   standalone: true,
-  imports: [CommonModule, ProgramsTableComponent, CreatePatProgramComponent],
+  imports: [
+    CommonModule,
+    ProgramsTableComponent,
+    CreatePatProgramComponent,
+    AdendaContextSectionComponent,
+    AdendaProgramSummarySectionComponent,
+  ],
   templateUrl: "./programs-tab.component.html",
 })
 export class ProgramsTabComponent {
-  adendaId = input.required<number | null>();
+  readonly year = input.required<number>();
 
   @ViewChild(ProgramsTableComponent) table?: ProgramsTableComponent;
 

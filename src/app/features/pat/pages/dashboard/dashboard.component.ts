@@ -44,7 +44,7 @@ export class DashboardComponent {
 
   readonly tabsInputs = computed<Record<TabKey, any>>(() => {
     return {
-      programs: {},
+      programs: { year: this.year() },
       tacticalActivities: { year: this.year() },
     };
   });

@@ -83,6 +83,8 @@ export class EditImprovementPlanModalComponent {
 
   plan = signal<ImprovementPlan | null>(null);
   id = input<number | null>(null);
+  findingId = input<number | null>(null);
+  actionId = input<number | null>(null);
 
   get planStatus() {
     return Object.keys(improvementPlanStatus) as Array<

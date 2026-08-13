@@ -49,6 +49,24 @@
             [required]="true"
           />
 
+          <app-context-search-select
+            [ctx]="pillarCtx"
+            label="Pilar"
+            [required]="false"
+          />
+
+          <app-context-search-select
+            [ctx]="programCtx"
+            label="Programa estratégico"
+            [required]="false"
+          />
+
+          <app-context-search-select
+            [ctx]="policyCtx"
+            label="Política"
+            [required]="false"
+          />
+
           <div class="form-group">
             <label>Descripción</label>
             <textarea

@@ -19,8 +19,6 @@ export interface CreateUserDto {
   positionId: number;
   scheduleId: number;
   password: string | null;
-  /** Direct boss (optional). */
-  reportsTo?: number | null;
 }
 
 export interface UpdateUserDto {
@@ -48,6 +46,21 @@ export class UserService {
 
   createUser(dto: CreateUserDto): Observable<ApiResponse<UserResponse>> {
     return this.http.post<ApiResponse<UserResponse>>(this.API_URL, dto);
+  }
+
+  seedFromExcel(
+    file: File,
+    scheduleId: number,
+    roleId: number,
+  ): Observable<ApiResponse<UserResponse[]>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('scheduleId', scheduleId.toString());
+    formData.append('roleId', roleId.toString());
+    return this.http.post<ApiResponse<UserResponse[]>>(
+      `${this.API_URL}/seed-from-excel`,
+      formData,
+    );
   }
 
   updateUser(

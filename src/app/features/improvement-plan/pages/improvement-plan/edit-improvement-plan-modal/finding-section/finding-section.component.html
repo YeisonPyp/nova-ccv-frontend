@@ -10,23 +10,13 @@
 
     @if (!isLoading()) {
       <div class="space-y-3 mt-2">
-        @for (finding of pagedFindings(); track finding.id) {
+        @for (finding of findings(); track finding.id) {
           <app-finding-item
             [finding]="finding"
             (onDelete)="onDeleteFinding($event)"
           ></app-finding-item>
         }
       </div>
-
-      @if (findings().length > 0) {
-        <app-paginator
-          [pageSize]="pageSize()"
-          [currentPage]="currentPage()"
-          [totalPages]="totalPages()"
-          (onSelectPage)="onSelectPage($event)"
-          (pageSizeChange)="onPageSizeChange($event)"
-        ></app-paginator>
-      }
 
       @if (canCreate()) {
         <app-new-finding

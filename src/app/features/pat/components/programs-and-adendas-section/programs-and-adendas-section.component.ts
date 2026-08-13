@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { AdendaListComponent } from '../adenda-list/adenda-list.component';
 import { ProgramsTabComponent } from '../programs-tab/programs-tab.component';
 import { PatAdenda } from '@/app/core/models/pat/pat-models';
@@ -11,6 +11,8 @@ import { PatAdenda } from '@/app/core/models/pat/pat-models';
   templateUrl: './programs-and-adendas-section.component.html',
 })
 export class ProgramsAndAdendasSectionComponent {
+  readonly year = input.required<number>();
+
   selectedAdenda = signal<PatAdenda | null>(null);
 
   onSelectAdenda(adenda: PatAdenda | null): void {
