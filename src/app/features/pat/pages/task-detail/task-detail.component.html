@@ -79,12 +79,16 @@
       </div>
 
       <div class="p-6">
-        <app-monthly-overview-grid
-          [overview]="overview()"
-          [mode]="activeTab() === 'plan' ? 'plan' : 'execution'"
-          [year]="t.activityYear!"
-          [taskId]="t.id"
-        />
+        @if (activeTab() === 'budget') {
+          <app-pat-task-budget-tab [taskId]="t.id" />
+        } @else {
+          <app-monthly-overview-grid
+            [overview]="overview()"
+            [mode]="activeTab() === 'plan' ? 'plan' : 'execution'"
+            [year]="t.activityYear!"
+            [taskId]="t.id"
+          />
+        }
       </div>
     </div>
   }

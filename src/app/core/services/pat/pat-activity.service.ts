@@ -1,8 +1,5 @@
 import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
-import {
-  PatActivity,
-  PatActivityBudgetMatrix,
-} from '../../models/pat/pat-models';
+import { PatActivity } from '../../models/pat/pat-models';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/api-response.model';
@@ -35,25 +32,6 @@ export class PatActivityService extends FilterServiceSpecImpl<
 > {
   constructor() {
     super('pat/v2/activities');
-  }
-
-  findPresupuestalMatrix(
-    id: number,
-  ): Observable<ApiResponse<PatActivityBudgetMatrix[]>> {
-    return this.http.get<ApiResponse<PatActivityBudgetMatrix[]>>(
-      `${this.baseUrl}/${id}/presupuestal-matrix`,
-    );
-  }
-
-  saveBudgetMatrix(
-    activityId: number,
-    budgetCategoryId: number,
-    amount: number,
-  ): Observable<ApiResponse<PatActivityBudgetMatrix>> {
-    return this.http.post<ApiResponse<PatActivityBudgetMatrix>>(
-      `${this.baseUrl}/${activityId}/presupuestal-matrix`,
-      { budgetCategoryId, amount },
-    );
   }
 
   seedFromFile(year: number, file: File): Observable<ApiResponse<void>> {

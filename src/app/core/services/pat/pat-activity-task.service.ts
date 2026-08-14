@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import { PatActivityTask } from '../../models/pat/pat-models';
+import {
+  PatActivityBudgetMatrix,
+  PatActivityTask,
+} from '../../models/pat/pat-models';
 
 export interface CreatePatActivityTaskDto {
   name: string;
@@ -66,5 +69,24 @@ export class PatActivityTaskService {
 
   delete(id: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/tasks/${id}`);
+  }
+
+  findPresupuestalMatrix(
+    taskId: number,
+  ): Observable<ApiResponse<PatActivityBudgetMatrix[]>> {
+    return this.http.get<ApiResponse<PatActivityBudgetMatrix[]>>(
+      `${this.baseUrl}/tasks/${taskId}/presupuestal-matrix`,
+    );
+  }
+
+  saveBudgetMatrix(
+    taskId: number,
+    budgetCategoryId: number,
+    amount: number,
+  ): Observable<ApiResponse<PatActivityBudgetMatrix>> {
+    return this.http.post<ApiResponse<PatActivityBudgetMatrix>>(
+      `${this.baseUrl}/tasks/${taskId}/presupuestal-matrix`,
+      { budgetCategoryId, amount },
+    );
   }
 }

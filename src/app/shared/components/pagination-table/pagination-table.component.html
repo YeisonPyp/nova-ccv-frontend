@@ -28,9 +28,11 @@
       </ng-template>
     }
   </app-dynamic-table>
-  <app-pagination
+  <app-paginator
     [currentPage]="currentPage()"
-    [pages]="totalPages()"
-    (pageChange)="onPageChange($event)"
+    [totalPages]="totalPages()"
+    [pageSize]="$pageSize()"
+    (onSelectPage)="onPageChange($event)"
+    (pageSizeChange)="$pageSize.set($event)"
   />
 }

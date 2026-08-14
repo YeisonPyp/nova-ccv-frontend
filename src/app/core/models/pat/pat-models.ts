@@ -117,7 +117,6 @@ export interface PatActivity {
   executedBudget?: number;
 
   tasks?: PatActivityTask[];
-  budgetMatrix?: PatActivityBudgetMatrix[];
 }
 
 export interface PatActivityBudgetMatrix {

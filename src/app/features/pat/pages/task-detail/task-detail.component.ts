@@ -12,8 +12,9 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
 import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execution-pie-chart/execution-pie-chart.component';
 import { PlannedExecutedLineChartComponent } from '@/app/shared/components/charts/planned-executed-line-chart/planned-executed-line-chart.component';
 import { MonthlyOverviewGridComponent } from './components/monthly-overview-grid/monthly-overview-grid.component';
+import { PatTaskBudgetTabComponent } from './components/budget-tab/budget-tab.component';
 
-type TabKey = 'execution' | 'plan';
+type TabKey = 'execution' | 'plan' | 'budget';
 
 @Component({
   selector: 'app-pat-task-detail',
@@ -24,6 +25,7 @@ type TabKey = 'execution' | 'plan';
     ExecutionPieChartComponent,
     PlannedExecutedLineChartComponent,
     MonthlyOverviewGridComponent,
+    PatTaskBudgetTabComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './task-detail.component.html',
@@ -78,6 +80,7 @@ export class PatTaskDetailComponent implements OnInit {
   tabs: { key: TabKey; label: string }[] = [
     { key: 'execution', label: 'Ejecuciones' },
     { key: 'plan', label: 'Planeaciones' },
+    { key: 'budget', label: 'Presupuesto' },
   ];
 
   ngOnInit(): void {
@@ -95,9 +98,9 @@ export class PatTaskDetailComponent implements OnInit {
       },
     });
 
-    this.overviewService.findOverview(id).subscribe((res) => {
-      if (res.success) this.overview.set(res.data);
-    });
+    // this.overviewService.findOverview(id).subscribe((res) => {
+    //   if (res.success) this.overview.set(res.data);
+    // });
   }
 
   goBack(): void {

@@ -3,6 +3,14 @@ import { Routes } from "@angular/router";
 
 export const CONTRACT_ROUTES: Routes = [
   {
+    path: "management",
+    loadComponent: () =>
+      import("./pages/management/contract-management-dashboard.component").then(
+        (m) => m.ContractManagementDashboardComponent,
+      ),
+    canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_READ"])],
+  },
+  {
     path: "dashboard",
     loadComponent: () =>
       import("./pages/seed-dashboard/contract-seed-dashboard.component").then(

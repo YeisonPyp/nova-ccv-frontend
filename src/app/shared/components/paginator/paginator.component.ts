@@ -1,8 +1,8 @@
-import { Component, input, output } from "@angular/core";
-import { PaginationComponent } from "../pagination/pagination.component";
+import { Component, input, output } from '@angular/core';
+import { PaginationComponent } from '../pagination/pagination.component';
 
 @Component({
-  selector: "app-paginator",
+  selector: 'app-paginator',
   standalone: true,
   imports: [PaginationComponent],
   template: `
@@ -22,9 +22,7 @@ import { PaginationComponent } from "../pagination/pagination.component";
         class="page-size-control"
         style="display: flex; align-items: center; gap: 8px"
       >
-        <label
-          style="font-size: 0.9rem; color: #595959; font-weight: 500"
-        >
+        <label style="font-size: 0.9rem; color: #595959; font-weight: 500">
           Elementos por página:
         </label>
         <input
@@ -57,8 +55,8 @@ import { PaginationComponent } from "../pagination/pagination.component";
       .form-control:focus {
         border-color: #003380;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class PaginatorComponent {
   pageSize = input.required<number>();
@@ -72,6 +70,7 @@ export class PaginatorComponent {
     const target = event.target as HTMLInputElement;
     const size = parseInt(target.value, 10);
     if (!isNaN(size) && size > 0) {
+      console.log(size);
       this.pageSizeChange.emit(size);
     }
   }

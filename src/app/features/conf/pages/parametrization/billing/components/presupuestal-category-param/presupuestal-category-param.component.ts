@@ -4,19 +4,19 @@ import {
   signal,
   ViewChild,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { PaginationTableComponent } from "@/app/shared/components/pagination-table/pagination-table.component";
-import { TableColumn } from "@/app/shared/components/dynamic-table/dynamic-table.component";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PaginationTableComponent } from '@/app/shared/components/pagination-table/pagination-table.component';
+import { TableColumn } from '@/app/shared/components/dynamic-table/dynamic-table.component';
 import {
   PatPresupuestalCategoryService,
   PresupuestalCategory,
-} from "@/app/core/services/pat/pat-presupuestal-category.service";
-import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
+} from '@/app/core/services/pat/pat-presupuestal-category.service';
+import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
 
 @Component({
-  selector: "app-presupuestal-category-param",
+  selector: 'app-presupuestal-category-param',
   standalone: true,
   imports: [
     CommonModule,
@@ -60,7 +60,7 @@ import { ParametrizationSectionComponent } from "@/app/features/conf/components/
         <div class="modal-container" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <h2 class="modal-title">
-              {{ selectedCategory() ? "Editar Categoría" : "Nueva Categoría" }}
+              {{ selectedCategory() ? 'Editar Categoría' : 'Nueva Categoría' }}
             </h2>
             <button type="button" class="close-btn" (click)="closeModal()">
               &times;
@@ -145,22 +145,22 @@ export class PresupuestalCategoryParamComponent {
   @ViewChild(PaginationTableComponent) table?: PaginationTableComponent;
 
   form = this.fb.group({
-    code: ["", [Validators.required, Validators.maxLength(20)]],
-    name: ["", [Validators.required, Validators.maxLength(300)]],
-    resourceType: ["public", Validators.maxLength(20)],
-    description: [""],
+    code: ['', [Validators.required, Validators.maxLength(20)]],
+    name: ['', [Validators.required, Validators.maxLength(300)]],
+    resourceType: ['public', Validators.maxLength(20)],
+    description: [''],
   });
 
   columns: TableColumn[] = [
-    { key: "code", label: "Código" },
-    { key: "name", label: "Nombre" },
-    { key: "resourceType", label: "Tipo" },
-    { key: "description", label: "Descripción" },
+    { key: 'code', label: 'Código' },
+    { key: 'name', label: 'Nombre' },
+    { key: 'resourceType', label: 'Tipo' },
+    { key: 'description', label: 'Descripción' },
   ];
 
   openCreateModal() {
     this.selectedCategory.set(null);
-    this.form.reset({ resourceType: "public" });
+    this.form.reset({ resourceType: 'public' });
     this.isModalOpen.set(true);
   }
 
@@ -194,7 +194,7 @@ export class PresupuestalCategoryParamComponent {
       next: (res) => {
         if (res.success) {
           this.closeModal();
-          this.table?.load(this.table?.currentPage());
+          // this.table?.load(this.table?.currentPage());
         }
         this.submitting = false;
       },
@@ -208,7 +208,7 @@ export class PresupuestalCategoryParamComponent {
     this.service.delete(item.id).subscribe({
       next: (res) => {
         if (res.success) {
-          this.table?.load(this.table?.currentPage());
+          // this.table?.load(this.table?.currentPage());
         }
       },
     });

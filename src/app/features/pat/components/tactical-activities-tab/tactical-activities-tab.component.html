@@ -5,35 +5,19 @@
     </button>
   </div>
 
-  <div app-loading-spinner [isLoading]="loading()"></div>
-
-  @if (!loading()) {
-    @if (activities().length === 0) {
-      <p class="text-sm text-gray-400 text-center py-8">
-        No se encontraron actividades tácticas para este año.
-      </p>
-    } @else {
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        @for (activity of activities(); track activity.id) {
-          <app-activity-report-card
-            [activityId]="activity.id"
-            [activityName]="activity.name"
-            [year]="year()"
-            [budgetRows]="budgetRowsFor(activity.id)"
-            [indicatorRows]="indicatorRowsFor(activity.id)"
-            [productRows]="productRowsFor(activity.id)"
-            [benefitRows]="benefitRowsFor(activity.id)"
-          />
-        }
-      </div>
-
-      <app-paginator
-        [currentPage]="currentPage()"
-        [totalPages]="totalPages()"
-        [pageSize]="pageSize()"
-        (onSelectPage)="onPageChange($event)"
-        (pageSizeChange)="onPageSizeChange($event)"
-      ></app-paginator>
-    }
-  }
+  <app-pagination-table
+    [service]="service"
+    [tableColumns]="tableColumns"
+    [showFilterSection]="false"
+    [baseRsqlQuery]="baseRsqlQuery()"
+  >
+    <ng-template #actions let-item>
+      <a
+        [routerLink]="['/pat', year(), 'activities', item.id]"
+        class="text-xs font-medium text-primary hover:underline whitespace-nowrap"
+      >
+        Ver detalle →
+      </a>
+    </ng-template>
+  </app-pagination-table>
 </div>

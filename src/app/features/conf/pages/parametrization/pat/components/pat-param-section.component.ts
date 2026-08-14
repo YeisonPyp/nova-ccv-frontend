@@ -1,16 +1,16 @@
-import { CommonModule } from "@angular/common";
-import { Component, input, output, signal, ViewChild } from "@angular/core";
-import { PaginationTableComponent } from "@/app/shared/components/pagination-table/pagination-table.component";
-import { TableColumn } from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec.service";
+import { CommonModule } from '@angular/common';
+import { Component, input, output, signal, ViewChild } from '@angular/core';
+import { PaginationTableComponent } from '@/app/shared/components/pagination-table/pagination-table.component';
+import { TableColumn } from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import {
   PatUpsertField,
   PatUpsertModalComponent,
-} from "./pat-upsert-modal.component";
-import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
+} from './pat-upsert-modal.component';
+import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
 
 @Component({
-  selector: "app-pat-param-section",
+  selector: 'app-pat-param-section',
   standalone: true,
   imports: [
     CommonModule,
@@ -61,7 +61,7 @@ export class PatParamSectionComponent {
   readonly fields = input.required<PatUpsertField[]>();
   isOpen = signal<boolean>(false);
 
-  @ViewChild("table") table?: PaginationTableComponent<any>;
+  @ViewChild('table') table?: PaginationTableComponent<any>;
 
   modalOpen = signal(false);
   editing = signal<any | null>(null);
@@ -83,6 +83,6 @@ export class PatParamSectionComponent {
   onSaved() {
     this.modalOpen.set(false);
     this.editing.set(null);
-    this.table?.load(this.table.currentPage());
+    // this.table?.load(this.table.currentPage());
   }
 }

@@ -7,22 +7,22 @@ import {
   OnInit,
   signal,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "../dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "../pagination/pagination.component";
-import { PageableQuery } from "../../pageable-query";
-import { Observable, Subscription } from "rxjs";
-import { ApiResponse } from "@/app/core/models/api-response.model";
-import { APIPage } from "@/app/core/models/api-page.model";
+} from '../dynamic-table/dynamic-table.component';
+import { PageableQuery } from '../../pageable-query';
+import { Observable, Subscription } from 'rxjs';
+import { ApiResponse } from '@/app/core/models/api-response.model';
+import { APIPage } from '@/app/core/models/api-page.model';
 import {
   FilterRow,
   FilterSectionComponent,
-} from "../dynamic-table/filter-section/filter-section.component";
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
+} from '../dynamic-table/filter-section/filter-section.component';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { PaginatorComponent } from '../paginator/paginator.component';
 
 export interface PageableQueryWithRsql extends PageableQuery {
   rsqlQuery?: string;
@@ -39,27 +39,30 @@ export interface FilterServiceSpec {
 }
 
 @Component({
-  selector: "app-pagination-table",
+  selector: 'app-pagination-table',
   standalone: true,
   imports: [
     CommonModule,
     DynamicTableComponent,
-    PaginationComponent,
+    PaginatorComponent,
     FilterSectionComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
   ],
-  templateUrl: "./pagination-table.component.html",
+  templateUrl: './pagination-table.component.html',
 })
 export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   service = input.required<FilterServiceSpec>();
   tableColumns = input.required<TableColumn[]>();
+  pageSize = input(15);
+
   showFilterSection = input(true);
   /** Fixed RSQL predicate always ANDed with whatever the filter section builds. */
-  baseRsqlQuery = input<string>("");
+  baseRsqlQuery = input<string>('');
   filterRows = signal<FilterRow[]>([]);
+  $pageSize = signal(15);
 
-  @ContentChild("actions") actionsTemplate?: TemplateRef<any>;
-  @ContentChild("customCell") customCellTemplate?: TemplateRef<any>;
+  @ContentChild('actions') actionsTemplate?: TemplateRef<any>;
+  @ContentChild('customCell') customCellTemplate?: TemplateRef<any>;
 
   items = signal<T[]>([]);
   currentPage = signal(1);
@@ -72,7 +75,35 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
     this.onSaveSubscription?.unsubscribe();
   }
 
-  rsqlQuery = signal("");
+  rsqlQuery = signal('');
+
+  constructor() {
+    effect(() => {
+      this.loading.set(true);
+
+      const base = this.baseRsqlQuery();
+      const filter = this.rsqlQuery();
+      const rsqlQuery = base && filter ? `${base};${filter}` : base || filter;
+
+      this.service()
+        .findAll({
+          page: this.currentPage() - 1,
+          size: this.$pageSize(),
+          rsqlQuery,
+        })
+        .subscribe({
+          next: (res) => {
+            if (res.success && res.data) {
+              this.items.set(res.data.content);
+              this.currentPage.set(res.data.pageable.pageNumber + 1);
+              this.totalPages.set(res.data.totalPages);
+            }
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false),
+        });
+    });
+  }
 
   ngOnInit(): void {
     const baseFilters = this.tableColumns().reduce((acc, r) => {
@@ -81,45 +112,17 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
       }
       return acc;
     }, [] as FilterRow[]);
+    this.$pageSize.set(this.pageSize());
     this.filterRows.set(baseFilters);
-    // no cargar cuando hay filtros iniciales
-    // pues en caso de hacerlo, se harían dos peticiones
-    // una que sería ésta y la otra en `onFilterChange`
-    if (!baseFilters.length) {
-      this.load();
-    }
-  }
-
-  load(page = 1) {
-    this.loading.set(true);
-
-    const base = this.baseRsqlQuery();
-    const filter = this.rsqlQuery();
-    const rsqlQuery = base && filter ? `${base};${filter}` : base || filter;
-
-    this.service()
-      .findAll({ page: page - 1, size: 10, rsqlQuery })
-      .subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.items.set(res.data.content);
-            this.currentPage.set(res.data.pageable.pageNumber + 1);
-            this.totalPages.set(res.data.totalPages);
-          }
-          this.loading.set(false);
-        },
-        error: () => this.loading.set(false),
-      });
   }
 
   onPageChange(page: number) {
-    this.load(page);
+    this.currentPage.set(page);
   }
 
   onFilterChange(query: string) {
     if (query) {
       this.rsqlQuery.set(query);
-      this.load(this.currentPage());
     }
   }
 
@@ -139,7 +142,6 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
 
   onClearFilters() {
     this.filterRows.set([]);
-    this.rsqlQuery.set("");
-    this.load(this.currentPage());
+    this.rsqlQuery.set('');
   }
 }

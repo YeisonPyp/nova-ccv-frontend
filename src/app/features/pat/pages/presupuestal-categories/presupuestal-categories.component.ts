@@ -85,7 +85,7 @@ export class PresupuestalCategoriesComponent {
         this.saving.set(false);
         this.closeModal();
         const t = this.table;
-        if (t) t.load(t.currentPage());
+        // if (t) t.load(t.currentPage());
       },
       error: () => this.saving.set(false),
     });

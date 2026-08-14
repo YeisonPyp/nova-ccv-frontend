@@ -11,13 +11,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
 import { PatActivity } from '@/app/core/models/pat/pat-models';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
-import { PatBudgetTabComponent } from './components/budget-tab/budget-tab.component';
 import { PatTasksTabComponent } from './components/tasks-tab/tasks-tab.component';
 import { PatIndicatorsTabComponent } from './components/indicators-tab/indicators-tab.component';
 import { PatProductsTabComponent } from './components/products-tab/products-tab.component';
 import { PatBenefitsTabComponent } from './components/benefits-tab/benefits-tab.component';
 
-type TabKeys = 'budget' | 'tasks' | 'indicators' | 'products' | 'benefits';
+type TabKeys = 'tasks' | 'indicators' | 'products' | 'benefits';
 interface Tab {
   key: TabKeys;
   label: string;
@@ -45,7 +44,6 @@ export class PatActivityDetailComponent implements OnInit {
   error = signal<string | null>(null);
 
   tabComponents: Record<TabKeys, Type<any>> = {
-    budget: PatBudgetTabComponent,
     tasks: PatTasksTabComponent,
     indicators: PatIndicatorsTabComponent,
     products: PatProductsTabComponent,
@@ -53,20 +51,18 @@ export class PatActivityDetailComponent implements OnInit {
   };
 
   tabs: Tab[] = [
-    { key: 'budget', label: 'Presupuesto' },
     { key: 'tasks', label: 'Tareas' },
     { key: 'indicators', label: 'Indicadores' },
     { key: 'products', label: 'Productos' },
     { key: 'benefits', label: 'Beneficios' },
   ];
 
-  activeTab = signal<TabKeys>('budget');
+  activeTab = signal<TabKeys>('tasks');
 
   tabInputs = computed<Record<TabKeys, Record<string, unknown>>>(() => {
     const activity = this.activity();
     const base = { activityId: activity?.id };
     return {
-      budget: base,
       tasks: { ...base, year: activity?.year },
       indicators: base,
       products: base,
