@@ -3,6 +3,7 @@
   [formGroup]="formGroup"
 >
   <summary
+    #trigger
     class="flex items-center justify-between p-3 cursor-pointer list-none bg-white hover:bg-gray-50 transition-all border-b border-gray-50 group/item"
   >
     <div class="flex items-center gap-3 grow mr-4">
@@ -125,253 +126,256 @@
       </button>
     </div>
   </summary>
-
-  <div class="p-6 bg-white border-t border-gray-50 space-y-8">
-    <div class="space-y-2">
-      <label class="text-[10px] font-bold uppercase tracking-widest">
-        Descripción del objetivo
-      </label>
-      <textarea
-        rows="4"
-        class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
-        formControlName="objectiveDescription"
-      ></textarea>
-    </div>
-
-    <div
-      class="p-5 rounded-2xl border border-gray-200/60 bg-gray-50/80 shadow-sm space-y-4"
-    >
-      @if (allowedActionTypes().length > 1) {
-        <div class="flex flex-col gap-2 max-w-xs">
-          <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
-            Tipo de acción
-          </label>
-          <select
-            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all appearance-none cursor-pointer"
-            formControlName="actionType"
-          >
-            @for (t of allowedActionTypes(); track t) {
-              <option [value]="t">{{ getActionTypeLabel(t) }}</option>
-            }
-          </select>
-        </div>
-      }
-
-      <div class="flex flex-col gap-2">
-        <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
-          Ciclo PHVA
+  @defer (on hover(trigger)) {
+    <div class="p-6 bg-white border-t border-gray-50 space-y-8">
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-widest">
+          Descripción del objetivo
         </label>
-        <div class="flex flex-wrap gap-2">
-          @for (phase of pdcaPhases; track phase) {
-            <button
-              type="button"
-              class="px-3 py-1.5 text-[11px] font-bold rounded-full border transition-all"
-              [class]="
-                isPhaseSelected(phase)
-                  ? 'bg-primary text-white border-primary shadow-sm'
-                  : 'bg-white text-tertiary border-gray-200 hover:border-blue-300'
-              "
-              (click)="togglePhase(phase)"
+        <textarea
+          rows="4"
+          class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
+          formControlName="objectiveDescription"
+        ></textarea>
+      </div>
+
+      <div
+        class="p-5 rounded-2xl border border-gray-200/60 bg-gray-50/80 shadow-sm space-y-4"
+      >
+        @if (allowedActionTypes().length > 1) {
+          <div class="flex flex-col gap-2 max-w-xs">
+            <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+              Tipo de acción
+            </label>
+            <select
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all appearance-none cursor-pointer"
+              formControlName="actionType"
             >
-              {{ getPdcaPhaseLabel(phase) }}
-            </button>
+              @for (t of allowedActionTypes(); track t) {
+                <option [value]="t">{{ getActionTypeLabel(t) }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+            Ciclo PHVA
+          </label>
+          <div class="flex flex-wrap gap-2">
+            @for (phase of pdcaPhases; track phase) {
+              <button
+                type="button"
+                class="px-3 py-1.5 text-[11px] font-bold rounded-full border transition-all"
+                [class]="
+                  isPhaseSelected(phase)
+                    ? 'bg-primary text-white border-primary shadow-sm'
+                    : 'bg-white text-tertiary border-gray-200 hover:border-blue-300'
+                "
+                (click)="togglePhase(phase)"
+              >
+                {{ getPdcaPhaseLabel(phase) }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2.5"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Meta
+            </label>
+            <input
+              type="number"
+              min="1"
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
+              formControlName="target"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2.5"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Ejecución
+            </label>
+            <select
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all appearance-none cursor-pointer"
+              formControlName="executionFrequency"
+            >
+              @for (f of executionFrequencies; track f) {
+                <option [value]="f">{{ getExecutionFrequencyLabel(f) }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2.5"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              Vigencia
+            </label>
+            <div
+              class="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-2 py-1.5 shadow-sm"
+            >
+              <input
+                type="date"
+                class="bg-transparent text-[13px] font-semibold text-secondary outline-none w-full cursor-pointer"
+                formControlName="startDate"
+              />
+              <svg
+                viewBox="0 0 20 20"
+                class="w-6 h-4 fill-current text-tertiary shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M11.5 3.5l5.5 5.5-5.5 5.5-1.4-1.2 3.2-3.1H0V8.2h13.3l-3.2-3.1L11.5 3.5z"
+                  fill-rule="evenodd"
+                />
+              </svg>
+              <input
+                type="date"
+                class="bg-transparent text-[13px] font-semibold text-secondary outline-none w-full cursor-pointer text-right"
+                formControlName="closeDate"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-bold uppercase tracking-[0.15em]"
+            >Indicador</label
+          >
+          <input
+            type="text"
+            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] font-medium text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
+            formControlName="indicator"
+          />
+        </div>
+      </div>
+
+      <div
+        class="p-5 rounded-2xl border border-gray-200/60 bg-blue-50/40 shadow-sm space-y-4"
+      >
+        <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+          Seguimiento
+        </label>
+
+        <textarea
+          rows="3"
+          class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all resize-none"
+          placeholder="Observaciones del seguimiento..."
+          formControlName="followUpObservations"
+        ></textarea>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-bold uppercase tracking-[0.15em]"
+              >Fecha cierre real</label
+            >
+            <input
+              type="date"
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
+              formControlName="actualCloseDate"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-bold uppercase tracking-[0.15em]"
+              >¿Fue eficaz?</label
+            >
+            <select
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all cursor-pointer"
+              formControlName="wasEffective"
+            >
+              <option value="">Pendiente</option>
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+        </div>
+
+        @if (formGroup.get("wasEffective")?.value === "false") {
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+              Justificación de la ineficacia
+            </label>
+            <textarea
+              rows="2"
+              class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all resize-none"
+              placeholder="Explique por qué la acción no fue eficaz..."
+              formControlName="ineffectivenessJustification"
+            ></textarea>
+          </div>
+        }
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <label class="text-[10px] font-bold uppercase tracking-widest">
+            Mapa de seguimiento
+          </label>
+          <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full">
+            {{ followup().length }} entregas
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          @for (f of followup(); track f.id) {
+            <app-action-followup [followup]="f"></app-action-followup>
           }
         </div>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="flex flex-col gap-2">
-          <label
-            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Meta
-          </label>
-          <input
-            type="number"
-            min="1"
-            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
-            formControlName="target"
-          />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label
-            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Ejecución
-          </label>
-          <select
-            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all appearance-none cursor-pointer"
-            formControlName="executionFrequency"
-          >
-            @for (f of executionFrequencies; track f) {
-              <option [value]="f">{{ getExecutionFrequencyLabel(f) }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label
-            class="text-[10px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Vigencia
-          </label>
-          <div
-            class="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-2 py-1.5 shadow-sm"
-          >
-            <input
-              type="date"
-              class="bg-transparent text-[13px] font-semibold text-secondary outline-none w-full cursor-pointer"
-              formControlName="startDate"
-            />
-            <svg
-              viewBox="0 0 20 20"
-              class="w-6 h-4 fill-current text-tertiary shrink-0"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M11.5 3.5l5.5 5.5-5.5 5.5-1.4-1.2 3.2-3.1H0V8.2h13.3l-3.2-3.1L11.5 3.5z"
-                fill-rule="evenodd"
-              />
-            </svg>
-            <input
-              type="date"
-              class="bg-transparent text-[13px] font-semibold text-secondary outline-none w-full cursor-pointer text-right"
-              formControlName="closeDate"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label class="text-[10px] font-bold uppercase tracking-[0.15em]"
-          >Indicador</label
-        >
-        <input
-          type="text"
-          class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] font-medium text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
-          formControlName="indicator"
-        />
-      </div>
     </div>
-
-    <div
-      class="p-5 rounded-2xl border border-gray-200/60 bg-blue-50/40 shadow-sm space-y-4"
-    >
-      <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
-        Seguimiento
-      </label>
-
-      <textarea
-        rows="3"
-        class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all resize-none"
-        placeholder="Observaciones del seguimiento..."
-        formControlName="followUpObservations"
-      ></textarea>
-
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label class="text-[10px] font-bold uppercase tracking-[0.15em]"
-            >Fecha cierre real</label
-          >
-          <input
-            type="date"
-            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
-            formControlName="actualCloseDate"
-          />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label class="text-[10px] font-bold uppercase tracking-[0.15em]"
-            >¿Fue eficaz?</label
-          >
-          <select
-            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all cursor-pointer"
-            formControlName="wasEffective"
-          >
-            <option value="">Pendiente</option>
-            <option value="true">Sí</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-
-      @if (formGroup.get("wasEffective")?.value === "false") {
-        <div class="flex flex-col gap-2">
-          <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
-            Justificación de la ineficacia
-          </label>
-          <textarea
-            rows="2"
-            class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all resize-none"
-            placeholder="Explique por qué la acción no fue eficaz..."
-            formControlName="ineffectivenessJustification"
-          ></textarea>
-        </div>
-      }
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex items-center justify-between">
-        <label class="text-[10px] font-bold uppercase tracking-widest">
-          Mapa de seguimiento
-        </label>
-        <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full">
-          {{ followup().length }} entregas
-        </span>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        @for (f of followup(); track f.id) {
-          <app-action-followup [followup]="f"></app-action-followup>
-        }
-      </div>
-    </div>
-  </div>
+  }
 </details>
 
-<app-approval-flow-modal
-  [isOpen]="approvalModalOpen()"
-  [action]="action()"
-  (onClose)="closeApprovalModal()"
-  (onUpdated)="onApprovalUpdated($event)"
-/>
+@if (approvalModalOpen()) {
+  <app-approval-flow-modal
+    [isOpen]="approvalModalOpen()"
+    [action]="action()"
+    (onClose)="closeApprovalModal()"
+    (onUpdated)="onApprovalUpdated($event)"
+  />
+}

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
@@ -53,6 +54,7 @@ import { ActionFollowUpComponent } from './followup/action-followup.component';
   ],
   templateUrl: './action-details.component.html',
   styleUrl: './action-details.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActionDetailsComponent implements OnInit {
   action = input.required<ImprovementActionDto>();
@@ -61,7 +63,6 @@ export class ActionDetailsComponent implements OnInit {
 
   followup = signal<ImprovementActionFollowUp[]>([]);
   approvalModalOpen = signal(false);
-  isOpen = signal(false);
 
   onDelete = output<ImprovementActionDto>();
   onUpdated = output<ImprovementActionDto>();

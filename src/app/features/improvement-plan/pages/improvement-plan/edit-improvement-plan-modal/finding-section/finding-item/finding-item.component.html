@@ -4,6 +4,7 @@
 >
   <summary
     class="flex items-center justify-between p-3 cursor-pointer list-none bg-white hover:bg-gray-50 transition-all border-b border-gray-50 group/item"
+    #findingDetails
   >
     <div class="flex items-center gap-3 grow mr-4">
       <svg
@@ -71,63 +72,64 @@
       </button>
     </div>
   </summary>
-
-  <div class="p-6 bg-white border-t border-gray-50 space-y-8">
-    <div class="space-y-3">
-      <label class="text-[10px] font-bold uppercase tracking-widest">
-        Hallazgo
-      </label>
-      <textarea
-        rows="6"
-        class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
-        placeholder="Criterio/requisito, evidencia objetiva y declaración del hallazgo..."
-        formControlName="description"
-      ></textarea>
-    </div>
-
-    <div class="space-y-4">
-      <label class="text-[10px] font-bold uppercase tracking-widest">
-        Análisis de causa raíz
-      </label>
-
-      <textarea
-        rows="3"
-        class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
-        placeholder="Notas del análisis (ej. 5 Porqués)..."
-        formControlName="rootCauseNotes"
-      ></textarea>
-
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full">
-          {{ rootCauseDocuments().length }} documentos
-        </span>
+  @defer (on hover(findingDetails)) {
+    <div class="p-6 bg-white border-t border-gray-50 space-y-8">
+      <div class="space-y-3">
+        <label class="text-[10px] font-bold uppercase tracking-widest">
+          Hallazgo
+        </label>
+        <textarea
+          rows="6"
+          class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
+          placeholder="Criterio/requisito, evidencia objetiva y declaración del hallazgo..."
+          formControlName="description"
+        ></textarea>
       </div>
 
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-      >
-        @for (doc of rootCauseDocuments(); track doc.id) {
+      <div class="space-y-4">
+        <label class="text-[10px] font-bold uppercase tracking-widest">
+          Análisis de causa raíz
+        </label>
+
+        <textarea
+          rows="3"
+          class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
+          placeholder="Notas del análisis (ej. 5 Porqués)..."
+          formControlName="rootCauseNotes"
+        ></textarea>
+
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full">
+            {{ rootCauseDocuments().length }} documentos
+          </span>
+        </div>
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+        >
+          @for (doc of rootCauseDocuments(); track doc.id) {
+            <app-finding-document-item
+              [findingId]="finding().id"
+              [document]="doc"
+              (onSaved)="onSaveDocument($event)"
+              (onRemoved)="onRemoveDocument($event)"
+            ></app-finding-document-item>
+          }
           <app-finding-document-item
+            class="border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-300 transition-colors"
             [findingId]="finding().id"
-            [document]="doc"
             (onSaved)="onSaveDocument($event)"
-            (onRemoved)="onRemoveDocument($event)"
           ></app-finding-document-item>
-        }
-        <app-finding-document-item
-          class="border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-300 transition-colors"
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-gray-100 -mx-6">
+        <app-action-section
           [findingId]="finding().id"
-          (onSaved)="onSaveDocument($event)"
-        ></app-finding-document-item>
+          [actions]="actions()"
+          [findingType]="finding().type"
+        ></app-action-section>
       </div>
     </div>
-
-    <div class="pt-4 border-t border-gray-100 -mx-6">
-      <app-action-section
-        [findingId]="finding().id"
-        [actions]="actions()"
-        [findingType]="finding().type"
-      ></app-action-section>
-    </div>
-  </div>
+  }
 </details>

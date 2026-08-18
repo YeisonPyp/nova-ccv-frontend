@@ -1,15 +1,11 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
-  computed,
-  effect,
-  inject,
   input,
   OnInit,
   signal,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { ImprovementActionService } from '@/app/core/services/improvement-plan/improvement-action.service';
 import { NewActionComponent } from './new-action/new-action.component';
 import { ImprovementActionDto } from '@/app/core/models/improvement-plan/improvement-action.model';
 import { FindingType } from '@/app/core/models/improvement-plan/finding.model';
@@ -23,6 +19,7 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   imports: [CommonModule, NewActionComponent, ActionDetailsComponent],
   templateUrl: './action-section.component.html',
   styleUrl: './action-section.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActionSectionComponent implements OnInit {
   findingId = input.required<number>();

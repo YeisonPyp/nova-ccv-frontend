@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FindingService } from '@/app/core/services/improvement-plan/finding.service';
 import { FindingDto } from '@/app/core/models/improvement-plan/finding.model';
 import { NewFindingComponent } from './new-finding/new-finding.component';
@@ -17,6 +24,7 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
   ],
   templateUrl: './finding-section.component.html',
   styleUrl: './finding-section.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FindingSectionComponent implements OnInit {
   planId = input.required<number>();

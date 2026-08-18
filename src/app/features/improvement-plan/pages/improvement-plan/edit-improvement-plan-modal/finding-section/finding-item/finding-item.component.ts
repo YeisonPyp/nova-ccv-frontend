@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
@@ -39,6 +40,7 @@ import { AutosizeTextareaDirective } from '@/app/shared/directives/autosize-text
   ],
   templateUrl: './finding-item.component.html',
   styleUrl: './finding-item.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FindingItemComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

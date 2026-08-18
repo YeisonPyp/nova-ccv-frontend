@@ -1,20 +1,34 @@
-import { CommonModule } from "@angular/common";
-import { Component, effect, inject, input, output, signal } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { HasPermissionDirective } from "@/app/shared/directives/has-permission.directive";
-import { ImprovementActionService } from "@/app/core/services/improvement-plan/improvement-action.service";
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { HasPermissionDirective } from '@/app/shared/directives/has-permission.directive';
+import { ImprovementActionService } from '@/app/core/services/improvement-plan/improvement-action.service';
 import {
   approvalDecisionLabels,
   ImprovementActionApprovalDecision,
   ImprovementActionApprovalStepDto,
   ImprovementActionDto,
-} from "@/app/core/models/improvement-plan/improvement-action.model";
+} from '@/app/core/models/improvement-plan/improvement-action.model';
 
 @Component({
-  selector: "app-approval-flow-modal",
+  selector: 'app-approval-flow-modal',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, HasPermissionDirective],
-  templateUrl: "./approval-flow-modal.component.html",
+  templateUrl: './approval-flow-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApprovalFlowModalComponent {
   readonly isOpen = input<boolean>(false);
@@ -39,15 +53,18 @@ export class ApprovalFlowModalComponent {
   error = signal<string | null>(null);
 
   form: FormGroup = this.fb.group({
-    observation: ["", Validators.required],
-    decision: ["APPROVED" as ImprovementActionApprovalDecision, Validators.required],
+    observation: ['', Validators.required],
+    decision: [
+      'APPROVED' as ImprovementActionApprovalDecision,
+      Validators.required,
+    ],
   });
 
   constructor() {
     effect(() => {
       if (this.isOpen()) {
         this.error.set(null);
-        this.form.reset({ observation: "", decision: "APPROVED" });
+        this.form.reset({ observation: '', decision: 'APPROVED' });
         this.loading.set(true);
         this.service.findApprovalSteps(this.action().id).subscribe((res) => {
           this.loading.set(false);
@@ -80,7 +97,7 @@ export class ApprovalFlowModalComponent {
       next: (res) => {
         if (res.success && res.data) {
           this.steps.set([...this.steps(), res.data]);
-          this.form.reset({ observation: "", decision: "APPROVED" });
+          this.form.reset({ observation: '', decision: 'APPROVED' });
         }
         this.submitting.set(false);
         this.service.findById(this.action().id).subscribe((r) => {
@@ -90,7 +107,7 @@ export class ApprovalFlowModalComponent {
       error: (err) => {
         this.submitting.set(false);
         this.error.set(
-          err.error?.message ?? "Error al registrar el paso de aprobación",
+          err.error?.message ?? 'Error al registrar el paso de aprobación',
         );
       },
     });

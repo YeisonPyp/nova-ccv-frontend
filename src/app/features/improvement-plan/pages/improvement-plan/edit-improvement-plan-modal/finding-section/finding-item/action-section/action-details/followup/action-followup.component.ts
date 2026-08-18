@@ -11,6 +11,7 @@ import {
 } from '@/app/shared/components/selector/selector.component';
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -38,6 +39,7 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
     SelectorComponent,
   ],
   templateUrl: './action-followup.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActionFollowUpComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
