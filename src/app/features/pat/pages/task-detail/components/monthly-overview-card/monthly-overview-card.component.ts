@@ -2,11 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ExecutionOrPlaning } from '@/app/core/models/pat/pat-models';
-
-const MONTH_LABELS = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
-];
+import { MONTH_NAMES } from '@/app/shared/utils/month-names';
 
 @Component({
   selector: 'app-monthly-overview-card',
@@ -20,7 +16,7 @@ export class MonthlyOverviewCardComponent {
   year = input.required<number>();
   taskId = input.required<number>();
 
-  monthLabel = computed(() => MONTH_LABELS[this.data().month - 1] ?? '');
+  monthLabel = computed(() => MONTH_NAMES[this.data().month - 1] ?? '');
 
   registerLink = computed(() => [
     '/pat',

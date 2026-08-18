@@ -2,11 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-
-const MONTH_LABELS = [
-  'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-  'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
-];
+import { MONTH_NAMES_SHORT } from '@/app/shared/utils/month-names';
 
 @Component({
   selector: 'app-planned-executed-line-chart',
@@ -23,7 +19,7 @@ export class PlannedExecutedLineChartComponent {
   readonly height = input<number>(220);
 
   readonly data = computed<ChartData<'line'>>(() => ({
-    labels: MONTH_LABELS,
+    labels: MONTH_NAMES_SHORT,
     datasets: [
       {
         data: this.plannedValues(),

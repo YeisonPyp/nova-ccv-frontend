@@ -47,6 +47,16 @@ export class PatActivityTaskService {
     );
   }
 
+  findByYearAndArea(
+    year: number,
+    areaId: number,
+  ): Observable<ApiResponse<PatActivityTask[]>> {
+    return this.http.get<ApiResponse<PatActivityTask[]>>(
+      `${this.baseUrl}/tasks`,
+      { params: { year, areaId } },
+    );
+  }
+
   create(
     activityId: number,
     dto: CreatePatActivityTaskDto,

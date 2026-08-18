@@ -5,7 +5,9 @@ import { environment } from "../../../../environments/environment";
 import { ApiResponse } from "../../models/api-response.model";
 import {
   ContractManagementExecutionPlan,
-  CreateContractManagementExecutionPlanDto,
+  LinkContractToExecutionPlanDto,
+  UpdateExecutionStatusDto,
+  UpsertContractManagementExecutionPlanDto,
 } from "../../models/contract/contract-management-plan.model";
 
 @Injectable({ providedIn: "root" })
@@ -21,12 +23,32 @@ export class ContractManagementExecutionPlanService {
     );
   }
 
-  create(
+  upsert(
     planId: string,
-    dto: CreateContractManagementExecutionPlanDto,
+    dto: UpsertContractManagementExecutionPlanDto,
   ): Observable<ApiResponse<ContractManagementExecutionPlan>> {
-    return this.http.post<ApiResponse<ContractManagementExecutionPlan>>(
+    return this.http.put<ApiResponse<ContractManagementExecutionPlan>>(
       `${this.base}/plans/${planId}/executions`,
+      dto,
+    );
+  }
+
+  linkContract(
+    id: string,
+    dto: LinkContractToExecutionPlanDto,
+  ): Observable<ApiResponse<ContractManagementExecutionPlan>> {
+    return this.http.put<ApiResponse<ContractManagementExecutionPlan>>(
+      `${this.base}/executions/${id}/contract`,
+      dto,
+    );
+  }
+
+  updateStatus(
+    id: string,
+    dto: UpdateExecutionStatusDto,
+  ): Observable<ApiResponse<ContractManagementExecutionPlan>> {
+    return this.http.put<ApiResponse<ContractManagementExecutionPlan>>(
+      `${this.base}/executions/${id}/status`,
       dto,
     );
   }

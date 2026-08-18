@@ -2,21 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { Chart, ChartConfiguration, ChartData, registerables } from 'chart.js';
-
-const MONTH_LABELS = [
-  'Ene',
-  'Feb',
-  'Mar',
-  'Abr',
-  'May',
-  'Jun',
-  'Jul',
-  'Ago',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dic',
-];
+import { MONTH_NAMES_SHORT } from '@/app/shared/utils/month-names';
 
 Chart.register(...registerables);
 
@@ -33,7 +19,7 @@ export class MonthlyBarChartComponent {
   readonly height = input<number>(260);
 
   readonly data = computed<ChartData<'bar'>>(() => ({
-    labels: MONTH_LABELS,
+    labels: MONTH_NAMES_SHORT,
     datasets: [
       {
         data: this.values(),

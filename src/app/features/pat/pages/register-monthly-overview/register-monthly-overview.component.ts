@@ -5,11 +5,7 @@ import { ExecutionOrPlaning, PatActivityTask } from '@/app/core/models/pat/pat-m
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { MonthlyMetricRowComponent } from '@/app/shared/components/monthly-metric-row/monthly-metric-row.component';
 import { PatTaskMonthlyOverviewService } from '@/app/core/services/pat/pat-task-monthly-overview.service';
-
-const MONTH_LABELS = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
-];
+import { MONTH_NAMES } from '@/app/shared/utils/month-names';
 
 @Component({
   selector: 'app-register-monthly-overview',
@@ -33,7 +29,7 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
   dirty = signal(false);
   saved = signal(false);
 
-  monthLabel = computed(() => MONTH_LABELS[this.month() - 1] ?? '');
+  monthLabel = computed(() => MONTH_NAMES[this.month() - 1] ?? '');
 
   title = computed(() =>
     this.mode() === 'plan'

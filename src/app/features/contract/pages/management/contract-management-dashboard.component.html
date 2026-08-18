@@ -120,33 +120,27 @@
       </app-parametrization-section>
     }
 
+    <div class="flex justify-end">
+      @if (canCreate) {
+        <a class="btn btn-primary" routerLink="/contracts/management/plans/create">
+          + Nueva planeación
+        </a>
+      }
+    </div>
+
     <app-pagination-table
       [service]="service"
       [tableColumns]="columns"
       [baseRsqlQuery]="baseRsqlQuery()"
     >
       <ng-template #actions let-item>
-        <button class="btn btn-sm btn-outline" (click)="selectPlan(item)">
-          Ver
-        </button>
+        <a
+          class="btn btn-sm btn-outline"
+          [routerLink]="['/contracts/management/plans', item.id]"
+        >
+          Gestionar
+        </a>
       </ng-template>
     </app-pagination-table>
-
-    @if (selectedPlan(); as plan) {
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <h3 class="text-sm font-semibold text-secondary uppercase tracking-wider m-0">
-            {{ plan.task }} — {{ plan.position.name }}
-          </h3>
-          <button class="text-gray-400 hover:text-gray-600 text-xl leading-none" (click)="closeDetail()">
-            ×
-          </button>
-        </div>
-        <div app-loading-spinner [isLoading]="loadingExecutions()"></div>
-        @if (!loadingExecutions()) {
-          <app-monthly-bar-chart [values]="monthlyValues()" label="Planeado" />
-        }
-      </div>
-    }
   </div>
 }

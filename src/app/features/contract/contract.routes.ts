@@ -11,6 +11,22 @@ export const CONTRACT_ROUTES: Routes = [
     canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_READ"])],
   },
   {
+    path: "management/plans/create",
+    loadComponent: () =>
+      import(
+        "./pages/management/contract-management-plan-detail/contract-management-plan-detail.component"
+      ).then((m) => m.ContractManagementPlanDetailComponent),
+    canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_CREATE"])],
+  },
+  {
+    path: "management/plans/:id",
+    loadComponent: () =>
+      import(
+        "./pages/management/contract-management-plan-detail/contract-management-plan-detail.component"
+      ).then((m) => m.ContractManagementPlanDetailComponent),
+    canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_READ"])],
+  },
+  {
     path: "dashboard",
     loadComponent: () =>
       import("./pages/seed-dashboard/contract-seed-dashboard.component").then(

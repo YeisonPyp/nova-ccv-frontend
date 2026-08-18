@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { HttpEventType } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@/app/core/services/auth.service';
 import { ContractManagementPlanService } from '@/app/core/services/contract/contract-management-plan.service';
-import { ContractManagementExecutionPlanService } from '@/app/core/services/contract/contract-management-execution-plan.service';
 import { ContractManagementNotificationConfigService } from '@/app/core/services/contract/contract-management-notification-config.service';
 import { ContractAlertsConfigService } from '@/app/core/services/contract/contract-alerts-config.service';
 import { StorageService } from '@/app/core/services/improvement-plan/storage.service';
@@ -17,7 +17,6 @@ import { PaginationTableComponent } from '@/app/shared/components/pagination-tab
 import { TableColumn } from '@/app/shared/components/dynamic-table/dynamic-table.component';
 import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
 import { FileItemComponent, FileResource } from '@/app/shared/components/file-item/file-item.component';
-import { MonthlyBarChartComponent } from '@/app/shared/components/charts/monthly-bar-chart/monthly-bar-chart.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
@@ -25,12 +24,12 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     FormsModule,
     ReactiveFormsModule,
     PaginationTableComponent,
     ParametrizationSectionComponent,
     FileItemComponent,
-    MonthlyBarChartComponent,
     LoadingSpinnerComponent,
   ],
   templateUrl: './contract-management-dashboard.component.html',
@@ -38,7 +37,6 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
 export class ContractManagementDashboardComponent {
   private readonly auth = inject(AuthService);
   protected readonly service = inject(ContractManagementPlanService);
-  private readonly executionPlanService = inject(ContractManagementExecutionPlanService);
   private readonly configService = inject(ContractManagementNotificationConfigService);
   private readonly alertsConfigService = inject(ContractAlertsConfigService);
   private readonly storageService = inject(StorageService);
@@ -63,10 +61,6 @@ export class ContractManagementDashboardComponent {
   uploadError = signal<string | null>(null);
   seedResult = signal<ContractManagementSeedResult | null>(null);
 
-  selectedPlan = signal<ContractManagementPlan | null>(null);
-  monthlyValues = signal<number[]>(new Array(12).fill(0));
-  loadingExecutions = signal(false);
-
   get canRead() {
     return this.auth.hasPermission('CONTRACT_MANAGEMENT_PLAN_READ');
   }
@@ -76,7 +70,6 @@ export class ContractManagementDashboardComponent {
 
   onYearInputChange(value: number | null): void {
     this.year.set(value ?? new Date().getFullYear());
-    this.selectedPlan.set(null);
   }
 
   onFileSelected(event: Event): void {
@@ -103,25 +96,6 @@ export class ContractManagementDashboardComponent {
         );
       },
     });
-  }
-
-  selectPlan(plan: ContractManagementPlan): void {
-    this.selectedPlan.set(plan);
-    this.loadingExecutions.set(true);
-    this.executionPlanService.findByPlanId(plan.id).subscribe((res) => {
-      this.loadingExecutions.set(false);
-      const values = new Array(12).fill(0);
-      if (res.success && res.data) {
-        for (const execution of res.data) {
-          values[execution.month - 1] = execution.amount;
-        }
-      }
-      this.monthlyValues.set(values);
-    });
-  }
-
-  closeDetail(): void {
-    this.selectedPlan.set(null);
   }
 
   // ── Configuración de notificaciones ──

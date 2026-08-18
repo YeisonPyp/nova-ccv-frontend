@@ -2,7 +2,12 @@ import { FilterServiceSpecImpl } from "@/app/shared/services/filter-service-spec
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
-import { ContractManagementPlan, ContractManagementSeedResult } from "../../models/contract/contract-management-plan.model";
+import {
+  ContractManagementPlan,
+  ContractManagementSeedResult,
+  CreateContractManagementPlanDto,
+  UpdateContractManagementPlanDto,
+} from "../../models/contract/contract-management-plan.model";
 
 @Injectable({ providedIn: "root" })
 export class ContractManagementPlanService extends FilterServiceSpecImpl<
@@ -11,6 +16,25 @@ export class ContractManagementPlanService extends FilterServiceSpecImpl<
 > {
   constructor() {
     super("contract-management/plans");
+  }
+
+  createPlan(
+    dto: CreateContractManagementPlanDto,
+  ): Observable<ApiResponse<ContractManagementPlan>> {
+    return this.http.post<ApiResponse<ContractManagementPlan>>(
+      this.baseUrl,
+      dto,
+    );
+  }
+
+  updatePlan(
+    id: string,
+    dto: UpdateContractManagementPlanDto,
+  ): Observable<ApiResponse<ContractManagementPlan>> {
+    return this.http.put<ApiResponse<ContractManagementPlan>>(
+      `${this.baseUrl}/${id}`,
+      dto,
+    );
   }
 
   seedFromExcel(

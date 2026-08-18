@@ -6,8 +6,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ContractService } from "@/app/core/services/contract/contract.service";
+import { ContractManagementExecutionPlanService } from "@/app/core/services/contract/contract-management-execution-plan.service";
 import { ContractFilingFileNameService } from "@/app/core/services/contract/contract-filing-file-name.service";
 import { AreaService } from "@/app/core/services/assessment/area.service";
 import { EmployeeService } from "@/app/core/services/assessment/employee.service";
@@ -72,8 +73,14 @@ export class CreateEmployeeContractComponent implements OnInit {
   private readonly epsEntityService = inject(EpsEntityService);
   private readonly pensionTypeService = inject(PensionTypeService);
   private readonly contractParamService = inject(ContractParamsService);
+  private readonly executionPlanService = inject(
+    ContractManagementExecutionPlanService,
+  );
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+
+  private fromExecutionId: string | null = null;
 
   compensationEntities = signal<CompensationEntity[]>([]);
   contractTypes = signal<ContractType[]>([]);
@@ -172,6 +179,50 @@ export class CreateEmployeeContractComponent implements OnInit {
     this.filingFileNameService
       .findAll()
       .subscribe((res) => this.filingFileNames.set(res.data ?? []));
+
+    this.applyPrefillFromQueryParams();
+  }
+
+  private applyPrefillFromQueryParams(): void {
+    const q = this.route.snapshot.queryParamMap;
+    this.fromExecutionId = q.get("fromExecutionId");
+
+    const areaId = q.get("areaId");
+    const areaName = q.get("areaName");
+    if (areaId && areaName) {
+      this.form.patchValue({ areaId: Number(areaId) });
+      this.areaCtx.selectResults([
+        { id: Number(areaId), name: areaName } as any,
+      ]);
+    }
+
+    const costCenterId = q.get("costCenterId");
+    const costCenterName = q.get("costCenterName");
+    if (costCenterId && costCenterName) {
+      this.form.patchValue({ costCenterId: Number(costCenterId) });
+      this.costCenterCtx.selectResults([
+        { id: Number(costCenterId), name: costCenterName } as any,
+      ]);
+    }
+
+    const positionId = q.get("positionId");
+    const positionName = q.get("positionName");
+    if (positionId && positionName) {
+      this.form.patchValue({ positionId: Number(positionId) });
+      this.positionCtx.selectResults([
+        { id: Number(positionId), name: positionName } as any,
+      ]);
+    }
+
+    const contractTypeName = q.get("contractTypeName");
+    if (contractTypeName) {
+      this.form.patchValue({ contractTypeName });
+    }
+
+    const basePeriodAmount = q.get("basePeriodAmount");
+    if (basePeriodAmount) {
+      this.form.patchValue({ basePeriodAmount: Number(basePeriodAmount) });
+    }
   }
 
   isFieldInvalid(field: string): boolean {
@@ -264,14 +315,26 @@ export class CreateEmployeeContractComponent implements OnInit {
         this.selectedFiles(),
       )
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.submitting.set(false);
-          this.router.navigate(["/contracts/dashboard"]);
+          const executionId = this.fromExecutionId;
+          const contractId = res.data?.id;
+          if (executionId && contractId) {
+            this.executionPlanService
+              .linkContract(executionId, { contractId })
+              .subscribe(() => this.goBackAfterCreate());
+          } else {
+            this.goBackAfterCreate();
+          }
         },
         error: (err) => {
           this.submitting.set(false);
           this.error.set(err.error?.message ?? "Error al crear el contrato");
         },
       });
+  }
+
+  private goBackAfterCreate(): void {
+    this.router.navigate(["/contracts/dashboard"]);
   }
 }

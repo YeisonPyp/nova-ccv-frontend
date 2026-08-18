@@ -1,0 +1,24 @@
+<div class="w-full p-6 max-w-5xl mx-auto flex flex-col gap-6">
+  <button class="btn btn-link text-sm text-gray-500 ps-0 w-fit" (click)="goBack()">
+    ← Volver a planeaciones
+  </button>
+
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+    <h4 class="text-base font-semibold text-secondary mb-4">
+      {{ planId() ? "Editar planeación" : "Nueva planeación" }}
+    </h4>
+    <app-contract-management-plan-form
+      [planId]="planId()"
+      (saved)="onSaved($event)"
+    />
+  </div>
+
+  @if (plan(); as p) {
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h4 class="text-base font-semibold text-secondary mb-4">
+        Cronograma de ejecución
+      </h4>
+      <app-contract-management-execution-matrix [plan]="p" />
+    </div>
+  }
+</div>
