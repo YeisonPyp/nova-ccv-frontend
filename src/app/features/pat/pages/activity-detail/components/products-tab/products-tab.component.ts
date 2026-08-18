@@ -32,7 +32,6 @@ export class PatProductsTabComponent {
   readonly columns: TableColumn[] = [
     { key: 'product.name', label: 'Producto' },
     { key: 'targetQuantity', label: 'Meta' },
-    { key: 'unitMeasure.name', label: 'Unidad' },
   ];
 
   constructor() {

@@ -109,6 +109,11 @@ export class ContractManagementPlanFormComponent implements OnInit {
 
     this.form.get('areaId')?.valueChanges.subscribe(() => this.reloadTasks());
     this.form.get('year')?.valueChanges.subscribe(() => this.reloadTasks());
+
+    this.formValid.set(this.form.valid);
+    this.form.statusChanges.subscribe((status) =>
+      this.formValid.set(status === 'VALID'),
+    );
   }
 
   private reloadTasks(): void {
@@ -163,8 +168,20 @@ export class ContractManagementPlanFormComponent implements OnInit {
         }
         if (plan.costCenter)
           this.costCenterCtx.selectResults([plan.costCenter]);
+
+        // Existing plan: start locked, editable only after the user
+        // explicitly unlocks it (and only if they're allowed to update).
+        this.form.disable();
       });
+    } else {
+      // Creating: nothing to lock yet.
+      this.editing.set(true);
     }
+  }
+
+  enableEditing(): void {
+    this.form.enable();
+    this.editing.set(true);
   }
 
   isFieldInvalid(field: string): boolean {

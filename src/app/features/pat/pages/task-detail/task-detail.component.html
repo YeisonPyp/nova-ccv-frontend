@@ -1,5 +1,8 @@
 <div class="w-full p-6">
-  <button class="btn btn-link text-sm text-gray-500 mb-4 ps-0" (click)="goBack()">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    (click)="goBack()"
+  >
     ← Volver a la actividad
   </button>
 
@@ -9,7 +12,9 @@
     <div class="flex items-start justify-between mb-6">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+          <span
+            class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded"
+          >
             {{ t.activityName }}
           </span>
         </div>
@@ -22,23 +27,44 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
           Área
         </p>
-        <p class="text-sm font-medium text-gray-700">{{ t.area?.name ?? "—" }}</p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.area?.name ?? "—" }}
+        </p>
       </div>
 
       <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-        <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
           Centro de Costo
         </p>
-        <p class="text-sm font-medium text-gray-700">{{ t.costCenter?.name ?? "—" }}</p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.costCenter?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Producto
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.activityProduct?.product?.name ?? "—" }}
+        </p>
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
       <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3">
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
           Presupuesto Planeado vs. Ejecutado
         </h5>
         <div class="max-w-xs mx-auto">
@@ -50,7 +76,9 @@
       </div>
 
       <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h5 class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3">
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
           Presupuesto por Mes
         </h5>
         <app-planned-executed-line-chart
@@ -60,7 +88,9 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+    >
       <div class="flex border-b border-gray-200 bg-gray-50 px-2 pt-2 gap-2">
         @for (tab of tabs; track tab.key) {
           <button
@@ -79,7 +109,7 @@
       </div>
 
       <div class="p-6">
-        @if (activeTab() === 'budget') {
+        @if (activeTab() === "budget") {
           <app-pat-task-budget-tab [taskId]="t.id" />
         } @else {
           <app-monthly-overview-grid

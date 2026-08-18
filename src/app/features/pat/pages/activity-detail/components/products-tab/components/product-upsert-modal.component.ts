@@ -1,6 +1,18 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { PatActivityProductService } from '@/app/core/services/pat/pat-activity-product.service';
 import { PatActivityProduct } from '@/app/core/models/pat/pat-models';
 import { PatProductService } from '@/app/core/services/pat/pat-product.service';
@@ -24,7 +36,6 @@ export class PatProductUpsertModalComponent {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatActivityProductService);
   private readonly productCatalogService = inject(PatProductService);
-  private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
@@ -33,12 +44,6 @@ export class PatProductUpsertModalComponent {
     (p) => this.form.patchValue({ productId: p.id }),
     { isRequired: true, label: 'Producto' },
     () => this.form.patchValue({ productId: null }),
-  );
-
-  unitMeasureCtx = this.unitMeasureService.newSearchSelectContext(
-    (u) => this.form.patchValue({ unitMeasureId: u.id }),
-    { isRequired: false, label: 'Unidad de medida' },
-    () => this.form.patchValue({ unitMeasureId: null }),
   );
 
   form: FormGroup = this.fb.group({
@@ -55,10 +60,8 @@ export class PatProductUpsertModalComponent {
         this.form.reset({
           productId: p?.product?.id ?? null,
           targetQuantity: p?.targetQuantity ?? 0,
-          unitMeasureId: p?.unitMeasure?.id ?? null,
         });
         if (p?.product) this.productCtx.selectResults([p.product]);
-        if (p?.unitMeasure) this.unitMeasureCtx.selectResults([p.unitMeasure]);
       }
     });
   }

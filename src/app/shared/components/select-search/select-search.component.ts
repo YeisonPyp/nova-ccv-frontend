@@ -92,10 +92,12 @@ export class SelectSearchComponent {
 
     // keep the highlighted option in view
     effect(() => {
+      console.log('is single', this.isSingle());
       const idx = this.activeIndex();
       if (idx < 0) return;
-      this.optionRefs()
-        [idx]?.nativeElement?.scrollIntoView({ block: 'nearest' });
+      this.optionRefs()[idx]?.nativeElement?.scrollIntoView({
+        block: 'nearest',
+      });
     });
   }
 

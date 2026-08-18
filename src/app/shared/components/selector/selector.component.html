@@ -1,4 +1,6 @@
-<option [value]="null">-- Selecciona</option>
+<option value="">-- Selecciona</option>
 @for (option of options(); track option.value) {
-  <option [value]="option.value">{{ option.label }}</option>
+  <option [value]="option.value">
+    {{ option.label }}
+  </option>
 }

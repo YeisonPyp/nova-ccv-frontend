@@ -152,6 +152,7 @@ export interface PatActivityTask {
   costCenter: CostCenter;
   pillar?: PatPillar;
   program?: PatStrategicProgram;
+  activityProduct?: PatActivityProduct;
   policy?: PatPolicy;
   adenda?: PatAdenda;
   description?: string;
@@ -253,7 +254,6 @@ export interface PatActivityProduct {
   activityId: number;
   product: PatProduct;
   targetQuantity: number;
-  unitMeasure?: PatUnitMeasure;
   createdAt: string;
 }
 

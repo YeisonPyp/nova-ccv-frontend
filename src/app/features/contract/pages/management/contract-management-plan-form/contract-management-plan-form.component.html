@@ -1,7 +1,18 @@
 <div app-loading-spinner [isLoading]="loading()"></div>
 
 @if (!loading()) {
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 relative">
+    @if (planId() && !editing() && canUpdate) {
+      <button
+        type="button"
+        class="absolute top-0 right-0 text-gray-400 hover:text-primary"
+        title="Habilitar edición"
+        (click)="enableEditing()"
+      >
+        <app-edit-icon [size]="18" />
+      </button>
+    }
+
     @if (error()) {
       <div class="text-sm text-red-600">{{ error() }}</div>
     }
@@ -52,6 +63,7 @@
       <app-select-search
         label="Área"
         [required]="true"
+        [disabled]="!editing()"
         [items]="areaCtx.options()"
         [selectedItems]="areaCtx.selectedOptions()"
         [isInvalid]="isFieldInvalid('areaId')"
@@ -64,6 +76,7 @@
       <app-select-search
         label="Cargo responsable"
         [required]="true"
+        [disabled]="!editing()"
         [items]="positionCtx.options()"
         [selectedItems]="positionCtx.selectedOptions()"
         [isInvalid]="isFieldInvalid('positionId')"
@@ -76,6 +89,7 @@
       <app-select-search
         label="Centro de Costo"
         [required]="true"
+        [disabled]="!editing()"
         [items]="costCenterCtx.options()"
         [selectedItems]="costCenterCtx.selectedOptions()"
         [isInvalid]="isFieldInvalid('costCenterId')"
@@ -159,10 +173,16 @@
       </div>
     </div>
 
-    <div class="flex justify-end">
-      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-        {{ planId() ? "Actualizar planeación" : "Crear planeación" }}
-      </button>
-    </div>
+    @if (editing()) {
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="submitting() || !formValid()"
+        >
+          {{ planId() ? "Actualizar planeación" : "Crear planeación" }}
+        </button>
+      </div>
+    }
   </form>
 }

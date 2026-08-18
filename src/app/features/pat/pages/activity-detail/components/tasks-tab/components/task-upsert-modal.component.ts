@@ -1,19 +1,43 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { PatActivityTaskService } from '@/app/core/services/pat/pat-activity-task.service';
-import { PatActivityTask } from '@/app/core/models/pat/pat-models';
+import { PatActivityTask, PatProduct } from '@/app/core/models/pat/pat-models';
 import { AreaService } from '@/app/core/services/assessment/area.service';
 import { CostCenterService } from '@/app/core/services/cost-center/cost-center.service';
 import { PillarService } from '@/app/core/services/pat/pillar.service';
 import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
 import { PolicyService } from '@/app/core/services/pat/policy.service';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
+import {
+  SelectorComponent,
+  Option,
+} from '@/app/shared/components/selector/selector.component';
+import { PatAdendaService } from '@/app/core/services/pat/pat-adenda.service';
+import { PatActivityProductService } from '@/app/core/services/pat/pat-activity-product.service';
 
 @Component({
   selector: 'app-task-upsert-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ContextSearchSelectComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ContextSearchSelectComponent,
+    SelectorComponent,
+  ],
   templateUrl: './task-upsert-modal.component.html',
 })
 export class PatTaskUpsertModalComponent {
@@ -26,14 +50,18 @@ export class PatTaskUpsertModalComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatActivityTaskService);
+  private readonly productsService = inject(PatActivityProductService);
   private readonly areaService = inject(AreaService);
   private readonly costCenterService = inject(CostCenterService);
   private readonly pillarService = inject(PillarService);
-  private readonly programService = inject(PatProgramService);
+  private readonly adendaService = inject(PatAdendaService);
   private readonly policyService = inject(PolicyService);
 
   submitting = signal(false);
   error = signal<string | null>(null);
+
+  activityProducts = signal<Option[]>([]);
+  // selectedProduct = signal<Option | null>(null);
 
   areaCtx = this.areaService.newSearchSelectAreaContext(
     (a) => this.form.patchValue({ areaId: a.id }),
@@ -43,7 +71,7 @@ export class PatTaskUpsertModalComponent {
 
   costCenterCtx = this.costCenterService.newSearchSelectContext(
     (cc) => this.form.patchValue({ costCenterId: cc.id }),
-    { isRequired: true, label: 'Centro de costo' },
+    { isRequired: true, label: 'Centro de costo', maxItems: 1 },
     () => this.form.patchValue({ costCenterId: null }),
   );
 
@@ -53,10 +81,10 @@ export class PatTaskUpsertModalComponent {
     () => this.form.patchValue({ pillarId: null }),
   );
 
-  programCtx = this.programService.newSearchSelectContext(
-    (p) => this.form.patchValue({ programId: p.id }),
-    { isRequired: false, label: 'Programa estratégico' },
-    () => this.form.patchValue({ programId: null }),
+  adendaCtx = this.adendaService.newSearchSelectContext(
+    (p) => this.form.patchValue({ adendaId: p.id }),
+    { isRequired: false, label: 'Adenda' },
+    () => this.form.patchValue({ adendaId: null }),
   );
 
   policyCtx = this.policyService.newSearchSelectContext(
@@ -69,10 +97,11 @@ export class PatTaskUpsertModalComponent {
     name: ['', Validators.required],
     areaId: [null, Validators.required],
     costCenterId: [null, Validators.required],
-    pillarId: [null],
-    programId: [null],
-    policyId: [null],
+    productId: [null, Validators.required],
     description: [''],
+    adendaId: [null],
+    pillarId: [null],
+    policyId: [null],
   });
 
   constructor() {
@@ -85,16 +114,34 @@ export class PatTaskUpsertModalComponent {
           areaId: t?.area?.id ?? null,
           costCenterId: t?.costCenter?.id ?? null,
           pillarId: t?.pillar?.id ?? null,
-          programId: t?.program?.id ?? null,
+          adendaId: t?.program?.id ?? null,
           policyId: t?.policy?.id ?? null,
+          productId: t?.activityProduct?.id ?? null,
           description: t?.description ?? '',
         });
         if (t?.area) this.areaCtx.selectResults([t.area]);
         if (t?.costCenter) this.costCenterCtx.selectResults([t.costCenter]);
         if (t?.pillar) this.pillarCtx.selectResults([t.pillar]);
-        if (t?.program) this.programCtx.selectResults([t.program]);
+        if (t?.adenda) this.adendaCtx.selectResults([t.adenda]);
         if (t?.policy) this.policyCtx.selectResults([t.policy]);
       }
+    });
+
+    effect(() => {
+      this.productsService
+        .findByActivity(this.activityId())
+        .subscribe((res) => {
+          if (res.success)
+            this.activityProducts.set(
+              res.data.map(
+                (p) =>
+                  ({
+                    label: `${p.product.name} (${p.targetQuantity})`,
+                    value: p.id,
+                  }) as Option,
+              ),
+            );
+        });
     });
   }
 
@@ -110,6 +157,7 @@ export class PatTaskUpsertModalComponent {
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      console.log(this.form.errors);
       return;
     }
     this.submitting.set(true);

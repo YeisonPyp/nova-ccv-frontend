@@ -1,10 +1,6 @@
 @if (isOpen()) {
   <div class="modal-overlay" (click)="close()">
-    <div
-      class="modal-container"
-      style="max-width: 560px"
-      (click)="$event.stopPropagation()"
-    >
+    <div class="modal-container max-w-4xl!" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2 class="modal-title">
           {{ product() ? "Editar producto" : "Nuevo producto" }}
@@ -27,13 +23,14 @@
           (ngSubmit)="submit()"
           class="flex flex-col gap-4"
         >
-          <app-context-search-select
-            [ctx]="productCtx"
-            label="Producto"
-            [required]="true"
-          />
-
           <div class="form-row">
+            <div class="half-width">
+              <app-context-search-select
+                [ctx]="productCtx"
+                label="Producto"
+                [required]="true"
+              />
+            </div>
             <div class="half-width form-group">
               <label>Cantidad meta <span class="required">*</span></label>
               <input
@@ -41,13 +38,6 @@
                 formControlName="targetQuantity"
                 class="form-control"
                 min="0"
-              />
-            </div>
-            <div class="half-width">
-              <app-context-search-select
-                [ctx]="unitMeasureCtx"
-                label="Unidad de medida"
-                [required]="false"
               />
             </div>
           </div>
