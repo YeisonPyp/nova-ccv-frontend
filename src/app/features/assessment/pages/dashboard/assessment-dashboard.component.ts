@@ -2,7 +2,7 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EvaluationPeriod } from '@/app/core/models/assessment/period.model';
 import { AssessmentTableComponent } from '../period-detail/assessment-table/assessment-table.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 import { PeriodService } from '@/app/core/services/assessment/period.service';
 import { PeriodCardComponent } from './period-card/period-card.component';
@@ -13,6 +13,7 @@ import { AssessmentYearMetricsComponent } from './assessment-year-metrics/assess
   selector: 'app-assessment-dashboard',
   imports: [
     CommonModule,
+    RouterLink,
     AssessmentTableComponent,
     PaginatorComponent,
     PeriodCardComponent,

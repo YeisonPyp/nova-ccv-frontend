@@ -1,0 +1,98 @@
+<div class="p-6 max-w-6xl mx-auto flex flex-col gap-6">
+  <div>
+    <h1 class="text-2xl font-bold text-secondary m-0">Mis Obligaciones</h1>
+    <p class="text-sm text-tertiary">
+      Componentes de evaluación asignados por tu jefe. Sube los soportes o
+      entregas correspondientes a cada requerimiento.
+    </p>
+  </div>
+
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+  @if (!isLoading() && reports().length === 0) {
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 text-center text-tertiary"
+    >
+      No tienes obligaciones asignadas.
+    </div>
+  }
+
+  @for (report of reports(); track report.id) {
+    <section
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-4"
+    >
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-base font-semibold text-gray-800 m-0">
+            {{ report.component?.name || "Componente" }}
+          </h3>
+          @if (report.component?.description) {
+            <p class="text-xs text-gray-500 mt-1">
+              {{ report.component?.description }}
+            </p>
+          }
+        </div>
+        @if (report.component?.dueDate) {
+          <span
+            class="text-xs font-medium px-2 py-1 rounded"
+            [class.bg-red-100]="isOverdue(report)"
+            [class.text-red-700]="isOverdue(report)"
+            [class.bg-gray-100]="!isOverdue(report)"
+            [class.text-gray-600]="!isOverdue(report)"
+          >
+            Entrega: {{ report.component?.dueDate }}
+          </span>
+        }
+      </div>
+
+      @if (report.component?.requirements?.length) {
+        <div class="flex flex-col gap-4 border-t border-gray-100 pt-4">
+          @for (req of report.component?.requirements; track req.id) {
+            <div>
+              <div class="mb-2">
+                <span class="text-sm font-medium text-gray-800">{{
+                  req.name
+                }}</span>
+                @if (req.description) {
+                  <p class="text-xs text-gray-500">{{ req.description }}</p>
+                }
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                @for (
+                  support of supportsFor(report, req);
+                  track support.id
+                ) {
+                  @for (file of support.files || []; track file.id) {
+                    <div class="w-32">
+                      <app-file-item
+                        [file]="file"
+                        [canUpdate]="false"
+                        (deleteRequested)="
+                          onDeleteFile(report, support, file.id)
+                        "
+                      />
+                    </div>
+                  }
+                }
+
+                <div class="w-32">
+                  <app-file-item
+                    [file]="null"
+                    label="Subir soporte"
+                    [loading]="uploadKey(report.id, req.id) === uploadingKey()"
+                    (fileSelected)="onUploadFile(report, req, $event)"
+                  />
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="text-xs text-gray-400 italic">
+          Este componente no tiene requerimientos de soporte configurados.
+        </p>
+      }
+    </section>
+  }
+</div>

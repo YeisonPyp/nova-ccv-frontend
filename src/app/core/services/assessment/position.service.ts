@@ -56,6 +56,12 @@ export class PositionService {
     return this.http.get<ApiResponse<Position>>(`${this.API_URL}/${id}`);
   }
 
+  findSubordinates(): Observable<ApiResponse<Position[]>> {
+    return this.http.get<ApiResponse<Position[]>>(
+      `${this.API_URL}/subordinates`,
+    );
+  }
+
   createPosition(
     position: CreatePositionDto,
   ): Observable<ApiResponse<Position>> {

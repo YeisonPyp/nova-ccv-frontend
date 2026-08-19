@@ -14,6 +14,7 @@ export interface CreatePositionAssessmentComponentDto {
   description?: string;
   minValue: number;
   maxValue: number;
+  dueDate: string;
 }
 
 export interface CreateAssessmentComponentRequirementDto {

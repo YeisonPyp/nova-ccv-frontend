@@ -16,7 +16,10 @@ import {
 } from './competency-score-card/competency-score-card.component';
 import { Router } from '@angular/router';
 import { AssessmentService } from '@/app/core/services/assessment/assessment.service';
-import { ReportScoreChange } from './assessment-component-report/assessment-component-report.component';
+import {
+  AssessmentComponentReportCardComponent,
+  ReportScoreChange,
+} from './assessment-component-report/assessment-component-report.component';
 import {
   SurveyAnswerCardComponent,
   SurveyAnswerScoreChange,
@@ -66,6 +69,7 @@ export interface EditAssesmentDto {
     SurveyAnswerCardComponent,
     LoadingSpinnerComponent,
     TrainingEffectivenessComponent,
+    AssessmentComponentReportCardComponent,
   ],
   templateUrl: './edit-assessment-modal.component.html',
   styleUrl: './edit-assessment-modal.component.scss',
@@ -95,6 +99,8 @@ export class EditAssessmentModalComponent implements OnInit {
   trainingAssessments = computed(
     () => this.assessment()?.trainingAssessments ?? [],
   );
+
+  componentReports = computed(() => this.assessment()?.components ?? []);
 
   trainingSurveyScores = signal<SubmitTrainingAnswersDto[]>([]);
 

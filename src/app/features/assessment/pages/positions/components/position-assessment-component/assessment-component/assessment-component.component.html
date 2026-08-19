@@ -17,6 +17,11 @@
         <span class="bg-white px-2 py-0.5 rounded border"
           >Máx: {{ comp().maxValue }}</span
         >
+        @if (comp().dueDate) {
+          <span class="bg-white px-2 py-0.5 rounded border"
+            >Entrega: {{ comp().dueDate }}</span
+          >
+        }
       </div>
     </div>
     <div class="flex items-center gap-2">

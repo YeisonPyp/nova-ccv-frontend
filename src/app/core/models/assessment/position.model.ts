@@ -35,6 +35,7 @@ export interface PositionAssessmentComponent {
   description: string;
   minValue: number;
   maxValue: number;
+  dueDate?: string;
   createdAt: string;
   requirements?: AssessmentComponentRequirement[];
 }

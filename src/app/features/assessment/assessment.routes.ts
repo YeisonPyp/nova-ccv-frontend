@@ -11,6 +11,20 @@ export const ASSESSMENT_ROUTES: Routes = [
     canActivate: [hasPermissionGuard(['ASSESSMENTS_READ'])],
   },
   {
+    path: 'obligations',
+    loadComponent: () =>
+      import('./pages/obligations/obligations.component').then(
+        (m) => m.ObligationsComponent,
+      ),
+  },
+  {
+    path: 'assignments',
+    loadComponent: () =>
+      import('./pages/assignments/assignments.component').then(
+        (m) => m.AssignmentsComponent,
+      ),
+  },
+  {
     path: 'edit/:id',
     loadComponent: () =>
       import('./pages/edit-assessment-modal/edit-assessment-modal.component').then(

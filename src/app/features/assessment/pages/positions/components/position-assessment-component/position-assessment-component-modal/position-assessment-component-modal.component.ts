@@ -35,6 +35,7 @@ export class PositionAssessmentComponentModalComponent {
     description: [""],
     minValue: [0, [Validators.required, Validators.min(0)]],
     maxValue: [100, [Validators.required]],
+    dueDate: ["", Validators.required],
   });
 
   constructor() {
@@ -46,6 +47,7 @@ export class PositionAssessmentComponentModalComponent {
           description: comp.description,
           minValue: comp.minValue,
           maxValue: comp.maxValue,
+          dueDate: comp.dueDate,
         });
       } else {
         this.componentForm.reset({ minValue: 0, maxValue: 100 });
