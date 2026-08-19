@@ -1,6 +1,10 @@
-<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-6">
+<div
+  class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-6"
+>
   <div class="flex items-center justify-between">
-    <h4 class="text-base font-semibold text-secondary m-0">{{ activityName() }}</h4>
+    <h4 class="text-base font-semibold text-secondary m-0">
+      {{ activityName() }}
+    </h4>
     <a
       [routerLink]="['/pat', year(), 'activities', activityId()]"
       class="text-xs font-medium text-primary hover:underline whitespace-nowrap"
@@ -78,13 +82,13 @@
     </section>
   }
 
-  <!-- ── BENEFICIOS ── -->
+  <!-- ── Impactos ── -->
   @if (benefitSeries().length) {
     <section>
       <h5
         class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
       >
-        Beneficios
+        Impactos
       </h5>
       <div class="flex flex-wrap gap-4">
         @for (s of benefitSeries(); track s.key) {

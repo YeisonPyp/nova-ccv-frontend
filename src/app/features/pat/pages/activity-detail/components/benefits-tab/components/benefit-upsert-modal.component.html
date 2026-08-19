@@ -7,7 +7,7 @@
     >
       <div class="modal-header">
         <h2 class="modal-title">
-          {{ benefit() ? "Editar beneficio" : "Nuevo beneficio" }}
+          {{ benefit() ? "Editar impacto" : "Nuevo impacto" }}
         </h2>
         <button type="button" class="close-btn" (click)="close()">×</button>
       </div>
@@ -28,7 +28,7 @@
           class="flex flex-col gap-4"
         >
           <div class="form-group">
-            <label>Tipo de beneficio <span class="required">*</span></label>
+            <label>Tipo de impacto <span class="required">*</span></label>
             <select
               formControlName="benefitTypeId"
               class="form-control"
@@ -66,7 +66,7 @@
           @if (submitting()) {
             Guardando...
           } @else {
-            {{ benefit() ? "Guardar cambios" : "Crear beneficio" }}
+            {{ benefit() ? "Guardar cambios" : "Crear impacto" }}
           }
         </button>
       </div>

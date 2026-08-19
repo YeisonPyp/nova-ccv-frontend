@@ -1,12 +1,12 @@
 <app-project-section-card
-  title="Beneficios"
-  addLabel="+ Nuevo beneficio"
+  title="Impactos"
+  addLabel="+ Nuevo impacto"
   (onAdd)="openCreate()"
 >
   <app-dynamic-table
     [data]="benefits()"
     [columns]="columns"
-    emptyMessage="Sin beneficios registrados."
+    emptyMessage="Sin Impactos registrados."
   >
     <ng-template #customCell let-item let-col="column">
       @switch (col.key) {

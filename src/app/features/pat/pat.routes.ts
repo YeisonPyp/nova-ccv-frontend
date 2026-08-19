@@ -73,7 +73,7 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
       {
-        path: "tasks/:taskId/register/:month/:mode",
+        path: "tasks/:taskId/register/:month",
         loadComponent: () =>
           import(
             "./pages/register-monthly-overview/register-monthly-overview.component"

@@ -1,9 +1,24 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { PatActivityBenefitService } from '@/app/core/services/pat/pat-activity-benefit.service';
 import { BenefitTypeService } from '@/app/core/services/pat/benefit-type.service';
-import { PatActivityBenefit, PatBenefitType } from '@/app/core/models/pat/pat-models';
+import {
+  PatActivityBenefit,
+  PatBenefitType,
+} from '@/app/core/models/pat/pat-models';
 
 @Component({
   selector: 'app-pat-benefit-upsert-modal',
@@ -79,7 +94,7 @@ export class PatBenefitUpsertModalComponent {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.error.set(err.error?.message ?? 'Error al guardar el beneficio');
+        this.error.set(err.error?.message ?? 'Error al guardar el impacto');
       },
     });
   }

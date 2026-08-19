@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   ExecutionOrPlaning,
   PatActivityTask,
+  PatRegisterMode,
 } from '@/app/core/models/pat/pat-models';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { MonthlyMetricRowComponent } from '@/app/shared/components/monthly-metric-row/monthly-metric-row.component';
@@ -23,7 +24,6 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
 
   taskId = signal(0);
   month = signal(1);
-  mode = signal<'plan' | 'execution'>('execution');
 
   task = signal<PatActivityTask | null>(null);
   data = signal<ExecutionOrPlaning | null>(null);
@@ -34,23 +34,14 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
 
   monthLabel = computed(() => MONTH_NAMES[this.month() - 1] ?? '');
 
-  title = computed(() =>
-    this.mode() === 'plan'
-      ? `Registrar planeación — ${this.monthLabel()}`
-      : `Registrar ejecución — ${this.monthLabel()}`,
-  );
+  title = computed(() => `Registrar mes — ${this.monthLabel()}`);
 
   ngOnInit(): void {
     const taskId = Number(this.route.snapshot.paramMap.get('taskId'));
     const month = Number(this.route.snapshot.paramMap.get('month'));
-    const mode =
-      this.route.snapshot.paramMap.get('mode') === 'plan'
-        ? 'plan'
-        : 'execution';
 
     this.taskId.set(taskId);
     this.month.set(month);
-    this.mode.set(mode);
 
     this.overviewService.findRegisterPage(taskId, month).subscribe((res) => {
       if (res.success) {
@@ -61,46 +52,45 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
     });
   }
 
-  valueOf(entry: {
-    planning?: { amount: number };
-    execution?: { amount: number };
-  }): number {
-    const amount =
-      this.mode() === 'plan' ? entry.planning?.amount : entry.execution?.amount;
-    return amount ?? 0;
+  planOf(entry: { planning?: { amount: number } }): number {
+    return entry.planning?.amount ?? 0;
   }
 
-  referenceOf(entry: { planning?: { amount: number } }): number | null {
-    return this.mode() === 'execution' ? (entry.planning?.amount ?? 0) : null;
+  executionOf(entry: { execution?: { amount: number } }): number {
+    return entry.execution?.amount ?? 0;
   }
 
-  availableOf(entry: {
-    availableForPlanning?: number;
+  availableForPlanOf(entry: { availableForPlanning?: number }): number | null {
+    return entry.availableForPlanning ?? null;
+  }
+
+  availableForExecutionOf(entry: {
     availableForExecution?: number;
   }): number | null {
-    const available =
-      this.mode() === 'plan'
-        ? entry.availableForPlanning
-        : entry.availableForExecution;
-    return available ?? null;
+    return entry.availableForExecution ?? null;
   }
 
-  stageBudget(categoryId: number, amount: number): void {
-    this.updateEntry('budgets', (b) => b.budget.id === categoryId, amount);
+  stageBudget(categoryId: number, mode: PatRegisterMode, amount: number): void {
+    this.updateEntry('budgets', (b) => b.budget.id === categoryId, mode, amount);
   }
 
-  stageProduct(productId: number, amount: number): void {
-    this.updateEntry('products', (p) => p.product.id === productId, amount);
+  stageProduct(productId: number, mode: PatRegisterMode, amount: number): void {
+    this.updateEntry('products', (p) => p.product.id === productId, mode, amount);
   }
 
-  stageBenefit(benefitId: number, amount: number): void {
-    this.updateEntry('benefits', (b) => b.benefit.id === benefitId, amount);
+  stageBenefit(benefitId: number, mode: PatRegisterMode, amount: number): void {
+    this.updateEntry('benefits', (b) => b.benefit.id === benefitId, mode, amount);
   }
 
-  stageIndicator(indicatorId: number, amount: number): void {
+  stageIndicator(
+    indicatorId: number,
+    mode: PatRegisterMode,
+    amount: number,
+  ): void {
     this.updateEntry(
       'indicators',
       (i) => i.indicator.id === indicatorId,
+      mode,
       amount,
     );
   }
@@ -110,12 +100,13 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
   >(
     key: K,
     match: (item: ExecutionOrPlaning[K][number]) => boolean,
+    mode: PatRegisterMode,
     amount: number,
   ): void {
     const current = this.data();
     if (!current) return;
 
-    const field = this.mode() === 'plan' ? 'planning' : 'execution';
+    const field = mode === 'PLAN' ? 'planning' : 'execution';
     const list = current[key].map((item) =>
       match(item) ? { ...item, [field]: { ...item[field], amount } } : item,
     ) as ExecutionOrPlaning[K];
@@ -125,40 +116,55 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
     this.saved.set(false);
   }
 
+  private buildPayload(current: ExecutionOrPlaning, mode: PatRegisterMode) {
+    const valueOf =
+      mode === 'PLAN'
+        ? (e: { planning?: { amount: number } }) => e.planning?.amount ?? 0
+        : (e: { execution?: { amount: number } }) => e.execution?.amount ?? 0;
+
+    return {
+      month: this.month(),
+      mode,
+      budgets: current.budgets.map((b) => ({
+        presupuestalCategoryId: b.budget.id,
+        amount: valueOf(b),
+      })),
+      products: current.products.map((p) => ({
+        productId: p.product.id,
+        quantity: valueOf(p),
+      })),
+      benefits: current.benefits.map((b) => ({
+        benefitId: b.benefit.id,
+        value: valueOf(b),
+      })),
+      indicators: current.indicators.map((i) => ({
+        activityIndicatorId: i.indicator.id,
+        value: valueOf(i),
+      })),
+    };
+  }
+
   saveAll(): void {
     const current = this.data();
     const taskId = this.taskId();
-    const month = this.month();
     if (!current || this.saving()) return;
 
     this.saving.set(true);
     this.overviewService
-      .registerMonth(taskId, {
-        month,
-        mode: this.mode() === 'plan' ? 'PLAN' : 'EXECUTION',
-        budgets: current.budgets.map((b) => ({
-          presupuestalCategoryId: b.budget.id,
-          amount: this.valueOf(b),
-        })),
-        products: current.products.map((p) => ({
-          productId: p.product.id,
-          quantity: this.valueOf(p),
-        })),
-        benefits: current.benefits.map((b) => ({
-          benefitId: b.benefit.id,
-          value: this.valueOf(b),
-        })),
-        indicators: current.indicators.map((i) => ({
-          activityIndicatorId: i.indicator.id,
-          value: this.valueOf(i),
-        })),
-      })
+      .registerMonth(taskId, this.buildPayload(current, 'PLAN'))
       .subscribe({
-        next: (res) => {
-          if (res.success) this.data.set(res.data);
-          this.saving.set(false);
-          this.dirty.set(false);
-          this.saved.set(true);
+        next: () => {
+          this.overviewService
+            .registerMonth(taskId, this.buildPayload(current, 'EXECUTION'))
+            .subscribe({
+              next: (res) => {
+                if (res.success) this.data.set(res.data);
+                this.saving.set(false);
+                this.dirty.set(false);
+                this.saved.set(true);
+              },
+              error: () => this.saving.set(false),
+            });
         },
         error: () => this.saving.set(false),
       });

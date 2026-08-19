@@ -1,5 +1,8 @@
 <div class="w-full p-6">
-  <button class="btn btn-link text-sm text-gray-500 mb-4 ps-0" (click)="goBack()">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    (click)="goBack()"
+  >
     ← Volver a la tarea
   </button>
 
@@ -23,10 +26,18 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+    <!-- ── PLANEACIÓN ── -->
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+      <h2
+        class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4"
+      >
+        Planeación
+      </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="flex flex-col gap-1">
-          <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
             Presupuesto
           </p>
           @if (d.budgets.length === 0) {
@@ -35,19 +46,20 @@
             @for (b of d.budgets; track b.budget.id) {
               <app-monthly-metric-row
                 [label]="b.budget.name"
-                [value]="valueOf(b)"
-                [referenceValue]="referenceOf(b)"
-                [targetValue]="availableOf(b)"
+                [value]="planOf(b)"
+                [targetValue]="availableForPlanOf(b)"
                 [targetLabel]="'Disponible'"
                 [currency]="true"
-                (save)="stageBudget(b.budget.id, $event)"
+                (save)="stageBudget(b.budget.id, 'PLAN', $event)"
               />
             }
           }
         </div>
 
         <div class="flex flex-col gap-1">
-          <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
             Productos
           </p>
           @if (d.products.length === 0) {
@@ -56,36 +68,38 @@
             @for (p of d.products; track p.product.id) {
               <app-monthly-metric-row
                 [label]="p.product.name"
-                [value]="valueOf(p)"
-                [referenceValue]="referenceOf(p)"
+                [value]="planOf(p)"
                 [targetValue]="p.targetQuantity ?? null"
-                (save)="stageProduct(p.product.id, $event)"
+                (save)="stageProduct(p.product.id, 'PLAN', $event)"
               />
             }
           }
         </div>
 
         <div class="flex flex-col gap-1">
-          <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
             Impacto
           </p>
           @if (d.benefits.length === 0) {
-            <p class="text-xs text-gray-400">Sin beneficios</p>
+            <p class="text-xs text-gray-400">Sin impactos</p>
           } @else {
             @for (b of d.benefits; track b.benefit.id) {
               <app-monthly-metric-row
                 [label]="b.benefit.benefitTypeName"
-                [value]="valueOf(b)"
-                [referenceValue]="referenceOf(b)"
+                [value]="planOf(b)"
                 [targetValue]="b.benefit.targetValue"
-                (save)="stageBenefit(b.benefit.id, $event)"
+                (save)="stageBenefit(b.benefit.id, 'PLAN', $event)"
               />
             }
           }
         </div>
 
         <div class="flex flex-col gap-1">
-          <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
             Indicadores
           </p>
           @if (d.indicators.length === 0) {
@@ -94,10 +108,109 @@
             @for (i of d.indicators; track i.indicator.id) {
               <app-monthly-metric-row
                 [label]="i.indicator.managementIndicator.name"
-                [value]="valueOf(i)"
-                [referenceValue]="referenceOf(i)"
+                [value]="planOf(i)"
                 [targetValue]="i.indicator.goalValue"
-                (save)="stageIndicator(i.indicator.id, $event)"
+                (save)="stageIndicator(i.indicator.id, 'PLAN', $event)"
+              />
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EJECUCIÓN ── -->
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h2
+        class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4"
+      >
+        Ejecución
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Presupuesto
+          </p>
+          @if (d.budgets.length === 0) {
+            <p class="text-xs text-gray-400">Sin rubros</p>
+          } @else {
+            @for (b of d.budgets; track b.budget.id) {
+              <app-monthly-metric-row
+                [label]="b.budget.name"
+                [value]="executionOf(b)"
+                [referenceValue]="planOf(b)"
+                [referenceLabel]="'Planeado'"
+                [targetValue]="availableForExecutionOf(b)"
+                [targetLabel]="'Disponible'"
+                [currency]="true"
+                (save)="stageBudget(b.budget.id, 'EXECUTION', $event)"
+              />
+            }
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Productos
+          </p>
+          @if (d.products.length === 0) {
+            <p class="text-xs text-gray-400">Sin productos</p>
+          } @else {
+            @for (p of d.products; track p.product.id) {
+              <app-monthly-metric-row
+                [label]="p.product.name"
+                [value]="executionOf(p)"
+                [referenceValue]="planOf(p)"
+                [referenceLabel]="'Planeado'"
+                [targetValue]="p.targetQuantity ?? null"
+                (save)="stageProduct(p.product.id, 'EXECUTION', $event)"
+              />
+            }
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Impacto
+          </p>
+          @if (d.benefits.length === 0) {
+            <p class="text-xs text-gray-400">Sin impactos</p>
+          } @else {
+            @for (b of d.benefits; track b.benefit.id) {
+              <app-monthly-metric-row
+                [label]="b.benefit.benefitTypeName"
+                [value]="executionOf(b)"
+                [referenceValue]="planOf(b)"
+                [referenceLabel]="'Planeado'"
+                [targetValue]="b.benefit.targetValue"
+                (save)="stageBenefit(b.benefit.id, 'EXECUTION', $event)"
+              />
+            }
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Indicadores
+          </p>
+          @if (d.indicators.length === 0) {
+            <p class="text-xs text-gray-400">Sin indicadores</p>
+          } @else {
+            @for (i of d.indicators; track i.indicator.id) {
+              <app-monthly-metric-row
+                [label]="i.indicator.managementIndicator.name"
+                [value]="executionOf(i)"
+                [referenceValue]="planOf(i)"
+                [referenceLabel]="'Planeado'"
+                [targetValue]="i.indicator.goalValue"
+                (save)="stageIndicator(i.indicator.id, 'EXECUTION', $event)"
               />
             }
           }

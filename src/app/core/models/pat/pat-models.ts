@@ -290,7 +290,7 @@ export interface PatActivityProduct {
   createdAt: string;
 }
 
-// ─── Beneficios/beneficiarios por actividad (catálogo; planeación/ejecución
+// ─── Impactos/beneficiarios por actividad (catálogo; planeación/ejecución
 // mensual vive ahora por tarea, ver ExecutionOrPlaningBenefit) ─────────────
 
 export interface PatActivityBenefit {

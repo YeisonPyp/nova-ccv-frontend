@@ -30,7 +30,7 @@ export class PatBenefitsTabComponent {
   editingBenefit = signal<PatActivityBenefit | null>(null);
 
   readonly columns: TableColumn[] = [
-    { key: 'benefitTypeName', label: 'Tipo de beneficio' },
+    { key: 'benefitTypeName', label: 'Tipo de impacto' },
     { key: 'targetValue', label: 'Meta' },
   ];
 

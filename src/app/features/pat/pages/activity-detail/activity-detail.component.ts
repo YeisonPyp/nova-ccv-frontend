@@ -6,7 +6,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe, NgComponentOutlet } from '@angular/common';
+import {
+  CommonModule,
+  CurrencyPipe,
+  DatePipe,
+  NgComponentOutlet,
+} from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
 import { PatActivity } from '@/app/core/models/pat/pat-models';
@@ -54,7 +59,7 @@ export class PatActivityDetailComponent implements OnInit {
     { key: 'tasks', label: 'Tareas' },
     { key: 'indicators', label: 'Indicadores' },
     { key: 'products', label: 'Productos' },
-    { key: 'benefits', label: 'Beneficios' },
+    { key: 'benefits', label: 'Impactos' },
   ];
 
   activeTab = signal<TabKeys>('tasks');

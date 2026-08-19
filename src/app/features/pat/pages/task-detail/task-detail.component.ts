@@ -14,7 +14,7 @@ import { PlannedExecutedLineChartComponent } from '@/app/shared/components/chart
 import { MonthlyOverviewGridComponent } from './components/monthly-overview-grid/monthly-overview-grid.component';
 import { PatTaskBudgetTabComponent } from './components/budget-tab/budget-tab.component';
 
-type TabKey = 'execution' | 'plan' | 'budget';
+type TabKey = 'overview' | 'budget';
 
 @Component({
   selector: 'app-pat-task-detail',
@@ -76,10 +76,9 @@ export class PatTaskDetailComponent implements OnInit {
     return values;
   });
 
-  activeTab = signal<TabKey>('execution');
+  activeTab = signal<TabKey>('overview');
   tabs: { key: TabKey; label: string }[] = [
-    { key: 'execution', label: 'Ejecuciones' },
-    { key: 'plan', label: 'Planeaciones' },
+    { key: 'overview', label: 'Planeación y Ejecución' },
     { key: 'budget', label: 'Presupuesto' },
   ];
 

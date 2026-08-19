@@ -2,9 +2,9 @@
   @for (item of overview(); track item.month) {
     <app-monthly-overview-card
       [data]="item"
-      [mode]="mode()"
       [year]="year()"
       [taskId]="taskId()"
+      [avance]="avanceFor(item.month)"
     />
   }
 </div>
