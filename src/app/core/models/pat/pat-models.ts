@@ -147,6 +147,7 @@ export interface PatActivity {
   updatedAt: string;
 
   approvedBudget?: number;
+  plannedBudget?: number;
   executedBudget?: number;
 
   tasks?: PatActivityTask[];
