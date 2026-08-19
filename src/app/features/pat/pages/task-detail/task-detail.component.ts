@@ -98,9 +98,9 @@ export class PatTaskDetailComponent implements OnInit {
       },
     });
 
-    // this.overviewService.findOverview(id).subscribe((res) => {
-    //   if (res.success) this.overview.set(res.data);
-    // });
+    this.overviewService.findOverview(id).subscribe((res) => {
+      if (res.success) this.overview.set(res.data);
+    });
   }
 
   goBack(): void {

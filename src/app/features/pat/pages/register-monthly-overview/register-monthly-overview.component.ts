@@ -1,7 +1,10 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ExecutionOrPlaning, PatActivityTask } from '@/app/core/models/pat/pat-models';
+import {
+  ExecutionOrPlaning,
+  PatActivityTask,
+} from '@/app/core/models/pat/pat-models';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { MonthlyMetricRowComponent } from '@/app/shared/components/monthly-metric-row/monthly-metric-row.component';
 import { PatTaskMonthlyOverviewService } from '@/app/core/services/pat/pat-task-monthly-overview.service';
@@ -40,7 +43,10 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
   ngOnInit(): void {
     const taskId = Number(this.route.snapshot.paramMap.get('taskId'));
     const month = Number(this.route.snapshot.paramMap.get('month'));
-    const mode = this.route.snapshot.paramMap.get('mode') === 'plan' ? 'plan' : 'execution';
+    const mode =
+      this.route.snapshot.paramMap.get('mode') === 'plan'
+        ? 'plan'
+        : 'execution';
 
     this.taskId.set(taskId);
     this.month.set(month);
@@ -92,10 +98,16 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
   }
 
   stageIndicator(indicatorId: number, amount: number): void {
-    this.updateEntry('indicators', (i) => i.indicator.id === indicatorId, amount);
+    this.updateEntry(
+      'indicators',
+      (i) => i.indicator.id === indicatorId,
+      amount,
+    );
   }
 
-  private updateEntry<K extends 'budgets' | 'products' | 'benefits' | 'indicators'>(
+  private updateEntry<
+    K extends 'budgets' | 'products' | 'benefits' | 'indicators',
+  >(
     key: K,
     match: (item: ExecutionOrPlaning[K][number]) => boolean,
     amount: number,
@@ -155,10 +167,7 @@ export class RegisterMonthlyOverviewComponent implements OnInit {
   goBack(): void {
     const task = this.task();
     if (task) {
-      this.router.navigate([
-        `/pat/${task.activityYear}/tasks`,
-        this.taskId(),
-      ]);
+      this.router.navigate([`/pat/${task.activityYear}/tasks`, this.taskId()]);
     }
   }
 }
