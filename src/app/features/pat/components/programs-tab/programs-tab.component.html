@@ -1,32 +1,4 @@
 <div class="flex flex-col gap-4">
-  <div class="flex items-center justify-between">
-    <h3
-      class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
-    >
-      Programas Estratégicos
-    </h3>
-
-    <button
-      type="button"
-      class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
-      (click)="openCreate()"
-    >
-      + Nuevo programa
-    </button>
-  </div>
-
-  <app-programs-table (onEdit)="openEdit($event)" />
-</div>
-
-<app-create-pat-program
-  [isOpen]="modalOpen()"
-  [program]="editing()"
-  [year]="year()"
-  (onClose)="closeModal()"
-  (onSaved)="onSaved()"
-/>
-
-<div class="mt-8 pt-6 border-t border-gray-200">
   <app-adenda-context-section />
 </div>
 

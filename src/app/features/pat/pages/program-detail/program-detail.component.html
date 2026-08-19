@@ -1,0 +1,143 @@
+<div class="p-6 max-w-9xl mx-auto flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <button
+      type="button"
+      class="text-sm text-primary hover:underline flex items-center gap-1"
+      (click)="back()"
+    >
+      ← Volver al tablero
+    </button>
+    <button type="button" class="btn btn-outline" (click)="openEdit()">
+      Editar programa
+    </button>
+  </div>
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (program()) {
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-2"
+    >
+      <h1 class="text-xl font-bold text-secondary">
+        {{ program()!.description || "Programa Estratégico" }}
+      </h1>
+      <div class="flex gap-6 text-sm text-tertiary">
+        <span>Año: {{ program()!.year }}</span>
+        <span>Inicio: {{ program()!.startsAt }}</span>
+        <span>Fin: {{ program()!.endsAt }}</span>
+      </div>
+    </div>
+
+    <!-- Budget progress -->
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-4"
+    >
+      <div class="flex items-center justify-between">
+        <h2
+          class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+        >
+          Progreso de Presupuesto
+        </h2>
+        <div class="text-sm text-tertiary">
+          Ejecutado {{ money(totalExecuted()) }} de {{ money(totalBudgeted()) }}
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr
+              class="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200"
+            >
+              <th class="py-2 pr-4">Rubro</th>
+              <th class="py-2 pr-4">Tipo Recursos</th>
+              <th class="py-2 pr-4">Saldo Vigencia Anterior</th>
+              <th class="py-2 pr-4">Monto Presupuestado</th>
+              <th class="py-2 pr-4">Reporte T1</th>
+              <th class="py-2 pr-4">Reporte T2</th>
+              <th class="py-2 pr-4">Reporte T3</th>
+              <th class="py-2 pr-4">Reporte T4</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of budgetLines(); track line.id) {
+              <tr class="border-b border-gray-100">
+                <td class="py-2 pr-4">{{ line.categoryName }}</td>
+                <td class="py-2 pr-4">{{ line.resourceType || "—" }}</td>
+                <td class="py-2 pr-4">
+                  {{ money(line.previousVigencyBalance) }}
+                </td>
+                <td class="py-2 pr-4 font-medium">
+                  {{ money(line.budgetedAmount) }}
+                </td>
+                <td class="py-2 pr-4">{{ money(line.q1Executed) }}</td>
+                <td class="py-2 pr-4">{{ money(line.q2Executed) }}</td>
+                <td class="py-2 pr-4">{{ money(line.q3Executed) }}</td>
+                <td class="py-2 pr-4">{{ money(line.q4Executed) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="py-4 text-center text-tertiary">
+                  No hay rubros presupuestales asociados a este programa.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Beneficiary impact -->
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-4"
+    >
+      <h2
+        class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+      >
+        Impacto de Beneficiarios
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr
+              class="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200"
+            >
+              <th class="py-2 pr-4">Tipo de Beneficio</th>
+              <th class="py-2 pr-4">Meta</th>
+              <th class="py-2 pr-4">Trimestre 1</th>
+              <th class="py-2 pr-4">Trimestre 2</th>
+              <th class="py-2 pr-4">Trimestre 3</th>
+              <th class="py-2 pr-4">Trimestre 4</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of benefits(); track b.id) {
+              <tr class="border-b border-gray-100">
+                <td class="py-2 pr-4">{{ b.benefitTypeName }}</td>
+                <td class="py-2 pr-4 font-medium">{{ b.targetValue }}</td>
+                <td class="py-2 pr-4">{{ b.q1Executed }}</td>
+                <td class="py-2 pr-4">{{ b.q2Executed }}</td>
+                <td class="py-2 pr-4">{{ b.q3Executed }}</td>
+                <td class="py-2 pr-4">{{ b.q4Executed }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="py-4 text-center text-tertiary">
+                  No hay beneficios asociados a este programa.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<app-create-pat-program
+  [isOpen]="editModalOpen()"
+  [program]="program()"
+  [year]="year()"
+  (onClose)="closeEdit()"
+  (onSaved)="onSaved()"
+/>

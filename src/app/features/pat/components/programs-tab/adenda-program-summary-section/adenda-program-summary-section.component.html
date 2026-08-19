@@ -36,5 +36,20 @@
     [columns]="columns"
     [exportable]="false"
     emptyMessage="No hay programas para los filtros seleccionados."
-  />
+  >
+    <ng-template #actions let-item>
+      <button
+        type="button"
+        class="text-xs font-medium text-primary hover:underline whitespace-nowrap disabled:opacity-50"
+        [disabled]="resolvingId() === item.programCode"
+        (click)="viewProgram(item)"
+      >
+        @if (resolvingId() === item.programCode) {
+          Abriendo...
+        } @else {
+          Ver detalle →
+        }
+      </button>
+    </ng-template>
+  </app-dynamic-table>
 </div>

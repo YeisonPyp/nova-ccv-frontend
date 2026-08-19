@@ -55,6 +55,15 @@ export const PAT_ROUTES: Routes = [
         canActivate: [hasPermissionGuard(["PAT_ACTIVITY_READ"])],
       },
       {
+        path: "programs/:id",
+        loadComponent: () =>
+          import("./pages/program-detail/program-detail.component").then(
+            (m) => m.ProgramDetailComponent,
+          ),
+        title: "PAT — Detalle de Programa",
+        canActivate: [hasPermissionGuard(["PAT_STRATEGIC_PROGRAM_READ"])],
+      },
+      {
         path: "tasks/:id",
         loadComponent: () =>
           import("./pages/task-detail/task-detail.component").then(

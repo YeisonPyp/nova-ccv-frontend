@@ -7,7 +7,7 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from '@/app/shared/components/dynamic-table/dynamic-table.component';
-import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 import { ExpressionNode } from '@rsql/ast';
 import builder from '@rsql/builder';
 
@@ -18,7 +18,7 @@ import builder from '@rsql/builder';
     CommonModule,
     RouterLink,
     DynamicTableComponent,
-    PaginationComponent,
+    PaginatorComponent,
   ],
   templateUrl: './tactical-activities-tab.component.html',
 })
@@ -106,6 +106,11 @@ export class TacticalActivitiesTabComponent {
   onSearchChange(nodes: ExpressionNode[]) {
     this.page.set(1);
     this.searchNodes.set(nodes);
+  }
+
+  onPageSizeChange(size: number) {
+    this.page.set(1);
+    this.size.set(size);
   }
 
   openCreate(): void {

@@ -1,7 +1,9 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { PatAdendaProgramSummaryService } from "@/app/core/services/pat/pat-adenda-program-summary.service";
 import { PatAdendaService } from "@/app/core/services/pat/pat-adenda.service";
+import { PatProgramService } from "@/app/core/services/pat/pat-program.service";
 import { PatAdendaProgramSummary } from "@/app/core/models/pat/pat-models";
 import { ContextSearchSelectComponent } from "@/app/shared/components/context-search-select/context-search-select.component";
 import { DynamicTableComponent, TableColumn } from "@/app/shared/components/dynamic-table/dynamic-table.component";
@@ -23,11 +25,14 @@ export class AdendaProgramSummarySectionComponent {
 
   private readonly service = inject(PatAdendaProgramSummaryService);
   private readonly adendaService = inject(PatAdendaService);
+  private readonly programService = inject(PatProgramService);
+  private readonly router = inject(Router);
 
   loading = signal(false);
   items = signal<PatAdendaProgramSummary[]>([]);
   yearFilter = signal<number | null>(null);
   adendaIdFilter = signal<number | null>(null);
+  resolvingId = signal<string | null>(null);
 
   adendaCtx = this.adendaService.newSearchSelectContext(
     (a) => this.adendaIdFilter.set(a.id),
@@ -66,5 +71,27 @@ export class AdendaProgramSummarySectionComponent {
 
   onYearInputChange(value: number | null): void {
     this.yearFilter.set(value ?? null);
+  }
+
+  viewProgram(item: PatAdendaProgramSummary): void {
+    const year = item.year;
+    if (item.programId != null) {
+      this.router.navigate(['/pat', year, 'programs', item.programId]);
+      return;
+    }
+    if (item.contextId == null || item.unitMeasureId == null) return;
+
+    this.resolvingId.set(item.programCode);
+    this.programService
+      .resolveProgram(item.adendaId, item.contextId, item.unitMeasureId)
+      .subscribe({
+        next: (res) => {
+          this.resolvingId.set(null);
+          if (res.success && res.data) {
+            this.router.navigate(['/pat', year, 'programs', res.data.id]);
+          }
+        },
+        error: () => this.resolvingId.set(null),
+      });
   }
 }

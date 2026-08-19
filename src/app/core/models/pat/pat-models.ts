@@ -45,6 +45,39 @@ export interface PatStrategicProgram {
   description?: string;
 }
 
+export interface PatStrategicProgramBudgetLine {
+  id: string;
+  programId: number;
+  categoryId: number;
+  categoryCode?: string;
+  categoryName: string;
+  resourceType?: string;
+  previousVigencyBalance: number;
+  budgetedAmount: number;
+  q1Executed: number;
+  q2Executed: number;
+  q3Executed: number;
+  q4Executed: number;
+}
+
+export interface PatStrategicProgramBenefitQuarterly {
+  id: string;
+  programId: number;
+  benefitTypeId: number;
+  benefitTypeName: string;
+  targetValue: number;
+  q1Executed: number;
+  q2Executed: number;
+  q3Executed: number;
+  q4Executed: number;
+}
+
+export interface PatStrategicProgramDetail {
+  program: PatStrategicProgram;
+  budgetLines: PatStrategicProgramBudgetLine[];
+  benefits: PatStrategicProgramBenefitQuarterly[];
+}
+
 export interface PatAdendaProgramSummary {
   id: string;
   programId: number;

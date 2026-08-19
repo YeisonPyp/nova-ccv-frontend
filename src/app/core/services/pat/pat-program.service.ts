@@ -1,5 +1,8 @@
 import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
-import { PatStrategicProgram } from '../../models/pat/pat-models';
+import {
+  PatStrategicProgram,
+  PatStrategicProgramDetail,
+} from '../../models/pat/pat-models';
 import { Injectable } from '@angular/core';
 import {
   OnSelectCallback,
@@ -8,7 +11,8 @@ import {
 } from '@/app/shared/components/search-select/on-search-select.interface';
 import builder from '@rsql/builder';
 import { emit } from '@rsql/emitter';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { ApiResponse } from '../../models/api-response.model';
 
 export interface CreatePatProgramDto {
   year: number;
@@ -24,6 +28,26 @@ export class PatProgramService extends FilterServiceSpecImpl<
 > {
   constructor() {
     super('pat/v2/strategic-programs');
+  }
+
+  resolveProgram(
+    adendaId: number,
+    contextId: number,
+    unitMeasureId: number,
+  ): Observable<ApiResponse<PatStrategicProgram>> {
+    return this.http.post<ApiResponse<PatStrategicProgram>>(
+      `${this.baseUrl}/resolve`,
+      null,
+      { params: { adendaId, contextId, unitMeasureId } },
+    );
+  }
+
+  findDetail(
+    id: number,
+  ): Observable<ApiResponse<PatStrategicProgramDetail>> {
+    return this.http.get<ApiResponse<PatStrategicProgramDetail>>(
+      `${this.baseUrl}/${id}/detail`,
+    );
   }
 
   newSearchSelectContext(

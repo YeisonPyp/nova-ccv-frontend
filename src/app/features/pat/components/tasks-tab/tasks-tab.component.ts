@@ -7,7 +7,7 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from '@/app/shared/components/dynamic-table/dynamic-table.component';
-import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 import { ExpressionNode } from '@rsql/ast';
 
 @Component({
@@ -17,7 +17,7 @@ import { ExpressionNode } from '@rsql/ast';
     CommonModule,
     RouterLink,
     DynamicTableComponent,
-    PaginationComponent,
+    PaginatorComponent,
   ],
   templateUrl: './tasks-tab.component.html',
 })
@@ -100,5 +100,10 @@ export class TasksTabComponent {
   onSearchChange(nodes: ExpressionNode[]) {
     this.page.set(1);
     this.searchNodes.set(nodes);
+  }
+
+  onPageSizeChange(size: number) {
+    this.page.set(1);
+    this.size.set(size);
   }
 }
