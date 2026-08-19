@@ -1,22 +1,16 @@
 <div class="flex flex-col gap-4">
-  <div class="flex justify-end">
-    <button class="btn btn-primary" (click)="openCreate()">
-      + Nueva Actividad Táctica
-    </button>
-  </div>
-
   <app-dynamic-table
-    [data]="activities()"
+    [data]="tasks()"
     [columns]="columns"
-    emptyMessage="No hay actividades tácticas."
+    emptyMessage="No hay tareas."
     (searchChange)="onSearchChange($event)"
   >
     <ng-template #actions let-item>
       <a
-        [routerLink]="['/pat', year(), 'activities', item.id]"
+        [routerLink]="['/pat', year(), 'activities', item.activityId]"
         class="text-xs font-medium text-primary hover:underline whitespace-nowrap"
       >
-        Ver detalle →
+        Ver actividad →
       </a>
     </ng-template>
   </app-dynamic-table>

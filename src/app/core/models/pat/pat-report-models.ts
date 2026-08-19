@@ -49,6 +49,12 @@ export interface ActivityBenefitMonthly {
   executedValue: number;
 }
 
+export interface MonthlyBudgetTotals {
+  month: number;
+  plannedBudget: number;
+  executedBudget: number;
+}
+
 export interface PatActivityReportResponse {
   budget: ActivityBudgetMonthly[];
   indicators: ActivityIndicatorMonthly[];

@@ -7,6 +7,11 @@ import {
   PatActivityBudgetMatrix,
   PatActivityTask,
 } from '../../models/pat/pat-models';
+import { APIPage } from '../../models/api-page.model';
+import {
+  PageableQuery,
+  PageableQueryParams,
+} from '@/app/shared/pageable-query';
 
 export interface CreatePatActivityTaskDto {
   name: string;
@@ -54,6 +59,20 @@ export class PatActivityTaskService {
     return this.http.get<ApiResponse<PatActivityTask[]>>(
       `${this.baseUrl}/tasks`,
       { params: { year, areaId } },
+    );
+  }
+
+  search(
+    query: PageableQuery,
+    year: number,
+    areaId?: number | null,
+  ): Observable<ApiResponse<APIPage<PatActivityTask>>> {
+    const params = new PageableQueryParams(query).getParams();
+    params['year'] = year;
+    if (areaId != null) params['areaId'] = areaId;
+    return this.http.get<ApiResponse<APIPage<PatActivityTask>>>(
+      `${this.baseUrl}/tasks/search`,
+      { params },
     );
   }
 

@@ -24,7 +24,55 @@
     </div>
   </div>
 
-  <app-area-budget-report [year]="year() || null" />
+  <!-- Area chips -->
+  <div class="flex flex-wrap gap-2">
+    <button
+      type="button"
+      class="px-4 py-1.5 text-sm font-medium rounded-full border transition-colors"
+      [class]="
+        selectedAreaId() === null
+          ? 'bg-primary text-white border-primary'
+          : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
+      "
+      (click)="selectArea(null)"
+    >
+      Todas
+    </button>
+    @for (area of areas(); track area.id) {
+      <button
+        type="button"
+        class="px-4 py-1.5 text-sm font-medium rounded-full border transition-colors"
+        [class]="
+          selectedAreaId() === area.id
+            ? 'bg-primary text-white border-primary'
+            : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
+        "
+        (click)="selectArea(area.id)"
+      >
+        {{ area.name }}
+      </button>
+    }
+  </div>
+
+  <!-- Budget charts -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+      <app-execution-pie-chart
+        title="Presupuesto planeado vs ejecutado"
+        [planned]="totalPlanned()"
+        [executed]="totalExecuted()"
+      />
+    </div>
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 md:col-span-2"
+    >
+      <app-planned-executed-line-chart
+        title="Presupuesto mensual"
+        [plannedValues]="plannedValues()"
+        [executedValues]="executedValues()"
+      />
+    </div>
+  </div>
   <!-- Tabs -->
   <div
     class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"

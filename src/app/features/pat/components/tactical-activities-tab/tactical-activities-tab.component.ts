@@ -1,28 +1,52 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
 import { PatActivity } from '@/app/core/models/pat/pat-models';
-import { PaginationTableComponent } from '@/app/shared/components/pagination-table/pagination-table.component';
-import { TableColumn } from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import {
+  DynamicTableComponent,
+  TableColumn,
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
+import { ExpressionNode } from '@rsql/ast';
+import builder from '@rsql/builder';
 
 @Component({
   selector: 'app-tactical-activities-tab',
   standalone: true,
-  imports: [CommonModule, RouterLink, PaginationTableComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    DynamicTableComponent,
+    PaginationComponent,
+  ],
   templateUrl: './tactical-activities-tab.component.html',
 })
 export class TacticalActivitiesTabComponent {
   private readonly router = inject(Router);
-  readonly service = inject(PatActivityService);
+  private readonly service = inject(PatActivityService);
 
   year = input.required<number>();
+  areaId = input<number | null>(null);
 
-  baseRsqlQuery = computed(() => `year==${this.year()}`);
+  activities = signal<PatActivity[]>([]);
+  page = signal(1);
+  size = signal(10);
+  totalPages = signal(0);
+  loading = signal(false);
+  searchNodes = signal<ExpressionNode[]>([]);
 
-  tableColumns: TableColumn[] = [
-    { key: 'code', label: 'Código' },
-    { key: 'name', label: 'Nombre' },
+  columns: TableColumn[] = [
+    {
+      key: 'code',
+      label: 'Código',
+      filterSet: { valueType: 'text', search: true },
+    },
+    {
+      key: 'name',
+      label: 'Nombre',
+      filterSet: { valueType: 'text', search: true },
+    },
     {
       key: 'startsAt',
       label: 'Inicio',
@@ -44,6 +68,45 @@ export class TacticalActivitiesTabComponent {
       valueCallBack: (a: PatActivity) => this.money(a.executedBudget),
     },
   ];
+
+  constructor() {
+    effect(() => {
+      this.year();
+      this.areaId();
+      this.page();
+      this.size();
+      this.searchNodes();
+      this.loadActivities();
+    });
+  }
+
+  private loadActivities(): void {
+    this.loading.set(true);
+    this.service
+      .findAllForDashboard(
+        {
+          page: this.page() - 1,
+          size: this.size(),
+          nodes: [builder.eq('year', String(this.year())), ...this.searchNodes()],
+        },
+        this.areaId(),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            this.activities.set(res.data.content);
+            this.totalPages.set(res.data.totalPages);
+          }
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      });
+  }
+
+  onSearchChange(nodes: ExpressionNode[]) {
+    this.page.set(1);
+    this.searchNodes.set(nodes);
+  }
 
   openCreate(): void {
     this.router.navigate([`/pat/${this.year()}/activities/create`]);

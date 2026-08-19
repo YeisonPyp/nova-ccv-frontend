@@ -1,5 +1,6 @@
 import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import { PatActivity } from '../../models/pat/pat-models';
+import { Area } from '../../models/assessment/area.model';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/api-response.model';
@@ -8,6 +9,10 @@ import {
   PageableQueryWithRsql,
 } from '@/app/shared/components/pagination-table/pagination-table.component';
 import { APIPage } from '../../models/api-page.model';
+import {
+  PageableQuery,
+  PageableQueryParams,
+} from '@/app/shared/pageable-query';
 
 export interface CreatePatActivity {
   name: string;
@@ -42,6 +47,23 @@ export class PatActivityService extends FilterServiceSpecImpl<
       `${this.baseUrl}/seed-from-file`,
       formData,
     );
+  }
+
+  findAllForDashboard(
+    query: PageableQuery,
+    areaId?: number | null,
+  ): Observable<ApiResponse<APIPage<PatActivity>>> {
+    const params = new PageableQueryParams(query).getParams();
+    if (areaId != null) params['areaId'] = areaId;
+    return this.http.get<ApiResponse<APIPage<PatActivity>>>(this.baseUrl, {
+      params,
+    });
+  }
+
+  findAreasForYear(year: number): Observable<ApiResponse<Area[]>> {
+    return this.http.get<ApiResponse<Area[]>>(`${this.baseUrl}/areas`, {
+      params: { year },
+    });
   }
 }
 

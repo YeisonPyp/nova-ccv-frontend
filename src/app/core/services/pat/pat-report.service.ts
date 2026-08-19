@@ -5,6 +5,7 @@ import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
 import {
   AreaBudgetSummary,
+  MonthlyBudgetTotals,
   PatActivityReportResponse,
 } from '../../models/pat/pat-report-models';
 
@@ -22,6 +23,19 @@ export class PatReportService {
     if (year != null) params['year'] = year;
     return this.http.get<ApiResponse<AreaBudgetSummary[]>>(
       `${this.baseUrl}/area-budget-summary`,
+      { params },
+    );
+  }
+
+  findMonthlyBudgetTotals(
+    year?: number | null,
+    areaId?: number | null,
+  ): Observable<ApiResponse<MonthlyBudgetTotals[]>> {
+    const params: Record<string, number> = {};
+    if (areaId != null) params['areaId'] = areaId;
+    if (year != null) params['year'] = year;
+    return this.http.get<ApiResponse<MonthlyBudgetTotals[]>>(
+      `${this.baseUrl}/monthly-budget-totals`,
       { params },
     );
   }
