@@ -7,30 +7,6 @@
     </h3>
   </div>
 
-  <div class="flex items-end gap-4">
-    <div class="w-64">
-      <app-context-search-select
-        [ctx]="adendaCtx"
-        label="Adenda"
-        [required]="false"
-      />
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <label
-        class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
-      >
-        Año
-      </label>
-      <input
-        type="number"
-        [ngModel]="yearFilter()"
-        (ngModelChange)="onYearInputChange($event)"
-        class="text-sm rounded border border-gray-200 px-3 py-2 w-32 focus:outline-none focus:ring-1 focus:ring-primary"
-      />
-    </div>
-  </div>
-
   <app-dynamic-table
     [data]="items()"
     [columns]="columns"

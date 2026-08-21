@@ -21,6 +21,20 @@
     <p class="text-xs text-gray-400">Sin adendas registradas.</p>
   } @else {
     <ul class="flex flex-col gap-1">
+      <li>
+        <button
+          type="button"
+          class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md text-left text-sm transition-colors"
+          [class]="
+            selectedId() === null
+              ? 'bg-primary/10 text-primary font-medium'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+          (click)="select(null)"
+        >
+          <span>Todas</span>
+        </button>
+      </li>
       @for (adenda of adendas(); track adenda.id) {
         <li>
           <button

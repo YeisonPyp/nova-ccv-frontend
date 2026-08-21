@@ -29,19 +29,18 @@ export class AdendaListComponent implements OnInit {
 
   load(): void {
     this.loading.set(true);
-    this.service.findAll({ page: 0, size: 200 }).subscribe((res) => {
-      this.loading.set(false);
-      if (res.success && res.data) {
-        this.adendas.set(res.data.content);
-        if (this.selectedId() == null && res.data.content.length) {
-          this.select(res.data.content[0]);
+    this.service
+      .findAll({ page: 0, size: 200, sort: 'name,asc' })
+      .subscribe((res) => {
+        this.loading.set(false);
+        if (res.success && res.data) {
+          this.adendas.set(res.data.content);
         }
-      }
-    });
+      });
   }
 
-  select(adenda: PatAdenda): void {
-    this.selectedId.set(adenda.id);
+  select(adenda: PatAdenda | null): void {
+    this.selectedId.set(adenda?.id || null);
     this.onSelect.emit(adenda);
   }
 

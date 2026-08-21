@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PatAdendaProgramSummaryService } from '@/app/core/services/pat/pat-adenda-program-summary.service';
-import { PatAdendaService } from '@/app/core/services/pat/pat-adenda.service';
 import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
 import { PatAdendaProgramSummary } from '@/app/core/models/pat/pat-models';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
@@ -24,24 +23,16 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './adenda-program-summary-section.component.html',
 })
 export class AdendaProgramSummarySectionComponent {
-  readonly year = input<number | null>(null);
+  readonly year = input.required<number>();
+  adendaId = input<number | null>(null);
 
   private readonly service = inject(PatAdendaProgramSummaryService);
-  private readonly adendaService = inject(PatAdendaService);
   private readonly programService = inject(PatProgramService);
   private readonly router = inject(Router);
 
   loading = signal(false);
   items = signal<PatAdendaProgramSummary[]>([]);
-  yearFilter = signal<number | null>(null);
-  adendaIdFilter = signal<number | null>(null);
   resolvingId = signal<string | null>(null);
-
-  adendaCtx = this.adendaService.newSearchSelectContext(
-    (a) => this.adendaIdFilter.set(a.id),
-    { isRequired: false, label: 'Adenda' },
-    () => this.adendaIdFilter.set(null),
-  );
 
   readonly columns: TableColumn[] = [
     { key: 'programCode', label: 'Código' },
@@ -55,11 +46,8 @@ export class AdendaProgramSummarySectionComponent {
 
   constructor() {
     effect(() => {
-      this.yearFilter.set(this.year());
-    });
-    effect(() => {
-      const year = this.yearFilter();
-      const adendaId = this.adendaIdFilter();
+      const year = this.year();
+      const adendaId = this.adendaId();
       this.load(adendaId, year);
     });
   }
@@ -70,10 +58,6 @@ export class AdendaProgramSummarySectionComponent {
       this.loading.set(false);
       if (res.success && res.data) this.items.set(res.data);
     });
-  }
-
-  onYearInputChange(value: number | null): void {
-    this.yearFilter.set(value ?? null);
   }
 
   viewProgram(item: PatAdendaProgramSummary): void {

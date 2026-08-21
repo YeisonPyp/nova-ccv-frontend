@@ -4,6 +4,9 @@
   </div>
 
   <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-    <app-programs-tab [year]="year()" />
+    <app-programs-tab
+      [year]="year()"
+      [adendaId]="selectedAdenda()?.id || null"
+    />
   </div>
 </div>
