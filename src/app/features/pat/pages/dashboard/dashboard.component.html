@@ -24,9 +24,7 @@
   </div>
 
   <!-- Área: drill-down jerárquico, mismo selector del tablero interactivo -->
-  <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-3">
-    <app-area-tree-chips (selectedChange)="selectArea($event)" />
-  </div>
+  <app-area-tree-chips (selectedChange)="selectArea($event)" />
 
   <!-- Presupuesto: cifras a la izquierda, evolución mensual a la derecha -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">

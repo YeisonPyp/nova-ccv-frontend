@@ -1,25 +1,39 @@
-<div class="flex flex-col gap-2 min-w-0">
-  <!-- Breadcrumb of the current drill-down + reset -->
-  <div class="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap">
-    <button
-      type="button"
-      class="font-medium transition-colors"
-      [class]="
-        selectedId() === null
-          ? 'text-primary'
-          : 'text-gray-400 hover:text-primary'
-      "
-      (click)="clear()"
-    >
-      Todas
-    </button>
-    @for (name of breadcrumb(); track $index) {
-      <span class="text-gray-300">›</span>
-      <span class="text-gray-600">{{ name }}</span>
-    }
-  </div>
-
-  <!-- Horizontal drill-down: one column per level of the org chart -->
+<details class="group/item border border-gray-200 rounded-lg shadow-sm">
+  <summary
+    class="flex items-center justify-between p-3 cursor-pointer bg-white hover:bg-gray-50 transition-all border-b border-gray-50 group/item"
+  >
+    <div class="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap">
+      <svg
+        class="w-3.5 h-3.5 transition-transform group-open/item:rotate-90"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+      <button
+        type="button"
+        class="font-medium transition-colors"
+        [class]="
+          selectedId() === null
+            ? 'text-primary'
+            : 'text-gray-400 hover:text-primary'
+        "
+        (click)="clear()"
+      >
+        Todas
+      </button>
+      @for (name of breadcrumb(); track $index) {
+        <span class="text-gray-300">›</span>
+        <span class="text-gray-600">{{ name }}</span>
+      }
+    </div>
+  </summary>
   <div class="flex items-stretch gap-2 overflow-x-auto pb-1">
     @for (column of columns(); track $index; let level = $index) {
       @if (level > 0) {
@@ -57,4 +71,27 @@
       </div>
     }
   </div>
+</details>
+<!--
+<div class="flex flex-col gap-2 min-w-0">
+  <div class="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap">
+    <button
+      type="button"
+      class="font-medium transition-colors"
+      [class]="
+        selectedId() === null
+          ? 'text-primary'
+          : 'text-gray-400 hover:text-primary'
+      "
+      (click)="clear()"
+    >
+      Todas
+    </button>
+    @for (name of breadcrumb(); track $index) {
+      <span class="text-gray-300">›</span>
+      <span class="text-gray-600">{{ name }}</span>
+    }
+  </div>
+
 </div>
+-->
