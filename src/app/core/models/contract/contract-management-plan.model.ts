@@ -5,6 +5,14 @@ import { Contract } from "./contract.models";
 
 export type ContractManagementExecutionStatus = "PENDING" | "MADE";
 
+export const CONTRACT_MANAGEMENT_EXECUTION_STATUS_LABELS: Record<
+  ContractManagementExecutionStatus,
+  string
+> = {
+  PENDING: "Pendiente",
+  MADE: "Realizado",
+};
+
 export interface ContractManagementPlan {
   id: string;
   statusName: string;
@@ -105,11 +113,14 @@ export interface ContractManagementNotificationConfig {
   updatedAt: string;
 }
 
+/**
+ * The email template ships with the backend, so only the timing is
+ * configurable here.
+ */
 export interface CreateContractManagementNotificationConfigDto {
   daysBeforeEnd: number;
   alertTime: string;
   timeZone: string;
-  templateName: string;
   isActive?: boolean;
 }
 
@@ -117,6 +128,5 @@ export interface UpdateContractManagementNotificationConfigDto {
   daysBeforeEnd?: number;
   alertTime?: string;
   timeZone?: string;
-  templateName?: string;
   isActive?: boolean;
 }

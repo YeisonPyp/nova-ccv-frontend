@@ -95,17 +95,10 @@
               <label for="configIsActive" class="text-sm font-medium">Activo</label>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium mb-1">Plantilla de correo *</label>
-              <app-file-item
-                [file]="templateFile()"
-                [loading]="uploadingTemplate()"
-                accept=".html"
-                label="Subir plantilla"
-                [canDelete]="false"
-                (fileSelected)="onTemplateFileSelected($event)"
-              ></app-file-item>
-            </div>
+            <p class="text-xs text-tertiary">
+              La plantilla del correo viene incluida con el sistema; aquí solo
+              se configura cuándo se envía.
+            </p>
 
             <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
               <button type="button" class="btn btn-secondary" (click)="cancelConfigEdit()">
@@ -128,10 +121,63 @@
       }
     </div>
 
+    <!-- Filtros sobre la planeación mensual de cada plan -->
+    <div class="flex flex-wrap items-end gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-medium text-gray-500">Planeado desde</label>
+        <input
+          type="date"
+          class="form-control text-sm"
+          [value]="since() ?? ''"
+          (change)="onCutOffChange('since', $event)"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-medium text-gray-500">Planeado hasta</label>
+        <input
+          type="date"
+          class="form-control text-sm"
+          [value]="before() ?? ''"
+          (change)="onCutOffChange('before', $event)"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-gray-500">Estado de ejecución</span>
+        <div class="flex flex-wrap gap-2">
+          @for (status of executionStatuses; track status) {
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-medium rounded-full border transition-colors"
+              [class]="
+                isStatusActive(status)
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
+              "
+              (click)="toggleStatus(status)"
+            >
+              {{ statusLabels[status] }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (hasFilters()) {
+        <button
+          type="button"
+          class="text-xs text-primary hover:underline pb-2"
+          (click)="clearFilters()"
+        >
+          Limpiar filtros
+        </button>
+      }
+    </div>
+
     <app-pagination-table
       [service]="service"
       [tableColumns]="columns"
       [baseRsqlQuery]="baseRsqlQuery()"
+      [extraParams]="extraParams()"
     >
       <ng-template #actions let-item>
         <a

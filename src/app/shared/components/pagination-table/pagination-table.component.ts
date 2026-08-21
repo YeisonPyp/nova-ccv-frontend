@@ -58,6 +58,11 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
   showFilterSection = input(true);
   /** Fixed RSQL predicate always ANDed with whatever the filter section builds. */
   baseRsqlQuery = input<string>('');
+  /**
+   * Extra query params forwarded verbatim to the service, for filters the
+   * endpoint exposes on its own instead of through RSQL.
+   */
+  extraParams = input<Record<string, unknown>>({});
   filterRows = signal<FilterRow[]>([]);
   $pageSize = signal(15);
 
@@ -77,8 +82,17 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
 
   rsqlQuery = signal('');
 
+  /** Filters changing must send the user back to the first page. */
+  private lastFilterKey: string | null = null;
+
   constructor() {
     effect(() => {
+      const filterKey = `${this.baseRsqlQuery()}|${this.rsqlQuery()}|${JSON.stringify(this.extraParams())}`;
+      if (this.lastFilterKey !== null && filterKey !== this.lastFilterKey) {
+        this.currentPage.set(1);
+      }
+      this.lastFilterKey = filterKey;
+
       this.loading.set(true);
 
       const base = this.baseRsqlQuery();
@@ -87,6 +101,7 @@ export class PaginationTableComponent<T = any> implements OnInit, OnDestroy {
 
       this.service()
         .findAll({
+          ...this.extraParams(),
           page: this.currentPage() - 1,
           size: this.$pageSize(),
           rsqlQuery,

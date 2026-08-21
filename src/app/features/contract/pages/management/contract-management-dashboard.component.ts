@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { HttpEventType } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@/app/core/services/auth.service';
 import { ContractManagementPlanService } from '@/app/core/services/contract/contract-management-plan.service';
 import { ContractManagementNotificationConfigService } from '@/app/core/services/contract/contract-management-notification-config.service';
-import { ContractAlertsConfigService } from '@/app/core/services/contract/contract-alerts-config.service';
-import { StorageService } from '@/app/core/services/improvement-plan/storage.service';
 import {
+  CONTRACT_MANAGEMENT_EXECUTION_STATUS_LABELS,
+  ContractManagementExecutionStatus,
   ContractManagementNotificationConfig,
   ContractManagementPlan,
   ContractManagementSeedResult,
@@ -16,7 +15,6 @@ import {
 import { PaginationTableComponent } from '@/app/shared/components/pagination-table/pagination-table.component';
 import { TableColumn } from '@/app/shared/components/dynamic-table/dynamic-table.component';
 import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
-import { FileItemComponent, FileResource } from '@/app/shared/components/file-item/file-item.component';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
@@ -29,7 +27,6 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
     ReactiveFormsModule,
     PaginationTableComponent,
     ParametrizationSectionComponent,
-    FileItemComponent,
     LoadingSpinnerComponent,
   ],
   templateUrl: './contract-management-dashboard.component.html',
@@ -38,11 +35,62 @@ export class ContractManagementDashboardComponent {
   private readonly auth = inject(AuthService);
   protected readonly service = inject(ContractManagementPlanService);
   private readonly configService = inject(ContractManagementNotificationConfigService);
-  private readonly alertsConfigService = inject(ContractAlertsConfigService);
-  private readonly storageService = inject(StorageService);
 
   year = signal<number>(new Date().getFullYear());
   baseRsqlQuery = computed(() => `year==${this.year()}`);
+
+  // ── Filtros por planeación mensual ──
+  readonly executionStatuses: ContractManagementExecutionStatus[] = [
+    'PENDING',
+    'MADE',
+  ];
+  readonly statusLabels = CONTRACT_MANAGEMENT_EXECUTION_STATUS_LABELS;
+
+  /** Cut-off dates over the monthly execution rows of each plan. */
+  since = signal<string | null>(null);
+  before = signal<string | null>(null);
+  selectedStatuses = signal<Set<ContractManagementExecutionStatus>>(new Set());
+
+  /**
+   * Forwarded to the listing endpoint: keeps plans holding at least one
+   * monthly execution matching the dates and/or the selected statuses.
+   */
+  extraParams = computed<Record<string, unknown>>(() => {
+    const params: Record<string, unknown> = {};
+    if (this.since()) params['since'] = this.since();
+    if (this.before()) params['before'] = this.before();
+    const statuses = Array.from(this.selectedStatuses());
+    if (statuses.length > 0) params['statuses'] = statuses;
+    return params;
+  });
+
+  hasFilters = computed(
+    () =>
+      !!this.since() || !!this.before() || this.selectedStatuses().size > 0,
+  );
+
+  onCutOffChange(field: 'since' | 'before', event: Event): void {
+    const value = (event.target as HTMLInputElement).value || null;
+    if (field === 'since') this.since.set(value);
+    else this.before.set(value);
+  }
+
+  isStatusActive(status: ContractManagementExecutionStatus): boolean {
+    return this.selectedStatuses().has(status);
+  }
+
+  toggleStatus(status: ContractManagementExecutionStatus): void {
+    const next = new Set(this.selectedStatuses());
+    if (next.has(status)) next.delete(status);
+    else next.add(status);
+    this.selectedStatuses.set(next);
+  }
+
+  clearFilters(): void {
+    this.since.set(null);
+    this.before.set(null);
+    this.selectedStatuses.set(new Set());
+  }
 
   readonly columns: TableColumn[] = [
     {
@@ -120,17 +168,6 @@ export class ContractManagementDashboardComponent {
   existingConfig = signal<ContractManagementNotificationConfig | null>(null);
   configEditing = signal(false);
 
-  bucketName = signal<string | null>(null);
-  templateName = signal<string | null>(null);
-  uploadingTemplate = signal(false);
-
-  templateFile = computed<FileResource | null>(() => {
-    const bucket = this.bucketName();
-    const fileName = this.templateName();
-    if (!bucket || !fileName) return null;
-    return { id: fileName, bucketName: bucket, fileName };
-  });
-
   configForm = new FormGroup({
     daysBeforeEnd: new FormControl<number | null>(5, [
       Validators.required,
@@ -151,7 +188,6 @@ export class ContractManagementDashboardComponent {
       if (res.success && res.data && res.data.length > 0) {
         const config = res.data[0];
         this.existingConfig.set(config);
-        this.templateName.set(config.templateName);
         this.configForm.reset({
           daysBeforeEnd: config.daysBeforeEnd,
           alertTime: config.alertTime,
@@ -162,26 +198,14 @@ export class ContractManagementDashboardComponent {
     });
   }
 
-  private ensureBucketName(cb: () => void): void {
-    if (this.bucketName()) {
-      cb();
-      return;
-    }
-    this.alertsConfigService.getTemplatesBucketName().subscribe((res) => {
-      if (res.success && res.data) this.bucketName.set(res.data);
-      cb();
-    });
-  }
-
   editConfig(): void {
-    this.ensureBucketName(() => this.configEditing.set(true));
+    this.configEditing.set(true);
   }
 
   cancelConfigEdit(): void {
     this.configEditing.set(false);
     const config = this.existingConfig();
     if (config) {
-      this.templateName.set(config.templateName);
       this.configForm.reset({
         daysBeforeEnd: config.daysBeforeEnd,
         alertTime: config.alertTime,
@@ -191,24 +215,8 @@ export class ContractManagementDashboardComponent {
     }
   }
 
-  onTemplateFileSelected(file: File): void {
-    const bucket = this.bucketName();
-    if (!bucket) return;
-    const objectName = `contract-management/${Date.now()}-${file.name}`;
-    this.uploadingTemplate.set(true);
-    this.storageService.uploadFile(bucket, objectName, file).subscribe({
-      next: (event) => {
-        if (event.type === HttpEventType.Response) {
-          this.uploadingTemplate.set(false);
-          this.templateName.set(event.body?.data?.objectName ?? objectName);
-        }
-      },
-      error: () => this.uploadingTemplate.set(false),
-    });
-  }
-
   get canSubmitConfig(): boolean {
-    return this.configForm.valid && !!this.templateName();
+    return this.configForm.valid;
   }
 
   submitConfig(): void {
@@ -219,7 +227,6 @@ export class ContractManagementDashboardComponent {
       daysBeforeEnd: daysBeforeEnd!,
       alertTime: alertTime!,
       timeZone: timeZone!,
-      templateName: this.templateName()!,
       isActive: isActive ?? true,
     };
 
