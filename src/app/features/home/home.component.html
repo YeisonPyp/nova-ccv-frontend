@@ -1,61 +1,34 @@
-<div class="dashboard">
-  <!-- Welcome Section -->
-  <section class="welcome-section">
-    <div class="welcome-content">
-      <h1>{{ greeting }}, {{ getUserName() }}! 👋</h1>
-      <p>Aquí tienes un resumen de la actividad reciente del sistema.</p>
+<div class="p-6 flex flex-col gap-6">
+  <!-- Welcome + year scope -->
+  <section class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-secondary m-0">
+        {{ greeting }}, {{ getUserName() }}! 👋
+      </h1>
+      <p class="text-sm text-tertiary m-0">
+        Plan Anual de Trabajo — {{ currentDate | date: "EEEE, d MMMM yyyy" }}
+      </p>
     </div>
-    <div class="welcome-date">
-      <span class="date">{{ currentDate | date: "EEEE, d MMMM yyyy" }}</span>
+
+    <div class="flex items-center gap-2">
+      <label
+        for="home-year"
+        class="text-xs font-semibold text-gray-500 uppercase tracking-wide"
+      >
+        Año
+      </label>
+      <input
+        id="home-year"
+        type="number"
+        min="2000"
+        max="2100"
+        step="1"
+        class="text-sm rounded border border-gray-200 px-3 py-1.5 bg-white w-24 focus:outline-none focus:ring-1 focus:ring-primary"
+        [value]="year()"
+        (change)="onYearChange($event)"
+      />
     </div>
   </section>
 
-  <!-- Stats Grid -->
-  <section class="stats-section">
-    <div class="stats-grid">
-      @for (stat of stats; track stat.title) {
-        <div class="stat-card">
-          <div class="stat-icon">{{ stat.icon }}</div>
-          <div class="stat-info">
-            <span class="stat-value">{{ stat.value }}</span>
-            <span class="stat-title">{{ stat.title }}</span>
-            <span
-              class="stat-change"
-              [class.up]="stat.trend === 'up'"
-              [class.down]="stat.trend === 'down'"
-            >
-              @if (stat.trend === "up") {
-                ↑
-              } @else if (stat.trend === "down") {
-                ↓
-              }
-              {{ stat.change }}
-            </span>
-          </div>
-        </div>
-      }
-    </div>
-  </section>
-
-  <!-- Quick Links -->
-  <section class="quick-links-section">
-    <h2>Accesos Rápidos</h2>
-    <div class="quick-links-grid">
-      @for (link of quickLinks; track link.title) {
-        <a [routerLink]="link.route" class="quick-link-card">
-          <div class="link-icon" [style.background]="link.color">
-            {{ link.icon }}
-          </div>
-          <div class="link-content">
-            <h3>{{ link.title }}</h3>
-            <p>{{ link.description }}</p>
-          </div>
-          <div class="link-arrow">→</div>
-        </a>
-      }
-    </div>
-  </section>
-
-  <!-- Recent Activity -->
-  <section class="activity-section"></section>
+  <app-pat-home-dashboard [year]="year()" />
 </div>

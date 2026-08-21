@@ -1,0 +1,30 @@
+<div class="flex flex-wrap items-center gap-2">
+  @for (chip of chips(); track chip.id) {
+    <button
+      type="button"
+      class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+      [style.margin-left.rem]="chip.depth * 0.5"
+      [class]="
+        selectedId() === chip.id
+          ? 'bg-primary text-white border-primary'
+          : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
+      "
+      (click)="select(chip.id)"
+    >
+      {{ chip.name }}
+    </button>
+  }
+
+  <button
+    type="button"
+    class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+    [class]="
+      selectedId() === null
+        ? 'bg-primary text-white border-primary'
+        : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
+    "
+    (click)="select(null)"
+  >
+    Todas
+  </button>
+</div>

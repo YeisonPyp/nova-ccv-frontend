@@ -1,0 +1,83 @@
+<div class="flex flex-col gap-4">
+  <!-- ── Areas + section controls ─────────────────────────────────────── -->
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <app-area-tree-chips (selectedChange)="onAreaChange($event)" />
+
+    <div class="flex flex-wrap items-center gap-4">
+      @for (section of sections; track section.key) {
+        <label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">
+          <input
+            type="checkbox"
+            class="accent-primary w-4 h-4"
+            [checked]="isSectionVisible(section.key)"
+            (change)="toggleSection(section.key)"
+          />
+          {{ section.label }}
+        </label>
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+    <!-- ── Left column: programs + tasks ──────────────────────────────── -->
+    <div class="flex flex-col gap-4">
+      @if (isSectionVisible("programs")) {
+        <app-selectable-list
+          title="Programas"
+          [items]="programItems()"
+          [loading]="loadingPrograms()"
+          emptyMessage="No hay programas para los filtros seleccionados."
+          (selectionChange)="onProgramChange($event)"
+        />
+      }
+
+      @if (isSectionVisible("tasks")) {
+        <app-selectable-list
+          title="Tareas"
+          [items]="taskItems()"
+          [multiple]="true"
+          [loading]="loadingTasks()"
+          emptyMessage="No hay tareas para los filtros seleccionados."
+          (selectionChange)="onTasksChange($event)"
+        />
+      }
+    </div>
+
+    <!-- ── Right column: budget + indicators ──────────────────────────── -->
+    <div class="flex flex-col gap-4">
+      @if (isSectionVisible("budget")) {
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+          <h3 class="text-sm font-semibold text-secondary m-0 mb-3">
+            Presupuesto
+          </h3>
+
+          @if (loadingBudget()) {
+            <p class="text-xs text-gray-400">Cargando presupuesto...</p>
+          } @else {
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+              <div class="md:col-span-1">
+                <app-execution-pie-chart
+                  [planned]="budget()?.totalPlanned ?? 0"
+                  [executed]="budget()?.totalExecuted ?? 0"
+                />
+              </div>
+              <div class="md:col-span-2">
+                <app-planned-executed-line-chart
+                  [plannedValues]="plannedValues()"
+                  [executedValues]="executedValues()"
+                />
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (isSectionVisible("indicators")) {
+        <app-indicator-progress-list
+          [indicators]="indicators()"
+          [loading]="loadingIndicators()"
+        />
+      }
+    </div>
+  </div>
+</div>

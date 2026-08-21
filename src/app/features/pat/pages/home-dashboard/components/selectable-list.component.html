@@ -1,0 +1,59 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-3">
+  <div class="flex items-center justify-between gap-2">
+    <h3 class="text-sm font-semibold text-secondary m-0">{{ title() }}</h3>
+
+    <div class="flex items-center gap-2">
+      @if (selected().length) {
+        <button
+          type="button"
+          class="text-xs text-primary hover:underline"
+          (click)="clear()"
+        >
+          Limpiar
+        </button>
+      }
+      <input
+        type="search"
+        placeholder="Buscar..."
+        class="text-sm rounded border border-gray-200 px-3 py-1.5 w-32 focus:outline-none focus:ring-1 focus:ring-primary"
+        [ngModel]="search()"
+        (ngModelChange)="onSearch($event)"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="text-xs text-gray-400">Cargando...</p>
+  } @else if (visible().length === 0) {
+    <p class="text-xs text-gray-400">{{ emptyMessage() }}</p>
+  } @else {
+    <ul
+      class="flex flex-col divide-y divide-gray-100 border border-gray-200 rounded-md max-h-64 overflow-y-auto m-0 p-0 list-none"
+    >
+      @for (item of visible(); track item.id) {
+        <li>
+          <label
+            class="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-gray-50"
+          >
+            <input
+              type="checkbox"
+              class="shrink-0 accent-primary w-4 h-4"
+              [checked]="isSelected(item.id)"
+              (change)="toggle(item.id)"
+            />
+            <span class="min-w-0 flex-1">
+              <span class="block text-xs text-gray-700 truncate" [title]="item.label">
+                {{ item.label }}
+              </span>
+              @if (item.sublabel) {
+                <span class="block text-[10px] text-gray-400 truncate">
+                  {{ item.sublabel }}
+                </span>
+              }
+            </span>
+          </label>
+        </li>
+      }
+    </ul>
+  }
+</div>
