@@ -13,8 +13,11 @@ import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execu
 import { PlannedExecutedLineChartComponent } from '@/app/shared/components/charts/planned-executed-line-chart/planned-executed-line-chart.component';
 import { MonthlyOverviewGridComponent } from './components/monthly-overview-grid/monthly-overview-grid.component';
 import { PatTaskBudgetTabComponent } from './components/budget-tab/budget-tab.component';
+import { PatIndicatorsTabComponent } from './components/indicators-tab/indicators-tab.component';
+import { PatProductsTabComponent } from './components/products-tab/products-tab.component';
+import { PatBenefitsTabComponent } from './components/benefits-tab/benefits-tab.component';
 
-type TabKey = 'overview' | 'budget';
+type TabKey = 'overview' | 'budget' | 'indicators' | 'products' | 'benefits';
 
 @Component({
   selector: 'app-pat-task-detail',
@@ -26,6 +29,9 @@ type TabKey = 'overview' | 'budget';
     PlannedExecutedLineChartComponent,
     MonthlyOverviewGridComponent,
     PatTaskBudgetTabComponent,
+    PatIndicatorsTabComponent,
+    PatProductsTabComponent,
+    PatBenefitsTabComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './task-detail.component.html',
@@ -78,8 +84,11 @@ export class PatTaskDetailComponent implements OnInit {
 
   activeTab = signal<TabKey>('overview');
   tabs: { key: TabKey; label: string }[] = [
-    { key: 'overview', label: 'Planeación y Ejecución' },
+    { key: 'indicators', label: 'Indicadores' },
+    { key: 'products', label: 'Productos' },
+    { key: 'benefits', label: 'Impactos' },
     { key: 'budget', label: 'Presupuesto' },
+    { key: 'overview', label: 'Planeación y Ejecución' },
   ];
 
   ngOnInit(): void {

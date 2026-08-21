@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import { PatActivityIndicator } from '../../models/pat/pat-models';
+import { PatActivityIndicator, PatActivityIndicatorSummary } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityIndicatorDto {
   managementIndicatorId: number;
@@ -24,18 +24,24 @@ export class PatActivityIndicatorService {
 
   findByActivity(
     activityId: number,
-  ): Observable<ApiResponse<PatActivityIndicator[]>> {
-    return this.http.get<ApiResponse<PatActivityIndicator[]>>(
+  ): Observable<ApiResponse<PatActivityIndicatorSummary[]>> {
+    return this.http.get<ApiResponse<PatActivityIndicatorSummary[]>>(
       `${this.baseUrl}/activities/${activityId}/indicators`,
     );
   }
 
+  findByTask(taskId: number): Observable<ApiResponse<PatActivityIndicator[]>> {
+    return this.http.get<ApiResponse<PatActivityIndicator[]>>(
+      `${this.baseUrl}/tasks/${taskId}/indicators`,
+    );
+  }
+
   create(
-    activityId: number,
+    taskId: number,
     dto: CreatePatActivityIndicatorDto,
   ): Observable<ApiResponse<PatActivityIndicator>> {
     return this.http.post<ApiResponse<PatActivityIndicator>>(
-      `${this.baseUrl}/activities/${activityId}/indicators`,
+      `${this.baseUrl}/tasks/${taskId}/indicators`,
       dto,
     );
   }

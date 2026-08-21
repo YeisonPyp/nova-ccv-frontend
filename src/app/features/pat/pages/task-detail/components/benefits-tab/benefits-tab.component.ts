@@ -23,7 +23,7 @@ import { ProjectSectionCardComponent } from '@/app/features/projects/pages/proje
 export class PatBenefitsTabComponent {
   private readonly service = inject(PatActivityBenefitService);
 
-  activityId = input.required<number>();
+  taskId = input.required<number>();
   benefits = signal<PatActivityBenefit[]>([]);
 
   upsertModalOpen = signal(false);
@@ -36,7 +36,7 @@ export class PatBenefitsTabComponent {
 
   constructor() {
     effect(() => {
-      this.service.findByActivity(this.activityId()).subscribe((res) => {
+      this.service.findByTask(this.taskId()).subscribe((res) => {
         if (res.success) this.benefits.set(res.data);
       });
     });

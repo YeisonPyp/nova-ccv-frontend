@@ -20,10 +20,8 @@ import {
   PatActivityService,
 } from '@/app/core/services/pat/pat-activity.service';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
-import { SearchSelectContextFactory } from '@/app/shared/components/search-select/on-search-select.interface';
 import { PatTacticalActivityService } from '@/app/core/services/pat/tactical-activity.service';
-import { PatUnitMeasureService } from '@/app/core/services/pat/pat-unit-measure.service';
-import { PatTacticalActivity, PatUnitMeasure } from '@/app/core/models/pat/pat-models';
+import { PatTacticalActivity } from '@/app/core/models/pat/pat-models';
 import { Observable, of } from 'rxjs';
 import { FormFieldErrorDirective } from '@/app/shared/directives/form-field-error.directive';
 
@@ -68,7 +66,6 @@ export class CreatePatActivityComponent {
   private readonly router = inject(Router);
   private readonly activityService = inject(PatActivityService);
   private readonly tacticalActivityService = inject(PatTacticalActivityService);
-  private readonly unitMeasureService = inject(PatUnitMeasureService);
 
   year = input.required<number>();
 
@@ -91,19 +88,10 @@ export class CreatePatActivityComponent {
     ),
   );
 
-  unitMeasureCtx: SearchSelectContextFactory<PatUnitMeasure> =
-    this.unitMeasureService.newSearchSelectContext(
-      (u) => this.form.patchValue({ unitMeasureId: u.id }),
-      { isRequired: false, label: 'Unidad de medida' },
-      () => this.form.patchValue({ unitMeasureId: null }),
-    );
-
   form: FormGroup = this.fb.group({
     code: [''],
     name: ['', Validators.required],
     tacticalActivityId: [null, Validators.required],
-    unitMeasureId: [null],
-    unitMeasureGoal: [null],
     description: [''],
     starts: [
       '',
@@ -141,8 +129,6 @@ export class CreatePatActivityComponent {
       code: v.code || undefined,
       name: v.name,
       tacticalActivityId: v.tacticalActivityId,
-      unitMeasureId: v.unitMeasureId || null,
-      unitMeasureGoal: v.unitMeasureGoal ?? null,
       description: v.description || undefined,
       startsAt: v.starts,
       endsAt: v.ends,

@@ -23,7 +23,7 @@ import { ProjectSectionCardComponent } from '@/app/features/projects/pages/proje
 export class PatIndicatorsTabComponent {
   private readonly service = inject(PatActivityIndicatorService);
 
-  activityId = input.required<number>();
+  taskId = input.required<number>();
   indicators = signal<PatActivityIndicator[]>([]);
 
   upsertModalOpen = signal(false);
@@ -37,7 +37,7 @@ export class PatIndicatorsTabComponent {
 
   constructor() {
     effect(() => {
-      this.service.findByActivity(this.activityId()).subscribe((res) => {
+      this.service.findByTask(this.taskId()).subscribe((res) => {
         if (res.success) this.indicators.set(res.data);
       });
     });

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import { PatActivityProduct } from '../../models/pat/pat-models';
+import { PatActivityProduct, PatActivityProductSummary } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityProductDto {
   productId: number;
@@ -24,18 +24,24 @@ export class PatActivityProductService {
 
   findByActivity(
     activityId: number,
-  ): Observable<ApiResponse<PatActivityProduct[]>> {
-    return this.http.get<ApiResponse<PatActivityProduct[]>>(
+  ): Observable<ApiResponse<PatActivityProductSummary[]>> {
+    return this.http.get<ApiResponse<PatActivityProductSummary[]>>(
       `${this.baseUrl}/activities/${activityId}/products`,
     );
   }
 
+  findByTask(taskId: number): Observable<ApiResponse<PatActivityProduct[]>> {
+    return this.http.get<ApiResponse<PatActivityProduct[]>>(
+      `${this.baseUrl}/tasks/${taskId}/products`,
+    );
+  }
+
   create(
-    activityId: number,
+    taskId: number,
     dto: CreatePatActivityProductDto,
   ): Observable<ApiResponse<PatActivityProduct>> {
     return this.http.post<ApiResponse<PatActivityProduct>>(
-      `${this.baseUrl}/activities/${activityId}/products`,
+      `${this.baseUrl}/tasks/${taskId}/products`,
       dto,
     );
   }

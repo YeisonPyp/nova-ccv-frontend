@@ -28,7 +28,7 @@ import {
 })
 export class PatBenefitUpsertModalComponent {
   readonly isOpen = input<boolean>(false);
-  readonly activityId = input.required<number>();
+  readonly taskId = input.required<number>();
   readonly benefit = input<PatActivityBenefit | null>(null);
 
   readonly onClose = output<void>();
@@ -85,7 +85,7 @@ export class PatBenefitUpsertModalComponent {
 
     const req$ = b
       ? this.service.update(b.id, v)
-      : this.service.create(this.activityId(), v);
+      : this.service.create(this.taskId(), v);
 
     req$.subscribe({
       next: (res) => {

@@ -24,8 +24,6 @@ export interface CreatePatActivity {
   description?: string | null;
   policyId?: number | null;
   programId?: number | null;
-  unitMeasureId?: number | null;
-  unitMeasureGoal?: number | null;
 }
 
 @Injectable({

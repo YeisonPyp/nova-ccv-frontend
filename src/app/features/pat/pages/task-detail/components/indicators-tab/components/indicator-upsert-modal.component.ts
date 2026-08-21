@@ -14,7 +14,7 @@ import { ContextSearchSelectComponent } from '@/app/shared/components/context-se
 })
 export class IndicatorUpsertModalComponent {
   readonly isOpen = input<boolean>(false);
-  readonly activityId = input.required<number>();
+  readonly taskId = input.required<number>();
   readonly indicator = input<PatActivityIndicator | null>(null);
 
   readonly onClose = output<void>();
@@ -79,7 +79,7 @@ export class IndicatorUpsertModalComponent {
 
     const req$ = i
       ? this.service.update(i.id, v)
-      : this.service.create(this.activityId(), v);
+      : this.service.create(this.taskId(), v);
 
     req$.subscribe({
       next: (res) => {

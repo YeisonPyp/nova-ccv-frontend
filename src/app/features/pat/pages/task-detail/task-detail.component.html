@@ -52,10 +52,21 @@
         <p
           class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
         >
-          Producto
+          Unidad de Medida
         </p>
         <p class="text-sm font-medium text-gray-700">
-          {{ t.activityProduct?.product?.name ?? "—" }}
+          {{ t.unitMeasure?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Meta
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.unitMeasureGoal ?? "—" }}
         </p>
       </div>
     </div>
@@ -109,14 +120,26 @@
       </div>
 
       <div class="p-6">
-        @if (activeTab() === "budget") {
-          <app-pat-task-budget-tab [taskId]="t.id" />
-        } @else {
-          <app-monthly-overview-grid
-            [overview]="overview()"
-            [year]="t.activityYear!"
-            [taskId]="t.id"
-          />
+        @switch (activeTab()) {
+          @case ("budget") {
+            <app-pat-task-budget-tab [taskId]="t.id" />
+          }
+          @case ("indicators") {
+            <app-pat-indicators-tab [taskId]="t.id" />
+          }
+          @case ("products") {
+            <app-pat-products-tab [taskId]="t.id" />
+          }
+          @case ("benefits") {
+            <app-pat-benefits-tab [taskId]="t.id" />
+          }
+          @default {
+            <app-monthly-overview-grid
+              [overview]="overview()"
+              [year]="t.activityYear!"
+              [taskId]="t.id"
+            />
+          }
         }
       </div>
     </div>

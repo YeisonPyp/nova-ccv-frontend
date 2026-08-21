@@ -17,8 +17,10 @@ export interface CreatePatActivityTaskDto {
   name: string;
   areaId: number;
   costCenterId: number;
+  unitMeasureId: number;
+  unitMeasureGoal: number;
   pillarId?: number | null;
-  programId?: number | null;
+  adendaId?: number | null;
   policyId?: number | null;
   description?: string | null;
 }
@@ -27,6 +29,8 @@ export interface UpdatePatActivityTaskDto {
   name?: string;
   areaId?: number;
   costCenterId?: number;
+  unitMeasureId?: number | null;
+  unitMeasureGoal?: number | null;
   pillarId?: number | null;
   programId?: number | null;
   policyId?: number | null;

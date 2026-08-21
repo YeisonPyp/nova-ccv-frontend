@@ -8,7 +8,11 @@ import {
 import { map, Observable } from "rxjs";
 import { ApiResponse } from "../../models/api-response.model";
 import { APIPage } from "../../models/api-page.model";
-import { Area } from "../../models/assessment/area.model";
+import {
+  Area,
+  AreaTreeNode,
+  AreaType,
+} from "../../models/assessment/area.model";
 import {
   OnSelectCallback,
   SearchSelectContextFactory,
@@ -17,6 +21,8 @@ import {
 
 export interface CreateAreaDto {
   name: string;
+  type?: AreaType;
+  parentId?: number | null;
 }
 
 export interface FindAreasPageableQuery extends PageableQuery {
@@ -30,8 +36,19 @@ export class AreaService {
   private http = inject(HttpClient);
   private readonly API_URL = `${environment.apiUrl}/area`;
 
-  list(): Observable<ApiResponse<Area[]>> {
-    return this.http.get<ApiResponse<Area[]>>(`${this.API_URL}/list`);
+  list(type?: AreaType): Observable<ApiResponse<Area[]>> {
+    return this.http.get<ApiResponse<Area[]>>(`${this.API_URL}/list`, {
+      params: type ? { type } : {},
+    });
+  }
+
+  /** Whole organizational chart, roots first, descendants nested. */
+  tree(): Observable<ApiResponse<AreaTreeNode[]>> {
+    return this.http.get<ApiResponse<AreaTreeNode[]>>(`${this.API_URL}/tree`);
+  }
+
+  children(id: number): Observable<ApiResponse<Area[]>> {
+    return this.http.get<ApiResponse<Area[]>>(`${this.API_URL}/${id}/children`);
   }
 
   findAreas(query: FindAreasPageableQuery): Observable<ApiResponse<APIPage<Area>>> {

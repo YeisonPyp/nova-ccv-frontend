@@ -62,32 +62,6 @@
       </div>
     </section>
 
-    <!-- ── MEDICIÓN ── -->
-    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
-      >
-        Medición
-      </h5>
-      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-        <app-context-search-select
-          [ctx]="unitMeasureCtx"
-          label="Unidad de medida"
-          [required]="false"
-        />
-
-        <div class="form-group">
-          <label>Meta</label>
-          <input
-            type="number"
-            formControlName="unitMeasureGoal"
-            class="form-control"
-            step="0.01"
-          />
-        </div>
-      </div>
-    </section>
-
     <!-- ── PLANIFICACIÓN ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5

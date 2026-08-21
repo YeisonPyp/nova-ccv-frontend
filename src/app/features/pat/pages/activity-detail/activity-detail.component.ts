@@ -17,9 +17,9 @@ import { PatActivityService } from '@/app/core/services/pat/pat-activity.service
 import { PatActivity } from '@/app/core/models/pat/pat-models';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 import { PatTasksTabComponent } from './components/tasks-tab/tasks-tab.component';
-import { PatIndicatorsTabComponent } from './components/indicators-tab/indicators-tab.component';
-import { PatProductsTabComponent } from './components/products-tab/products-tab.component';
-import { PatBenefitsTabComponent } from './components/benefits-tab/benefits-tab.component';
+import { PatIndicatorsSummaryTabComponent } from './components/indicators-summary-tab/indicators-summary-tab.component';
+import { PatProductsSummaryTabComponent } from './components/products-summary-tab/products-summary-tab.component';
+import { PatBenefitsSummaryTabComponent } from './components/benefits-summary-tab/benefits-summary-tab.component';
 
 type TabKeys = 'tasks' | 'indicators' | 'products' | 'benefits';
 interface Tab {
@@ -50,9 +50,9 @@ export class PatActivityDetailComponent implements OnInit {
 
   tabComponents: Record<TabKeys, Type<any>> = {
     tasks: PatTasksTabComponent,
-    indicators: PatIndicatorsTabComponent,
-    products: PatProductsTabComponent,
-    benefits: PatBenefitsTabComponent,
+    indicators: PatIndicatorsSummaryTabComponent,
+    products: PatProductsSummaryTabComponent,
+    benefits: PatBenefitsSummaryTabComponent,
   };
 
   tabs: Tab[] = [

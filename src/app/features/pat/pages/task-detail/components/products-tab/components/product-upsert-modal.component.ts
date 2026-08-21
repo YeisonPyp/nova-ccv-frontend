@@ -27,7 +27,7 @@ import { ContextSearchSelectComponent } from '@/app/shared/components/context-se
 })
 export class PatProductUpsertModalComponent {
   readonly isOpen = input<boolean>(false);
-  readonly activityId = input.required<number>();
+  readonly taskId = input.required<number>();
   readonly product = input<PatActivityProduct | null>(null);
 
   readonly onClose = output<void>();
@@ -87,7 +87,7 @@ export class PatProductUpsertModalComponent {
 
     const req$ = p
       ? this.service.update(p.id, v)
-      : this.service.create(this.activityId(), v);
+      : this.service.create(this.taskId(), v);
 
     req$.subscribe({
       next: (res) => {

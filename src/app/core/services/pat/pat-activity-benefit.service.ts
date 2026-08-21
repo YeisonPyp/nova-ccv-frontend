@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import { PatActivityBenefit } from '../../models/pat/pat-models';
+import { PatActivityBenefit, PatActivityBenefitSummary } from '../../models/pat/pat-models';
 
 export interface CreatePatActivityBenefitDto {
   benefitTypeId: number;
@@ -22,18 +22,24 @@ export class PatActivityBenefitService {
 
   findByActivity(
     activityId: number,
-  ): Observable<ApiResponse<PatActivityBenefit[]>> {
-    return this.http.get<ApiResponse<PatActivityBenefit[]>>(
+  ): Observable<ApiResponse<PatActivityBenefitSummary[]>> {
+    return this.http.get<ApiResponse<PatActivityBenefitSummary[]>>(
       `${this.baseUrl}/activities/${activityId}/benefits`,
     );
   }
 
+  findByTask(taskId: number): Observable<ApiResponse<PatActivityBenefit[]>> {
+    return this.http.get<ApiResponse<PatActivityBenefit[]>>(
+      `${this.baseUrl}/tasks/${taskId}/benefits`,
+    );
+  }
+
   create(
-    activityId: number,
+    taskId: number,
     dto: CreatePatActivityBenefitDto,
   ): Observable<ApiResponse<PatActivityBenefit>> {
     return this.http.post<ApiResponse<PatActivityBenefit>>(
-      `${this.baseUrl}/activities/${activityId}/benefits`,
+      `${this.baseUrl}/tasks/${taskId}/benefits`,
       dto,
     );
   }

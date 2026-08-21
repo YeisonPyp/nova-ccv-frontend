@@ -1,22 +1,30 @@
 <app-project-section-card
-  title="Impactos"
-  addLabel="+ Nuevo impacto"
+  title="Productos"
+  addLabel="+ Nuevo producto"
   (onAdd)="openCreate()"
 >
   <app-dynamic-table
-    [data]="benefits()"
+    [data]="products()"
     [columns]="columns"
-    emptyMessage="Sin Impactos registrados."
+    emptyMessage="Sin productos registrados."
   >
     <ng-template #customCell let-item let-col="column">
       @switch (col.key) {
-        @case ("benefitTypeName") {
+        @case ("product.name") {
           <div class="font-medium text-sm text-gray-800">
-            {{ item.benefitTypeName }}
+            {{ item.product?.name }}
           </div>
+          @if (item.product?.description) {
+            <div class="text-xs text-gray-400 mt-0.5">
+              {{ item.product.description }}
+            </div>
+          }
         }
-        @case ("targetValue") {
-          {{ item.targetValue != null ? item.targetValue : "—" }}
+        @case ("targetQuantity") {
+          {{ item.targetQuantity }}
+        }
+        @case ("unitMeasure.name") {
+          {{ item.unitMeasure?.name ?? "—" }}
         }
       }
     </ng-template>
@@ -34,10 +42,10 @@
   </app-dynamic-table>
 </app-project-section-card>
 
-<app-pat-benefit-upsert-modal
+<app-pat-product-upsert-modal
   [isOpen]="upsertModalOpen()"
-  [activityId]="activityId()"
-  [benefit]="editingBenefit()"
+  [taskId]="taskId()"
+  [product]="editingProduct()"
   (onClose)="closeUpsertModal()"
   (onSaved)="onSaved($event)"
 />

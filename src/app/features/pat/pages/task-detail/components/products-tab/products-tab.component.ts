@@ -23,7 +23,7 @@ import { ProjectSectionCardComponent } from '@/app/features/projects/pages/proje
 export class PatProductsTabComponent {
   private readonly service = inject(PatActivityProductService);
 
-  activityId = input.required<number>();
+  taskId = input.required<number>();
   products = signal<PatActivityProduct[]>([]);
 
   upsertModalOpen = signal(false);
@@ -36,7 +36,7 @@ export class PatProductsTabComponent {
 
   constructor() {
     effect(() => {
-      this.service.findByActivity(this.activityId()).subscribe((res) => {
+      this.service.findByTask(this.taskId()).subscribe((res) => {
         if (res.success) this.products.set(res.data);
       });
     });

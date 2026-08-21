@@ -138,8 +138,6 @@ export interface PatActivity {
   name: string;
   year: number;
   description?: string;
-  unitMeasure?: PatUnitMeasure;
-  unitMeasureGoal?: number;
   tacticalActivity?: PatTacticalActivity;
   startsAt: string;
   endsAt: string;
@@ -189,6 +187,8 @@ export interface PatActivityTask {
   activityProduct?: PatActivityProduct;
   policy?: PatPolicy;
   adenda?: PatAdenda;
+  unitMeasure?: PatUnitMeasure;
+  unitMeasureGoal?: number;
   description?: string;
   createdAt: string;
 }
@@ -273,7 +273,7 @@ export interface PatActivityTaskBenefitExecution {
 
 export interface PatActivityIndicator {
   id: number;
-  activityId: number;
+  taskId: number;
   managementIndicator: PatManagementIndicator;
   baseValue: number;
   goalValue: number;
@@ -285,7 +285,7 @@ export interface PatActivityIndicator {
 
 export interface PatActivityProduct {
   id: number;
-  activityId: number;
+  taskId: number;
   product: PatProduct;
   targetQuantity: number;
   createdAt: string;
@@ -296,7 +296,41 @@ export interface PatActivityProduct {
 
 export interface PatActivityBenefit {
   id: number;
+  taskId: number;
+  benefitTypeId: number;
+  benefitTypeName: string;
+  targetValue: number;
+  createdAt: string;
+}
+
+export interface PatActivityIndicatorSummary {
+  id: number;
   activityId: number;
+  taskId: number;
+  taskName: string;
+  managementIndicatorId: number;
+  managementIndicatorName: string;
+  baseValue: number;
+  goalValue: number;
+  createdAt: string;
+}
+
+export interface PatActivityProductSummary {
+  id: number;
+  activityId: number;
+  taskId: number;
+  taskName: string;
+  productId: number;
+  productName: string;
+  targetQuantity: number;
+  createdAt: string;
+}
+
+export interface PatActivityBenefitSummary {
+  id: number;
+  activityId: number;
+  taskId: number;
+  taskName: string;
   benefitTypeId: number;
   benefitTypeName: string;
   targetValue: number;

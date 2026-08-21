@@ -15,29 +15,20 @@ import {
   Validators,
 } from '@angular/forms';
 import { PatActivityTaskService } from '@/app/core/services/pat/pat-activity-task.service';
-import { PatActivityTask, PatProduct } from '@/app/core/models/pat/pat-models';
+import { PatActivityTask } from '@/app/core/models/pat/pat-models';
 import { AreaService } from '@/app/core/services/assessment/area.service';
 import { CostCenterService } from '@/app/core/services/cost-center/cost-center.service';
 import { PillarService } from '@/app/core/services/pat/pillar.service';
 import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
 import { PolicyService } from '@/app/core/services/pat/policy.service';
 import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
-import {
-  SelectorComponent,
-  Option,
-} from '@/app/shared/components/selector/selector.component';
 import { PatAdendaService } from '@/app/core/services/pat/pat-adenda.service';
-import { PatActivityProductService } from '@/app/core/services/pat/pat-activity-product.service';
+import { PatUnitMeasureService } from '@/app/core/services/pat/pat-unit-measure.service';
 
 @Component({
   selector: 'app-task-upsert-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ContextSearchSelectComponent,
-    SelectorComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, ContextSearchSelectComponent],
   templateUrl: './task-upsert-modal.component.html',
 })
 export class PatTaskUpsertModalComponent {
@@ -50,7 +41,7 @@ export class PatTaskUpsertModalComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(PatActivityTaskService);
-  private readonly productsService = inject(PatActivityProductService);
+  private readonly unitMeasureService = inject(PatUnitMeasureService);
   private readonly areaService = inject(AreaService);
   private readonly costCenterService = inject(CostCenterService);
   private readonly pillarService = inject(PillarService);
@@ -59,9 +50,6 @@ export class PatTaskUpsertModalComponent {
 
   submitting = signal(false);
   error = signal<string | null>(null);
-
-  activityProducts = signal<Option[]>([]);
-  // selectedProduct = signal<Option | null>(null);
 
   areaCtx = this.areaService.newSearchSelectAreaContext(
     (a) => this.form.patchValue({ areaId: a.id }),
@@ -93,11 +81,18 @@ export class PatTaskUpsertModalComponent {
     () => this.form.patchValue({ policyId: null }),
   );
 
+  unitMeasureCtx = this.unitMeasureService.newSearchSelectContext(
+    (u) => this.form.patchValue({ unitMeasureId: u.id }),
+    { isRequired: true, label: 'Unidad de medida' },
+    () => this.form.patchValue({ unitMeasureId: null }),
+  );
+
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
     areaId: [null, Validators.required],
     costCenterId: [null, Validators.required],
-    productId: [null, Validators.required],
+    unitMeasureId: [null, Validators.required],
+    unitMeasureGoal: [null, Validators.required],
     description: [''],
     adendaId: [null],
     pillarId: [null],
@@ -116,7 +111,8 @@ export class PatTaskUpsertModalComponent {
           pillarId: t?.pillar?.id ?? null,
           adendaId: t?.program?.id ?? null,
           policyId: t?.policy?.id ?? null,
-          productId: t?.activityProduct?.id ?? null,
+          unitMeasureId: t?.unitMeasure?.id ?? null,
+          unitMeasureGoal: t?.unitMeasureGoal ?? null,
           description: t?.description ?? '',
         });
         if (t?.area) this.areaCtx.selectResults([t.area]);
@@ -124,24 +120,8 @@ export class PatTaskUpsertModalComponent {
         if (t?.pillar) this.pillarCtx.selectResults([t.pillar]);
         if (t?.adenda) this.adendaCtx.selectResults([t.adenda]);
         if (t?.policy) this.policyCtx.selectResults([t.policy]);
+        if (t?.unitMeasure) this.unitMeasureCtx.selectResults([t.unitMeasure]);
       }
-    });
-
-    effect(() => {
-      this.productsService
-        .findByActivity(this.activityId())
-        .subscribe((res) => {
-          if (res.success)
-            this.activityProducts.set(
-              res.data.map(
-                (p) =>
-                  ({
-                    label: `${p.product.name} (${p.targetQuantity})`,
-                    value: p.id,
-                  }) as Option,
-              ),
-            );
-        });
     });
   }
 
