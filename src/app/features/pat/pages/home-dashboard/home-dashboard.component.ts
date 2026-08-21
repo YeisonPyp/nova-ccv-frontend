@@ -2,7 +2,7 @@ import { Component, computed, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { PatDashboardBudget } from '@/app/core/models/pat/pat-dashboard.models';
-import { AreaTreeChipsComponent } from './components/area-tree/area-tree-chips.component';
+import { AreaTreeChipsComponent } from '../../components/area-tree/area-tree-chips.component';
 import { ProgramsSectionComponent } from './components/programs-section/programs-section.component';
 import { TasksSectionComponent } from './components/tasks-section/tasks-section.component';
 import { BudgetSectionComponent } from './components/budget-section/budget-section.component';

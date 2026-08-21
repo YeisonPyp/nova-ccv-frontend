@@ -1,15 +1,17 @@
-<div class="p-6 max-w-9xl mx-auto flex flex-col gap-6">
-  <div class="flex items-center justify-between">
-    <div class="flex flex-col gap-1">
+<div class="p-6 max-w-9xl mx-auto flex flex-col gap-4">
+  <!-- Header: título + acción, en una sola línea -->
+  <div class="flex items-center justify-between gap-4 flex-wrap">
+    <h1 class="text-xl font-bold text-secondary m-0">Tablero de Control</h1>
+
+    <div class="flex items-center gap-3">
+      @if (uploadError()) {
+        <span class="text-xs text-red-600">{{ uploadError() }}</span>
+      }
       <label
-        class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-2 w-fit"
+        class="px-3 py-1.5 text-xs font-medium text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-colors cursor-pointer inline-flex items-center gap-2"
         [class.opacity-60]="uploading()"
       >
-        @if (uploading()) {
-          Cargando...
-        } @else {
-          Cargar Excel PAT
-        }
+        {{ uploading() ? "Cargando..." : "Cargar Excel PAT" }}
         <input
           type="file"
           accept=".xlsx,.xls"
@@ -18,53 +20,71 @@
           (change)="onSeedFileSelected($event)"
         />
       </label>
-      @if (uploadError()) {
-        <span class="text-xs text-red-600">{{ uploadError() }}</span>
-      }
     </div>
   </div>
 
-  <!-- Area chips -->
-  <div class="flex flex-wrap gap-2">
-    <button
-      type="button"
-      class="px-4 py-1.5 text-sm font-medium rounded-full border transition-colors"
-      [class]="
-        selectedAreaId() === null
-          ? 'bg-primary text-white border-primary'
-          : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
-      "
-      (click)="selectArea(null)"
-    >
-      Todas
-    </button>
-    @for (area of areas(); track area.id) {
-      <button
-        type="button"
-        class="px-4 py-1.5 text-sm font-medium rounded-full border transition-colors"
-        [class]="
-          selectedAreaId() === area.id
-            ? 'bg-primary text-white border-primary'
-            : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'
-        "
-        (click)="selectArea(area.id)"
-      >
-        {{ area.name }}
-      </button>
-    }
+  <!-- Área: drill-down jerárquico, mismo selector del tablero interactivo -->
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-3">
+    <app-area-tree-chips (selectedChange)="selectArea($event)" />
   </div>
 
-  <!-- Budget charts -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-      <app-execution-pie-chart
-        title="Presupuesto planeado vs ejecutado"
-        [planned]="totalPlanned()"
-        [executed]="totalExecuted()"
-      />
-    </div>
+  <!-- Presupuesto: cifras a la izquierda, evolución mensual a la derecha -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
     <div
-      class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 md:col-span-2"
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-4"
+    >
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-0.5"
+          >
+            Planeado
+          </p>
+          <p class="text-lg font-bold text-secondary m-0">
+            {{ totalPlanned() | currency: "COP" : "symbol-narrow" : "1.0-0" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-0.5"
+          >
+            Ejecutado
+          </p>
+          <p class="text-lg font-bold text-primary m-0">
+            {{ totalExecuted() | currency: "COP" : "symbol-narrow" : "1.0-0" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- 0% es un dato válido, así que la barra se muestra en cuanto hay
+           algo planeado, no cuando el porcentaje es distinto de cero. -->
+      @if (totalPlanned() > 0) {
+        <div class="flex flex-col gap-1">
+          <div class="flex items-baseline justify-between text-xs">
+            <span class="text-gray-500">Avance de ejecución</span>
+            <span class="font-semibold text-secondary">
+              {{ executionPct() | number: "1.0-1" }}%
+            </span>
+          </div>
+          <div class="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+            <div
+              class="h-full rounded-full bg-primary transition-[width]"
+              [style.width.%]="executionPct()! > 100 ? 100 : executionPct()"
+            ></div>
+          </div>
+        </div>
+      }
+
+      <div class="flex-1 min-h-40">
+        <app-execution-pie-chart
+          [planned]="totalPlanned()"
+          [executed]="totalExecuted()"
+        />
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 lg:col-span-2"
     >
       <app-planned-executed-line-chart
         title="Presupuesto mensual"
@@ -73,15 +93,16 @@
       />
     </div>
   </div>
+
   <!-- Tabs -->
   <div
     class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
   >
-    <div class="flex border-b border-gray-200 bg-gray-50 px-2 pt-2 gap-2">
+    <div class="flex border-b border-gray-200 bg-gray-50 px-2 pt-2 gap-1">
       @for (tab of tabs; track tab.key) {
         <button
           type="button"
-          class="px-5 py-2.5 text-sm font-medium cursor-pointer border-b-2 transition-colors duration-150 rounded-t-lg -mb-px"
+          class="px-4 py-2 text-xs font-medium cursor-pointer border-b-2 transition-colors duration-150 rounded-t-md -mb-px"
           [class]="
             activeTab() === tab.key
               ? 'text-primary border-primary bg-white'
@@ -94,7 +115,7 @@
       }
     </div>
 
-    <div class="p-6 min-h-100">
+    <div class="p-4 min-h-100">
       <ng-container
         [ngComponentOutlet]="activeTabComponent()"
         [ngComponentOutletInputs]="activeTabInputs()"

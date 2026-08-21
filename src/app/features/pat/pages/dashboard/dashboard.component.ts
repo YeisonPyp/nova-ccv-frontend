@@ -6,9 +6,9 @@ import { ProgramsAndAdendasSectionComponent } from '../../components/programs-an
 import { TacticalActivitiesTabComponent } from '../../components/tactical-activities-tab/tactical-activities-tab.component';
 import { TasksTabComponent } from '../../components/tasks-tab/tasks-tab.component';
 import { AreaBudgetReportComponent } from '../activity-report/components/area-budget-report/area-budget-report.component';
+import { AreaTreeChipsComponent } from '../../components/area-tree/area-tree-chips.component';
 import { PatActivityService } from '@/app/core/services/pat/pat-activity.service';
 import { PatReportService } from '@/app/core/services/pat/pat-report.service';
-import { Area } from '@/app/core/models/assessment/area.model';
 import { MonthlyBudgetTotals } from '@/app/core/models/pat/pat-report-models';
 import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execution-pie-chart/execution-pie-chart.component';
 import { PlannedExecutedLineChartComponent } from '@/app/shared/components/charts/planned-executed-line-chart/planned-executed-line-chart.component';
@@ -24,6 +24,7 @@ type TabKey = 'programs' | 'tacticalActivities' | 'tasks';
     TacticalActivitiesTabComponent,
     TasksTabComponent,
     AreaBudgetReportComponent,
+    AreaTreeChipsComponent,
     ExecutionPieChartComponent,
     PlannedExecutedLineChartComponent,
     NgComponentOutlet,
@@ -42,7 +43,6 @@ export class DashboardComponent {
   uploading = signal(false);
   uploadError = signal<string | null>(null);
 
-  areas = signal<Area[]>([]);
   selectedAreaId = signal<number | null>(null);
 
   monthlyTotals = signal<MonthlyBudgetTotals[]>([]);
@@ -53,6 +53,11 @@ export class DashboardComponent {
   totalExecuted = computed(() =>
     this.monthlyTotals().reduce((sum, m) => sum + (m.executedBudget ?? 0), 0),
   );
+  executionPct = computed(() => {
+    const planned = this.totalPlanned();
+    if (!planned) return null;
+    return (this.totalExecuted() / planned) * 100;
+  });
   plannedValues = computed(() => this.monthlyTotalsSorted().map((m) => m.plannedBudget ?? 0));
   executedValues = computed(() => this.monthlyTotalsSorted().map((m) => m.executedBudget ?? 0));
 
@@ -89,13 +94,6 @@ export class DashboardComponent {
   activeTabComponent = computed(() => this.tabsComponent[this.activeTab()]);
 
   constructor() {
-    effect(() => {
-      const year = this.year();
-      this.activityService.findAreasForYear(year).subscribe((res) => {
-        if (res.success && res.data) this.areas.set(res.data);
-      });
-    });
-
     effect(() => {
       const year = this.year();
       const areaId = this.selectedAreaId();
