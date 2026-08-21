@@ -27,6 +27,10 @@ export class TasksTabComponent {
   year = input.required<number>();
   areaId = input<number | null>(null);
 
+  /** Cut-off dates: only tasks with budget planning inside the range. */
+  since = signal<string | null>(null);
+  before = signal<string | null>(null);
+
   tasks = signal<PatActivityTask[]>([]);
   page = signal(1);
   size = signal(10);
@@ -69,6 +73,8 @@ export class TasksTabComponent {
       this.page();
       this.size();
       this.searchNodes();
+      this.since();
+      this.before();
       this.loadTasks();
     });
   }
@@ -84,6 +90,8 @@ export class TasksTabComponent {
         },
         this.year(),
         this.areaId(),
+        this.since(),
+        this.before(),
       )
       .subscribe({
         next: (res) => {
@@ -100,6 +108,19 @@ export class TasksTabComponent {
   onSearchChange(nodes: ExpressionNode[]) {
     this.page.set(1);
     this.searchNodes.set(nodes);
+  }
+
+  onCutOffChange(field: 'since' | 'before', event: Event) {
+    const value = (event.target as HTMLInputElement).value || null;
+    this.page.set(1);
+    if (field === 'since') this.since.set(value);
+    else this.before.set(value);
+  }
+
+  clearCutOff() {
+    this.page.set(1);
+    this.since.set(null);
+    this.before.set(null);
   }
 
   onPageSizeChange(size: number) {

@@ -57,8 +57,19 @@ export class IndicatorProgressListComponent {
     new Set<PatIndicatorType>(['PRODUCT', 'MANAGEMENT', 'IMPACT']),
   );
 
+  /** Any change here starts the listing over from the first page. */
+  private readonly filterKey = computed(
+    () => `${this.year()}|${this.areaId() ?? ''}|${this.taskIds().join(',')}`,
+  );
+  private lastFilterKey: string | null = null;
+
   constructor() {
     effect(() => {
+      const filterKey = this.filterKey();
+      if (this.lastFilterKey !== null && filterKey !== this.lastFilterKey) {
+        this.page.set(1);
+      }
+      this.lastFilterKey = filterKey;
       this.loading.set(true);
       const search = this.search() || undefined;
       this.service
@@ -68,7 +79,8 @@ export class IndicatorProgressListComponent {
           taskIds: this.taskIds(),
           name: search,
           types: Array.from(this.activeTypes()) as PatIndicatorType[],
-          page: this.page(),
+          // The paginator is 1-based, Spring's Pageable is 0-based.
+          page: this.page() - 1,
           size: this.size(),
         })
         .subscribe({

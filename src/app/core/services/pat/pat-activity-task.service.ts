@@ -41,6 +41,12 @@ export interface FindTasksPageableQuery extends PageableQuery {
   year: number;
   programId?: number | null;
   areaId?: number | null;
+  /**
+   * Cut-off dates (yyyy-MM-dd): keep only tasks holding budget planning in the
+   * covered months.
+   */
+  since?: string | null;
+  before?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -80,8 +86,10 @@ export class PatActivityTaskService {
     query: PageableQuery,
     year: number,
     areaId?: number | null,
+    since?: string | null,
+    before?: string | null,
   ): Observable<ApiResponse<APIPage<PatActivityTask>>> {
-    return this.findAll({ ...query, year, areaId });
+    return this.findAll({ ...query, year, areaId, since, before });
   }
 
   /** Every task of an area for a year, unpaginated (used by task selectors). */

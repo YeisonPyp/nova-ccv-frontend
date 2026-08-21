@@ -24,7 +24,7 @@ import { buildRsqlPredicate } from '@/app/shared/utils/rsql-predicate.util';
 export class TasksSectionComponent {
   private readonly service = inject(PatActivityTaskService);
   programId = input<number | null>(null);
-  areaId = input<number>();
+  areaId = input<number | null>(null);
   year = input.required<number>();
 
   loading = signal(false);
@@ -50,16 +50,30 @@ export class TasksSectionComponent {
     );
   });
 
+  /** Any change here starts the listing over from the first page. */
+  private readonly filterKey = computed(
+    () =>
+      `${this.year()}|${this.areaId() ?? ''}|${this.programId() ?? ''}|${this.search()}`,
+  );
+  private lastFilterKey: string | null = null;
+
   constructor() {
     effect(() => {
-      this.loading.set(true);
+      const filterKey = this.filterKey();
+      if (this.lastFilterKey !== null && filterKey !== this.lastFilterKey) {
+        this.page.set(1);
+      }
+      this.lastFilterKey = filterKey;
+
       const search = this.search();
+      this.loading.set(true);
       this.service
         .findAll({
           year: this.year(),
           programId: this.programId(),
           areaId: this.areaId(),
-          page: this.page(),
+          // The paginator is 1-based, Spring's Pageable is 0-based.
+          page: this.page() - 1,
           size: this.size(),
           nodes: !search
             ? undefined

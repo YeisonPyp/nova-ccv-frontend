@@ -35,7 +35,7 @@
         <app-tasks-section
           class="h-full"
           [year]="year()"
-          [areaId]="areaId() || undefined"
+          [areaId]="areaId()"
           [programId]="programId()"
           (selectedActivities)="onTasksChange($event)"
         />
