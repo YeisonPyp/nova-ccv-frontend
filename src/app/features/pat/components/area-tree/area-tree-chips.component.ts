@@ -1,16 +1,24 @@
-import { Component, computed, effect, inject, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AreaService } from '@/app/core/services/assessment/area.service';
 import {
   AREA_TYPE_LABELS,
   AreaTreeNode,
 } from '@/app/core/models/assessment/area.model';
+import { HomeIconComponent } from '@/app/shared/components/home-icon/home-icon.component';
 
 /**
- * Area selector for the dashboard, laid out as a horizontal drill-down:
- * each level of the org chart is its own column, and picking a node opens
- * its children in a new column to the right instead of pushing the rest of
- * the dashboard down.
+ * Area selector for the dashboard, laid out as a drill-down: only the level
+ * currently being browsed is shown, and picking a node with children replaces
+ * the list with them. The breadcrumb plus the back/root buttons are what move
+ * between levels.
  *
  * Selecting an area scopes the dashboard to it *and its descendants*, which
  * the backend resolves.
@@ -18,7 +26,7 @@ import {
 @Component({
   selector: 'app-area-tree-chips',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HomeIconComponent],
   templateUrl: './area-tree-chips.component.html',
 })
 export class AreaTreeChipsComponent {
@@ -49,6 +57,15 @@ export class AreaTreeChipsComponent {
     }
     return cols.filter((c) => c.length > 0);
   });
+
+  /** Deepest opened level: the only column rendered. */
+  currentLevel = computed<number>(() => this.columns().length - 1);
+
+  currentColumn = computed<AreaTreeNode[]>(
+    () => this.columns()[this.currentLevel()] ?? [],
+  );
+
+  canGoBack = computed<boolean>(() => this.path().length > 0);
 
   /** Names along the current path, for the breadcrumb. */
   breadcrumb = computed<string[]>(() => {
@@ -90,6 +107,11 @@ export class AreaTreeChipsComponent {
       return;
     }
     this.path.set([...current.slice(0, level), id]);
+  }
+
+  /** Climbs one level, deselecting the node whose children are on screen. */
+  back(): void {
+    this.path.update((p) => p.slice(0, -1));
   }
 
   clear(): void {
