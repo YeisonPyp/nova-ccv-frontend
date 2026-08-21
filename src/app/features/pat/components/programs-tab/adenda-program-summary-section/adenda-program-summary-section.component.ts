@@ -1,16 +1,19 @@
-import { CommonModule } from "@angular/common";
-import { Component, effect, inject, input, signal } from "@angular/core";
-import { Router } from "@angular/router";
-import { PatAdendaProgramSummaryService } from "@/app/core/services/pat/pat-adenda-program-summary.service";
-import { PatAdendaService } from "@/app/core/services/pat/pat-adenda.service";
-import { PatProgramService } from "@/app/core/services/pat/pat-program.service";
-import { PatAdendaProgramSummary } from "@/app/core/models/pat/pat-models";
-import { ContextSearchSelectComponent } from "@/app/shared/components/context-search-select/context-search-select.component";
-import { DynamicTableComponent, TableColumn } from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { FormsModule } from "@angular/forms";
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, input, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { PatAdendaProgramSummaryService } from '@/app/core/services/pat/pat-adenda-program-summary.service';
+import { PatAdendaService } from '@/app/core/services/pat/pat-adenda.service';
+import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
+import { PatAdendaProgramSummary } from '@/app/core/models/pat/pat-models';
+import { ContextSearchSelectComponent } from '@/app/shared/components/context-search-select/context-search-select.component';
+import {
+  DynamicTableComponent,
+  TableColumn,
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: "app-adenda-program-summary-section",
+  selector: 'app-adenda-program-summary-section',
   standalone: true,
   imports: [
     CommonModule,
@@ -18,7 +21,7 @@ import { FormsModule } from "@angular/forms";
     ContextSearchSelectComponent,
     DynamicTableComponent,
   ],
-  templateUrl: "./adenda-program-summary-section.component.html",
+  templateUrl: './adenda-program-summary-section.component.html',
 })
 export class AdendaProgramSummarySectionComponent {
   readonly year = input<number | null>(null);
@@ -36,18 +39,18 @@ export class AdendaProgramSummarySectionComponent {
 
   adendaCtx = this.adendaService.newSearchSelectContext(
     (a) => this.adendaIdFilter.set(a.id),
-    { isRequired: false, label: "Adenda" },
+    { isRequired: false, label: 'Adenda' },
     () => this.adendaIdFilter.set(null),
   );
 
   readonly columns: TableColumn[] = [
-    { key: "programCode", label: "Código" },
-    { key: "description", label: "Programa" },
-    { key: "adendaName", label: "Adenda" },
-    { key: "year", label: "Año" },
-    { key: "contextName", label: "Contexto" },
-    { key: "unitMeasureName", label: "Unidad de medida" },
-    { key: "unitMeasureGoal", label: "Meta" },
+    { key: 'programCode', label: 'Código' },
+    { key: 'description', label: 'Programa' },
+    { key: 'adendaName', label: 'Adenda' },
+    { key: 'year', label: 'Año' },
+    { key: 'contextName', label: 'Contexto' },
+    { key: 'unitMeasureName', label: 'Unidad de medida' },
+    { key: 'unitMeasureGoal', label: 'Meta' },
   ];
 
   constructor() {
@@ -63,7 +66,7 @@ export class AdendaProgramSummarySectionComponent {
 
   private load(adendaId: number | null, year: number | null): void {
     this.loading.set(true);
-    this.service.findSummaries(adendaId, year).subscribe((res) => {
+    this.service.findSummaries({ adendaId, year }).subscribe((res) => {
       this.loading.set(false);
       if (res.success && res.data) this.items.set(res.data);
     });

@@ -1,5 +1,6 @@
 import { Area } from '../assessment/area.model';
 import { CostCenter } from '../cost-center/cost-center.models';
+import { Position } from '../assessment/position.model';
 
 export interface PatPillar {
   id: number;
@@ -87,7 +88,7 @@ export interface PatAdendaProgramSummary {
   adendaName: string;
   contextId?: number;
   contextName?: string;
-  unitMeasureId?: number;
+  unitMeasureId: number;
   unitMeasureName?: string;
   unitMeasureGoal: number;
   programCode: string;
@@ -181,6 +182,8 @@ export interface PatActivityTask {
   activityYear?: number;
   name: string;
   area: Area;
+  /** Position responsible for the monthly planning/execution of the task. */
+  position?: Position;
   costCenter: CostCenter;
   pillar?: PatPillar;
   program?: PatStrategicProgram;

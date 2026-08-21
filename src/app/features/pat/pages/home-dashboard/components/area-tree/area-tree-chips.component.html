@@ -1,0 +1,60 @@
+<div class="flex flex-col gap-2 min-w-0">
+  <!-- Breadcrumb of the current drill-down + reset -->
+  <div class="flex items-center gap-1.5 text-xs text-gray-500 flex-wrap">
+    <button
+      type="button"
+      class="font-medium transition-colors"
+      [class]="
+        selectedId() === null
+          ? 'text-primary'
+          : 'text-gray-400 hover:text-primary'
+      "
+      (click)="clear()"
+    >
+      Todas
+    </button>
+    @for (name of breadcrumb(); track $index) {
+      <span class="text-gray-300">›</span>
+      <span class="text-gray-600">{{ name }}</span>
+    }
+  </div>
+
+  <!-- Horizontal drill-down: one column per level of the org chart -->
+  <div class="flex items-stretch gap-2 overflow-x-auto pb-1">
+    @for (column of columns(); track $index; let level = $index) {
+      @if (level > 0) {
+        <div class="flex items-center text-gray-300 shrink-0">›</div>
+      }
+
+      <div
+        class="flex flex-col gap-1 shrink-0 max-h-44 overflow-y-auto p-1 rounded-md border border-gray-200 bg-gray-50"
+      >
+        @for (node of column; track node.id) {
+          <button
+            type="button"
+            class="flex items-center gap-2 px-2.5 py-1 text-xs font-medium rounded whitespace-nowrap text-left transition-colors"
+            [class]="
+              isSelected(level, node.id)
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-600 hover:text-primary'
+            "
+            [title]="typeLabels[node.type]"
+            (click)="select(level, node.id)"
+          >
+            <span>{{ node.name }}</span>
+            @if (node.children?.length) {
+              <span
+                class="text-[10px]"
+                [class]="
+                  isSelected(level, node.id) ? 'text-white/70' : 'text-gray-300'
+                "
+              >
+                ›
+              </span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

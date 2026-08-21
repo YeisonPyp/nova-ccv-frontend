@@ -4,6 +4,7 @@ import { PolicySectionComponent } from "./components/policy-section.component";
 import { BenefitTypeSectionComponent } from "./components/benefit-type-section.component";
 import { ProductSectionComponent } from "./components/product-section.component";
 import { ManagementIndicatorSectionComponent } from "./components/management-indicator-section.component";
+import { PatPlanningNotificationConfigSectionComponent } from "./components/planning-notification-config-section.component";
 
 @Component({
   selector: "app-pat-param",
@@ -14,6 +15,7 @@ import { ManagementIndicatorSectionComponent } from "./components/management-ind
     BenefitTypeSectionComponent,
     ProductSectionComponent,
     ManagementIndicatorSectionComponent,
+    PatPlanningNotificationConfigSectionComponent,
   ],
   template: `
     <div class="max-w-7xl mx-auto">
@@ -27,6 +29,7 @@ import { ManagementIndicatorSectionComponent } from "./components/management-ind
         <app-benefit-type-section />
         <app-product-section />
         <app-management-indicator-section />
+        <app-pat-planning-notification-config-section />
       </div>
     </div>
   `,

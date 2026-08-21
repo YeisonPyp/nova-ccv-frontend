@@ -1,23 +1,12 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
-import { PatDashboardService } from '@/app/core/services/pat/pat-dashboard.service';
-import {
-  PatDashboardBudget,
-  PatDashboardIndicator,
-} from '@/app/core/models/pat/pat-dashboard.models';
-import {
-  PatActivityTask,
-  PatStrategicProgram,
-} from '@/app/core/models/pat/pat-models';
-import { ExecutionPieChartComponent } from '@/app/shared/components/charts/execution-pie-chart/execution-pie-chart.component';
-import { PlannedExecutedLineChartComponent } from '@/app/shared/components/charts/planned-executed-line-chart/planned-executed-line-chart.component';
-import { AreaTreeChipsComponent } from './components/area-tree-chips.component';
-import { IndicatorProgressListComponent } from './components/indicator-progress-list.component';
-import {
-  SelectableItem,
-  SelectableListComponent,
-} from './components/selectable-list.component';
+import { PatDashboardBudget } from '@/app/core/models/pat/pat-dashboard.models';
+import { AreaTreeChipsComponent } from './components/area-tree/area-tree-chips.component';
+import { ProgramsSectionComponent } from './components/programs-section/programs-section.component';
+import { TasksSectionComponent } from './components/tasks-section/tasks-section.component';
+import { BudgetSectionComponent } from './components/budget-section/budget-section.component';
+import { IndicatorProgressListComponent } from './components/indicator-progress-list/indicator-progress-list.component';
 
 type SectionKey = 'budget' | 'programs' | 'indicators' | 'tasks';
 
@@ -32,18 +21,16 @@ type SectionKey = 'budget' | 'programs' | 'indicators' | 'tasks';
   standalone: true,
   imports: [
     CommonModule,
-    ExecutionPieChartComponent,
-    PlannedExecutedLineChartComponent,
     AreaTreeChipsComponent,
+    ProgramsSectionComponent,
+    TasksSectionComponent,
+    BudgetSectionComponent,
     IndicatorProgressListComponent,
-    SelectableListComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './home-dashboard.component.html',
 })
 export class PatHomeDashboardComponent {
-  private readonly service = inject(PatDashboardService);
-
   year = input.required<number>();
 
   // ── Selections ────────────────────────────────────────────────────────
@@ -64,30 +51,8 @@ export class PatHomeDashboardComponent {
 
   // ── Data ──────────────────────────────────────────────────────────────
   budget = signal<PatDashboardBudget | null>(null);
-  indicators = signal<PatDashboardIndicator[]>([]);
-  programs = signal<PatStrategicProgram[]>([]);
-  tasks = signal<PatActivityTask[]>([]);
 
   loadingBudget = signal(false);
-  loadingIndicators = signal(false);
-  loadingPrograms = signal(false);
-  loadingTasks = signal(false);
-
-  programItems = computed<SelectableItem[]>(() =>
-    this.programs().map((p) => ({
-      id: p.id,
-      label: p.description || `Programa ${p.id}`,
-      sublabel: `${p.startsAt} — ${p.endsAt}`,
-    })),
-  );
-
-  taskItems = computed<SelectableItem[]>(() =>
-    this.tasks().map((t) => ({
-      id: t.id,
-      label: t.name,
-      sublabel: t.area?.name,
-    })),
-  );
 
   plannedValues = computed(() =>
     (this.budget()?.monthly ?? []).map((m) => m.planned),
@@ -96,66 +61,6 @@ export class PatHomeDashboardComponent {
     (this.budget()?.monthly ?? []).map((m) => m.executed),
   );
 
-  constructor() {
-    // Budget + indicators react to every selection.
-    effect(() => {
-      const filters = {
-        year: this.year(),
-        areaId: this.areaId(),
-        programId: this.programId(),
-        taskIds: this.taskIds(),
-      };
-
-      this.loadingBudget.set(true);
-      this.service.findBudget(filters).subscribe({
-        next: (res) => {
-          if (res.success) this.budget.set(res.data);
-          this.loadingBudget.set(false);
-        },
-        error: () => this.loadingBudget.set(false),
-      });
-
-      this.loadingIndicators.set(true);
-      this.service.findIndicators(filters).subscribe({
-        next: (res) => {
-          if (res.success) this.indicators.set(res.data);
-          this.loadingIndicators.set(false);
-        },
-        error: () => this.loadingIndicators.set(false),
-      });
-    });
-
-    // Programs only depend on year + area.
-    effect(() => {
-      const filters = { year: this.year(), areaId: this.areaId() };
-      this.loadingPrograms.set(true);
-      this.service.findPrograms(filters).subscribe({
-        next: (res) => {
-          if (res.success) this.programs.set(res.data);
-          this.loadingPrograms.set(false);
-        },
-        error: () => this.loadingPrograms.set(false),
-      });
-    });
-
-    // Tasks additionally depend on the selected program.
-    effect(() => {
-      const filters = {
-        year: this.year(),
-        areaId: this.areaId(),
-        programId: this.programId(),
-      };
-      this.loadingTasks.set(true);
-      this.service.findTasks(filters).subscribe({
-        next: (res) => {
-          if (res.success) this.tasks.set(res.data);
-          this.loadingTasks.set(false);
-        },
-        error: () => this.loadingTasks.set(false),
-      });
-    });
-  }
-
   onAreaChange(areaId: number | null): void {
     this.areaId.set(areaId);
     // A different area invalidates the program/task picks below it.
@@ -163,13 +68,13 @@ export class PatHomeDashboardComponent {
     this.taskIds.set([]);
   }
 
-  onProgramChange(ids: number[]): void {
-    this.programId.set(ids.length ? ids[0] : null);
+  onProgramChange(ids: string[]): void {
+    this.programId.set(ids.length > 0 ? Number(ids[0]) : null);
     this.taskIds.set([]);
   }
 
-  onTasksChange(ids: number[]): void {
-    this.taskIds.set(ids);
+  onTasksChange(ids: string[]): void {
+    this.taskIds.set(ids.map(Number));
   }
 
   isSectionVisible(key: SectionKey): boolean {

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '@/environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
 import {
@@ -37,6 +37,12 @@ export interface UpdatePatActivityTaskDto {
   description?: string | null;
 }
 
+export interface FindTasksPageableQuery extends PageableQuery {
+  year: number;
+  programId?: number | null;
+  areaId?: number | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PatActivityTaskService {
   private readonly http = inject(HttpClient);
@@ -56,27 +62,35 @@ export class PatActivityTaskService {
     );
   }
 
-  findByYearAndArea(
-    year: number,
-    areaId: number,
-  ): Observable<ApiResponse<PatActivityTask[]>> {
-    return this.http.get<ApiResponse<PatActivityTask[]>>(
+  findAll(
+    query: FindTasksPageableQuery,
+  ): Observable<ApiResponse<APIPage<PatActivityTask>>> {
+    const params = new PageableQueryParams(query).getParams();
+    return this.http.get<ApiResponse<APIPage<PatActivityTask>>>(
       `${this.baseUrl}/tasks`,
-      { params: { year, areaId } },
+      { params },
     );
   }
 
+  /**
+   * Paginated + RSQL-searchable listing, optionally narrowed by year/area.
+   * Thin wrapper over {@link findAll} for the dashboard tables.
+   */
   search(
     query: PageableQuery,
     year: number,
     areaId?: number | null,
   ): Observable<ApiResponse<APIPage<PatActivityTask>>> {
-    const params = new PageableQueryParams(query).getParams();
-    params['year'] = year;
-    if (areaId != null) params['areaId'] = areaId;
-    return this.http.get<ApiResponse<APIPage<PatActivityTask>>>(
-      `${this.baseUrl}/tasks/search`,
-      { params },
+    return this.findAll({ ...query, year, areaId });
+  }
+
+  /** Every task of an area for a year, unpaginated (used by task selectors). */
+  findByYearAndArea(
+    year: number,
+    areaId: number,
+  ): Observable<ApiResponse<PatActivityTask[]>> {
+    return this.findAll({ year, areaId, page: 0, size: 500 }).pipe(
+      map((res) => ({ ...res, data: res.data?.content ?? [] })),
     );
   }
 

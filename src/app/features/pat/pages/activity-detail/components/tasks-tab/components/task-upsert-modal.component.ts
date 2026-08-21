@@ -17,6 +17,7 @@ import {
 import { PatActivityTaskService } from '@/app/core/services/pat/pat-activity-task.service';
 import { PatActivityTask } from '@/app/core/models/pat/pat-models';
 import { AreaService } from '@/app/core/services/assessment/area.service';
+import { PositionService } from '@/app/core/services/assessment/position.service';
 import { CostCenterService } from '@/app/core/services/cost-center/cost-center.service';
 import { PillarService } from '@/app/core/services/pat/pillar.service';
 import { PatProgramService } from '@/app/core/services/pat/pat-program.service';
@@ -43,6 +44,7 @@ export class PatTaskUpsertModalComponent {
   private readonly service = inject(PatActivityTaskService);
   private readonly unitMeasureService = inject(PatUnitMeasureService);
   private readonly areaService = inject(AreaService);
+  private readonly positionService = inject(PositionService);
   private readonly costCenterService = inject(CostCenterService);
   private readonly pillarService = inject(PillarService);
   private readonly adendaService = inject(PatAdendaService);
@@ -55,6 +57,12 @@ export class PatTaskUpsertModalComponent {
     (a) => this.form.patchValue({ areaId: a.id }),
     { isRequired: true, label: 'Área' },
     () => this.form.patchValue({ areaId: null }),
+  );
+
+  positionCtx = this.positionService.newSearchSelectContext(
+    (p) => this.form.patchValue({ positionId: p.id }),
+    { isRequired: false, label: 'Cargo responsable', maxItems: 1 },
+    () => this.form.patchValue({ positionId: null }),
   );
 
   costCenterCtx = this.costCenterService.newSearchSelectContext(
@@ -90,6 +98,7 @@ export class PatTaskUpsertModalComponent {
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
     areaId: [null, Validators.required],
+    positionId: [null],
     costCenterId: [null, Validators.required],
     unitMeasureId: [null, Validators.required],
     unitMeasureGoal: [null, Validators.required],
@@ -107,6 +116,7 @@ export class PatTaskUpsertModalComponent {
         this.form.reset({
           name: t?.name ?? '',
           areaId: t?.area?.id ?? null,
+          positionId: t?.position?.id ?? null,
           costCenterId: t?.costCenter?.id ?? null,
           pillarId: t?.pillar?.id ?? null,
           adendaId: t?.program?.id ?? null,
@@ -116,6 +126,7 @@ export class PatTaskUpsertModalComponent {
           description: t?.description ?? '',
         });
         if (t?.area) this.areaCtx.selectResults([t.area]);
+        if (t?.position) this.positionCtx.selectResults([t.position]);
         if (t?.costCenter) this.costCenterCtx.selectResults([t.costCenter]);
         if (t?.pillar) this.pillarCtx.selectResults([t.pillar]);
         if (t?.adenda) this.adendaCtx.selectResults([t.adenda]);

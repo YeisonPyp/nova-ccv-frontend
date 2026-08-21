@@ -44,6 +44,12 @@
           />
 
           <app-context-search-select
+            [ctx]="positionCtx"
+            label="Cargo responsable"
+            [required]="false"
+          />
+
+          <app-context-search-select
             [ctx]="costCenterCtx"
             label="Centro de costo"
             [required]="true"

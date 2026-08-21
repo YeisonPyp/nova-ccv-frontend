@@ -5,7 +5,9 @@
 
     <div class="flex flex-wrap items-center gap-4">
       @for (section of sections; track section.key) {
-        <label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">
+        <label
+          class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer"
+        >
           <input
             type="checkbox"
             class="accent-primary w-4 h-4"
@@ -18,64 +20,44 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-    <!-- ── Left column: programs + tasks ──────────────────────────────── -->
-    <div class="flex flex-col gap-4">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+    <!-- ── Left column: 5 de 12 columnas (41.6% aprox) ────────────────── -->
+    <div class="lg:col-span-5 flex flex-col gap-4">
       @if (isSectionVisible("programs")) {
-        <app-selectable-list
-          title="Programas"
-          [items]="programItems()"
-          [loading]="loadingPrograms()"
-          emptyMessage="No hay programas para los filtros seleccionados."
-          (selectionChange)="onProgramChange($event)"
+        <app-programs-section
+          [year]="year()"
+          [areaId]="areaId()"
+          (onSelectedPrograms)="onProgramChange($event)"
         />
       }
 
       @if (isSectionVisible("tasks")) {
-        <app-selectable-list
-          title="Tareas"
-          [items]="taskItems()"
-          [multiple]="true"
-          [loading]="loadingTasks()"
-          emptyMessage="No hay tareas para los filtros seleccionados."
-          (selectionChange)="onTasksChange($event)"
+        <app-tasks-section
+          class="h-full"
+          [year]="year()"
+          [areaId]="areaId() || undefined"
+          [programId]="programId()"
+          (selectedActivities)="onTasksChange($event)"
         />
       }
     </div>
 
-    <!-- ── Right column: budget + indicators ──────────────────────────── -->
-    <div class="flex flex-col gap-4">
+    <!-- ── Right column: 7 de 12 columnas (58.3% aprox) ───────────────── -->
+    <div class="lg:col-span-7 flex flex-col gap-4">
       @if (isSectionVisible("budget")) {
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-          <h3 class="text-sm font-semibold text-secondary m-0 mb-3">
-            Presupuesto
-          </h3>
-
-          @if (loadingBudget()) {
-            <p class="text-xs text-gray-400">Cargando presupuesto...</p>
-          } @else {
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-              <div class="md:col-span-1">
-                <app-execution-pie-chart
-                  [planned]="budget()?.totalPlanned ?? 0"
-                  [executed]="budget()?.totalExecuted ?? 0"
-                />
-              </div>
-              <div class="md:col-span-2">
-                <app-planned-executed-line-chart
-                  [plannedValues]="plannedValues()"
-                  [executedValues]="executedValues()"
-                />
-              </div>
-            </div>
-          }
-        </div>
+        <app-budget-section
+          [year]="year()"
+          [areaId]="areaId()"
+          [programId]="programId()"
+          [taskIds]="taskIds()"
+        />
       }
 
       @if (isSectionVisible("indicators")) {
         <app-indicator-progress-list
-          [indicators]="indicators()"
-          [loading]="loadingIndicators()"
+          [year]="year()"
+          [areaId]="areaId()"
+          [taskIds]="taskIds()"
         />
       }
     </div>

@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import { ApiResponse } from '@/app/core/models/api-response.model';
+import {
+  PatDashboardBudget,
+  PatDashboardFilters,
+} from '../../models/pat/pat-dashboard.models';
+import { PageableQueryParams } from '@/app/shared/pageable-query';
 
 export interface PresupuestalCategory {
   id: number;
@@ -54,6 +59,15 @@ export class PatPresupuestalCategoryService extends FilterServiceSpecImpl<
 > {
   constructor() {
     super('pat/v2/presupuestal-categories');
+  }
+
+  findSummary(
+    filters: PatDashboardFilters,
+  ): Observable<ApiResponse<PatDashboardBudget>> {
+    return this.http.get<ApiResponse<PatDashboardBudget>>(
+      `${this.baseUrl}/summary`,
+      { params: new PageableQueryParams(filters).getParams() },
+    );
   }
 
   // ── Ingresos ──

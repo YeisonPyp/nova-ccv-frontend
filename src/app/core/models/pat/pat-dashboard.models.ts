@@ -1,3 +1,5 @@
+import { PageableQuery } from '@/app/shared/pageable-query';
+
 /** Kind of measurable a PAT task tracks month to month. */
 export type PatIndicatorType = 'PRODUCT' | 'MANAGEMENT' | 'IMPACT';
 
@@ -46,7 +48,7 @@ export interface PatDashboardBudget {
 }
 
 /** Filters every dashboard section shares. */
-export interface PatDashboardFilters {
+export interface PatDashboardFilters extends PageableQuery {
   year?: number | null;
   areaId?: number | null;
   programId?: number | null;

@@ -85,6 +85,7 @@ export class PositionService {
   newSearchSelectContext(
     onSelectCallback?: OnSelectCallback<Position>,
     op?: SearchSelectContextFactoryOptions,
+    onRemoveCallback?: OnSelectCallback<Position>,
   ) {
     return new SearchSelectContextFactory<Position>(
       (term) =>
@@ -94,6 +95,7 @@ export class PositionService {
       (p) => ({ id: p.id, title: p.name }),
       onSelectCallback,
       op,
+      onRemoveCallback,
     );
   }
 }
