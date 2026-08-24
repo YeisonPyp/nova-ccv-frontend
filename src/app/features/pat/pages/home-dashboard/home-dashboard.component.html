@@ -57,6 +57,15 @@
         />
       }
 
+      @if (isSectionVisible("taskExecution")) {
+        <app-task-execution-section
+          [year]="year()"
+          [areaId]="areaId()"
+          [programId]="programId()"
+          [taskIds]="taskIds()"
+        />
+      }
+
       @if (isSectionVisible("indicators")) {
         <app-indicator-progress-list
           [year]="year()"

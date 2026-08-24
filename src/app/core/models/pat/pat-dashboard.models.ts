@@ -47,6 +47,17 @@ export interface PatDashboardBudget {
   monthly: PatDashboardBudgetMonth[];
 }
 
+/**
+ * One month of the task-execution chart: tasks that had to be worked on that
+ * month versus tasks that actually were, both read from the monthly quantity
+ * of each task's management indicator.
+ */
+export interface PatMonthlyTaskExecution {
+  month: number;
+  plannedTasks: number;
+  executedTasks: number;
+}
+
 /** Filters every dashboard section shares. */
 export interface PatDashboardFilters extends PageableQuery {
   year?: number | null;

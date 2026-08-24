@@ -1,0 +1,36 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-3">
+  <div class="flex items-baseline justify-between gap-3 flex-wrap">
+    <p class="text-sm font-semibold text-secondary m-0">
+      Ejecución mensual de tareas
+    </p>
+    <div class="flex items-center gap-4 text-xs">
+      <span class="text-gray-500">
+        Planeadas
+        <span class="font-semibold text-secondary">{{ totalPlanned() }}</span>
+      </span>
+      <span class="text-gray-500">
+        Ejecutadas
+        <span class="font-semibold text-primary">{{ totalExecuted() }}</span>
+      </span>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div
+      app-loading-spinner
+      [isLoading]="true"
+      class="py-10 flex justify-center"
+    ></div>
+  } @else if (totalPlanned() === 0 && totalExecuted() === 0) {
+    <p class="py-10 text-center text-xs text-gray-400 m-0">
+      No hay tareas planeadas para los filtros seleccionados.
+    </p>
+  } @else {
+    <app-planned-executed-bar-chart
+      [plannedValues]="plannedValues()"
+      [executedValues]="executedValues()"
+      plannedLabel="Tareas planeadas"
+      executedLabel="Tareas ejecutadas"
+    />
+  }
+</div>

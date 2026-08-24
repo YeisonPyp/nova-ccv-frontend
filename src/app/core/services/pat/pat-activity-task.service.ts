@@ -8,6 +8,7 @@ import {
   PatActivityTask,
 } from '../../models/pat/pat-models';
 import { APIPage } from '../../models/api-page.model';
+import { PatMonthlyTaskExecution } from '../../models/pat/pat-dashboard.models';
 import {
   PageableQuery,
   PageableQueryParams,
@@ -35,6 +36,14 @@ export interface UpdatePatActivityTaskDto {
   programId?: number | null;
   policyId?: number | null;
   description?: string | null;
+}
+
+/** Filters of the dashboard's monthly task-execution chart. */
+export interface PatMonthlyExecutionQuery extends PageableQuery {
+  year?: number | null;
+  areaId?: number | null;
+  programId?: number | null;
+  taskIds?: number[];
 }
 
 export interface FindTasksPageableQuery extends PageableQuery {
@@ -90,6 +99,19 @@ export class PatActivityTaskService {
     before?: string | null,
   ): Observable<ApiResponse<APIPage<PatActivityTask>>> {
     return this.findAll({ ...query, year, areaId, since, before });
+  }
+
+  /**
+   * Monthly planned-vs-executed task counts for the dashboard chart. All
+   * filters are optional and mirror the ones the other sections use.
+   */
+  findMonthlyExecution(
+    filters: PatMonthlyExecutionQuery,
+  ): Observable<ApiResponse<PatMonthlyTaskExecution[]>> {
+    return this.http.get<ApiResponse<PatMonthlyTaskExecution[]>>(
+      `${this.baseUrl}/tasks/monthly-execution`,
+      { params: new PageableQueryParams(filters).getParams() },
+    );
   }
 
   /** Every task of an area for a year, unpaginated (used by task selectors). */

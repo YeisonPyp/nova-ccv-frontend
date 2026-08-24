@@ -7,8 +7,14 @@ import { ProgramsSectionComponent } from './components/programs-section/programs
 import { TasksSectionComponent } from './components/tasks-section/tasks-section.component';
 import { BudgetSectionComponent } from './components/budget-section/budget-section.component';
 import { IndicatorProgressListComponent } from './components/indicator-progress-list/indicator-progress-list.component';
+import { TaskExecutionSectionComponent } from './components/task-execution-section/task-execution-section.component';
 
-type SectionKey = 'budget' | 'programs' | 'indicators' | 'tasks';
+type SectionKey =
+  | 'budget'
+  | 'programs'
+  | 'indicators'
+  | 'tasks'
+  | 'taskExecution';
 
 /**
  * Interactive PAT dashboard. Selections cascade downwards: the area scopes
@@ -26,6 +32,7 @@ type SectionKey = 'budget' | 'programs' | 'indicators' | 'tasks';
     TasksSectionComponent,
     BudgetSectionComponent,
     IndicatorProgressListComponent,
+    TaskExecutionSectionComponent,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './home-dashboard.component.html',
@@ -44,9 +51,16 @@ export class PatHomeDashboardComponent {
     { key: 'programs', label: 'Programas' },
     { key: 'indicators', label: 'Indicadores' },
     { key: 'tasks', label: 'Tareas' },
+    { key: 'taskExecution', label: 'Ejecución de tareas' },
   ];
   visibleSections = signal<Set<SectionKey>>(
-    new Set<SectionKey>(['budget', 'programs', 'indicators', 'tasks']),
+    new Set<SectionKey>([
+      'budget',
+      'programs',
+      'indicators',
+      'tasks',
+      'taskExecution',
+    ]),
   );
 
   // ── Data ──────────────────────────────────────────────────────────────
