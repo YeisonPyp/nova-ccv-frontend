@@ -1,63 +1,38 @@
+<!-- Drawer: always full width, slides in/out over the content. -->
 <aside
-  class="sidebar fixed left-0 top-0 border-r-2 border-r-border-primary flex flex-col w-72 h-screen bg-slate-900 transition-all overflow-hidden"
-  [class.w-18]="collapsed"
-  [class.collapsed]="collapsed"
+  class="sidebar border-r-2 border-r-border-primary flex flex-col w-72 h-full bg-white transition-all overflow-hidden"
 >
   <!-- Navigation -->
   <nav class="flex-1 overflow-y-auto overflow-x-hidden p-4">
     @if (isLoading()) {
       <div class="flex flex-col items-center justify-center gap-4 p-8">
-        <div
-          class="w-6 h-6 rounded-full border-2 border-slate-700 border-t-primary animate-spin"
-        ></div>
-        @if (!collapsed) {
-          <span class="text-sm">Cargando menú...</span>
-        }
+        <div app-loading-spinner [isLoading]="isLoading()"></div>
       </div>
     } @else {
       <!-- Quick Links -->
       <div class="mb-6">
-        @if (!collapsed) {
-          <span
-            class="block text-xs font-semibold uppercase tracking-wider px-3 mb-2 text-secondary"
-            >Principal</span
-          >
-        }
+        <span
+          class="block text-xs font-semibold uppercase tracking-wider px-3 mb-2 text-secondary"
+          >Principal</span
+        >
         <a
           routerLink="/dashboard"
           routerLinkActive="active"
           class="nav-item nav-item-hover"
-          [class.justify-center]="collapsed"
           [class.active]="true"
-          [title]="collapsed ? 'Dashboard' : ''"
         >
-          @if (!collapsed) {
-            <span class="text-sm font-medium whitespace-nowrap">Dashboard</span>
-          }
+          <span class="text-sm font-medium whitespace-nowrap">Dashboard</span>
         </a>
       </div>
 
       <!-- Dynamic Menu -->
       @if (menuNodes().length > 0) {
         <div class="mb-6">
-          @if (!collapsed) {
-            <span
-              class="block text-xs font-semibold uppercase tracking-wider px-3 mb-2 text-secondary"
-              >Módulos</span
-            >
-          }
-          @if (!collapsed) {
-            <app-tree-menu [menu]="menuNodes()" [level]="0" />
-          } @else {
-            <!-- Collapsed view - show only icons -->
-            @for (node of menuNodes(); track node.label) {
-              <div class="nav-item collapsed-item" [title]="node.label">
-                <span class="shrink-0 w-6 text-center text-xl">{{
-                  node.icon || ""
-                }}</span>
-              </div>
-            }
-          }
+          <span
+            class="block text-xs font-semibold uppercase tracking-wider px-3 mb-2 text-secondary"
+            >Módulos</span
+          >
+          <app-tree-menu [menu]="menuNodes()" [level]="0" />
         </div>
       }
     }

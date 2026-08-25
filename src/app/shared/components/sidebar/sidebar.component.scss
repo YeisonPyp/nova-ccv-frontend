@@ -2,38 +2,19 @@
 
 // Sidebar specific variables
 $sidebar-width: 280px;
-$sidebar-collapsed-width: 0px;
 $sidebar-bg: var(--color-primary);
 $sidebar-text: var(--color-secondary);
 $sidebar-active-bg: var(--color-primary);
 $primary-color: var(--color-primary);
-$transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 .sidebar {
-  @apply flex flex-col h-screen overflow-hidden sticky top-0;
+  @apply flex flex-col h-screen overflow-hidden;
   width: 300px;
-  background: var(--primary-background);
+  box-shadow: 0 0 24px rgba(15, 23, 42, 0.25);
   color: $sidebar-text;
   transition: $transition;
-
-  &.collapsed {
-    width: $sidebar-collapsed-width;
-
-    .logo-text,
-    .nav-label,
-    .nav-section-title,
-    .footer-info {
-      @apply opacity-0 invisible;
-    }
-
-    .nav-item {
-      @apply justify-center p-3;
-    }
-
-    .sidebar-nav {
-      @apply p-3;
-    }
-  }
+  z-index: 1000;
 }
 
 .sidebar-header {

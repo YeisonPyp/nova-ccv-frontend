@@ -171,3 +171,8 @@
     </div>
   </div>
 </header>
+<app-sidebar
+  class="absolute transition-transform duration-300 ease-in-out"
+  [class.collapsed]="isCollapsed()"
+  [attr.aria-hidden]="isCollapsed()"
+/>

@@ -55,7 +55,8 @@ export class MenuService {
   menuModules = signal<MenuModule[]>([]);
   menuNodes = signal<MenuNode[]>([]);
   isLoading = signal<boolean>(false);
-  isCollapsed = signal<boolean>(false);
+  /** The sidebar is an overlay drawer, so it starts closed. */
+  isCollapsed = signal<boolean>(true);
 
   /**
    * Cargar menú desde el backend
