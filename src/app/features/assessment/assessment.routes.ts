@@ -33,13 +33,6 @@ export const ASSESSMENT_ROUTES: Routes = [
     canActivate: [hasPermissionGuard(['ASSESSMENTS_UPDATE'])],
   },
   {
-    path: 'positions/:id',
-    loadComponent: () =>
-      import('./pages/positions/position-detail.component').then(
-        (m) => m.PositionDetailComponent,
-      ),
-  },
-  {
     path: 'surveys',
     loadComponent: () =>
       import('./pages/surveys/surveys-list.component').then(

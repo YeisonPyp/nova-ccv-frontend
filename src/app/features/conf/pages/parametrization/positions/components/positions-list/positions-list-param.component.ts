@@ -1,32 +1,34 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
-import { AuthService } from "@/app/core/services/auth.service";
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, signal } from '@angular/core';
+import { AuthService } from '@/app/core/services/auth.service';
 import {
   PositionService,
   CreatePositionDto,
   UpdatePositionDto,
-} from "@/app/core/services/assessment/position.service";
-import { Position } from "@/app/core/models/assessment/position.model";
+} from '@/app/core/services/assessment/position.service';
+import { Position } from '@/app/core/models/assessment/position.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
-import { JobModalComponent } from "../../job-modal/job-modal.component";
-import { Router } from "@angular/router";
-import { EditIconComponent } from "@/app/shared/components/edit-icon/edit-icon.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { JobModalComponent } from '../../job-modal/job-modal.component';
+import { Router } from '@angular/router';
+import { EditIconComponent } from '@/app/shared/components/edit-icon/edit-icon.component';
+import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 
 @Component({
-  selector: "app-positions-list-param",
+  selector: 'app-positions-list-param',
   standalone: true,
   imports: [
     CommonModule,
     DynamicTableComponent,
-    PaginationComponent,
+    PaginatorComponent,
     JobModalComponent,
     EditIconComponent,
+    ParametrizationSectionComponent,
   ],
-  templateUrl: "./positions-list-param.component.html",
+  templateUrl: './positions-list-param.component.html',
 })
 export class PositionsListParamComponent {
   private readonly auth = inject(AuthService);
@@ -39,6 +41,8 @@ export class PositionsListParamComponent {
   positionTotalPages = signal(0);
   positionsLoaded = signal(false);
 
+  isOpen = signal(false);
+
   jobModalOpen = signal(false);
   isEditPosition = signal(false);
   editingPosition = signal<Position | null>(null);
@@ -47,44 +51,44 @@ export class PositionsListParamComponent {
   deletingPosition = signal<Position | null>(null);
 
   positionColumns: TableColumn[] = [
-    { key: "name", label: "Nombre" },
-    { key: "areaName", label: "Área" },
-    { key: "description", label: "Descripción" },
+    { key: 'name', label: 'Nombre' },
+    { key: 'areaName', label: 'Área' },
+    { key: 'description', label: 'Descripción' },
   ];
 
+  constructor() {
+    effect(() => {
+      if (this.isOpen()) {
+        this.positionService
+          .findPositions({
+            page: this.positionPage() - 1,
+            size: this.positionSize(),
+          })
+          .subscribe({
+            next: (res) => {
+              if (res.success && res.data) {
+                this.positionsLoaded.set(true);
+                this.positions.set(res.data.content);
+                this.positionTotalPages.set(res.data.totalPages);
+              }
+            },
+            error: () => this.positionsLoaded.set(false),
+          });
+      }
+    });
+  }
+
   get canReadPosition() {
-    return this.auth.hasPermission("POSITION_READ");
+    return this.auth.hasPermission('POSITION_READ');
   }
   get canCreatePosition() {
-    return this.auth.hasPermission("POSITION_CREATE");
+    return this.auth.hasPermission('POSITION_CREATE');
   }
   get canUpdatePosition() {
-    return this.auth.hasPermission("POSITION_UPDATE");
+    return this.auth.hasPermission('POSITION_UPDATE');
   }
   get canDeletePosition() {
-    return this.auth.hasPermission("POSITION_DELETE");
-  }
-
-  onPositionsToggle(event: Event) {
-    if ((event.target as HTMLDetailsElement).open && !this.positionsLoaded()) {
-      this.loadPositions(1);
-    }
-  }
-
-  loadPositions(page: number) {
-    this.positionPage.set(page);
-    this.positionsLoaded.set(true);
-    this.positionService
-      .findPositions({ page: page - 1, size: this.positionSize() })
-      .subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.positions.set(res.data.content);
-            this.positionTotalPages.set(res.data.totalPages);
-          }
-        },
-        error: () => this.positionsLoaded.set(false),
-      });
+    return this.auth.hasPermission('POSITION_DELETE');
   }
 
   openCreatePosition() {
@@ -100,7 +104,7 @@ export class PositionsListParamComponent {
   }
 
   onPositionDetail(position: Position) {
-    this.router.navigate([`/assessment/positions/${position.id}`]);
+    this.router.navigate(['/conf/parametrization/positions', position.id]);
   }
 
   closeJobModal() {
@@ -117,14 +121,12 @@ export class PositionsListParamComponent {
         .subscribe({
           next: () => {
             this.closeJobModal();
-            this.loadPositions(this.positionPage());
           },
         });
     } else {
       this.positionService.createPosition(dto as CreatePositionDto).subscribe({
         next: () => {
           this.closeJobModal();
-          this.loadPositions(this.positionPage());
         },
       });
     }
@@ -146,7 +148,6 @@ export class PositionsListParamComponent {
     this.positionService.deletePosition(position.id).subscribe({
       next: () => {
         this.closeDeletePositionModal();
-        this.loadPositions(this.positionPage());
       },
     });
   }

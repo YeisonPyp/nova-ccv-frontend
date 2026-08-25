@@ -3,7 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Position } from '@/app/core/models/assessment/position.model';
 import { PositionService } from '@/app/core/services/assessment/position.service';
 import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
-import { PositionAssessmentComponentsComponent } from '../positions/components/position-assessment-component/position-assessment-components.component';
+import { PositionAssessmentComponentsComponent } from '@/app/features/conf/pages/parametrization/positions/components/positions-list/position-detail/position-assessment-component/position-assessment-components.component';
 
 @Component({
   selector: 'app-assignments',

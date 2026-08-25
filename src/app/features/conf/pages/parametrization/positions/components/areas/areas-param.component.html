@@ -2,7 +2,7 @@
   title="Áreas"
   createLabel="+ Nueva área"
   [canCreate]="canCreateArea"
-  (onOpen)="onAreasToggle($event)"
+  (onOpen)="isOpen.set($event)"
   (onCreate)="openCreateArea()"
 >
   @if (!areasLoaded()) {
@@ -31,10 +31,12 @@
         </ng-template>
       </app-dynamic-table>
 
-      <app-pagination
-        [pages]="areaTotalPages()"
+      <app-paginator
+        [totalPages]="areaTotalPages()"
+        [pageSize]="areaSize()"
         [currentPage]="areaPage()"
-        (pageChange)="loadAreas($event)"
+        (onSelectPage)="areaPage.set($event)"
+        (pageSizeChange)="areaSize.set($event)"
       />
     </div>
   }

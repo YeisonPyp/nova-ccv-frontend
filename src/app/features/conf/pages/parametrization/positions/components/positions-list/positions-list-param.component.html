@@ -1,10 +1,10 @@
-<details class="border rounded-lg" (toggle)="onPositionsToggle($event)">
-  <summary
-    class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
-  >
-    Cargos
-  </summary>
-
+<app-parametrization-section
+  title="Cargos"
+  createLabel="+ Nuevo cargo"
+  [canCreate]="canCreatePosition"
+  (onOpen)="isOpen.set($event)"
+  (onCreate)="openCreatePosition()"
+>
   <div class="p-4 space-y-3">
     @if (!positionsLoaded()) {
       <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
@@ -48,14 +48,16 @@
         </ng-template>
       </app-dynamic-table>
 
-      <app-pagination
-        [pages]="positionTotalPages()"
+      <app-paginator
+        [totalPages]="positionTotalPages()"
+        [pageSize]="positionSize()"
         [currentPage]="positionPage()"
-        (pageChange)="loadPositions($event)"
+        (onSelectPage)="positionPage.set($event)"
+        (pageSizeChange)="positionSize.set($event)"
       />
     }
   </div>
-</details>
+</app-parametrization-section>
 
 <app-job-modal
   [isOpen]="jobModalOpen()"

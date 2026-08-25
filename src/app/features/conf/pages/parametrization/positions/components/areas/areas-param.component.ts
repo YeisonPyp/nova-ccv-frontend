@@ -1,32 +1,32 @@
-import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { AuthService } from "@/app/core/services/auth.service";
-import { AreaService } from "@/app/core/services/assessment/area.service";
-import { Area } from "@/app/core/models/assessment/area.model";
+} from '@angular/forms';
+import { AuthService } from '@/app/core/services/auth.service';
+import { AreaService } from '@/app/core/services/assessment/area.service';
+import { Area } from '@/app/core/models/assessment/area.model';
 import {
   DynamicTableComponent,
   TableColumn,
-} from "@/app/shared/components/dynamic-table/dynamic-table.component";
-import { PaginationComponent } from "@/app/shared/components/pagination/pagination.component";
-import { ParametrizationSectionComponent } from "@/app/features/conf/components/parametrization-section.component";
+} from '@/app/shared/components/dynamic-table/dynamic-table.component';
+import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 
 @Component({
-  selector: "app-areas-param",
+  selector: 'app-areas-param',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     DynamicTableComponent,
-    PaginationComponent,
+    PaginatorComponent,
     ParametrizationSectionComponent,
   ],
-  templateUrl: "./areas-param.component.html",
+  templateUrl: './areas-param.component.html',
 })
 export class AreasParamComponent {
   private readonly auth = inject(AuthService);
@@ -38,61 +38,60 @@ export class AreasParamComponent {
   areaTotalPages = signal(0);
   areasLoaded = signal(false);
 
-  areaModalMode = signal<"create" | "update" | null>(null);
+  isOpen = signal(false);
+
+  areaModalMode = signal<'create' | 'update' | null>(null);
   showDeleteAreaModal = signal(false);
   editingArea = signal<Area | null>(null);
 
   areaForm = new FormGroup({
-    name: new FormControl("", [Validators.required, Validators.maxLength(50)]),
+    name: new FormControl('', [Validators.required, Validators.maxLength(50)]),
   });
 
-  areaColumns: TableColumn[] = [{ key: "name", label: "Nombre" }];
+  areaColumns: TableColumn[] = [{ key: 'name', label: 'Nombre' }];
+
+  constructor() {
+    effect(() => {
+      if (this.isOpen()) {
+        this.areaService
+          .findAreas({ page: this.areaPage() - 1, size: this.areaSize() })
+          .subscribe({
+            next: (res) => {
+              if (res.success && res.data) {
+                this.areasLoaded.set(true);
+                this.areas.set(res.data.content);
+                this.areaTotalPages.set(res.data.totalPages);
+              }
+            },
+            error: () => this.areasLoaded.set(false),
+          });
+      }
+    });
+  }
 
   get canReadArea() {
-    return this.auth.hasPermission("AREA_READ");
+    return this.auth.hasPermission('AREA_READ');
   }
   get canCreateArea() {
-    return this.auth.hasPermission("AREA_CREATE");
+    return this.auth.hasPermission('AREA_CREATE');
   }
   get canUpdateArea() {
-    return this.auth.hasPermission("AREA_UPDATE");
+    return this.auth.hasPermission('AREA_UPDATE');
   }
   get canDeleteArea() {
-    return this.auth.hasPermission("AREA_DELETE");
-  }
-
-  onAreasToggle(open: boolean) {
-    if (open && !this.areasLoaded()) {
-      this.loadAreas(1);
-    }
-  }
-
-  loadAreas(page: number) {
-    this.areaPage.set(page);
-    this.areasLoaded.set(true);
-    this.areaService
-      .findAreas({ page: page - 1, size: this.areaSize() })
-      .subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.areas.set(res.data.content);
-            this.areaTotalPages.set(res.data.totalPages);
-          }
-        },
-        error: () => this.areasLoaded.set(false),
-      });
+    return this.auth.hasPermission('AREA_DELETE');
   }
 
   openCreateArea() {
-    this.areaForm.reset({ name: "" });
+    this.areaForm.reset({ name: '' });
     this.editingArea.set(null);
-    this.areaModalMode.set("create");
+    this.areaModalMode.set('create');
   }
 
   openEditArea(area: Area) {
     this.areaForm.reset({ name: area.name });
     this.editingArea.set(area);
-    this.areaModalMode.set("update");
+    this.areaModalMode.set('update');
   }
 
   closeAreaModal() {
@@ -104,19 +103,17 @@ export class AreasParamComponent {
     const { name } = this.areaForm.value;
     const dto = { name: name! };
     const mode = this.areaModalMode();
-    if (mode === "create") {
+    if (mode === 'create') {
       this.areaService.createArea(dto).subscribe({
         next: () => {
           this.closeAreaModal();
-          this.loadAreas(this.areaPage());
         },
       });
-    } else if (mode === "update") {
+    } else if (mode === 'update') {
       const area = this.editingArea()!;
       this.areaService.updateArea(area.id, dto).subscribe({
         next: () => {
           this.closeAreaModal();
-          this.loadAreas(this.areaPage());
         },
       });
     }
@@ -138,7 +135,6 @@ export class AreasParamComponent {
     this.areaService.deleteArea(area.id).subscribe({
       next: () => {
         this.closeDeleteAreaModal();
-        this.loadAreas(this.areaPage());
       },
     });
   }
