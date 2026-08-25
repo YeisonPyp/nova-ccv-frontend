@@ -4,21 +4,37 @@
   @if (!loading() && detail(); as r) {
     <!-- Header -->
     <div class="flex items-center gap-4">
-      <button type="button" class="text-gray-500 hover:text-gray-700" (click)="goBack()">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      <button
+        type="button"
+        class="text-gray-500 hover:text-gray-700"
+        (click)="goBack()"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
         </svg>
       </button>
       <div>
         <div class="flex items-center gap-3">
           <h1 class="text-2xl font-bold text-gray-900">{{ r.topic }}</h1>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
+          >
             {{ r.status }}
           </span>
         </div>
         <p class="text-sm text-gray-500">
-          {{ r.trainingTopicName }} · {{ r.modalityName }} · {{ r.duration }} h ·
+          {{ r.trainingTopicName }} · {{ r.modalityName }} · {{ r.duration }} h
+          ·
           {{ r.createdAt | date: "mediumDate" }}
         </p>
       </div>
@@ -26,7 +42,9 @@
 
     <!-- Info -->
     <section class="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
-      <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">Información</h3>
+      <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">
+        Información
+      </h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
         <div>
           <dt class="text-xs text-gray-400 uppercase">Solicitante</dt>
@@ -60,7 +78,9 @@
         }
         <div class="sm:col-span-2 lg:col-span-3">
           <dt class="text-xs text-gray-400 uppercase">Justificación</dt>
-          <dd class="text-gray-700 mt-1 wrap-break-word">{{ r.justification }}</dd>
+          <dd class="text-gray-700 mt-1 wrap-break-word">
+            {{ r.justification }}
+          </dd>
         </div>
         @if (r.content) {
           <div class="sm:col-span-2 lg:col-span-3">
@@ -74,7 +94,9 @@
     <!-- Response -->
     @if (r.response) {
       <section class="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
-        <h3 class="text-sm font-semibold text-gray-700 uppercase mb-2">Respuesta</h3>
+        <h3 class="text-sm font-semibold text-gray-700 uppercase mb-2">
+          Respuesta
+        </h3>
         <p class="text-sm text-gray-700 wrap-break-word">{{ r.response }}</p>
         <p class="text-xs text-gray-400 mt-1">
           {{ r.responseDate | date: "short" }}
@@ -87,7 +109,7 @@
       <h3 class="text-sm font-semibold text-gray-700 uppercase mb-4">
         Empleados solicitados
       </h3>
-      @if (r.employees?.length) {
+      @if (r.employees.length) {
         <ul class="divide-y divide-gray-100">
           @for (e of r.employees; track e.id) {
             <li class="py-2">
@@ -107,7 +129,9 @@
     @if (canManage || canConvert) {
       <div class="flex flex-wrap justify-end gap-3">
         @if (canManage && !r.responseDate) {
-          <button class="btn btn-secondary" (click)="redirect()">Redirigir</button>
+          <button class="btn btn-secondary" (click)="redirect()">
+            Redirigir
+          </button>
           <button class="btn btn-primary" (click)="respondOpen.set(true)">
             Responder
           </button>
@@ -127,7 +151,11 @@
   <div class="modal-overlay" (click)="respondOpen.set(false)">
     <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Responder solicitud</h2>
-      <form [formGroup]="respondForm" (ngSubmit)="submitRespond()" class="space-y-3">
+      <form
+        [formGroup]="respondForm"
+        (ngSubmit)="submitRespond()"
+        class="space-y-3"
+      >
         <div>
           <label class="block text-sm font-medium mb-1">Estado *</label>
           <select formControlName="status" class="form-control w-full">
@@ -137,13 +165,25 @@
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Respuesta *</label>
-          <textarea rows="3" formControlName="response" class="form-control w-full"></textarea>
+          <textarea
+            rows="3"
+            formControlName="response"
+            class="form-control w-full"
+          ></textarea>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="respondOpen.set(false)">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="respondOpen.set(false)"
+          >
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" [disabled]="respondForm.invalid || saving()">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="respondForm.invalid || saving()"
+          >
             Guardar
           </button>
         </div>
@@ -157,7 +197,11 @@
   <div class="modal-overlay" (click)="convertOpen.set(false)">
     <div class="modal-container" (click)="$event.stopPropagation()">
       <h2 class="modal-title">Convertir en capacitación</h2>
-      <form [formGroup]="convertForm" (ngSubmit)="submitConvert()" class="space-y-3">
+      <form
+        [formGroup]="convertForm"
+        (ngSubmit)="submitConvert()"
+        class="space-y-3"
+      >
         <div>
           <app-search-select
             label="Responsable *"
@@ -172,37 +216,70 @@
         <div class="grid grid-cols-2 gap-3">
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Capacitador *</span>
-            <select app-selector [options]="trainers() ?? []"
-              formControlName="trainerId" class="form-control"></select>
+            <select
+              app-selector
+              [options]="trainers() ?? []"
+              formControlName="trainerId"
+              class="form-control"
+            ></select>
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Área</span>
-            <select app-selector [options]="areas() ?? []"
-              formControlName="areaId" class="form-control"></select>
+            <select
+              app-selector
+              [options]="areas() ?? []"
+              formControlName="areaId"
+              class="form-control"
+            ></select>
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Lugar *</span>
-            <input type="text" formControlName="location" class="form-control" />
+            <input
+              type="text"
+              formControlName="location"
+              class="form-control"
+            />
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Costo *</span>
-            <input type="number" min="0" formControlName="cost" class="form-control" />
+            <input
+              type="number"
+              min="0"
+              formControlName="cost"
+              class="form-control"
+            />
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Fecha *</span>
-            <input type="datetime-local" formControlName="scheduledDate" class="form-control" />
+            <input
+              type="datetime-local"
+              formControlName="scheduledDate"
+              class="form-control"
+            />
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Estado *</span>
-            <select app-selector [options]="statuses() ?? []"
-              formControlName="status" class="form-control"></select>
+            <select
+              app-selector
+              [options]="statuses() ?? []"
+              formControlName="status"
+              class="form-control"
+            ></select>
           </label>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="convertOpen.set(false)">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="convertOpen.set(false)"
+          >
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" [disabled]="convertForm.invalid || saving()">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="convertForm.invalid || saving()"
+          >
             Convertir
           </button>
         </div>

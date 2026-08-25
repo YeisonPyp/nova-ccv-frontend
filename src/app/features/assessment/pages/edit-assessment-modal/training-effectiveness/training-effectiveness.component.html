@@ -90,8 +90,8 @@
                   <input
                     type="number"
                     class="form-control w-24 text-sm text-right shrink-0"
-                    [min]="answer.question.minValue ?? 0"
-                    [max]="answer.question.maxValue ?? 5"
+                    [min]="answer.question.minValue || 0"
+                    [max]="answer.question.maxValue || 5"
                     [disabled]="!canEdit(s.assessment)"
                     [ngModel]="
                       scoreOf(s.trainingAssessmentId, answer.question.id)

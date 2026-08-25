@@ -14,7 +14,6 @@ import { AssessmentYearMetricsComponent } from './assessment-year-metrics/assess
   imports: [
     CommonModule,
     RouterLink,
-    AssessmentTableComponent,
     PaginatorComponent,
     PeriodCardComponent,
     LoadingSpinnerComponent,

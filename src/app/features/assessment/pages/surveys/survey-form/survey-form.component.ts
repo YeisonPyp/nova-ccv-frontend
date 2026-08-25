@@ -8,17 +8,11 @@ import {
 } from '@/app/core/models/assessment/survey.model';
 import { SurveyService } from '@/app/core/services/assessment/survey.service';
 import { SurveyQuestionsComponent } from './survey-questions/survey-questions.component';
-import { EditIconComponent } from '@/app/shared/components/edit-icon/edit-icon.component';
 
 @Component({
   selector: 'app-survey-form',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    SurveyQuestionsComponent,
-    EditIconComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, SurveyQuestionsComponent],
   templateUrl: './survey-form.component.html',
 })
 export class SurveyFormComponent implements OnInit {

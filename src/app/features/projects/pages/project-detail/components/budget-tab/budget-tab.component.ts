@@ -9,12 +9,7 @@ import { PatActivityBudgetMatrix } from '@/app/core/models/pat/pat-models';
 @Component({
   selector: 'app-budget-tab',
   standalone: true,
-  imports: [
-    CommonModule,
-    CurrencyPipe,
-    LoadingSpinnerComponent,
-    BudgetCalculationComponent,
-  ],
+  imports: [CommonModule, LoadingSpinnerComponent, BudgetCalculationComponent],
   templateUrl: './budget-tab.component.html',
 })
 export class BudgetTabComponent {

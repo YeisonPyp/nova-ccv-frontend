@@ -13,7 +13,6 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from '@/app/shared/components/dynamic-table/dynamic-table.component';
-import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
 import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
 
 @Component({
@@ -23,7 +22,6 @@ import { ParametrizationSectionComponent } from '@/app/features/conf/components/
     CommonModule,
     ReactiveFormsModule,
     DynamicTableComponent,
-    PaginationComponent,
     ParametrizationSectionComponent,
   ],
   templateUrl: './control-entity-param.component.html',

@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { CommonModule, NgComponentOutlet } from '@angular/common';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -20,10 +27,6 @@ type TabKey = 'programs' | 'tacticalActivities' | 'tasks';
   standalone: true,
   imports: [
     CommonModule,
-    ProgramsAndAdendasSectionComponent,
-    TacticalActivitiesTabComponent,
-    TasksTabComponent,
-    AreaBudgetReportComponent,
     AreaTreeChipsComponent,
     ExecutionPieChartComponent,
     PlannedExecutedLineChartComponent,
@@ -58,14 +61,20 @@ export class DashboardComponent {
     if (!planned) return null;
     return (this.totalExecuted() / planned) * 100;
   });
-  plannedValues = computed(() => this.monthlyTotalsSorted().map((m) => m.plannedBudget ?? 0));
-  executedValues = computed(() => this.monthlyTotalsSorted().map((m) => m.executedBudget ?? 0));
+  plannedValues = computed(() =>
+    this.monthlyTotalsSorted().map((m) => m.plannedBudget ?? 0),
+  );
+  executedValues = computed(() =>
+    this.monthlyTotalsSorted().map((m) => m.executedBudget ?? 0),
+  );
 
   private monthlyTotalsSorted = computed(() => {
     const byMonth = new Map(this.monthlyTotals().map((m) => [m.month, m]));
     return Array.from({ length: 12 }, (_, i) => {
       const month = i + 1;
-      return byMonth.get(month) ?? { month, plannedBudget: 0, executedBudget: 0 };
+      return (
+        byMonth.get(month) ?? { month, plannedBudget: 0, executedBudget: 0 }
+      );
     });
   });
 
@@ -97,9 +106,11 @@ export class DashboardComponent {
     effect(() => {
       const year = this.year();
       const areaId = this.selectedAreaId();
-      this.reportService.findMonthlyBudgetTotals(year, areaId).subscribe((res) => {
-        if (res.success && res.data) this.monthlyTotals.set(res.data);
-      });
+      this.reportService
+        .findMonthlyBudgetTotals(year, areaId)
+        .subscribe((res) => {
+          if (res.success && res.data) this.monthlyTotals.set(res.data);
+        });
     });
   }
 

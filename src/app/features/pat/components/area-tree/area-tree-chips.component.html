@@ -82,7 +82,7 @@
           (click)="select(currentLevel(), node.id)"
         >
           <span>{{ node.name }}</span>
-          @if (node.children?.length) {
+          @if (node.children.length) {
             <span
               class="text-[10px]"
               [class]="

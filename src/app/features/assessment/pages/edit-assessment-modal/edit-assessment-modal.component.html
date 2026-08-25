@@ -165,7 +165,7 @@
       }
 
       <!-- ── TRAINING EFFECTIVENESS (does not affect the average) ── -->
-      @if (trainingAssessments()?.length) {
+      @if (trainingAssessments().length) {
         <app-training-effectiveness
           [assessments]="trainingAssessments()!"
           [isDisabled]="isReadonly()"

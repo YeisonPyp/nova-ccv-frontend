@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '@/app/core/services/auth.service';
 import { ContractManagementPlanService } from '@/app/core/services/contract/contract-management-plan.service';
 import { ContractManagementNotificationConfigService } from '@/app/core/services/contract/contract-management-notification-config.service';
@@ -15,7 +21,6 @@ import {
 import { PaginationTableComponent } from '@/app/shared/components/pagination-table/pagination-table.component';
 import { TableColumn } from '@/app/shared/components/dynamic-table/dynamic-table.component';
 import { ParametrizationSectionComponent } from '@/app/features/conf/components/parametrization-section.component';
-import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-contract-management-dashboard',
@@ -27,14 +32,15 @@ import { LoadingSpinnerComponent } from '@/app/shared/components/loading-spinner
     ReactiveFormsModule,
     PaginationTableComponent,
     ParametrizationSectionComponent,
-    LoadingSpinnerComponent,
   ],
   templateUrl: './contract-management-dashboard.component.html',
 })
 export class ContractManagementDashboardComponent {
   private readonly auth = inject(AuthService);
   protected readonly service = inject(ContractManagementPlanService);
-  private readonly configService = inject(ContractManagementNotificationConfigService);
+  private readonly configService = inject(
+    ContractManagementNotificationConfigService,
+  );
 
   year = signal<number>(new Date().getFullYear());
   baseRsqlQuery = computed(() => `year==${this.year()}`);
@@ -65,8 +71,7 @@ export class ContractManagementDashboardComponent {
   });
 
   hasFilters = computed(
-    () =>
-      !!this.since() || !!this.before() || this.selectedStatuses().size > 0,
+    () => !!this.since() || !!this.before() || this.selectedStatuses().size > 0,
   );
 
   onCutOffChange(field: 'since' | 'before', event: Event): void {
@@ -96,7 +101,8 @@ export class ContractManagementDashboardComponent {
     {
       key: 'position',
       label: 'Cargo responsable',
-      valueCallBack: (item: ContractManagementPlan) => item.position?.name ?? '',
+      valueCallBack: (item: ContractManagementPlan) =>
+        item.position?.name ?? '',
     },
     { key: 'task', label: 'Tarea' },
     { key: 'processType', label: 'Tipo de proceso' },

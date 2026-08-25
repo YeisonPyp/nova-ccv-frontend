@@ -14,12 +14,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-adenda-program-summary-section',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ContextSearchSelectComponent,
-    DynamicTableComponent,
-  ],
+  imports: [CommonModule, FormsModule, DynamicTableComponent],
   templateUrl: './adenda-program-summary-section.component.html',
 })
 export class AdendaProgramSummarySectionComponent {

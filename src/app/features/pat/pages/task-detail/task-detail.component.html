@@ -33,7 +33,7 @@
           Área
         </p>
         <p class="text-sm font-medium text-gray-700">
-          {{ t.area?.name ?? "—" }}
+          {{ t.area.name || "—" }}
         </p>
       </div>
 
@@ -55,7 +55,7 @@
           Centro de Costo
         </p>
         <p class="text-sm font-medium text-gray-700">
-          {{ t.costCenter?.name ?? "—" }}
+          {{ t.costCenter.name || "—" }}
         </p>
       </div>
 
