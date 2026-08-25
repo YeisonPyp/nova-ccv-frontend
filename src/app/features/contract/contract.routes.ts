@@ -1,81 +1,81 @@
-import { hasPermissionGuard } from "@/app/shared/guards/has-permission.guard";
-import { Routes } from "@angular/router";
+import { hasPermissionGuard } from '@/app/shared/guards/has-permission.guard';
+import { Routes } from '@angular/router';
 
 export const CONTRACT_ROUTES: Routes = [
   {
-    path: "management",
+    path: 'management',
     loadComponent: () =>
-      import("./pages/management/contract-management-dashboard.component").then(
+      import('./pages/management/contract-management-dashboard.component').then(
         (m) => m.ContractManagementDashboardComponent,
       ),
-    canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_READ"])],
+    canActivate: [hasPermissionGuard(['CONTRACT_MANAGEMENT_PLAN_READ'])],
   },
   {
-    path: "management/plans/create",
+    path: 'management/plans/create',
     loadComponent: () =>
-      import(
-        "./pages/management/contract-management-plan-detail/contract-management-plan-detail.component"
-      ).then((m) => m.ContractManagementPlanDetailComponent),
-    canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_CREATE"])],
+      import('./pages/management/contract-management-plan-detail/contract-management-plan-detail.component').then(
+        (m) => m.ContractManagementPlanDetailComponent,
+      ),
+    canActivate: [hasPermissionGuard(['CONTRACT_MANAGEMENT_PLAN_CREATE'])],
   },
   {
-    path: "management/plans/:id",
+    path: 'management/plans/:id',
     loadComponent: () =>
-      import(
-        "./pages/management/contract-management-plan-detail/contract-management-plan-detail.component"
-      ).then((m) => m.ContractManagementPlanDetailComponent),
-    canActivate: [hasPermissionGuard(["CONTRACT_MANAGEMENT_PLAN_READ"])],
+      import('./pages/management/contract-management-plan-detail/contract-management-plan-detail.component').then(
+        (m) => m.ContractManagementPlanDetailComponent,
+      ),
+    canActivate: [hasPermissionGuard(['CONTRACT_MANAGEMENT_PLAN_READ'])],
   },
   {
-    path: "dashboard",
+    path: 'dashboard',
     loadComponent: () =>
-      import("./pages/seed-dashboard/contract-seed-dashboard.component").then(
+      import('./pages/seed-dashboard/contract-seed-dashboard.component').then(
         (m) => m.ContractSeedDashboardComponent,
       ),
-    canActivate: [hasPermissionGuard(["CONTRACT_READ"])],
+    canActivate: [hasPermissionGuard(['CONTRACT_READ'])],
   },
   {
-    path: "create/employee",
+    path: 'create/natural',
     loadComponent: () =>
-      import("./pages/create-employee-contract/create-employee-contract.component").then(
+      import('./pages/create-employee-contract/create-employee-contract.component').then(
         (m) => m.CreateEmployeeContractComponent,
       ),
-    canActivate: [hasPermissionGuard(["CONTRACT_CREATE"])],
+    canActivate: [hasPermissionGuard(['CONTRACT_CREATE'])],
   },
   {
-    path: "create/agency",
+    path: 'create/agency',
     loadComponent: () =>
-      import("./pages/create-agency-contract/create-agency-contract.component").then(
+      import('./pages/create-agency-contract/create-agency-contract.component').then(
         (m) => m.CreateAgencyContractComponent,
       ),
   },
   {
-    path: "assignment/:id",
+    path: 'assignment/:id',
     loadComponent: () =>
-      import("./pages/contract-assignment-detail/contract-assignment-detail.component").then(
+      import('./pages/contract-assignment-detail/contract-assignment-detail.component').then(
         (m) => m.ContractAssignmentDetailComponent,
       ),
-    canActivate: [hasPermissionGuard(["CONTRACT_ASSIGNMENTS_READ"])],
+    canActivate: [hasPermissionGuard(['CONTRACT_ASSIGNMENTS_READ'])],
   },
   {
-    path: ":contractId/process/:processId",
+    path: ':contractId/process/:processId',
     loadComponent: () =>
-      import("./pages/contract-process-detail/contract-process-detail.component").then(
+      import('./pages/contract-process-detail/contract-process-detail.component').then(
         (m) => m.ContractProcessDetailComponent,
       ),
     canActivate: [
       hasPermissionGuard([
-        "CONTRACT_PENDING_PROCESS_READ",
-        "CONTRACT_PENDING_PROCESS_UPDATE",
+        'CONTRACT_PENDING_PROCESS_READ',
+        'CONTRACT_PENDING_PROCESS_UPDATE',
       ]),
     ],
   },
   {
-    path: ":id",
+    path: ':id',
     loadComponent: () =>
-      import("./pages/contract-detail/contract-detail.component").then(
+      import('./pages/contract-detail/contract-detail.component').then(
         (m) => m.ContractDetailComponent,
       ),
-    canActivate: [hasPermissionGuard(["CONTRACT_READ"])],
+    canActivate: [hasPermissionGuard(['CONTRACT_READ'])],
   },
 ];

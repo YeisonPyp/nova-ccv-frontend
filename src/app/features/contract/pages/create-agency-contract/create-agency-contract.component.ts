@@ -12,21 +12,23 @@ import { ContractFilingFileNameService } from "@/app/core/services/contract/cont
 import { AreaService } from "@/app/core/services/assessment/area.service";
 import { CostCenterService } from "@/app/core/services/cost-center/cost-center.service";
 import { AgencyService } from "@/app/core/services/contract/agency.service";
+import { PositionService } from "@/app/core/services/assessment/position.service";
+import {
+  PatPresupuestalCategoryService,
+  PresupuestalCategory,
+} from "@/app/core/services/pat/pat-presupuestal-category.service";
 import {
   ContractTypeService,
   ContractType,
 } from "@/app/core/services/contract/contract-type.service";
-import { CotizationTypeService } from "@/app/core/services/contract/cotization-type.service";
 import { SearchSelectContextFactory } from "@/app/shared/components/search-select/on-search-select.interface";
 import { SearchSelectComponent } from "@/app/shared/components/search-select/search-select.component";
 import { Area } from "@/app/core/models/assessment/area.model";
 import { CostCenter } from "@/app/core/models/cost-center/cost-center.models";
 import { Agency } from "@/app/core/models/contract/agency.model";
 import { ContractFilingFileName } from "@/app/core/models/contract/contract.models";
-import {
-  ContractStatus,
-  CotizationType,
-} from "@/app/core/models/contract/contract-params.model";
+import { ContractStatus } from "@/app/core/models/contract/contract-params.model";
+import { Position } from "@/app/core/models/assessment/position.model";
 import { ContractParamsService } from "@/app/core/services/contract/contract-params.service";
 
 @Component({
@@ -44,14 +46,16 @@ export class CreateAgencyContractComponent implements OnInit {
   private readonly areaService = inject(AreaService);
   private readonly costCenterService = inject(CostCenterService);
   private readonly agencyService = inject(AgencyService);
+  private readonly positionService = inject(PositionService);
+  private readonly presupuestalCategoryService = inject(
+    PatPresupuestalCategoryService,
+  );
   private readonly contractTypeService = inject(ContractTypeService);
-  private readonly cotizationTypeService = inject(CotizationTypeService);
   private readonly contractParamService = inject(ContractParamsService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
   contractTypes = signal<ContractType[]>([]);
-  cotizationTypes = signal<CotizationType[]>([]);
   statusOptions = signal<ContractStatus[]>([]);
 
   submitting = signal(false);
@@ -63,25 +67,25 @@ export class CreateAgencyContractComponent implements OnInit {
   areaCtx: SearchSelectContextFactory<Area>;
   costCenterCtx: SearchSelectContextFactory<CostCenter>;
   agencyCtx: SearchSelectContextFactory<Agency>;
+  positionCtx: SearchSelectContextFactory<Position>;
+  presupuestalCategoryCtx: SearchSelectContextFactory<PresupuestalCategory>;
 
   constructor() {
     this.form = this.fb.group({
       contractId: ["", Validators.required],
       contractTypeName: ["", Validators.required],
       statusName: ["", Validators.required],
-      cotizationTypeName: ["", Validators.required],
       areaId: [null, Validators.required],
       costCenterId: [null, Validators.required],
       agencyId: [null, Validators.required],
+      positionId: [null, Validators.required],
+      presupuestalCategoryId: [null, Validators.required],
       identification: ["", Validators.required],
       starts: ["", Validators.required],
       ends: [""],
       basePeriodAmount: [null, [Validators.required, Validators.min(0)]],
       periodDays: [null, [Validators.required, Validators.min(1)]],
       periods: [null, [Validators.required, Validators.min(1)]],
-      filingOrigin: ["", Validators.required],
-      filingDestination: ["", Validators.required],
-      retentionProcess: [null],
       zone: [""],
     });
 
@@ -94,6 +98,13 @@ export class CreateAgencyContractComponent implements OnInit {
     this.agencyCtx = this.agencyService.newSearchSelectContext((agency) =>
       this.form.patchValue({ agencyId: agency.id }),
     );
+    this.positionCtx = this.positionService.newSearchSelectContext((pos) =>
+      this.form.patchValue({ positionId: pos.id }),
+    );
+    this.presupuestalCategoryCtx =
+      this.presupuestalCategoryService.newSearchSelectContext((category) =>
+        this.form.patchValue({ presupuestalCategoryId: category.id }),
+      );
   }
 
   ngOnInit(): void {
@@ -103,9 +114,6 @@ export class CreateAgencyContractComponent implements OnInit {
     this.contractTypeService
       .findAll()
       .subscribe((res) => this.contractTypes.set(res.data ?? []));
-    this.cotizationTypeService
-      .getCotizationTypes()
-      .subscribe((res) => this.cotizationTypes.set(res.data ?? []));
     this.filingFileNameService
       .findAll()
       .subscribe((res) => this.filingFileNames.set(res.data ?? []));
@@ -170,19 +178,17 @@ export class CreateAgencyContractComponent implements OnInit {
           contractId: v.contractId,
           contractTypeName: v.contractTypeName,
           statusName: v.statusName,
-          cotizationTypeName: v.cotizationTypeName,
           areaId: v.areaId,
           costCenterId: v.costCenterId,
           agencyId: v.agencyId,
+          positionId: v.positionId,
+          presupuestalCategoryId: v.presupuestalCategoryId,
           identification: v.identification,
           starts: v.starts,
           ends: v.ends || null,
           basePeriodAmount: v.basePeriodAmount,
           periodDays: v.periodDays,
           periods: v.periods,
-          filingOrigin: v.filingOrigin,
-          filingDestination: v.filingDestination,
-          retentionProcess: v.retentionProcess || null,
           zone: v.zone || null,
         },
         this.selectedFiles(),

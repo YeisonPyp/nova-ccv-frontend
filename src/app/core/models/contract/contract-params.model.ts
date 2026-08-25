@@ -16,6 +16,13 @@ export interface EpsEntity {
   description: string | null;
 }
 
+/** Administradora de Riesgos Laborales a contract is affiliated to. */
+export interface ArlEntity {
+  id: number;
+  name: string;
+  description: string | null;
+}
+
 export interface CotizationType {
   id: number;
   name: string;

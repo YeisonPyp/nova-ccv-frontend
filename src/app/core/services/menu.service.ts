@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable, tap, of, catchError } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { ApiResponse } from "../models/api-response.model";
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, of, catchError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../models/api-response.model';
 
 export interface MenuModule {
   id: number;
@@ -41,11 +41,11 @@ export interface MenuNode {
   external?: boolean;
   expanded?: boolean;
   children?: MenuNode[];
-  target?: "_blank" | "_self";
+  target?: '_blank' | '_self';
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class MenuService {
   private http = inject(HttpClient);
@@ -72,7 +72,7 @@ export class MenuService {
         this.isLoading.set(false);
       }),
       catchError((error) => {
-        console.error("Error cargando menú:", error);
+        console.error('Error cargando menú:', error);
         this.isLoading.set(false);
         // Cargar menú de fallback
         this.menuNodes.set(this.getFallbackMenu());
@@ -109,9 +109,9 @@ export class MenuService {
     return routes.map((route) => ({
       label: route.name,
       icon: route.icon,
-      route: route.path === "#" ? undefined : route.path,
+      route: route.path === '#' ? undefined : route.path,
       external: route.external,
-      target: route.openInNewTab ? ("_blank" as const) : ("_self" as const),
+      target: route.openInNewTab ? ('_blank' as const) : ('_self' as const),
       expanded: false,
       children: route.subRoutes?.length
         ? this.transformRoutes(route.subRoutes)
@@ -125,25 +125,25 @@ export class MenuService {
   private getFallbackMenu(): MenuNode[] {
     return [
       {
-        label: "Dashboard",
-        icon: "🏠",
-        route: "/dashboard",
+        label: 'Dashboard',
+        icon: '',
+        route: '/dashboard',
       },
       {
-        label: "PAT",
-        icon: "📊",
+        label: 'PAT',
+        icon: '',
         expanded: true,
         children: [
-          { label: "Dashboard PAT", icon: "📈", route: "/pat/dashboard" },
-          { label: "Programas", icon: "📋", route: "/pat/programs" },
+          { label: 'Dashboard PAT', icon: '📈', route: '/pat/dashboard' },
+          { label: 'Programas', icon: '📋', route: '/pat/programs' },
         ],
       },
       {
-        label: "Configuración",
-        icon: "⚙️",
+        label: 'Configuración',
+        icon: '',
         children: [
-          { label: "Usuarios", icon: "👥", route: "/settings/users" },
-          { label: "Roles", icon: "🔐", route: "/settings/roles" },
+          { label: 'Usuarios', icon: '👥', route: '/settings/users' },
+          { label: 'Roles', icon: '🔐', route: '/settings/roles' },
         ],
       },
     ];

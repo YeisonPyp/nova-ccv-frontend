@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec.service';
 import { ApiResponse } from '@/app/core/models/api-response.model';
 import {
@@ -7,6 +7,13 @@ import {
   PatDashboardFilters,
 } from '../../models/pat/pat-dashboard.models';
 import { PageableQueryParams } from '@/app/shared/pageable-query';
+import builder from '@rsql/builder';
+import { emit } from '@rsql/emitter';
+import {
+  OnSelectCallback,
+  SearchSelectContextFactory,
+  SearchSelectContextFactoryOptions,
+} from '@/app/shared/components/search-select/on-search-select.interface';
 
 export interface PresupuestalCategory {
   id: number;
@@ -107,6 +114,23 @@ export class PatPresupuestalCategoryService extends FilterServiceSpecImpl<
   deleteOut(id: number, outId: number): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
       `${this.baseUrl}/${id}/outs/${outId}`,
+    );
+  }
+
+  newSearchSelectContext(
+    onSelectCallback?: OnSelectCallback<PresupuestalCategory>,
+    op?: SearchSelectContextFactoryOptions,
+    onRemoveCallback?: OnSelectCallback<PresupuestalCategory>,
+  ) {
+    return new SearchSelectContextFactory<PresupuestalCategory>(
+      (term) =>
+        this.findAll({ rsqlQuery: emit(builder.eq('name', `*${term}*`)) }).pipe(
+          map((res) => res?.data?.content ?? []),
+        ),
+      (c) => ({ id: c.id, title: c.code ? `${c.code} — ${c.name}` : c.name }),
+      onSelectCallback,
+      op,
+      onRemoveCallback,
     );
   }
 }

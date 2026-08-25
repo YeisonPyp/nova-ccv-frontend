@@ -12,7 +12,7 @@
     <span
       class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 uppercase tracking-wide"
     >
-      Empleado
+      Mano de Obra
     </span>
   </div>
 
@@ -93,26 +93,6 @@
           }
         </div>
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-          >
-            Tipo de Cotización <span class="text-red-500">*</span>
-          </label>
-          <select
-            formControlName="cotizationTypeName"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-            [class.border-red-400]="isFieldInvalid('cotizationTypeName')"
-          >
-            <option value="">— Seleccionar —</option>
-            @for (ct of cotizationTypes(); track ct.id) {
-              <option [value]="ct.name">{{ ct.name }}</option>
-            }
-          </select>
-          @if (isFieldInvalid("cotizationTypeName")) {
-            <span class="text-xs text-red-500">Campo requerido</span>
-          }
-        </div>
       </div>
     </section>
 
@@ -149,49 +129,35 @@
         />
 
         <app-search-select
-          label="Empleado"
-          [required]="true"
-          [items]="employeeCtx.options()"
-          [selectedItems]="employeeCtx.selectedOptions()"
-          [isInvalid]="isFieldInvalid('employeeId')"
-          errorMessage="Empleado requerido"
-          (onSearch)="employeeCtx.search($event)"
-          (onSelect)="employeeCtx.select($event)"
-          (onRemove)="onFieldRemove('employeeId', employeeCtx, $event)"
-        />
-
-        <app-search-select
-          label="Cargo"
+          label="Cargo Responsable"
           [required]="true"
           [items]="positionCtx.options()"
           [selectedItems]="positionCtx.selectedOptions()"
           [isInvalid]="isFieldInvalid('positionId')"
-          errorMessage="Cargo requerido"
+          errorMessage="Cargo responsable requerido"
           (onSearch)="positionCtx.search($event)"
           (onSelect)="positionCtx.select($event)"
           (onRemove)="onFieldRemove('positionId', positionCtx, $event)"
         />
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-          >
-            Año Salarial <span class="text-red-500">*</span>
-          </label>
-          <select
-            formControlName="salaryYear"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-            [class.border-red-400]="isFieldInvalid('salaryYear')"
-          >
-            <option [value]="null">— Seleccionar —</option>
-            @for (s of salaryYears(); track s) {
-              <option [value]="s.year">{{ s.year }}</option>
-            }
-          </select>
-          @if (isFieldInvalid("salaryYear")) {
-            <span class="text-xs text-red-500">Año salarial requerido</span>
-          }
-        </div>
+        <app-search-select
+          label="Rubro Presupuestal"
+          [required]="true"
+          [items]="presupuestalCategoryCtx.options()"
+          [selectedItems]="presupuestalCategoryCtx.selectedOptions()"
+          [isInvalid]="isFieldInvalid('presupuestalCategoryId')"
+          errorMessage="Rubro presupuestal requerido"
+          (onSearch)="presupuestalCategoryCtx.search($event)"
+          (onSelect)="presupuestalCategoryCtx.select($event)"
+          (onRemove)="
+            onFieldRemove(
+              'presupuestalCategoryId',
+              presupuestalCategoryCtx,
+              $event
+            )
+          "
+        />
+
       </div>
     </section>
 
@@ -270,55 +236,8 @@
           }
         </div>
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-          >
-            Origen Radicación <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="filingOrigin"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-            [class.border-red-400]="isFieldInvalid('filingOrigin')"
-          />
-          @if (isFieldInvalid("filingOrigin")) {
-            <span class="text-xs text-red-500">Origen requerido</span>
-          }
-        </div>
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-          >
-            Destino Radicación <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="filingDestination"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-            [class.border-red-400]="isFieldInvalid('filingDestination')"
-          />
-          @if (isFieldInvalid("filingDestination")) {
-            <span class="text-xs text-red-500">Destino requerido</span>
-          }
-        </div>
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Proceso de Retención</label
-          >
-          <select
-            formControlName="retentionProcess"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-          >
-            <option [value]="null">— Sin retención —</option>
-            <option value="monthly">Mensual</option>
-            <option value="biannual">Semestral</option>
-            <option value="annual">Anual</option>
-          </select>
-        </div>
 
         <div class="flex flex-col gap-1">
           <label
@@ -335,100 +254,6 @@
       </div>
     </section>
 
-    <!-- ── VALORES DE NÓMINA ── -->
-    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-      <h5
-        class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-4"
-      >
-        Valores de Nómina
-      </h5>
-      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Sindicato</label
-          >
-          <input
-            type="number"
-            formControlName="periodTradeUnionAmount"
-            min="0"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Fondo Solidaridad</label
-          >
-          <input
-            type="number"
-            formControlName="periodSolidarityAmount"
-            min="0"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Contribuciones Parafiscales</label
-          >
-          <input
-            type="number"
-            formControlName="periodParafiscalContributionsAmount"
-            min="0"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Pensión</label
-          >
-          <input
-            type="number"
-            formControlName="periodPensionAmount"
-            min="0"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Transporte</label
-          >
-          <input
-            type="number"
-            formControlName="periodTransportAmount"
-            min="0"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Antigüedad</label
-          >
-          <input
-            type="number"
-            formControlName="periodSeniorityAmount"
-            min="0"
-            placeholder="0"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-      </div>
-    </section>
-
     <!-- ── SEGURIDAD SOCIAL ── -->
     <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <h5
@@ -437,21 +262,6 @@
         Seguridad Social
       </h5>
       <div class="grid grid-cols-3 gap-x-6 gap-y-4">
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Afiliación EPS</label
-          >
-          <select
-            formControlName="epsAffiliationType"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-          >
-            <option value="">— Seleccionar —</option>
-            @for (e of epsAfiliationTypes(); track e.id) {
-              <option [value]="e.name">{{ e.name }}</option>
-            }
-          </select>
-        </div>
 
         <div class="flex flex-col gap-1">
           <label
@@ -485,50 +295,21 @@
         <div class="flex flex-col gap-1">
           <label
             class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Tipo Pensión</label
+            >Afiliación ARL</label
           >
           <select
-            formControlName="pensionType"
+            formControlName="arlEntityName"
             class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
           >
             <option value="">— Seleccionar —</option>
-            @for (p of pensionTypes(); track p.id) {
-              <option [value]="p.name">{{ p.name }}</option>
+            @for (a of arlEntities(); track a.id) {
+              <option [value]="a.name">{{ a.name }}</option>
             }
           </select>
         </div>
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Clase Empleado</label
-          >
-          <select
-            formControlName="employeeClass"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-          >
-            <option value="">— Seleccionar —</option>
-            @for (e of employeeClasses(); track e.id) {
-              <option [value]="e.name">{{ e.name }}</option>
-            }
-          </select>
-        </div>
 
-        <div class="flex flex-col gap-1">
-          <label
-            class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide"
-            >Caja de Compensación</label
-          >
-          <select
-            formControlName="compensationEntity"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-          >
-            <option value="">— Seleccionar —</option>
-            @for (e of compensationEntities(); track e.id) {
-              <option [value]="e.name">{{ e.name }}</option>
-            }
-          </select>
-        </div>
+
       </div>
     </section>
 

@@ -12,7 +12,7 @@
     <span
       class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 uppercase tracking-wide"
     >
-      Agencia
+      Persona Jurídica
     </span>
   </div>
 
@@ -32,7 +32,7 @@
       >
         Información Básica
       </h5>
-      <div class="grid grid-cols-4 gap-x-6 gap-y-4">
+      <div class="grid grid-cols-3 gap-x-6 gap-y-4">
         <div class="flex flex-col gap-1">
           <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
             ID Contrato <span class="text-red-500">*</span>
@@ -87,24 +87,6 @@
           }
         </div>
 
-        <div class="flex flex-col gap-1">
-          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
-            Tipo de Cotización <span class="text-red-500">*</span>
-          </label>
-          <select
-            formControlName="cotizationTypeName"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-            [class.border-red-400]="isFieldInvalid('cotizationTypeName')"
-          >
-            <option value="">— Seleccionar —</option>
-            @for (ct of cotizationTypes(); track ct.id) {
-              <option [value]="ct.name">{{ ct.name }}</option>
-            }
-          </select>
-          @if (isFieldInvalid("cotizationTypeName")) {
-            <span class="text-xs text-red-500">Campo requerido</span>
-          }
-        </div>
       </div>
     </section>
 
@@ -141,15 +123,45 @@
         />
 
         <app-search-select
-          label="Agencia"
+          label="Persona Jurídica"
           [required]="true"
           [items]="agencyCtx.options()"
           [selectedItems]="agencyCtx.selectedOptions()"
           [isInvalid]="isFieldInvalid('agencyId')"
-          errorMessage="Agencia requerida"
+          errorMessage="Persona jurídica requerida"
           (onSearch)="agencyCtx.search($event)"
           (onSelect)="agencyCtx.select($event)"
           (onRemove)="onFieldRemove('agencyId', agencyCtx, $event)"
+        />
+
+        <app-search-select
+          label="Cargo Responsable"
+          [required]="true"
+          [items]="positionCtx.options()"
+          [selectedItems]="positionCtx.selectedOptions()"
+          [isInvalid]="isFieldInvalid('positionId')"
+          errorMessage="Cargo responsable requerido"
+          (onSearch)="positionCtx.search($event)"
+          (onSelect)="positionCtx.select($event)"
+          (onRemove)="onFieldRemove('positionId', positionCtx, $event)"
+        />
+
+        <app-search-select
+          label="Rubro Presupuestal"
+          [required]="true"
+          [items]="presupuestalCategoryCtx.options()"
+          [selectedItems]="presupuestalCategoryCtx.selectedOptions()"
+          [isInvalid]="isFieldInvalid('presupuestalCategoryId')"
+          errorMessage="Rubro presupuestal requerido"
+          (onSearch)="presupuestalCategoryCtx.search($event)"
+          (onSelect)="presupuestalCategoryCtx.select($event)"
+          (onRemove)="
+            onFieldRemove(
+              'presupuestalCategoryId',
+              presupuestalCategoryCtx,
+              $event
+            )
+          "
         />
 
         <div class="flex flex-col gap-1">
@@ -251,49 +263,6 @@
           @if (isFieldInvalid("periods")) {
             <span class="text-xs text-red-500">Períodos requeridos</span>
           }
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
-            Origen Radicación <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="filingOrigin"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-            [class.border-red-400]="isFieldInvalid('filingOrigin')"
-          />
-          @if (isFieldInvalid("filingOrigin")) {
-            <span class="text-xs text-red-500">Origen requerido</span>
-          }
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">
-            Destino Radicación <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="filingDestination"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-            [class.border-red-400]="isFieldInvalid('filingDestination')"
-          />
-          @if (isFieldInvalid("filingDestination")) {
-            <span class="text-xs text-red-500">Destino requerido</span>
-          }
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-[0.7rem] font-medium text-gray-400 uppercase tracking-wide">Proceso de Retención</label>
-          <select
-            formControlName="retentionProcess"
-            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-white"
-          >
-            <option [value]="null">— Sin retención —</option>
-            <option value="monthly">Mensual</option>
-            <option value="biannual">Semestral</option>
-            <option value="annual">Anual</option>
-          </select>
         </div>
 
         <div class="flex flex-col gap-1">
