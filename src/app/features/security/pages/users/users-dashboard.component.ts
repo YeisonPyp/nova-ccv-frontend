@@ -8,10 +8,10 @@ import {
   DynamicTableComponent,
   TableColumn,
 } from '@/app/shared/components/dynamic-table/dynamic-table.component';
-import { PaginationComponent } from '@/app/shared/components/pagination/pagination.component';
 import { ForbiddenComponent } from '@/app/shared/components/forbidden/forbidden.component';
 import { ExpressionNode } from '@rsql/ast';
 import { SeedUsersModalComponent } from './seed-users-modal/seed-users-modal.component';
+import { PaginatorComponent } from '@/app/shared/components/paginator/paginator.component';
 
 @Component({
   selector: 'app-users-dashboard',
@@ -19,7 +19,7 @@ import { SeedUsersModalComponent } from './seed-users-modal/seed-users-modal.com
   imports: [
     CommonModule,
     DynamicTableComponent,
-    PaginationComponent,
+    PaginatorComponent,
     ForbiddenComponent,
     SeedUsersModalComponent,
   ],
