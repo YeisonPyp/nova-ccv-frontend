@@ -74,7 +74,7 @@
 
     <!-- Permissions section — only in edit mode -->
     @if (isEditMode() && role(); as r) {
-      <details (toggle)="onPermissionsToggle($event)">
+      <details>
         <summary
           class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
         >
@@ -84,8 +84,7 @@
           <div class="card-body space-y-4">
             <app-permissions-manager
               [assigned]="r?.permissions ?? []"
-              [all]="allPermissions()"
-              [loaded]="permissionsLoaded()"
+              [excludeRoleId]="r?.id ?? null"
               [saving]="saving()"
               (assign)="assignPermission($event)"
               (remove)="removePermission($event)"

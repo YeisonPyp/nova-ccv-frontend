@@ -229,23 +229,26 @@
       </section>
 
       <!-- ── FOOTER ── -->
-      <div class="flex justify-end gap-3 pb-8">
-        <button
-          type="button"
-          class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-          (click)="goBack()"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
-          [disabled]="isReadonly()"
-          (click)="onSubmit()"
-        >
-          Guardar
-        </button>
-      </div>
+      @if (!isReadonly()) {
+        <div class="flex justify-end gap-3 pb-8">
+          <button
+            type="button"
+            class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            (click)="goBack()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+            [disabled]="isReadonly()"
+            (click)="onSubmit()"
+          >
+            Guardar
+          </button>
+        </div>
+      }
     </div>
   }
 </div>

@@ -17,11 +17,9 @@ import {
   UserService,
 } from '@/app/core/services/user/user.service';
 import { RoleService } from '@/app/core/services/user/role.service';
-import { PermissionService } from '@/app/core/services/user/permission.service';
 import { UserStatusChangeService } from '@/app/core/services/user/user-status-change.service';
 import { UserResponse } from '@/app/core/models/user/user.model';
 import { RoleResponse } from '@/app/core/models/user/role.model';
-import { PermissionResponse } from '@/app/core/models/user/permission.model';
 import {
   USER_STATUSES,
   UserStatus,
@@ -61,7 +59,6 @@ export class UserDetailComponent implements OnInit {
   private auth = inject(AuthService);
   private userService = inject(UserService);
   private roleService = inject(RoleService);
-  private permissionService = inject(PermissionService);
   private statusChangeService = inject(UserStatusChangeService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
@@ -72,10 +69,8 @@ export class UserDetailComponent implements OnInit {
   autoSaving = signal(false);
 
   allRoles = signal<RoleResponse[]>([]);
-  allPermissions = signal<PermissionResponse[]>([]);
 
   rolesLoaded = signal(false);
-  permissionsLoaded = signal(false);
 
   rolesPage = signal(1);
 
@@ -201,13 +196,6 @@ export class UserDetailComponent implements OnInit {
     if (open && !this.rolesLoaded() && this.canReadRoles) this.loadRoles();
   }
 
-  onPermissionsToggle(event: Event) {
-    const open = (event.target as HTMLDetailsElement).open;
-    if (open && !this.permissionsLoaded() && this.canReadPermissions) {
-      this.loadPermissions();
-    }
-  }
-
   onStatusChangesToggle(event: Event) {
     const open = (event.target as HTMLDetailsElement).open;
     if (open && !this.statusChangesLoaded() && this.canReadStatusChanges) {
@@ -305,16 +293,6 @@ export class UserDetailComponent implements OnInit {
         if (res.success && res.data) this.allRoles.set(res.data);
       },
       error: () => this.rolesLoaded.set(false),
-    });
-  }
-
-  private loadPermissions() {
-    this.permissionsLoaded.set(true);
-    this.permissionService.findAll().subscribe({
-      next: (res) => {
-        if (res.success && res.data) this.allPermissions.set(res.data);
-      },
-      error: () => this.permissionsLoaded.set(false),
     });
   }
 

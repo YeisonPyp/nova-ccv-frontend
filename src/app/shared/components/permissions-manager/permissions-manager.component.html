@@ -32,34 +32,33 @@
       Permisos disponibles
     </h4>
 
-    @if (!loaded()) {
-      <div class="text-center py-4">
-        <div
-          class="spinner-border spinner-border-sm text-primary"
-          role="status"
-        ></div>
-      </div>
-    } @else {
-      <app-dynamic-table
-        [data]="paged()"
-        [columns]="columns"
-        emptyMessage="No hay permisos disponibles para asignar."
-      >
-        <ng-template #actions let-perm>
-          <button
-            class="btn btn-sm btn-outline-primary"
-            [disabled]="saving()"
-            (click)="doAssign(perm)"
-          >
-            + Asignar
-          </button>
-        </ng-template>
-      </app-dynamic-table>
-      <app-pagination
-        [pages]="totalPages()"
-        [currentPage]="page()"
-        (pageChange)="page.set($event)"
-      />
-    }
+    <app-dynamic-table
+      [data]="available()"
+      [columns]="columns"
+      [emptyMessage]="
+        loading()
+          ? 'Cargando...'
+          : 'No hay permisos disponibles para asignar.'
+      "
+      (searchChange)="onSearchChange($event)"
+    >
+      <ng-template #actions let-perm>
+        <button
+          class="btn btn-sm btn-outline-primary"
+          [disabled]="saving()"
+          (click)="doAssign(perm)"
+        >
+          + Asignar
+        </button>
+      </ng-template>
+    </app-dynamic-table>
+
+    <app-paginator
+      [totalPages]="totalPages()"
+      [currentPage]="page()"
+      [pageSize]="size()"
+      (onSelectPage)="page.set($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
   </div>
 }

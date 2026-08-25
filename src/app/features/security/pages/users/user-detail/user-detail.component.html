@@ -159,7 +159,7 @@
         </div>
       </details>
 
-      <details (toggle)="onPermissionsToggle($event)">
+      <details>
         <summary
           class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
         >
@@ -171,8 +171,7 @@
           <div class="p-6 space-y-4">
             <app-permissions-manager
               [assigned]="u.permissions"
-              [all]="allPermissions()"
-              [loaded]="permissionsLoaded()"
+              [excludeUserId]="u.id"
               [saving]="saving()"
               [editable]="canUpdate && canReadPermissions"
               (assign)="assignPermission($event)"

@@ -21,9 +21,7 @@ import {
   switchMap,
 } from "rxjs";
 import { RoleService } from "@/app/core/services/user/role.service";
-import { PermissionService } from "@/app/core/services/user/permission.service";
 import { RoleResponse } from "@/app/core/models/user/role.model";
-import { PermissionResponse } from "@/app/core/models/user/permission.model";
 import { PermissionsManagerComponent } from "@/app/shared/components/permissions-manager/permissions-manager.component";
 
 @Component({
@@ -36,7 +34,6 @@ export class RoleUpsertComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private roleService = inject(RoleService);
-  private permissionService = inject(PermissionService);
   private fb = inject(FormBuilder);
 
   role = signal<RoleResponse | null>(null);
@@ -45,9 +42,6 @@ export class RoleUpsertComponent implements OnInit, OnDestroy {
   creating = signal(false);
   saving = signal(false);
   autoSaving = signal(false);
-
-  allPermissions = signal<PermissionResponse[]>([]);
-  permissionsLoaded = signal(false);
 
   form: FormGroup = this.fb.group({
     name: ["", [Validators.required, Validators.minLength(2)]],
@@ -133,19 +127,6 @@ export class RoleUpsertComponent implements OnInit, OnDestroy {
       },
       error: () => this.creating.set(false),
     });
-  }
-
-  onPermissionsToggle(event: Event): void {
-    const open = (event.target as HTMLDetailsElement).open;
-    if (open && !this.permissionsLoaded()) {
-      this.permissionsLoaded.set(true);
-      this.permissionService.findAll().subscribe({
-        next: (res) => {
-          if (res.success && res.data) this.allPermissions.set(res.data);
-        },
-        error: () => this.permissionsLoaded.set(false),
-      });
-    }
   }
 
   assignPermission(permName: string): void {
