@@ -1,0 +1,16 @@
+@reference "tailwindcss";
+
+.detail-grid-row {
+  @apply grid gap-1 items-center;
+
+  grid-template-columns: minmax(130px, 1fr) minmax(150px, 2fr);
+
+  & > span:first-child {
+    @apply font-medium;
+    color: var(--color-tertiary);
+  }
+
+  & > span:last-child {
+    color: var(--color-secondary);
+  }
+}

@@ -1,0 +1,128 @@
+@if (canReadAccountingPeriod) {
+  <app-parametrization-section
+    title="Períodos contables"
+    createLabel="+ Nuevo período"
+    [canCreate]="canCreateAccountingPeriod"
+    (onOpen)="onAccountingPeriodToggle($event)"
+    (onCreate)="openCreateAccountingPeriod()"
+  >
+    @if (!accountingPeriodLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
+        <app-dynamic-table
+          [data]="accountingPeriodItems()"
+          [columns]="accountingPeriodColumns"
+          emptyMessage="No hay períodos contables."
+        >
+          <ng-template #actions let-item>
+            @if (canDeleteAccountingPeriod) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteAccountingPeriod(item)"
+              >
+                Eliminar
+              </button>
+            }
+          </ng-template>
+        </app-dynamic-table>
+
+        <app-pagination
+          [pages]="accountingPeriodTotalPages()"
+          [currentPage]="accountingPeriodPage()"
+          (pageChange)="loadAccountingPeriod($event)"
+        />
+      </div>
+    }
+  </app-parametrization-section>
+}
+
+@if (accountingPeriodModalMode()) {
+  <div class="modal-overlay" (click)="closeAccountingPeriodModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Nuevo período contable</h2>
+
+      <form
+        [formGroup]="accountingPeriodForm"
+        (ngSubmit)="submitAccountingPeriod()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1"
+            >Período * (YYYYMM)</label
+          >
+          <input
+            formControlName="period"
+            class="form-control w-full"
+            placeholder="Ej: 202401"
+            maxlength="6"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1"
+            >Fecha de inicio *</label
+          >
+          <input
+            formControlName="startDate"
+            type="date"
+            class="form-control w-full"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Fecha de fin *</label>
+          <input
+            formControlName="endDate"
+            type="date"
+            class="form-control w-full"
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeAccountingPeriodModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="accountingPeriodForm.invalid"
+          >
+            Crear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (showDeleteAccountingPeriodModal()) {
+  <div class="modal-overlay" (click)="closeDeleteAccountingPeriodModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar período contable</h2>
+      <p class="text-sm text-tertiary">
+        ¿Está seguro de eliminar el período
+        <strong>{{ editingAccountingPeriod()?.period }}</strong
+        >? Esta acción no se puede deshacer.
+      </p>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteAccountingPeriodModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="confirmDeleteAccountingPeriod()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

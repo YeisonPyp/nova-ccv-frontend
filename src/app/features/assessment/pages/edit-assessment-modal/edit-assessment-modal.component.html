@@ -1,0 +1,254 @@
+<div class="w-full max-w-5xl mx-auto p-6">
+  <button
+    class="text-sm text-gray-500 mb-4 hover:text-gray-700 transition-colors"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a evaluaciones
+  </button>
+
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-secondary m-0">
+      Formulario de evaluación de desempeño
+    </h2>
+  </div>
+
+  <div class="flex w-20">
+    <div
+      class="justify-center w-20"
+      app-loading-spinner
+      [isLoading]="isLoading()"
+    ></div>
+  </div>
+
+  @if (!isLoading()) {
+    <div class="flex flex-col gap-6">
+      <!-- ── INFO ── -->
+      <section
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white rounded-lg border border-gray-200 shadow-sm p-6"
+      >
+        <div class="flex flex-col gap-1">
+          <strong
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Empleado
+          </strong>
+          <span class="text-base font-semibold text-secondary">
+            {{ evaluateeFullName }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <strong
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Evaluador
+          </strong>
+          <span class="text-base font-semibold text-secondary">
+            {{ evaluatorFullName }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <strong
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Periodo
+          </strong>
+          <span class="text-base font-semibold text-secondary">
+            {{ evaluationPeriodRange }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <strong
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Fecha de evaluación
+          </strong>
+          <span class="text-base font-semibold text-secondary">
+            {{ evaluationDate }}
+          </span>
+        </div>
+      </section>
+
+      <!-- ── COMPETENCIES ── -->
+      <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h3
+          class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4"
+        >
+          Evaluación de competencias
+        </h3>
+
+        <div class="flex flex-col gap-4">
+          @for (
+            competencyScore of getAssessmentCompetencyScores();
+            track competencyScore.id
+          ) {
+            <app-competency-score-card
+              [competencyScore]="competencyScore"
+              (scoreChange)="onChangeCompetencyScore($event)"
+            />
+          }
+        </div>
+
+        <!-- Average card -->
+        <div
+          class="mt-6 flex items-center justify-between gap-4 px-6 py-8 rounded-xl border-2 border-gray-200 bg-gray-50"
+        >
+          <div class="flex flex-col">
+            <span class="text-sm text-gray-500">Promedio General:</span>
+            <span class="text-3xl font-bold text-gray-900">
+              {{ matrixTotalScore() | number: "1.0-1" }}%
+            </span>
+          </div>
+          <span
+            class="text-lg font-bold text-white text-center px-4 py-3 rounded-xl"
+            [ngClass]="averageBadgeClass"
+          >
+            {{ averageDescription }}
+          </span>
+        </div>
+      </section>
+
+      <!-- ── COMPONENTS / OBLIGATIONS ── -->
+      @if (componentReports().length) {
+        <section
+          class="bg-white rounded-lg border border-gray-200 shadow-sm p-6"
+        >
+          <h3
+            class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4"
+          >
+            Obligaciones
+          </h3>
+
+          <div class="flex flex-col gap-4">
+            @for (report of componentReports(); track report.id) {
+              <app-assessment-component-report
+                [report]="report"
+                (onChange)="onChangeComponentScore($event)"
+              />
+            }
+          </div>
+        </section>
+      }
+
+      <!-- ── SURVEYS ── -->
+      @if (surveyGroups().length) {
+        <section
+          class="bg-white rounded-lg border border-gray-200 shadow-sm p-6"
+        >
+          <h3
+            class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4"
+          >
+            Encuestas de evaluación
+          </h3>
+
+          <div class="flex flex-col gap-6">
+            @for (group of surveyGroups(); track group.surveyId) {
+              <div class="flex flex-col gap-3">
+                <h4
+                  class="text-xs font-semibold text-gray-500 uppercase tracking-wide m-0"
+                >
+                  {{ group.surveyName }}
+                </h4>
+                @for (answer of group.answers; track answer.id) {
+                  <app-survey-answer-card
+                    [answer]="answer"
+                    [isDisabled]="isReadonly()"
+                    [canComment]="assessment()?.canComment ?? false"
+                    [canReply]="assessment()?.canReply ?? false"
+                    (onChange)="onChangeSurveyScore($event)"
+                  />
+                }
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- ── TRAINING EFFECTIVENESS (does not affect the average) ── -->
+      @if (trainingAssessments().length) {
+        <app-training-effectiveness
+          [assessments]="trainingAssessments()!"
+          [isDisabled]="isReadonly()"
+          (onUpdateScores)="onTrainingScore($event)"
+        />
+      }
+
+      <!-- ── FORM ── -->
+      <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <form
+          id="assessmentForm"
+          [formGroup]="assessmentForm"
+          (ngSubmit)="onSubmit()"
+          class="flex flex-col gap-4"
+        >
+          <div class="flex flex-col gap-1">
+            <label
+              for="observations"
+              class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+            >
+              Observaciones Adicionales
+            </label>
+            <textarea
+              id="observations"
+              formControlName="observations"
+              rows="3"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
+            ></textarea>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label
+              for="agreements"
+              class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+            >
+              Compromisos
+            </label>
+            <textarea
+              id="agreements"
+              formControlName="agreements"
+              rows="3"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
+            ></textarea>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label
+              for="aspects-to-improve"
+              class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+            >
+              Aspectos a mejorar
+            </label>
+            <textarea
+              id="aspects-to-improve"
+              formControlName="aspectsToImprove"
+              rows="3"
+              class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
+            ></textarea>
+          </div>
+        </form>
+      </section>
+
+      <!-- ── FOOTER ── -->
+      @if (!isReadonly()) {
+        <div class="flex justify-end gap-3 pb-8">
+          <button
+            type="button"
+            class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            (click)="goBack()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+            [disabled]="isReadonly()"
+            (click)="onSubmit()"
+          >
+            Guardar
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>

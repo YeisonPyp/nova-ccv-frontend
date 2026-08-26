@@ -1,0 +1,141 @@
+@if (process()) {
+  <div class="p-6 max-w-3xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <button
+        class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-secondary transition-colors"
+        (click)="goBack()"
+        title="Volver"
+      >
+        ←
+      </button>
+      <div>
+        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">
+          Proceso de contrato
+        </p>
+        <h1 class="text-xl font-bold text-secondary">{{ process()!.name }}</h1>
+      </div>
+      <span
+        class="ml-auto px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 uppercase tracking-wide"
+      >
+        {{ process()!.processType }}
+      </span>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="flex items-center gap-2">
+      @for (label of stepLabels; track $index) {
+        <div class="flex items-center gap-2">
+          <div
+            class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+            [class]="
+              currentStep() > $index + 1
+                ? 'bg-green-500 text-white'
+                : currentStep() === $index + 1
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-200 text-gray-400'
+            "
+          >
+            {{ currentStep() > $index + 1 ? "✓" : $index + 1 }}
+          </div>
+          <span
+            class="text-sm hidden sm:inline"
+            [class]="
+              currentStep() === $index + 1
+                ? 'font-semibold text-secondary'
+                : 'text-gray-400'
+            "
+          >
+            {{ label }}
+          </span>
+        </div>
+        @if ($index < stepLabels.length - 1) {
+          <div class="flex-1 h-px bg-gray-200 mx-1"></div>
+        }
+      }
+    </div>
+
+    <!-- Step content -->
+    @if (completed()) {
+      <div
+        class="bg-green-50 border border-green-200 rounded-xl p-8 text-center"
+      >
+        <p class="text-green-700 font-semibold text-lg">Proceso completado</p>
+        <p class="text-green-600 text-sm mt-1">
+          El registro ha sido guardado exitosamente.
+        </p>
+        <button class="btn btn-primary mt-4" (click)="goBack()">
+          Volver al contrato
+        </button>
+      </div>
+    } @else if (currentStep() === 1) {
+      <app-filing-upsert
+        [id]="null"
+        (onSaveFiling)="onFilingSaved($event)"
+        (onCancel)="goBack()"
+      />
+    } @else if (currentStep() === 2) {
+      <app-contract-act-upsert
+        [contractId]="contractId()"
+        [filingId]="getProcessFilingId()"
+        (onSave)="onActSaved($event)"
+      />
+    } @else if (currentStep() === 3) {
+      @switch (process()!.processType) {
+        @case ("addition") {
+          <app-addition-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("cancellation") {
+          <app-cancellation-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("cession") {
+          <app-cession-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
+            [contractType]="getProcessContractType()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("mutation") {
+          <app-mutation-form
+            [contractId]="contractId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("othersi") {
+          <app-othersi-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("suspension") {
+          <app-suspension-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+        @case ("resume") {
+          <app-resume-form
+            [contractId]="contractId()"
+            [actId]="getProcessActId()"
+            (onCompleted)="onProcessCompleted()"
+          />
+        }
+      }
+    }
+  </div>
+} @else {
+  <div class="flex items-center justify-center h-64 text-tertiary text-sm">
+    Cargando proceso...
+  </div>
+}

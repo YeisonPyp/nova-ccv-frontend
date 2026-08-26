@@ -1,0 +1,22 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+  <h3 class="text-sm font-semibold text-secondary m-0 mb-3">Presupuesto</h3>
+
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading()) {
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+      <div class="md:col-span-1">
+        <app-execution-pie-chart
+          [planned]="budget()?.totalPlanned ?? 0"
+          [executed]="budget()?.totalExecuted ?? 0"
+        />
+      </div>
+      <div class="md:col-span-2">
+        <app-planned-executed-line-chart
+          [plannedValues]="plannedValues()"
+          [executedValues]="executedValues()"
+        />
+      </div>
+    </div>
+  }
+</div>

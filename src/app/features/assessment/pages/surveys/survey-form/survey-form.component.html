@@ -1,0 +1,88 @@
+<div class="w-full max-w-5xl mx-auto p-6">
+  <button
+    class="text-sm text-gray-500 mb-4 hover:text-gray-700 transition-colors"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a encuestas
+  </button>
+
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-secondary m-0">
+      {{ isEdit ? "Editar encuesta" : "Nueva encuesta" }}
+    </h2>
+  </div>
+
+  <div class="flex flex-col gap-6">
+    <!-- ── INFO ── -->
+    <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+      <h3
+        class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4"
+      >
+        Datos de la encuesta
+      </h3>
+      <form
+        id="surveyForm"
+        [formGroup]="surveyForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4"
+      >
+        <div class="flex flex-col gap-1">
+          <label
+            for="name"
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Nombre <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="description"
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Descripción
+          </label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="3"
+            class="text-sm rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-y"
+          ></textarea>
+        </div>
+      </form>
+      <div class="flex justify-end gap-3 py-8">
+        <button
+          type="button"
+          class="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+          (click)="goBack()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="surveyForm"
+          class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+          [disabled]="saving()"
+        >
+          Guardar
+        </button>
+      </div>
+    </section>
+
+    @if (isEdit && survey()?.id) {
+      <app-survey-questions
+        [surveyId]="survey()!.id"
+        [questions]="questions()"
+        (onSave)="onSaveQuestion($event)"
+        (onDelete)="onDeleteQuestion($event)"
+      ></app-survey-questions>
+    }
+  </div>
+</div>

@@ -1,0 +1,115 @@
+<div
+  class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-4"
+>
+  <!-- Header: title, type legend/filters, search -->
+  <div class="flex flex-wrap items-center gap-2">
+    <h3 class="text-sm font-semibold text-secondary m-0 mr-2">Indicadores</h3>
+
+    @for (type of types; track type) {
+      <button
+        type="button"
+        class="px-3 py-1 text-xs font-medium rounded-md transition-opacity"
+        [class]="typeClasses[type]"
+        [class.opacity-40]="!isTypeActive(type)"
+        (click)="toggleType(type)"
+      >
+        {{ typeLabels[type] }}
+      </button>
+    }
+
+    <input
+      type="search"
+      placeholder="Buscar..."
+      class="ml-auto text-sm rounded border border-gray-200 px-3 py-1.5 w-40 focus:outline-none focus:ring-1 focus:ring-primary"
+      [value]="search()"
+      (change)="onSearch($event)"
+    />
+  </div>
+
+  <div app-loading-spinner [isLoading]="loading()"></div>
+  @if (indicators().length === 0) {
+    <p class="text-xs text-gray-400">
+      No hay indicadores para los filtros seleccionados.
+    </p>
+  } @else {
+    <div class="flex flex-col gap-3">
+      @for (i of indicators(); track i.id) {
+        <div
+          class="grid gap-x-3 gap-y-1 items-center"
+          style="grid-template-columns: minmax(8rem, 14rem) 6rem 1fr 4rem"
+        >
+          <!-- Name + owning task -->
+          <div class="min-w-0">
+            <p
+              class="text-xs font-medium text-gray-700 truncate m-0"
+              [title]="i.name"
+            >
+              {{ i.name }}
+            </p>
+            <p
+              class="text-[10px] text-gray-400 truncate m-0"
+              [title]="i.taskName"
+            >
+              {{ i.taskName }}
+            </p>
+          </div>
+
+          <!-- Type chip -->
+          <span
+            class="text-[10px] font-medium px-2 py-0.5 rounded-md text-center"
+            [class]="typeClasses[i.type]"
+          >
+            {{ typeLabels[i.type] }}
+          </span>
+
+          <!-- Planned track with executed fill -->
+          <div
+            class="relative h-2.5 rounded-full bg-blue-500/80 overflow-hidden"
+            role="progressbar"
+            [attr.aria-valuenow]="i.progressPct ?? 0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="'Avance de ' + i.name"
+          >
+            <div
+              class="absolute inset-y-0 left-0 rounded-full transition-all"
+              [class]="barClass(i)"
+              [style.width.%]="fillWidth(i)"
+            ></div>
+          </div>
+
+          <!-- Percentage -->
+          <span class="text-xs font-semibold text-secondary text-right">
+            @if (i.progressPct == null) {
+              <span class="text-gray-300" title="Sin planeación registrada"
+                >—</span
+              >
+            } @else {
+              {{ i.progressPct | number: "1.0-1" }}%
+            }
+          </span>
+
+          <!-- Values row -->
+          <div></div>
+          <div></div>
+          <p class="text-[10px] text-gray-400 m-0">
+            Ejecutado {{ i.executedValue | number }} de
+            {{ i.plannedValue | number }} planeado
+            @if (i.targetValue != null) {
+              · meta {{ i.targetValue | number }}
+            }
+          </p>
+          <div></div>
+        </div>
+      }
+    </div>
+
+    <app-paginator
+      [totalPages]="totalPages()"
+      [currentPage]="page()"
+      [pageSize]="size()"
+      (onSelectPage)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  }
+</div>

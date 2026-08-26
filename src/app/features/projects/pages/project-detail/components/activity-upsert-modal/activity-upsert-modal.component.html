@@ -1,0 +1,172 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 620px"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ activity() ? "Editar actividad" : "Nueva actividad" }}
+        </h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        @if (error()) {
+          <div
+            class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          id="activity-form"
+          (ngSubmit)="submit()"
+          class="flex flex-col gap-4"
+        >
+          <!-- Name + Order -->
+          <div class="form-row">
+            <div class="form-group" style="flex: 3">
+              <label>Nombre <span class="required">*</span></label>
+              <input
+                type="text"
+                formControlName="name"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('name')"
+                placeholder="Nombre de la actividad"
+              />
+              @if (isFieldInvalid("name")) {
+                <span class="invalid-feedback">Campo requerido</span>
+              }
+            </div>
+
+            <div class="half-width form-group">
+              <label>Orden <span class="required">*</span></label>
+              <input
+                type="number"
+                formControlName="displayOrder"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('displayOrder')"
+                min="1"
+              />
+              @if (isFieldInvalid("displayOrder")) {
+                <span class="invalid-feedback">Mín. 1</span>
+              }
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              rows="2"
+              placeholder="Descripción de la actividad"
+              style="resize: vertical"
+            ></textarea>
+          </div>
+
+          <!-- Dates -->
+          <div class="form-row">
+            <div class="half-width form-group">
+              <label>Fecha de inicio</label>
+              <input
+                type="date"
+                formControlName="startsAt"
+                class="form-control input-date-lc"
+              />
+            </div>
+
+            <div class="half-width form-group">
+              <label>Fecha de fin</label>
+              <input
+                type="date"
+                formControlName="endsAt"
+                class="form-control input-date-lc"
+              />
+            </div>
+          </div>
+
+          <!-- Status + Priority -->
+          <div class="form-row">
+            <div class="half-width form-group">
+              <label>Estado <span class="required">*</span></label>
+              <select
+                formControlName="status"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('status')"
+              >
+                <option value="">— Seleccionar —</option>
+                @for (s of statuses(); track s.id) {
+                  <option [value]="s.name">{{ s.name }}</option>
+                }
+              </select>
+              @if (isFieldInvalid("status")) {
+                <span class="invalid-feedback">Campo requerido</span>
+              }
+            </div>
+
+            <div class="half-width form-group">
+              <label>Prioridad</label>
+              <select formControlName="priority" class="form-control">
+                @for (p of priorityOptions; track p.value) {
+                  <option [value]="p.value">{{ p.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Color + Budget -->
+          <div class="form-row">
+            <div class="half-width form-group">
+              <label>Color</label>
+              <input
+                type="color"
+                formControlName="colorHex"
+                class="form-control"
+                style="height: 38px; padding: 2px"
+              />
+            </div>
+
+            <div class="half-width form-group">
+              <label>Presupuesto aprobado</label>
+              <input
+                type="number"
+                formControlName="approvedBudget"
+                class="form-control"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="activity-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            {{ activity() ? "Guardar cambios" : "Crear actividad" }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

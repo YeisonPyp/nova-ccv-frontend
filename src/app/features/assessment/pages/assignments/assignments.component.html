@@ -1,0 +1,38 @@
+<div class="p-6 max-w-6xl mx-auto flex flex-col gap-6">
+  <div>
+    <h1 class="text-2xl font-bold text-secondary m-0">Asignaciones</h1>
+    <p class="text-sm text-tertiary">
+      Componentes de evaluación (obligaciones) por cada cargo en
+      subordinación. Los empleados con esos cargos verán y darán
+      cumplimiento a estas obligaciones desde su pantalla de "Mis
+      Obligaciones".
+    </p>
+  </div>
+
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+  @if (!isLoading() && positions().length === 0) {
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 text-center text-tertiary"
+    >
+      No tienes cargos en subordinación.
+    </div>
+  }
+
+  @for (position of positions(); track position.id) {
+    <section
+      class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 flex flex-col gap-4"
+    >
+      <div>
+        <h3 class="text-base font-semibold text-gray-800 m-0">
+          {{ position.name }}
+        </h3>
+        <p class="text-xs text-gray-500 mt-1">
+          {{ position.areaName || position.area?.name }}
+        </p>
+      </div>
+
+      <app-position-assessment-components [position]="position" />
+    </section>
+  }
+</div>

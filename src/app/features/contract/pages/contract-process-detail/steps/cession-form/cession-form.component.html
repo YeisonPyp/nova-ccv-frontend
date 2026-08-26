@@ -1,0 +1,65 @@
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <h3 class="text-base font-semibold text-secondary mb-4">
+    Datos de la cesión
+  </h3>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      @if (contractType() === "employee") {
+        <app-search-select
+          [label]="employeeCtx.op?.label ?? 'Nuevo Empleado'"
+          [required]="true"
+          [items]="employeeCtx.options()"
+          [selectedItems]="employeeCtx.selectedOptions()"
+          errorMessage="Empleado requerido"
+          (onSearch)="employeeCtx.search($event)"
+          (onSelect)="employeeCtx.select($event)"
+          (onRemove)="onFieldRemove('newEmployeeId')"
+        />
+      }
+
+      @if (contractType() === "agency") {
+        <app-search-select
+          label="agencyCtx.label()"
+          [required]="true"
+          [items]="agencyCtx.options()"
+          [selectedItems]="agencyCtx.selectedOptions()"
+          errorMessage="Empleado requerido"
+          (onSearch)="agencyCtx.search($event)"
+          (onSelect)="agencyCtx.select($event)"
+          (onRemove)="onFieldRemove('newEmployeeId')"
+        />
+        <div class="form-group">
+          <label for="executedAmount"
+            >Monto ejecutado <span class="text-red-500">*</span></label
+          >
+          <input
+            id="executedAmount"
+            type="number"
+            formControlName="executedAmount"
+            class="form-control"
+            min="0"
+            step="0.01"
+          />
+        </div>
+      }
+      <div class="form-group md:col-span-2">
+        <label for="cessionDesc">Descripción</label>
+        <textarea
+          id="cessionDesc"
+          formControlName="description"
+          class="form-control"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+    <div class="flex justify-end mt-6">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || saving()"
+      >
+        {{ saving() ? "Guardando..." : "Guardar cesión" }}
+      </button>
+    </div>
+  </form>
+</div>

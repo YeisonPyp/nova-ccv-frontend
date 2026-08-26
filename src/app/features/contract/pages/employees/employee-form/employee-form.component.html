@@ -1,0 +1,182 @@
+<div class="p-6 space-y-6">
+  <!-- Nav -->
+  <div class="flex justify-between items-center">
+    <button class="btn btn-link text-sm text-gray-500 ps-0" type="button" (click)="goBack()">
+      ← Volver a empleados
+    </button>
+    <div class="flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" [disabled]="saving()" (click)="onSubmit()">
+        {{ saving() ? "Guardando..." : (isEdit ? "Actualizar" : "Crear Empleado") }}
+      </button>
+    </div>
+  </div>
+
+  <h1 class="text-2xl font-bold text-secondary">
+    {{ isEdit ? "Editar Empleado" : "Crear Empleado" }}
+  </h1>
+
+  <!-- Employee form -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="text-lg font-semibold text-secondary mb-4">Información Personal</h3>
+      <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="Ej. Juan"
+            [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched"
+          />
+          @if (form.get("name")?.invalid && form.get("name")?.touched) {
+            <div class="invalid-feedback">El nombre es requerido.</div>
+          }
+        </div>
+
+        <div>
+          <label class="form-label fw-semibold">Apellido <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="lastName"
+            placeholder="Ej. Pérez"
+            [class.is-invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+          />
+          @if (form.get("lastName")?.invalid && form.get("lastName")?.touched) {
+            <div class="invalid-feedback">El apellido es requerido.</div>
+          }
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="form-label fw-semibold">Correo Electrónico <span class="text-danger">*</span></label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Ej. juan.perez@empresa.com"
+            [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+          />
+          @if (form.get("email")?.invalid && form.get("email")?.touched) {
+            <div class="invalid-feedback">Un correo válido es requerido.</div>
+          }
+        </div>
+
+        <div>
+          <app-search-select
+            [label]="'Puesto'"
+            [placeholder]="'Selecciona un puesto'"
+            [maxElements]="1"
+            [required]="true"
+            [items]="positions()"
+            [selectedItems]="selectedPositions()"
+            (onSearch)="findPositions($event)"
+            (onRemove)="onRemovePosition($event)"
+            (onSelect)="onSelectPosition($event)"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Schedule section (edit mode only, gated by permission) -->
+  @if (isEdit && canReadSchedule) {
+    <div class="card shadow-sm">
+      <div class="card-body space-y-4">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-secondary">Horarios</h3>
+          @if (canCreateSchedule && !showScheduleForm()) {
+            <button class="btn btn-sm btn-primary" (click)="showScheduleForm.set(true)">
+              + Agregar horario
+            </button>
+          }
+        </div>
+
+        @if (showScheduleForm()) {
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <form [formGroup]="scheduleForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div>
+                <label class="form-label fw-semibold">Día <span class="text-danger">*</span></label>
+                <select class="form-select" formControlName="weekDay">
+                  <option value="">-- Selecciona --</option>
+                  @for (d of weekDays; track d) {
+                    <option [value]="d">{{ dayNames[d] }}</option>
+                  }
+                </select>
+                @if (scheduleForm.get("weekDay")?.invalid && scheduleForm.get("weekDay")?.touched) {
+                  <div class="text-danger small">Requerido</div>
+                }
+              </div>
+              <div>
+                <label class="form-label fw-semibold">Hora inicio (UTC)</label>
+                <input type="time" class="form-control" formControlName="startTime" />
+              </div>
+              <div>
+                <label class="form-label fw-semibold">Hora fin (UTC)</label>
+                <input type="time" class="form-control" formControlName="endTime" />
+              </div>
+            </form>
+            <div class="flex gap-2 mt-4">
+              <button
+                class="btn btn-primary btn-sm"
+                [disabled]="scheduleFormSaving()"
+                (click)="addSchedule()"
+              >
+                {{ scheduleFormSaving() ? "Guardando..." : "Guardar" }}
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm"
+                (click)="showScheduleForm.set(false)"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (scheduleLoading()) {
+          <div class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+          </div>
+        } @else if (schedules().length === 0) {
+          <p class="text-tertiary text-sm">No hay horarios registrados.</p>
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>Día</th>
+                  <th>Inicio (UTC)</th>
+                  <th>Fin (UTC)</th>
+                  @if (canDeleteSchedule) {
+                    <th></th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (s of schedules(); track s.id) {
+                  <tr>
+                    <td>{{ dayNames[s.weekDay] }}</td>
+                    <td>{{ minutesToTime(s.utcStartsMinutes) }}</td>
+                    <td>{{ minutesToTime(s.utcEndsMinutes) }}</td>
+                    @if (canDeleteSchedule) {
+                      <td>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          (click)="deleteSchedule(s.id)"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

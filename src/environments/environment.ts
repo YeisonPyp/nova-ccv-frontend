@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api',
+  apiUrl: 'https://api.backend.ccv-nova.tech/api',
   tokenKey: 'ccv_auth_token',
-  userKey: 'ccv_user_data'
+  userKey: 'ccv_user_data',
 };

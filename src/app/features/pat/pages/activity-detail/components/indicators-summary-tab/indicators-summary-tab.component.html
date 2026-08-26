@@ -1,0 +1,12 @@
+<div class="flex flex-col gap-3">
+  <p class="text-xs text-gray-500 m-0">
+    Los indicadores se registran por tarea. Entra al detalle de una tarea para
+    crearlos o editarlos.
+  </p>
+
+  <app-dynamic-table
+    [data]="indicators()"
+    [columns]="columns"
+    emptyMessage="Sin indicadores registrados en las tareas de esta actividad."
+  />
+</div>

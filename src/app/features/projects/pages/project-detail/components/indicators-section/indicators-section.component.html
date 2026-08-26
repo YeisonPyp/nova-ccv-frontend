@@ -1,0 +1,50 @@
+<app-project-section-card
+  title="Indicadores"
+  addLabel="+ Nuevo indicador"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="indicators()"
+    [columns]="columns"
+    emptyMessage="Sin indicadores registrados."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @switch (col.key) {
+        @case ("name") {
+          <div class="font-medium text-sm text-gray-800">{{ item.name }}</div>
+        }
+        @case ("type") {
+          {{ item.type | indicatorTypeLabel }}
+        }
+        @case ("targetValue") {
+          {{ item.targetValue != null ? item.targetValue : "—" }}
+        }
+        @case ("currentValue") {
+          {{ item.currentValue != null ? item.currentValue : "0" }}
+        }
+      }
+    </ng-template>
+    <ng-template #actions let-item>
+      <button
+        class="btn btn-sm btn-outline text-xs"
+        (click)="openEdit(item)"
+      >
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-indicator-upsert-modal
+  [isOpen]="modalOpen()"
+  [projectId]="projectId()"
+  [indicator]="editingIndicator()"
+  (onClose)="closeModal()"
+  (onSaved)="onSaved($event)"
+/>

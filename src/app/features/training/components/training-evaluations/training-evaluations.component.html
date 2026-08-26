@@ -1,0 +1,113 @@
+<div class="space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h4 class="text-lg font-medium text-gray-900">Respuestas de Evaluación</h4>
+
+    @if (hasEmployeeSurveys() && hasTrainingSurveys()) {
+      <div class="inline-flex rounded-lg border border-gray-200 p-1 bg-gray-50">
+        <button
+          class="px-3 py-1.5 text-xs font-medium rounded-md"
+          [class]="
+            mode() === 'EMPLOYEES'
+              ? 'bg-white text-indigo-600 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          "
+          (click)="mode.set('EMPLOYEES')"
+        >
+          Evaluación de empleados
+        </button>
+        <button
+          class="px-3 py-1.5 text-xs font-medium rounded-md"
+          [class]="
+            mode() === 'TRAINING'
+              ? 'bg-white text-indigo-600 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          "
+          (click)="mode.set('TRAINING')"
+        >
+          Feedback de la capacitación
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (mode() === "EMPLOYEES") {
+    <p class="text-xs text-gray-500">
+      El responsable evalúa a cada participante. El puntaje define su nota final.
+    </p>
+  } @else {
+    <p class="text-xs text-gray-500">
+      Cada participante registra su feedback sobre la capacitación.
+    </p>
+  }
+
+  @if (surveys().length === 0) {
+    <p class="text-sm text-gray-500 italic py-4">
+      Adjunta encuestas en la pestaña Evaluaciones antes de registrar
+      respuestas.
+    </p>
+  } @else if (loading()) {
+    <p class="text-sm text-gray-400 py-4">Cargando…</p>
+  } @else if (participants().length) {
+    <div class="overflow-x-auto border rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Participante
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Nota
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (p of pagedParticipants(); track p.id) {
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ p.employeeName }} {{ p.employeeLastname }}
+                </div>
+                <div class="text-xs text-gray-500">{{ p.employeeEmail }}</div>
+              </td>
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900"
+              >
+                {{ p.score !== null && p.score !== undefined ? p.score : "-" }}
+              </td>
+              <td
+                class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+              >
+                <button
+                  class="text-indigo-600 hover:text-indigo-900"
+                  (click)="openAnswers(p)"
+                >
+                  {{ mode() === "EMPLOYEES" ? "Evaluar" : "Feedback" }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <app-paginator
+      [pageSize]="size()"
+      [currentPage]="page()"
+      [totalPages]="totalPages()"
+      (onSelectPage)="goToPage($event)"
+    />
+  } @else {
+    <p class="text-sm text-gray-500 italic py-4">
+      No hay participantes inscritos para evaluar.
+    </p>
+  }
+</div>

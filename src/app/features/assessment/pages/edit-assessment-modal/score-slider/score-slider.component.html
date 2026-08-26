@@ -1,0 +1,37 @@
+<div class="flex flex-row gap-4 py-4">
+  <input
+    class="w-full"
+    type="range"
+    step="0.01"
+    [min]="min()"
+    [max]="max()"
+    [value]="val()"
+    [disabled]="isDisabled()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    [style.background]="
+      'linear-gradient(to right, #0056b3 0%, #0056b3 ' +
+      fillPercent +
+      '%, #e0e0e0 ' +
+      fillPercent +
+      '%, #e0e0e0 100%)'
+    "
+  />
+  <input
+    class="w-20 text-2xl"
+    type="number"
+    [min]="min()"
+    [max]="max()"
+    [value]="val()"
+    [disabled]="isDisabled()"
+    (input)="onInput($event)"
+  />
+</div>
+<div class="flex flex-row justify-between">
+  <span class="text-sm font-semibold text-secondary"
+    >Deficiente ({{ min() }})</span
+  >
+  <span class="text-sm font-semibold text-secondary"
+    >Excelente ({{ max() }})</span
+  >
+</div>

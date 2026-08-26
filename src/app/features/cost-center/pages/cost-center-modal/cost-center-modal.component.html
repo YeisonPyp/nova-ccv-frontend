@@ -1,0 +1,217 @@
+@if (isOpen()) {
+  <div
+    class="modal-overlay flex flex-col max-h-screen min-h-[99%]"
+    [formGroup]="form"
+  >
+    <div
+      class="modal-container max-w-2xl! scrollable-container max-h-screen min-h-full"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="modal-header">
+        @if (isViewMode()) {
+          <h2 class="text-xl font-bold text-secondary tracking-tight">
+            {{ costCenter()?.name }}
+          </h2>
+        } @else {
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Nombre del centro de costo..."
+            class="text-xl font-bold text-secondary tracking-tight bg-transparent border-none outline-none w-full"
+          />
+        }
+        <button
+          class="p-2 text-alternate hover:text-tertiary hover:bg-gray-100 rounded-full transition-all"
+          (click)="close()"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="grow overflow-y-auto p-6 space-y-6 bg-white">
+        <!-- Budget summary (view mode) -->
+        @if (isViewMode()) {
+          <section class="grid grid-cols-3 gap-4">
+            <div
+              class="flex flex-col gap-1 bg-blue-50 border border-blue-100 rounded-2xl p-4"
+            >
+              <span
+                class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.15em]"
+                >Presupuesto Total</span
+              >
+              <span class="text-lg font-bold text-blue-700">
+                {{ costCenter()?.totalBudget | number: "1.2-2" }}
+              </span>
+            </div>
+            <div
+              class="flex flex-col gap-1 bg-orange-50 border border-orange-100 rounded-2xl p-4"
+            >
+              <span
+                class="text-[10px] font-bold text-orange-400 uppercase tracking-[0.15em]"
+                >Comprometido</span
+              >
+              <span class="text-lg font-bold text-orange-700">
+                {{ costCenter()?.committedAmount | number: "1.2-2" }}
+              </span>
+            </div>
+            <div
+              class="flex flex-col gap-1 bg-red-50 border border-red-100 rounded-2xl p-4"
+            >
+              <span
+                class="text-[10px] font-bold text-red-400 uppercase tracking-[0.15em]"
+                >Ejecutado</span
+              >
+              <span class="text-lg font-bold text-red-700">
+                {{ costCenter()?.executedAmount | number: "1.2-2" }}
+              </span>
+            </div>
+          </section>
+
+          <!-- Progress bar -->
+          <section class="space-y-2">
+            <div class="flex justify-between text-xs text-tertiary font-medium">
+              <span>Disponible</span>
+              <span>{{ availableBudget | number: "1.2-2" }}</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+              <div
+                class="h-full bg-primary rounded-full transition-all"
+                [style.width.%]="
+                  costCenter()?.totalBudget
+                    ? (costCenter()!.executedAmount /
+                        costCenter()!.totalBudget) *
+                      100
+                    : 0
+                "
+              ></div>
+            </div>
+          </section>
+        }
+
+        <!-- Fields -->
+        <section
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/80 p-6 rounded-2xl border border-gray-200/60 shadow-sm"
+        >
+          <!-- Responsable -->
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+              Responsable
+            </label>
+            @if (isViewMode()) {
+              <span class="text-sm font-semibold text-secondary">
+                {{ costCenter()?.managerName }}
+                {{ costCenter()?.managerLastName }}
+              </span>
+            } @else {
+              <app-search-select
+                class="w-full"
+                [emptyMessage]="'Sin resultados'"
+                [items]="searchSelectManagerContext.options()"
+                [selectedItems]="searchSelectManagerContext.selectedOptions()"
+                [maxElements]="1"
+                [required]="true"
+                (onRemove)="searchSelectManagerContext.remove($event)"
+                (onSearch)="searchSelectManagerContext.search($event)"
+                (onSelect)="searchSelectManagerContext.select($event)"
+              />
+            }
+          </div>
+
+          <!-- Parent -->
+          @if (isViewMode() && costCenter()?.parentName) {
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+                Centro Padre
+              </label>
+              <span class="text-sm font-semibold text-secondary">
+                {{ costCenter()?.parentName }}
+              </span>
+            </div>
+          }
+
+          <!-- Total Budget (create only) -->
+          @if (!isViewMode()) {
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-bold uppercase tracking-[0.15em]">
+                Presupuesto Total
+              </label>
+              <input
+                type="number"
+                formControlName="totalBudget"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              />
+            </div>
+          }
+        </section>
+
+        <!-- Description -->
+        <section class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-[0.15em] ml-1">
+            Descripción
+          </label>
+          @if (isViewMode()) {
+            <p
+              class="text-sm text-tertiary leading-relaxed pl-5 border-l-4 border-blue-100 py-2"
+            >
+              {{ costCenter()?.description || "Sin descripción." }}
+            </p>
+          } @else {
+            <div class="relative group">
+              <textarea
+                formControlName="description"
+                rows="3"
+                placeholder="Descripción del centro de costo..."
+                class="w-full text-[13px] text-tertiary leading-relaxed border-l-4 border-blue-100 focus:border-blue-500 pl-5 pr-4 py-3 bg-gray-50/30 focus:bg-white rounded-r-xl outline-none transition-all resize-none shadow-sm"
+              ></textarea>
+              <div
+                class="absolute top-3 left-0 w-1 h-4 bg-blue-500 rounded-full -translate-x-0.5"
+              ></div>
+            </div>
+          }
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <div
+        class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3"
+      >
+        <button
+          class="px-4 py-2 text-sm font-semibold text-tertiary hover:text-secondary transition-colors"
+          (click)="close()"
+        >
+          Cerrar
+        </button>
+        @if (!isViewMode()) {
+          <button
+            class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg shadow-sm hover:bg-primary transition-all disabled:opacity-50"
+            (click)="onSubmit()"
+            [disabled]="
+              form.invalid ||
+              !searchSelectManagerContext.selectedOptions().length ||
+              saving()
+            "
+          >
+            {{ saving() ? "Creando..." : "Crear centro de costo" }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

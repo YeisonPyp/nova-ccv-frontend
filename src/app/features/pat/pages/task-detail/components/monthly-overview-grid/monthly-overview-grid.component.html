@@ -1,0 +1,10 @@
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+  @for (item of overview(); track item.month) {
+    <app-monthly-overview-card
+      [data]="item"
+      [year]="year()"
+      [taskId]="taskId()"
+      [avance]="avanceFor(item.month)"
+    />
+  }
+</div>

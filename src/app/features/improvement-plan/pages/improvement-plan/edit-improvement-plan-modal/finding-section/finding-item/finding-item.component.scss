@@ -1,0 +1,7 @@
+details {
+  overflow: hidden;
+}
+
+details[open] {
+  overflow: visible;
+}

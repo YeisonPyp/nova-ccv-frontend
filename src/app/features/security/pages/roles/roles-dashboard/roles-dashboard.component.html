@@ -1,0 +1,89 @@
+<div class="p-6 space-y-4">
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-secondary m-0">Roles</h1>
+    <button class="btn btn-primary btn-sm" (click)="goToCreate()">
+      + Crear rol
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-8">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  } @else {
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <app-dynamic-table
+          [data]="tableData()"
+          [columns]="columns"
+          emptyMessage="No hay roles registrados."
+        >
+          <ng-template #actions let-role>
+            <div class="d-flex gap-2">
+              <button
+                class="btn btn-sm btn-outline-primary"
+                (click)="goToEdit(role)"
+              >
+                Editar
+              </button>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="confirmDelete(role)"
+              >
+                Eliminar
+              </button>
+            </div>
+          </ng-template>
+        </app-dynamic-table>
+      </div>
+    </div>
+
+    <app-pagination
+      [pages]="totalPages()"
+      [currentPage]="page()"
+      (pageChange)="page.set($event)"
+    />
+  }
+</div>
+
+@if (deleteTargetId() !== null) {
+  <div
+    class="modal-overlay"
+    style="
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1050;
+    "
+  >
+    <div
+      class="bg-white rounded-xl shadow-lg p-6"
+      style="width: 100%; max-width: 400px"
+    >
+      <h3 class="text-lg font-semibold text-secondary mb-3">
+        ¿Eliminar rol?
+      </h3>
+      <p class="text-tertiary text-sm mb-4">
+        Esta acción no se puede deshacer.
+      </p>
+      <div class="d-flex justify-content-end gap-2">
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="cancelDelete()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger btn-sm"
+          [disabled]="deleting()"
+          (click)="doDelete()"
+        >
+          {{ deleting() ? "Eliminando..." : "Eliminar" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

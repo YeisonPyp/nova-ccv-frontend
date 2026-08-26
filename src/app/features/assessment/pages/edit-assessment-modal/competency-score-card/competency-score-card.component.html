@@ -1,0 +1,15 @@
+<div class="competency-score-card">
+  <div class="competency-info">
+    <strong>{{ competencyName }}</strong>
+    <p>{{ competencyDescription }}</p>
+  </div>
+
+  <section>
+    <app-score-slider
+      formControl="scoreControl"
+      [min]="min()"
+      [max]="max()"
+      label="Puntaje de Evaluación"
+    />
+  </section>
+</div>

@@ -1,0 +1,24 @@
+<details
+  class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden w-full my-2"
+  (toggle)="onToggle($event)"
+>
+  <summary
+    class="cursor-pointer px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50"
+  >
+    <h3 class="text-sm font-semibold text-secondary m-0">
+      {{ title() }}
+    </h3>
+    @if (canCreate()) {
+      <button
+        type="button"
+        class="px-3 py-1 text-xs font-medium text-white bg-primary rounded hover:opacity-90"
+        (click)="openCreate($event)"
+      >
+        {{ createLabel() }}
+      </button>
+    }
+  </summary>
+  <div class="p-4">
+    <ng-content></ng-content>
+  </div>
+</details>

@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-2 items-center">
+  @if (title()) {
+    <p
+      class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+    >
+      {{ title() }}
+    </p>
+  }
+  <div class="relative" [style.height.px]="height()" [style.width.px]="height()">
+    <canvas
+      baseChart
+      [data]="data()"
+      [options]="options"
+      type="doughnut"
+    ></canvas>
+    <div
+      class="absolute inset-0 flex items-center justify-center pointer-events-none"
+    >
+      <span class="text-lg font-bold text-secondary">{{ pct() }}%</span>
+    </div>
+  </div>
+</div>

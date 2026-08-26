@@ -1,0 +1,64 @@
+<!-- Assigned permissions -->
+<div class="flex flex-wrap gap-2 min-h-8">
+  @if (assigned().length === 0) {
+    <span class="text-tertiary text-sm">Sin permisos asignados.</span>
+  }
+  @for (perm of assigned(); track perm) {
+    <span
+      class="badge bg-primary text-white px-3 py-2 d-inline-flex align-items-center gap-2"
+      style="font-size: 0.85rem"
+    >
+      {{ perm }}
+      @if (editable()) {
+        <button
+          type="button"
+          class="btn-close btn-close-white cursor-pointer"
+          style="font-size: 1rem"
+          [disabled]="saving()"
+          (click)="doRemove(perm)"
+          aria-label="Quitar permiso"
+        >
+          &times;
+        </button>
+      }
+    </span>
+  }
+</div>
+
+<!-- Available permissions (only when editable) -->
+@if (editable()) {
+  <div class="border-t pt-4 mt-4">
+    <h4 class="text-sm font-semibold text-tertiary uppercase mb-3">
+      Permisos disponibles
+    </h4>
+
+    <app-dynamic-table
+      [data]="available()"
+      [columns]="columns"
+      [emptyMessage]="
+        loading()
+          ? 'Cargando...'
+          : 'No hay permisos disponibles para asignar.'
+      "
+      (searchChange)="onSearchChange($event)"
+    >
+      <ng-template #actions let-perm>
+        <button
+          class="btn btn-sm btn-outline-primary"
+          [disabled]="saving()"
+          (click)="doAssign(perm)"
+        >
+          + Asignar
+        </button>
+      </ng-template>
+    </app-dynamic-table>
+
+    <app-paginator
+      [totalPages]="totalPages()"
+      [currentPage]="page()"
+      [pageSize]="size()"
+      (onSelectPage)="page.set($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  </div>
+}

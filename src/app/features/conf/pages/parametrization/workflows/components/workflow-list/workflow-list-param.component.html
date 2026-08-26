@@ -1,0 +1,133 @@
+@if (canRead) {
+  <app-parametrization-section
+    title="Flujos de trabajo"
+    createLabel="+ Nuevo flujo"
+    [canCreate]="canCreate"
+    (onOpen)="onWorkflowsToggle($event)"
+    (onCreate)="openCreateWorkflow()"
+  >
+    @if (!workflowsLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
+        <app-dynamic-table
+          [data]="workflows()"
+          [columns]="workflowColumns"
+          emptyMessage="No hay flujos de trabajo."
+        >
+          <ng-template #actions let-wf>
+            @if (canReadStep) {
+              <button
+                class="btn btn-sm btn-secondary"
+                [class.btn-active]="selectedWorkflowId() === wf.id"
+                (click)="selectWorkflow(wf)"
+              >
+                Mostrar pasos
+              </button>
+            }
+            @if (canUpdate) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditWorkflow(wf)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDelete) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteWorkflow(wf)"
+              >
+                Eliminar
+              </button>
+            }
+          </ng-template>
+        </app-dynamic-table>
+
+        <app-pagination
+          [pages]="workflowTotalPages()"
+          [currentPage]="workflowPage()"
+          (pageChange)="loadWorkflows($event)"
+        />
+      </div>
+    }
+  </app-parametrization-section>
+}
+
+<!-- ── Workflow create/update modal ──────────────────────────────────────────── -->
+@if (workflowModalMode()) {
+  <div class="modal-overlay" (click)="closeWorkflowModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          workflowModalMode() === "create"
+            ? "Nuevo flujo de trabajo"
+            : "Editar flujo de trabajo"
+        }}
+      </h2>
+
+      <form
+        [formGroup]="workflowForm"
+        (ngSubmit)="submitWorkflow()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label>
+          <input
+            formControlName="name"
+            class="form-control w-full"
+            placeholder="Nombre del flujo"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label>
+          <textarea
+            formControlName="description"
+            class="form-control w-full"
+            rows="3"
+            placeholder="Descripción opcional"
+          ></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeWorkflowModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="workflowForm.invalid"
+          >
+            {{ workflowModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ── Workflow delete confirm modal ─────────────────────────────────────────── -->
+@if (showDeleteWorkflowModal()) {
+  <div class="modal-overlay" (click)="closeDeleteWorkflowModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar flujo de trabajo</h2>
+      <p class="text-sm text-tertiary">
+        ¿Está seguro de eliminar <strong>{{ editingWorkflow()?.name }}</strong
+        >? Esta acción no se puede deshacer.
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteWorkflowModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteWorkflow()">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

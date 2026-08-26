@@ -1,0 +1,188 @@
+<div app-loading-spinner [isLoading]="loading()"></div>
+
+@if (!loading()) {
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 relative">
+    @if (planId() && !editing() && canUpdate) {
+      <button
+        type="button"
+        class="absolute top-0 right-0 text-gray-400 hover:text-primary"
+        title="Habilitar edición"
+        (click)="enableEditing()"
+      >
+        <app-edit-icon [size]="18" />
+      </button>
+    }
+
+    @if (error()) {
+      <div class="text-sm text-red-600">{{ error() }}</div>
+    }
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Estado *</label>
+        <input
+          class="form-control w-full"
+          formControlName="statusName"
+          list="status-options"
+          [class.is-invalid]="isFieldInvalid('statusName')"
+        />
+        <datalist id="status-options">
+          @for (s of statusOptions(); track s.id) {
+            <option [value]="s.name"></option>
+          }
+        </datalist>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Año *</label>
+        <input
+          type="number"
+          class="form-control w-full"
+          formControlName="year"
+          [class.is-invalid]="isFieldInvalid('year')"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Tipo de proceso *</label>
+        <input
+          class="form-control w-full"
+          formControlName="processType"
+          list="contract-type-options"
+          [class.is-invalid]="isFieldInvalid('processType')"
+        />
+        <datalist id="contract-type-options">
+          @for (t of contractTypes(); track t.id) {
+            <option [value]="t.name"></option>
+          }
+        </datalist>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <app-select-search
+        label="Área"
+        [required]="true"
+        [disabled]="!editing()"
+        [items]="areaCtx.options()"
+        [selectedItems]="areaCtx.selectedOptions()"
+        [isInvalid]="isFieldInvalid('areaId')"
+        errorMessage="Área requerida"
+        (onSearch)="areaCtx.search($event)"
+        (onSelect)="areaCtx.select($event)"
+        (onRemove)="onFieldRemove('areaId', areaCtx, $event)"
+      />
+
+      <app-select-search
+        label="Cargo responsable"
+        [required]="true"
+        [disabled]="!editing()"
+        [items]="positionCtx.options()"
+        [selectedItems]="positionCtx.selectedOptions()"
+        [isInvalid]="isFieldInvalid('positionId')"
+        errorMessage="Cargo requerido"
+        (onSearch)="positionCtx.search($event)"
+        (onSelect)="positionCtx.select($event)"
+        (onRemove)="onFieldRemove('positionId', positionCtx, $event)"
+      />
+
+      <app-select-search
+        label="Centro de Costo"
+        [required]="true"
+        [disabled]="!editing()"
+        [items]="costCenterCtx.options()"
+        [selectedItems]="costCenterCtx.selectedOptions()"
+        [isInvalid]="isFieldInvalid('costCenterId')"
+        errorMessage="Centro de costo requerido"
+        (onSearch)="costCenterCtx.search($event)"
+        (onSelect)="costCenterCtx.select($event)"
+        (onRemove)="onFieldRemove('costCenterId', costCenterCtx, $event)"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Actividad *</label>
+      <input
+        class="form-control w-full"
+        formControlName="task"
+        placeholder="Descripción de la actividad"
+        [class.is-invalid]="isFieldInvalid('task')"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Actividad del PAT (opcional)
+      </label>
+      <select class="form-control w-full" formControlName="patTaskId">
+        <option [ngValue]="null">-- Ninguna --</option>
+        @for (t of patTasks(); track t.id) {
+          <option [ngValue]="t.id">{{ t.name }}</option>
+        }
+      </select>
+      @if (!patTasks().length) {
+        <p class="text-xs text-gray-400 mt-1">
+          Selecciona un área y un año para ver las actividades del PAT
+          disponibles.
+        </p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Rubro presupuestal *</label>
+      <select
+        class="form-control w-full"
+        formControlName="budgetCategoryId"
+        [class.is-invalid]="isFieldInvalid('budgetCategoryId')"
+      >
+        <option [ngValue]="null">-- Seleccione --</option>
+        @for (c of budgetCategories(); track c.id) {
+          <option [ngValue]="c.id">{{ c.code }} - {{ c.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Cantidad *</label>
+        <input
+          type="number"
+          class="form-control w-full"
+          formControlName="contractsAmount"
+          [class.is-invalid]="isFieldInvalid('contractsAmount')"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Valor unitario *</label>
+        <input
+          type="text"
+          appCurrencyFormat
+          class="form-control w-full"
+          formControlName="unitCost"
+          [class.is-invalid]="isFieldInvalid('unitCost')"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Meses *</label>
+        <input
+          type="number"
+          class="form-control w-full"
+          formControlName="months"
+          [class.is-invalid]="isFieldInvalid('months')"
+        />
+      </div>
+    </div>
+
+    @if (editing()) {
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="submitting() || !formValid()"
+        >
+          {{ planId() ? "Actualizar planeación" : "Crear planeación" }}
+        </button>
+      </div>
+    }
+  </form>
+}

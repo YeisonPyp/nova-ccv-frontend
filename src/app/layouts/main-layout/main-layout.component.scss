@@ -1,20 +1,10 @@
-$sidebar-width: 280px;
-$sidebar-collapsed-width: 72px;
-$header-height: 64px;
-$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
 .layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: #f8fafc;
-}
-
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0; // Prevent flex item from overflowing
-  transition: $transition;
+  // The sidebar is an overlay drawer: it slides over the content, so the
+  // layout reserves no room for it and nothing reflows when it opens.
 }
 
 .page-content {
@@ -24,23 +14,5 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (max-width: 768px) {
     padding: 1rem;
-  }
-}
-
-// Mobile responsive
-@media (max-width: 992px) {
-  .layout {
-    app-sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transform: translateX(0);
-      transition: transform 0.3s ease;
-    }
-
-    &.sidebar-collapsed app-sidebar {
-      transform: translateX(-100%);
-    }
   }
 }

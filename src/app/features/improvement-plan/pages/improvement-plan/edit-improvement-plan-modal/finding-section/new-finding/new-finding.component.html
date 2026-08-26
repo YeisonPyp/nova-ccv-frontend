@@ -1,0 +1,65 @@
+<div
+  class="mt-3 p-5 rounded-2xl border border-gray-200/60 bg-gray-50/80 shadow-sm space-y-4"
+  [formGroup]="form"
+>
+  <div class="flex items-center gap-2">
+    <svg class="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+    </svg>
+    <span class="text-[11px] font-bold text-tertiary uppercase tracking-[0.15em]">
+      Nuevo hallazgo
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="flex flex-col gap-2">
+      <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em]">
+        Tipo de hallazgo
+      </label>
+      <select
+        class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-primary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all appearance-none cursor-pointer"
+        formControlName="type"
+      >
+        @for (t of findingTypes; track t) {
+          <option [value]="t">{{ getFindingTypeLabel(t) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-2 md:col-span-2">
+      <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em]">
+        Nombre
+      </label>
+      <input
+        type="text"
+        maxlength="255"
+        class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] font-medium text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all"
+        placeholder="Nombre corto del hallazgo..."
+        formControlName="name"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label class="text-[10px] font-bold text-alternate uppercase tracking-[0.15em]">
+      Hallazgo
+    </label>
+    <textarea
+      rows="4"
+      class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[13px] text-secondary shadow-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-primary transition-all resize-none"
+      placeholder="Describe el criterio, la evidencia objetiva y la declaración del hallazgo..."
+      formControlName="description"
+    ></textarea>
+  </div>
+
+  <div class="flex justify-end">
+    <button
+      type="button"
+      class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow-sm hover:bg-primary transition-all disabled:opacity-50"
+      [disabled]="!form.valid"
+      (click)="onSubmit()"
+    >
+      Agregar hallazgo
+    </button>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="min-h-57.5 flex flex-col">
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+  @if (!isLoading()) {
+    <app-dynamic-table
+      [data]="assessments()"
+      [columns]="columns"
+      emptyMessage="No hay evaluaciones disponibles."
+    >
+      <ng-template #customCell let-item let-col="column">
+        @if (col.key === "evaluatee") {
+          {{
+            (item.evaluatee?.name ?? "") +
+              " " +
+              (item.evaluatee?.lastName ?? "")
+          }}
+        } @else if (col.key === "evaluator") {
+          {{
+            (item.evaluator?.name ?? "") +
+              " " +
+              (item.evaluator?.lastName ?? "")
+          }}
+        } @else if (col.key === "status") {
+          <span class="badge" [appStatusBadge]="item.status">
+            {{ item.status }}
+          </span>
+        } @else if (col.key === "matrixTotalScore") {
+          <div
+            class="desempeno-cell"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              font-weight: 600;
+            "
+          >
+            {{ item.matrixTotalScore }}%
+            <div
+              class="mini-progress-track"
+              style="
+                width: 60px;
+                height: 6px;
+                background-color: #f0f0f0;
+                border-radius: 3px;
+                overflow: hidden;
+              "
+            >
+              <div
+                class="mini-progress-fill"
+                style="
+                  height: 100%;
+                  background-color: #003380;
+                  border-radius: 3px;
+                "
+                [style.width.%]="item.matrixTotalScore"
+              ></div>
+            </div>
+          </div>
+        } @else if (col.key === "type") {
+          <span app-assessment-type [t]="item.type"></span>
+        } @else {
+          {{ item[col.key] }}
+        }
+      </ng-template>
+
+      <ng-template #actions let-assessment>
+        <button
+          class="icon-btn text-tertiary hover:text-primary"
+          *appHasPermission="['ASSESSMENTS_UPDATE']"
+          (click)="onEdit(assessment)"
+          title="Editar"
+        >
+          <app-edit-icon />
+        </button>
+      </ng-template>
+    </app-dynamic-table>
+    <app-paginator
+      [pageSize]="size()"
+      [currentPage]="page()"
+      [totalPages]="pages()"
+      (pageSizeChange)="size.set($event)"
+      (onSelectPage)="page.set($event)"
+    ></app-paginator>
+  }
+</div>

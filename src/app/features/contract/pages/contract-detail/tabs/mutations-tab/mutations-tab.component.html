@@ -1,0 +1,16 @@
+@if (loading()) {
+  <div class="text-center py-4">
+    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+  </div>
+} @else {
+  <app-dynamic-table
+    [data]="items()"
+    [columns]="columns"
+    emptyMessage="Sin mutaciones registradas."
+  />
+  <app-pagination
+    [currentPage]="currentPage()"
+    [pages]="totalPages()"
+    (pageChange)="onPageChange($event)"
+  />
+}

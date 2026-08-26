@@ -1,0 +1,34 @@
+<app-project-section-card
+  title="Tareas / Actividades a Desarrollar"
+  addLabel="+ Nueva tarea"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="tasks()"
+    [columns]="columns"
+    emptyMessage="Sin tareas registradas."
+  >
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openDetail(item)">
+        Ver detalle
+      </button>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-task-upsert-modal
+  [isOpen]="upsertModalOpen()"
+  [activityId]="activityId()"
+  [task]="editingTask()"
+  (onClose)="closeUpsertModal()"
+  (onSaved)="onSaved($event)"
+/>

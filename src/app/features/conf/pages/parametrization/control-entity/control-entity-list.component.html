@@ -1,0 +1,50 @@
+<div class="w-full">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Entidades de Control</h2>
+    <button class="btn btn-primary" (click)="openModal()">
+      <i class="bi bi-plus-lg"></i> Nueva Entidad
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="alert alert-danger" role="alert">
+      {{ error() }}
+    </div>
+  } @else {
+    <app-dynamic-table
+      [data]="entities()"
+      [columns]="columns"
+      emptyMessage="No se encontraron entidades de control."
+    >
+      <ng-template #actions let-item>
+        <button
+          class="btn btn-sm btn-outline-primary me-2"
+          (click)="openModal(item)"
+        >
+          <i>✏️</i>
+        </button>
+        <button
+          class="btn btn-sm btn-outline-primary me-2"
+          (click)="deleteEntity(item)"
+        >
+          <i>🗑️</i>
+        </button>
+      </ng-template>
+    </app-dynamic-table>
+  }
+</div>
+
+@if (isModalOpen()) {
+  <app-control-entity-modal
+    [entity]="selectedEntity()"
+    (close)="closeModal()"
+    (saved)="onEntitySaved()"
+    [isOpen]="isModalOpen()"
+  />
+}

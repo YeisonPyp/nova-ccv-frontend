@@ -1,0 +1,56 @@
+<div class="flex flex-col gap-4">
+  <!-- Cut-off dates: keep only tasks with budget planning in the range -->
+  <div class="flex flex-wrap items-end gap-3">
+    <div class="flex flex-col gap-1">
+      <label class="text-xs font-medium text-gray-500">Desde</label>
+      <input
+        type="date"
+        class="form-control text-sm"
+        [value]="since() ?? ''"
+        (change)="onCutOffChange('since', $event)"
+      />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="text-xs font-medium text-gray-500">Hasta</label>
+      <input
+        type="date"
+        class="form-control text-sm"
+        [value]="before() ?? ''"
+        (change)="onCutOffChange('before', $event)"
+      />
+    </div>
+    @if (since() || before()) {
+      <button
+        type="button"
+        class="text-xs text-primary hover:underline pb-2"
+        (click)="clearCutOff()"
+      >
+        Limpiar fechas
+      </button>
+    }
+  </div>
+
+  <app-dynamic-table
+    [data]="tasks()"
+    [columns]="columns"
+    emptyMessage="No hay tareas."
+    (searchChange)="onSearchChange($event)"
+  >
+    <ng-template #actions let-item>
+      <a
+        [routerLink]="['/pat', year(), 'tasks', item.id]"
+        class="text-xs font-medium text-primary hover:underline whitespace-nowrap"
+      >
+        Ver tarea →
+      </a>
+    </ng-template>
+  </app-dynamic-table>
+
+  <app-paginator
+    [totalPages]="totalPages()"
+    [currentPage]="page()"
+    [pageSize]="size()"
+    (onSelectPage)="page.set($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  />
+</div>

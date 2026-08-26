@@ -1,0 +1,19 @@
+.chip {
+    background: #e0e7ff;
+    color: #4338ca;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 5px;
+
+    .chip-remove {
+        cursor: pointer;
+        font-weight: bold;
+        &:hover {
+        color: #ef4444;
+        }
+    }
+}

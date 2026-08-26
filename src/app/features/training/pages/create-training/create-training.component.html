@@ -1,0 +1,218 @@
+<div class="p-6 max-w-5xl mx-auto space-y-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        Programar Nueva Capacitación
+      </h1>
+      <p class="text-sm text-gray-500">
+        Completa la información para crear un nuevo evento de capacitación
+      </p>
+    </div>
+  </div>
+
+  <form
+    [formGroup]="form"
+    (submit)="onSubmit()"
+    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+  >
+    <div class="p-6 space-y-8">
+      <!-- Section: Información Principal -->
+      <div>
+        <h3
+          class="text-lg font-medium text-gray-900 mb-4 border-b border-gray-200 pb-2"
+        >
+          Información Principal
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="form-group">
+            <label>Tema <span class="required">*</span></label>
+            <select
+              app-selector
+              [options]="topics() || []"
+              formControlName="topicId"
+              class="form-control"
+              [appFormFieldError]="{}"
+            >
+              <option [ngValue]="null" disabled>Selecciona un tema...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Modalidad <span class="required">*</span></label>
+            <select
+              app-selector
+              [options]="modalities() || []"
+              formControlName="modalityId"
+              class="form-control"
+              [appFormFieldError]="{}"
+            ></select>
+          </div>
+
+          <div class="form-group">
+            <label>Tipo <span class="required">*</span></label>
+            <select
+              app-selector
+              [options]="types() || []"
+              formControlName="type"
+              class="form-control"
+              [appFormFieldError]="{}"
+            ></select>
+          </div>
+
+          <div class="form-group">
+            <label>Prioridad <span class="required">*</span></label>
+            <select
+              app-selector
+              [options]="priorities() || []"
+              formControlName="priorityId"
+              class="form-control"
+              [appFormFieldError]="{}"
+            >
+              <option [ngValue]="null" disabled>
+                Selecciona la prioridad...
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Responsabilidades y Logística -->
+      <div>
+        <h3
+          class="text-lg font-medium text-gray-900 mb-4 border-b border-gray-200 pb-2"
+        >
+          Responsables y Ubicación
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label
+              >Área Solicitante / Relacionada
+              <span class="required">*</span></label
+            >
+            <select
+              app-selector
+              [options]="areas() || []"
+              formControlName="areaId"
+              class="form-control"
+              [appFormFieldError]="{}"
+            ></select>
+          </div>
+
+          <div class="form-group">
+            <app-search-select
+              [id]="'responsibleEmployeeId'"
+              [label]="'Empleado Responsable'"
+              [required]="true"
+              [placeholder]="'Buscar empleado...'"
+              [items]="employeeCtx.options() || []"
+              [selectedItems]="employeeCtx.selectedOptions()"
+              (onSearch)="employeeCtx.search($event)"
+              (onSelect)="employeeCtx.select($event)"
+              (onRemove)="employeeCtx.remove($event)"
+            ></app-search-select>
+          </div>
+
+          <div class="form-group">
+            <label>Capacitador <span class="required">*</span></label>
+            <select
+              app-selector
+              [options]="trainers() || []"
+              formControlName="trainerId"
+              class="form-control"
+              [appFormFieldError]="{}"
+            ></select>
+          </div>
+
+          <div class="form-group">
+            <label>Ubicación / Medio</label>
+            <input
+              type="text"
+              formControlName="location"
+              class="form-control"
+              placeholder="Ej: Sala de juntas 1 o Enlace de Teams"
+              [appFormFieldError]="{}"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Fechas y Costos -->
+      <div>
+        <h3
+          class="text-lg font-medium text-gray-900 mb-4 border-b border-gray-200 pb-2"
+        >
+          Detalles Adicionales
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="form-group">
+            <label>Fecha de Programación <span class="required">*</span></label>
+            <input
+              type="datetime-local"
+              formControlName="scheduledDate"
+              class="form-control"
+              [appFormFieldError]="{}"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Duración (Horas) <span class="required">*</span></label>
+            <input
+              type="number"
+              formControlName="durationHours"
+              class="form-control"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Costo Estimado</label>
+            <input
+              type="text"
+              appCurrencyFormat
+              formControlName="cost"
+              class="form-control pl-7 text-right"
+              placeholder="0.00"
+              [appFormFieldError]="{}"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Estado de Creación</label>
+            <select
+              app-selector
+              [options]="statuses() || []"
+              formControlName="status"
+              class="form-control"
+            ></select>
+          </div>
+
+          <div class="form-group md:col-span-2">
+            <label>Descripción y Observaciones</label>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              rows="3"
+              placeholder="Detalles de la capacitación..."
+              [appFormFieldError]="{}"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div
+      class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200"
+    >
+      <button type="button" class="btn btn-secondary">Cancelar</button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || submitting()"
+      >
+        Guardar Capacitación
+      </button>
+    </div>
+  </form>
+</div>

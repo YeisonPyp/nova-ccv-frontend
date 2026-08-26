@@ -1,0 +1,305 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container flex flex-col"
+      style="max-width: 900px; max-height: 90vh"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header shrink-0">
+        <h2 class="modal-title">Editar formulación (Marco Lógico)</h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body flex-1 min-h-0 overflow-y-auto">
+        @if (error()) {
+          <div
+            class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          id="formulation-form"
+          (ngSubmit)="submit()"
+          class="flex flex-col gap-6"
+        >
+          <!-- ── INFORMACIÓN GENERAL ── -->
+          <section>
+            <h5
+              class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+            >
+              Información general
+            </h5>
+            <div class="form-row">
+              <div class="half-width form-group">
+                <label>Fecha de formulación</label>
+                <input
+                  type="date"
+                  formControlName="formulationDate"
+                  class="form-control input-date-lc"
+                />
+              </div>
+              <div class="half-width form-group">
+                <label>Estado de formulación</label>
+                <select
+                  formControlName="formulationStatus"
+                  class="form-control"
+                >
+                  @for (s of statusOptions; track s.value) {
+                    <option [value]="s.value">{{ s.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="half-width form-group">
+                <label>Tipo de iniciativa</label>
+                <select formControlName="initiativeType" class="form-control">
+                  @for (t of initiativeTypeOptions; track t.value) {
+                    <option [value]="t.value">{{ t.label }}</option>
+                  }
+                </select>
+              </div>
+              <div class="half-width form-group">
+                <label>Concepto técnico</label>
+                <select formControlName="technicalConcept" class="form-control">
+                  <option [value]="null">— Sin definir —</option>
+                  @for (c of technicalConceptOptions; track c.value) {
+                    <option [value]="c.value">{{ c.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── ALINEACIÓN ESTRATÉGICA ── -->
+          <section>
+            <h5
+              class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+            >
+              Alineación estratégica
+            </h5>
+            <div class="form-group">
+              <label>Eje estratégico</label>
+              <textarea
+                formControlName="strategicAxis"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Objetivos estratégicos</label>
+              <textarea
+                formControlName="strategicObjectives"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-row">
+              <div class="half-width form-group">
+                <label>Relación con el POA</label>
+                <textarea
+                  formControlName="poaRelation"
+                  class="form-control"
+                  rows="2"
+                ></textarea>
+              </div>
+              <div class="half-width form-group">
+                <label>Relación con el PAT</label>
+                <textarea
+                  formControlName="patRelation"
+                  class="form-control"
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── ANTECEDENTES Y PROBLEMA ── -->
+          <section>
+            <h5
+              class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+            >
+              Antecedentes, justificación y problema
+            </h5>
+            <div class="form-group">
+              <label>Antecedentes</label>
+              <textarea
+                formControlName="background"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Justificación</label>
+              <textarea
+                formControlName="justification"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Descripción del problema</label>
+              <textarea
+                formControlName="problemDescription"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+          </section>
+
+          <!-- ── ALCANCE Y BENEFICIARIOS ── -->
+          <section>
+            <h5
+              class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+            >
+              Alcance y beneficiarios
+            </h5>
+            <div class="form-row">
+              <div class="half-width form-group">
+                <label>El alcance incluye</label>
+                <textarea
+                  formControlName="scopeIncludes"
+                  class="form-control"
+                  rows="2"
+                ></textarea>
+              </div>
+              <div class="half-width form-group">
+                <label>El alcance no incluye</label>
+                <textarea
+                  formControlName="scopeExcludes"
+                  class="form-control"
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="half-width form-group">
+                <label>Beneficiarios directos</label>
+                <input
+                  type="number"
+                  formControlName="directBeneficiaries"
+                  class="form-control"
+                  min="0"
+                />
+              </div>
+              <div class="half-width form-group">
+                <label>Beneficiarios indirectos</label>
+                <input
+                  type="number"
+                  formControlName="indirectBeneficiaries"
+                  class="form-control"
+                  min="0"
+                />
+              </div>
+            </div>
+          </section>
+
+          <!-- ── EJECUCIÓN Y SEGUIMIENTO ── -->
+          <section>
+            <h5
+              class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+            >
+              Ejecución y seguimiento
+            </h5>
+            <div class="form-group">
+              <label>Metodología de ejecución</label>
+              <textarea
+                formControlName="executionMethodology"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Detalle presupuestal</label>
+              <textarea
+                formControlName="budgetDetail"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Plan de seguimiento</label>
+              <textarea
+                formControlName="monitoringPlan"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Sostenibilidad</label>
+              <textarea
+                formControlName="sustainability"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Conclusiones</label>
+              <textarea
+                formControlName="conclusions"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div>
+          </section>
+
+          <!-- ── RESPONSABLES ── -->
+          <section>
+            <h5
+              class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+            >
+              Responsables
+            </h5>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="form-group">
+                <label>Elaborado por</label>
+                <input
+                  type="text"
+                  formControlName="preparedBy"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label>Revisado por</label>
+                <input
+                  type="text"
+                  formControlName="reviewedBy"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-group">
+                <label>Aprobado por</label>
+                <input
+                  type="text"
+                  formControlName="approvedBy"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      <div class="modal-footer shrink-0">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="formulation-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            Guardar cambios
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

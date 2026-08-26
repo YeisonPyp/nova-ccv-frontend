@@ -1,0 +1,61 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Rubros presupuestales</h1>
+      <p class="text-sm text-gray-500">
+        Gestión de rubros y sus ingresos / egresos
+      </p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">
+      + Nuevo rubro
+    </button>
+  </div>
+
+  <app-pagination-table
+    [service]="service"
+    [tableColumns]="columns"
+    [showFilterSection]="false"
+  >
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline" (click)="openDetail(item)">
+        Gestionar
+      </button>
+    </ng-template>
+  </app-pagination-table>
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Nuevo rubro</h2>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label>
+          <input formControlName="name" class="form-control w-full" maxlength="300" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium mb-1">Código</label>
+            <input formControlName="code" class="form-control w-full" maxlength="20" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Tipo de recurso</label>
+            <input formControlName="resourceType" class="form-control w-full" maxlength="20" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label>
+          <textarea formControlName="description" rows="2" class="form-control w-full"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving()">
+            Crear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

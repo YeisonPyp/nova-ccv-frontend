@@ -1,0 +1,22 @@
+<div
+  class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer p-5 flex flex-col gap-3"
+  (click)="onClick()"
+>
+  <div class="flex items-center gap-3">
+    <div class="min-w-0">
+      <span class="text-xs text-gray-400">Plan estratégico</span>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between mt-1">
+    <span class="text-xs font-medium text-gray-700">
+      {{ plan().name }}
+    </span>
+  </div>
+
+  <div
+    class="h-1 rounded-full"
+    [style.background-color]="color()"
+    style="opacity: 0.3"
+  ></div>
+</div>

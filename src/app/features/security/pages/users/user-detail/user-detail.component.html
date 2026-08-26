@@ -1,0 +1,322 @@
+@if (!canRead) {
+  <app-forbidden />
+} @else {
+  <div class="p-6 space-y-6">
+    <button
+      class="btn btn-link text-sm text-gray-500 ps-0"
+      type="button"
+      (click)="goBack()"
+    >
+      ← Volver a usuarios
+    </button>
+
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-secondary m-0">
+        {{ user()?.firstName }} {{ user()?.lastName }}
+      </h1>
+      <div class="flex items-center gap-3">
+        @if (autoSaving()) {
+          <span class="text-xs text-tertiary">Guardando...</span>
+        }
+        @if (user(); as u) {
+          <span
+            class="badge fs-6 px-3 py-2"
+            [class.bg-success]="u.enabled"
+            [class.bg-secondary]="!u.enabled"
+          >
+            {{ u.enabled ? "Activo" : "Inactivo" }}
+          </span>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="text-center py-8">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+    }
+
+    <!-- Form card -->
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+    >
+      <div class="p-6">
+        @if (user(); as u) {
+          <p class="text-tertiary text-sm mb-4">
+            {{ u.username }} · {{ u.email }}
+          </p>
+        }
+        <form [formGroup]="form" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+              <label
+                class="form-label text-sm font-medium text-gray-700 mb-1 block"
+              >
+                Nombre <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                formControlName="firstName"
+                placeholder="Nombre"
+                [ngClass]="{ 'border-red-400': isFieldInvalid('firstName') }"
+                (input)="onFieldChange()"
+              />
+              @if (isFieldInvalid("firstName")) {
+                <div class="text-red-500 text-xs mt-1">Mínimo 2 caracteres</div>
+              }
+            </div>
+            <div class="form-group">
+              <label
+                class="form-label text-sm font-medium text-gray-700 mb-1 block"
+              >
+                Apellido <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                formControlName="lastName"
+                placeholder="Apellido"
+                [ngClass]="{ 'border-red-400': isFieldInvalid('lastName') }"
+                (input)="onFieldChange()"
+              />
+              @if (isFieldInvalid("lastName")) {
+                <div class="text-red-500 text-xs mt-1">Mínimo 2 caracteres</div>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit-only sections -->
+    @if (user(); as u) {
+      <details (toggle)="onRolesToggle($event)">
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
+        >
+          Roles
+        </summary>
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div class="p-6 space-y-4">
+            <div class="flex flex-wrap gap-2 min-h-8">
+              @if (u.roles.length === 0) {
+                <span class="text-tertiary text-sm italic"
+                  >Sin roles asignados.</span
+                >
+              }
+              @for (role of u.roles; track role; let i = $index) {
+                <span
+                  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-100"
+                >
+                  {{ role }}
+                  @if (canUpdate && i !== 0) {
+                    <button
+                      type="button"
+                      class="text-primary hover:text-indigo-900 cursor-pointer focus:outline-none"
+                      [disabled]="saving()"
+                      (click)="removeRole(role)"
+                      aria-label="Quitar rol"
+                    >
+                      &times;
+                    </button>
+                  }
+                </span>
+              }
+            </div>
+
+            @if (canUpdate && canReadRoles) {
+              <div class="border-t border-gray-100 pt-4 mt-4">
+                <h4 class="text-sm font-semibold text-gray-600 uppercase mb-3">
+                  Roles disponibles
+                </h4>
+                <app-dynamic-table
+                  [data]="pagedRoles()"
+                  [columns]="roleColumns"
+                  emptyMessage="No hay roles disponibles para asignar."
+                >
+                  <ng-template #actions let-role>
+                    <button
+                      class="btn btn-sm btn-outline-primary text-xs"
+                      [disabled]="saving()"
+                      (click)="assignRole(role)"
+                    >
+                      + Asignar
+                    </button>
+                  </ng-template>
+                </app-dynamic-table>
+                <app-pagination
+                  [pages]="rolesTotalPages()"
+                  [currentPage]="rolesPage()"
+                  (pageChange)="rolesPage.set($event)"
+                />
+              </div>
+            }
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
+        >
+          Permisos
+        </summary>
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+        >
+          <div class="p-6 space-y-4">
+            <app-permissions-manager
+              [assigned]="u.permissions"
+              [excludeUserId]="u.id"
+              [saving]="saving()"
+              [editable]="canUpdate && canReadPermissions"
+              (assign)="assignPermission($event)"
+              (remove)="removePermission($event)"
+            />
+          </div>
+        </div>
+      </details>
+
+      @if (canReadStatusChanges) {
+        <details (toggle)="onStatusChangesToggle($event)">
+          <summary
+            class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
+          >
+            Cambios de estado
+          </summary>
+          <div
+            class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+          >
+            <div class="p-6 space-y-4">
+              @if (canCreateStatusChange) {
+                <div class="flex justify-end">
+                  <button
+                    class="btn btn-sm btn-primary"
+                    (click)="openStatusChangeModal()"
+                  >
+                    + Registrar cambio
+                  </button>
+                </div>
+              }
+              @if (statusChangesLoading()) {
+                <div class="text-center py-4">
+                  <div
+                    class="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"
+                  ></div>
+                </div>
+              } @else {
+                <app-dynamic-table
+                  [data]="statusChanges()"
+                  [columns]="statusChangeColumns"
+                  emptyMessage="No hay cambios de estado registrados."
+                />
+                <app-paginator
+                  [pageSize]="statusChangesSize()"
+                  [currentPage]="statusChangesPage()"
+                  [totalPages]="statusChangesTotalPages()"
+                  (onSelectPage)="loadStatusChanges($event)"
+                  (pageSizeChange)="changeStatusPageSize($event)"
+                />
+              }
+            </div>
+          </div>
+        </details>
+      }
+
+      <!-- Employee section at the end -->
+      <details>
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-primary transition-colors border-b-2 border-primary p-2 font-medium text-gray-700"
+        >
+          Empleado
+        </summary>
+        <app-user-employee [userId]="u.id" [employee]="u.employee" />
+      </details>
+    }
+  </div>
+
+  @if (showStatusChangeModal()) {
+    <div
+      class="modal-overlay"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+      "
+    >
+      <div
+        class="modal-container bg-white rounded-xl shadow-lg p-6"
+        style="width: 100%; max-width: 480px"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-secondary m-0">
+            Registrar cambio de estado
+          </h3>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Cerrar"
+            (click)="closeStatusChangeModal()"
+          ></button>
+        </div>
+
+        <form [formGroup]="statusChangeForm" class="space-y-3">
+          <div class="flex justify-between w-[80%] self-center">
+            <label class="form-label fw-semibold">Nuevo estado</label>
+            <select formControlName="newStatus">
+              <option [ngValue]="null">-- Selecciona --</option>
+              @for (s of availableStatuses; track s) {
+                <option [ngValue]="s">{{ s }}</option>
+              }
+            </select>
+            @if (
+              statusChangeForm.get("newStatus")?.invalid &&
+              statusChangeForm.get("newStatus")?.touched
+            ) {
+              <div class="text-danger small">Requerido</div>
+            }
+          </div>
+          <div>
+            <label class="form-label fw-semibold">Motivo</label>
+            <textarea
+              class="form-control"
+              rows="3"
+              formControlName="reason"
+              placeholder="Explica el motivo del cambio"
+            ></textarea>
+            @if (
+              statusChangeForm.get("reason")?.invalid &&
+              statusChangeForm.get("reason")?.touched
+            ) {
+              <div class="text-danger small">Requerido</div>
+            }
+          </div>
+        </form>
+
+        <div class="flex justify-end gap-2 mt-4">
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            (click)="closeStatusChangeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            [disabled]="savingStatusChange()"
+            (click)="submitStatusChange()"
+          >
+            {{ savingStatusChange() ? "Guardando..." : "Guardar" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+}

@@ -7,18 +7,23 @@ $border-color: #e2e8f0;
 $white: #ffffff;
 $shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
+.collapsed {
+  transform: translateX(-100%);
+  box-shadow: none;
+}
+
 .header {
   display: flex;
   align-items: center;
   height: $header-height;
-  padding: 0 1.5rem;
+  padding: 1.5rem;
   background: $white;
   border-bottom: 1px solid $border-color;
   box-shadow: $shadow;
   position: sticky;
   top: 0;
-  z-index: 100;
   gap: 1rem;
+  z-index: 10;
 }
 
 .btn-toggle {
@@ -33,6 +38,7 @@ $shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   color: $text-color;
   transition: all 0.2s;
+  z-index: 11;
 
   &:hover {
     background: #f7fafc;
@@ -42,7 +48,6 @@ $shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
 .header-brand {
   h1 {
-    font-size: 1.25rem;
     font-weight: 700;
     color: $text-color;
     margin: 0;
@@ -61,6 +66,8 @@ $shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .btn-icon {

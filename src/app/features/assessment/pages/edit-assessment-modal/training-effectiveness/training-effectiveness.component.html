@@ -1,0 +1,115 @@
+@if (hasData()) {
+  <section class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+    <h3
+      class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-1"
+    >
+      Evaluación eficacia de las capacitaciones recibidas
+    </h3>
+    <p class="text-xs text-gray-500 mb-4">
+      Solo aplica para los funcionarios que recibieron capacitación. No afecta
+      el promedio general de la evaluación.
+    </p>
+
+    <div class="flex flex-col gap-6">
+      @for (s of surveys(); track s.surveyId) {
+        <div class="rounded-lg border border-gray-200">
+          <!-- training + scope header -->
+          <div
+            class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 bg-gray-50 px-4 py-3"
+          >
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-gray-800 truncate">
+                {{ s.training.topicName }}
+              </p>
+              <p class="text-xs text-gray-500">
+                {{ s.training.scheduledDate | date: "mediumDate" }} ·
+                {{ s.surveyName }}
+              </p>
+            </div>
+          </div>
+
+          <!-- questions -->
+          <div class="divide-y divide-gray-100">
+            @for (answer of s.answers; track answer.id) {
+              <div
+                class="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+              >
+                <p class="flex-1 min-w-0 text-sm text-gray-800 wrap-break-word">
+                  {{ answer.question.description }}
+                </p>
+
+                @if (
+                  isYesNo(answer.question.minValue, answer.question.maxValue)
+                ) {
+                  <!-- SI / NO, as in the official format -->
+                  <div class="flex items-center gap-4 shrink-0">
+                    <label class="flex items-center gap-1.5 text-sm">
+                      <input
+                        type="radio"
+                        [name]="'q-' + answer.question.id"
+                        [checked]="
+                          scoreOf(
+                            s.trainingAssessmentId,
+                            answer.question.id
+                          ) === 1
+                        "
+                        [disabled]="!canEdit(s.assessment)"
+                        (change)="
+                          setScore(
+                            s.trainingAssessmentId,
+                            answer.question.id,
+                            1
+                          )
+                        "
+                      />
+                      SI
+                    </label>
+                    <label class="flex items-center gap-1.5 text-sm">
+                      <input
+                        type="radio"
+                        [name]="'q-' + answer.question.id"
+                        [checked]="
+                          scoreOf(
+                            s.trainingAssessmentId,
+                            answer.question.id
+                          ) === 0
+                        "
+                        [disabled]="!canEdit(s.assessment)"
+                        (change)="
+                          setScore(
+                            s.trainingAssessmentId,
+                            answer.question.id,
+                            0
+                          )
+                        "
+                      />
+                      NO
+                    </label>
+                  </div>
+                } @else {
+                  <input
+                    type="number"
+                    class="form-control w-24 text-sm text-right shrink-0"
+                    [min]="answer.question.minValue || 0"
+                    [max]="answer.question.maxValue || 5"
+                    [disabled]="!canEdit(s.assessment)"
+                    [ngModel]="
+                      scoreOf(s.trainingAssessmentId, answer.question.id)
+                    "
+                    (ngModelChange)="
+                      setScore(
+                        s.trainingAssessmentId,
+                        answer.question.id,
+                        $event
+                      )
+                    "
+                  />
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+}

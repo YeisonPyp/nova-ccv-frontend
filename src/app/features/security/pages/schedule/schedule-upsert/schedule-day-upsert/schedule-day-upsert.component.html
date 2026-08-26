@@ -1,0 +1,47 @@
+<div class="grid grid-cols-2 max-w-150 py-2" [formGroup]="form">
+  <span
+    class="inline-flex items-center justify-center text-sm font-medium h-full"
+  >
+    {{ dayName() }}
+  </span>
+
+  <div class="flex items-start">
+    @if (isActive()) {
+      <!-- Time inputs -->
+      <div class="flex items-center gap-3 flex-1">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-tertiary">Entrada</span>
+          <input
+            type="time"
+            class="form-control form-control-sm"
+            formControlName="starts"
+          />
+        </div>
+        <span class="text-tertiary">→</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-tertiary">Salida</span>
+          <input
+            type="time"
+            class="form-control form-control-sm"
+            formControlName="ends"
+          />
+        </div>
+
+        <div class="flex justify-center">
+          @if (saving()) {
+            <div
+              class="spinner-border spinner-border-sm text-primary w-3"
+              role="status"
+            ></div>
+          } @else {
+            <button (click)="remove()" class="btn btn-primary">-</button>
+          }
+        </div>
+      </div>
+
+      <!-- Saving indicator -->
+    } @else {
+      <button (click)="activate()" class="btn btn-primary">+</button>
+    }
+  </div>
+</div>

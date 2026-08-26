@@ -1,0 +1,50 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Crear proceso — {{ label }}</h2>
+        <button class="close-btn" (click)="close()">✕</button>
+      </div>
+      <div class="modal-container">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <div class="form-group mb-4">
+            <label for="name"
+              >Nombre del proceso <span class="text-red-500">*</span></label
+            >
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              class="form-control"
+              placeholder="Ej. Adición enero 2024"
+              autocomplete="off"
+            />
+            @if (form.get("name")?.invalid && form.get("name")?.touched) {
+              <span class="text-xs text-red-500 mt-1 block"
+                >Nombre requerido</span
+              >
+            }
+          </div>
+
+          <div class="flex gap-3 justify-end pt-2">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="close()"
+              [disabled]="saving()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="form.invalid || saving()"
+            >
+              {{ saving() ? "Creando..." : "Crear proceso" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

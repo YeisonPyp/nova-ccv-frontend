@@ -1,0 +1,143 @@
+<div class="space-y-6">
+  <!-- Controls -->
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h3 class="text-lg font-medium text-gray-900">Métricas anuales</h3>
+      <p class="text-sm text-gray-500">
+        Selecciona un año en la tabla para ver el detalle por área.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-end gap-3">
+      <label class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-gray-600">Estado</span>
+        <select
+          class="form-control text-sm"
+          [ngModel]="status()"
+          (ngModelChange)="status.set($event)"
+        >
+          @for (s of statuses(); track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-gray-600">Meta (%)</span>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          class="form-control text-sm w-28"
+          [ngModel]="targetScore()"
+          (ngModelChange)="setTarget($event)"
+        />
+      </label>
+    </div>
+  </div>
+
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+  @if (!isLoading()) {
+    <!-- ── Year metrics ── -->
+    <section
+      class="bg-white rounded-lg border border-gray-100 shadow-sm p-6 space-y-4"
+    >
+      @if (hasYearData()) {
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div class="min-w-0 overflow-x-auto">
+            <app-dynamic-table
+              [data]="yearStats()"
+              [columns]="yearColumns"
+              emptyMessage="No hay métricas anuales."
+              fileName="metricas-anuales"
+            >
+              <ng-template #actions let-item>
+                <button
+                  class="text-sm font-medium"
+                  [class]="
+                    selectedYear() === item.year
+                      ? 'text-indigo-700 font-semibold'
+                      : 'text-indigo-600 hover:text-indigo-900'
+                  "
+                  (click)="selectYear(item)"
+                  [disabled]="selectedYear() === item.year"
+                >
+                  {{
+                    selectedYear() === item.year ? "Seleccionado" : "Ver áreas"
+                  }}
+                </button>
+              </ng-template>
+            </app-dynamic-table>
+          </div>
+          <!-- chart needs a sized wrapper: Chart.js writes the canvas size -->
+          <div class="h-96 min-w-0">
+            <app-chart-exporter
+              fileName="metricas-anuales"
+              excelSheetName="Anual"
+            >
+              <canvas
+                baseChart
+                type="line"
+                [data]="lineChartData()"
+                [options]="lineChartOptions"
+              ></canvas>
+            </app-chart-exporter>
+          </div>
+        </div>
+      } @else {
+        <p class="text-sm text-gray-500 italic py-6 text-center">
+          No hay métricas anuales para el estado seleccionado.
+        </p>
+      }
+    </section>
+
+    <!-- ── Area metrics ── -->
+    <section
+      class="bg-white rounded-lg border border-gray-100 shadow-sm p-6 space-y-4"
+    >
+      <h3 class="text-lg font-medium text-gray-900">
+        Métricas por área
+        @if (selectedYear()) {
+          <span class="text-sm font-normal text-gray-500">
+            — {{ selectedYear() }}
+          </span>
+        }
+      </h3>
+
+      <div app-loading-spinner [isLoading]="isLoadingAreas()"></div>
+
+      @if (!isLoadingAreas()) {
+        @if (hasAreaData()) {
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div class="min-w-0 overflow-x-auto">
+              <app-dynamic-table
+                [data]="areaStats()"
+                [columns]="areaColumns"
+                emptyMessage="No hay métricas por área."
+                fileName="metricas-por-area"
+              />
+            </div>
+            <div class="h-96 min-w-0">
+              <app-chart-exporter
+                fileName="metricas-por-area"
+                excelSheetName="Áreas"
+              >
+                <canvas
+                  baseChart
+                  type="bar"
+                  [data]="areaChartData()"
+                  [options]="areaChartOptions"
+                ></canvas>
+              </app-chart-exporter>
+            </div>
+          </div>
+        } @else {
+          <p class="text-sm text-gray-500 italic py-6 text-center">
+            No hay métricas por área para el año seleccionado.
+          </p>
+        }
+      }
+    </section>
+  }
+</div>

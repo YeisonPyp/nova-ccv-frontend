@@ -1,0 +1,196 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6 relative">
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading() && detail()) {
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+      <a routerLink=".." class="text-gray-500 hover:text-gray-700">
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+      </a>
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ detail()?.topicName }}
+          </h1>
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100"
+          >
+            {{ detail()?.status }}
+          </span>
+        </div>
+        <p class="text-sm text-gray-500">
+          Tipo: {{ detail()?.type }} | Modalidad:
+          {{ detail()?.modalityName }}
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden p-6 mb-6"
+    >
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        Información General
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">
+            Capacitador
+          </dt>
+          <dd class="mt-1 text-sm text-gray-900 font-semibold">
+            {{ detail()?.trainerName }} {{ detail()?.trainerLastname }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">
+            Responsable (Interno)
+          </dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ detail()?.responsibleName }}
+            {{ detail()?.responsibleLastName }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">
+            Fecha Programada
+          </dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ detail()?.scheduledDate | date: "medium" }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Duración</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ detail()?.durationHours }} horas
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Costo</dt>
+          <dd class="mt-1 text-sm font-semibold text-gray-900">
+            {{ detail()?.cost | currency: "COP" : "symbol" : "1.0-0" }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Ubicación</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ detail()?.location }}
+          </dd>
+        </div>
+      </div>
+
+      <div class="mt-6 border-t border-gray-100 pt-4">
+        <dt class="text-xs font-medium text-gray-500 uppercase">Descripción</dt>
+        <dd class="mt-1 text-sm text-gray-700">
+          {{ detail()?.description }}
+        </dd>
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden mb-6"
+    >
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px" aria-label="Tabs">
+          <button
+            (click)="activeTab.set('sessions')"
+            [class]="
+              activeTab() === 'sessions'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm"
+          >
+            Cronograma
+          </button>
+          <button
+            (click)="activeTab.set('participants')"
+            [class]="
+              activeTab() === 'participants'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm"
+          >
+            Participantes
+          </button>
+          <button
+            (click)="activeTab.set('surveys')"
+            [class]="
+              activeTab() === 'surveys'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm"
+          >
+            Evaluaciones
+          </button>
+          <button
+            (click)="activeTab.set('answers')"
+            [class]="
+              activeTab() === 'answers'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            class="w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm"
+          >
+            Respuestas
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-6">
+        <!-- SESSIONS -->
+        @if (activeTab() === "sessions") {
+          <app-training-sessions
+            [trainingId]="trainingId()"
+            [durationHours]="detail()?.durationHours"
+          />
+        }
+
+        <!-- PARTICIPANTS -->
+        @if (activeTab() === "participants") {
+          <div class="space-y-8">
+            <!-- Enrollment: chips of enrolled + table of employees to add -->
+            <div class="space-y-3">
+              <h4 class="text-lg font-medium text-gray-900">
+                Participantes Inscritos
+              </h4>
+              <app-training-participants-management
+                [trainingId]="trainingId()"
+              />
+            </div>
+          </div>
+        }
+
+        <!-- SURVEYS -->
+        @if (activeTab() === "surveys") {
+          <app-training-surveys [trainingId]="trainingId()" />
+        }
+
+        <!-- ANSWERS -->
+        @if (activeTab() === "answers") {
+          <app-training-evaluations [trainingId]="trainingId()" />
+        }
+      </div>
+    </div>
+
+    <!-- METRICS (below general info + tabs) -->
+    <section class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        Métricas de la capacitación
+      </h3>
+      <app-training-metrics [trainingId]="trainingId()" />
+    </section>
+  }
+</div>

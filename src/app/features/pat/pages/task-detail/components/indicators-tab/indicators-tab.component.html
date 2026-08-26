@@ -1,0 +1,31 @@
+<app-project-section-card
+  title="Indicadores"
+  addLabel="+ Nuevo indicador"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="indicators()"
+    [columns]="columns"
+    emptyMessage="Sin indicadores registrados."
+  >
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-indicator-upsert-modal
+  [isOpen]="upsertModalOpen()"
+  [taskId]="taskId()"
+  [indicator]="editingIndicator()"
+  (onClose)="closeUpsertModal()"
+  (onSaved)="onSaved($event)"
+/>

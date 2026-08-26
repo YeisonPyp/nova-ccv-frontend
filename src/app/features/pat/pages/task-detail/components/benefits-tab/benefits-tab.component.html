@@ -1,0 +1,43 @@
+<app-project-section-card
+  title="Impactos"
+  addLabel="+ Nuevo impacto"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="benefits()"
+    [columns]="columns"
+    emptyMessage="Sin Impactos registrados."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @switch (col.key) {
+        @case ("benefitTypeName") {
+          <div class="font-medium text-sm text-gray-800">
+            {{ item.benefitTypeName }}
+          </div>
+        }
+        @case ("targetValue") {
+          {{ item.targetValue != null ? item.targetValue : "—" }}
+        }
+      }
+    </ng-template>
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-pat-benefit-upsert-modal
+  [isOpen]="upsertModalOpen()"
+  [taskId]="taskId()"
+  [benefit]="editingBenefit()"
+  (onClose)="closeUpsertModal()"
+  (onSaved)="onSaved($event)"
+/>

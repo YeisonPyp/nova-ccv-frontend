@@ -1,0 +1,82 @@
+@if (filterableColumns().length) {
+  <div class="filter-section">
+    <div class="filter-section__header">
+      <span class="filter-section__title">Filtros</span>
+      <div class="filter-section__actions">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline text-xs"
+          (click)="addRow()"
+          [disabled]="filterableColumns().length === 0"
+        >
+          + filtro
+        </button>
+        @if (rows().length > 0) {
+          <button
+            type="button"
+            class="btn btn-sm btn-link text-xs"
+            (click)="clear()"
+          >
+            limpiar
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (rows().length) {
+      @for (row of rows(); track $index; let i = $index) {
+        <div class="filter-row">
+          @if (i > 0) {
+            <select
+              class="filter-row__connector"
+              [ngModel]="row.connector"
+              (ngModelChange)="updateRow(i, { connector: $event })"
+            >
+              <option value="and">Y</option>
+              <option value="or">O</option>
+            </select>
+          } @else {
+            <span class="filter-row__where">donde</span>
+          }
+
+          <select
+            class="filter-row__field"
+            [ngModel]="row.field"
+            (ngModelChange)="updateRow(i, { field: $event })"
+          >
+            @for (col of filterableColumns(); track col.key) {
+              <option [value]="col.key">{{ col.label }}</option>
+            }
+          </select>
+
+          <select
+            class="filter-row__op"
+            [ngModel]="row.operator"
+            (ngModelChange)="updateRow(i, { operator: $event })"
+          >
+            @for (op of operatorsFor(row.field); track op) {
+              <option [value]="op">{{ operatorLabel[op] }}</option>
+            }
+          </select>
+
+          <input
+            class="filter-row__value"
+            [type]="valueTypeFor(row.field) ?? 'text'"
+            [ngModel]="row.value"
+            (ngModelChange)="updateRow(i, { value: $event })"
+            placeholder="valor"
+          />
+
+          <button
+            type="button"
+            class="filter-row__remove"
+            (click)="removeRow(i)"
+            aria-label="Eliminar filtro"
+          >
+            ×
+          </button>
+        </div>
+      }
+    }
+  </div>
+}

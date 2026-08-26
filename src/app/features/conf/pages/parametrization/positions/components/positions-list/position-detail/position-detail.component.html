@@ -1,0 +1,82 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+  @if (loading()) {
+    <div class="flex justify-center items-center h-64">
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"
+      ></div>
+    </div>
+  }
+
+  @if (!loading() && position()) {
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+      <a routerLink="../" class="text-gray-500 hover:text-gray-700">
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">
+          Cargo: {{ position()?.name }}
+        </h1>
+        <p class="text-sm text-gray-500">
+          Área: {{ position()?.areaName || position()?.area?.name }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Position Details -->
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden p-6"
+    >
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Detalles del Cargo</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Descripción</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ position()?.description || "No especificada" }}
+          </dd>
+        </div>
+      </div>
+
+      @if (position()?.competencies?.length) {
+        <div class="mt-6 border-t border-gray-200 pt-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-3">Competencias</h4>
+          <div class="flex flex-wrap gap-2">
+            @for (comp of position()?.competencies; track comp.id) {
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              >
+                {{ comp.name }}
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Evaluation surveys section -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">
+        Encuestas de Evaluación
+      </h2>
+      <app-position-evaluations
+        [position]="position()!"
+      ></app-position-evaluations>
+    </div>
+  }
+
+  @if (!loading() && !position()) {
+    <div class="text-center py-12 text-gray-500">Cargo no encontrado.</div>
+  }
+</div>

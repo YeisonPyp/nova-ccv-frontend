@@ -1,0 +1,13 @@
+<div class="form-row z-999">
+  <div class="form-group flex flex-row items-center gap-5">
+    <label class="text-center">{{ label() }}</label>
+    <input
+      #inputField
+      readonly
+      class="cursor-pointer w-10 h-10 rounded-full border-black border-2"
+      [style.background]="selectedColor()"
+      [style.caret-color]="'transparent'"
+      [(colorPicker)]="selectedColor"
+    />
+  </div>
+</div>

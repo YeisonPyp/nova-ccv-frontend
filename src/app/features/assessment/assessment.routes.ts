@@ -1,0 +1,66 @@
+import { hasPermissionGuard } from '@/app/shared/guards/has-permission.guard';
+import { Routes } from '@angular/router';
+
+export const ASSESSMENT_ROUTES: Routes = [
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./pages/dashboard/assessment-dashboard.component').then(
+        (m) => m.AssessmentDashboardComponent,
+      ),
+    canActivate: [hasPermissionGuard(['ASSESSMENTS_READ'])],
+  },
+  {
+    path: 'obligations',
+    loadComponent: () =>
+      import('./pages/obligations/obligations.component').then(
+        (m) => m.ObligationsComponent,
+      ),
+  },
+  {
+    path: 'assignments',
+    loadComponent: () =>
+      import('./pages/assignments/assignments.component').then(
+        (m) => m.AssignmentsComponent,
+      ),
+  },
+  {
+    path: 'edit/:id',
+    loadComponent: () =>
+      import('./pages/edit-assessment-modal/edit-assessment-modal.component').then(
+        (m) => m.EditAssessmentModalComponent,
+      ),
+    canActivate: [hasPermissionGuard(['ASSESSMENTS_UPDATE'])],
+  },
+  {
+    path: 'surveys',
+    loadComponent: () =>
+      import('./pages/surveys/surveys-list.component').then(
+        (m) => m.SurveysListComponent,
+      ),
+    canActivate: [hasPermissionGuard(['SURVEY_READ'])],
+  },
+  {
+    path: 'surveys/new',
+    loadComponent: () =>
+      import('./pages/surveys/survey-form/survey-form.component').then(
+        (m) => m.SurveyFormComponent,
+      ),
+    canActivate: [hasPermissionGuard(['SURVEY_CREATE'])],
+  },
+  {
+    path: 'surveys/:id',
+    loadComponent: () =>
+      import('./pages/surveys/survey-form/survey-form.component').then(
+        (m) => m.SurveyFormComponent,
+      ),
+    canActivate: [hasPermissionGuard(['SURVEY_UPDATE'])],
+  },
+  {
+    path: 'periods/:periodId',
+    loadComponent: () =>
+      import('./pages/period-detail/period-detail.component').then(
+        (m) => m.PeriodDetailComponent,
+      ),
+  },
+];

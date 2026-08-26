@@ -1,0 +1,135 @@
+<details
+  class="group/item border border-gray-200 rounded-lg shadow-sm"
+  [formGroup]="formGroup"
+>
+  <summary
+    class="flex items-center justify-between p-3 cursor-pointer list-none bg-white hover:bg-gray-50 transition-all border-b border-gray-50 group/item"
+    #findingDetails
+  >
+    <div class="flex items-center gap-3 grow mr-4">
+      <svg
+        class="w-3.5 h-3.5 transition-transform group-open/item:rotate-90"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+
+      <span
+        class="px-2 py-0.5 bg-blue-50 text-primary text-xs font-bold rounded-md border border-blue-100"
+      >
+        #{{ finding().number }}
+      </span>
+
+      <textarea
+        rows="1"
+        maxlength="255"
+        appAutosize
+        class="grow bg-transparent font-semibold text-secondary outline-none border-b border-transparent focus:border-blue-500 focus:bg-blue-50/30 transition-all px-2 py-0.5 rounded-sm text-sm resize-none overflow-hidden leading-snug"
+        placeholder="Nombre del hallazgo..."
+        (click)="$event.stopPropagation()"
+        formControlName="name"
+      ></textarea>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <select
+        class="px-2 py-1 text-[10px] font-bold rounded-md uppercase tracking-tight bg-gray-100 text-tertiary border border-gray-200 outline-none focus:ring-2 focus:ring-blue-400/20 cursor-pointer"
+        (click)="$event.stopPropagation()"
+        formControlName="type"
+      >
+        @for (t of findingTypes; track t) {
+          <option [value]="t">{{ getFindingTypeLabel(t) }}</option>
+        }
+      </select>
+
+      <button
+        type="button"
+        class="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 opacity-0 group-hover/item:opacity-100 focus:opacity-100"
+        (click)="onDeleteFinding(); $event.stopPropagation()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 6h18"></path>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+        </svg>
+      </button>
+    </div>
+  </summary>
+  @defer (on hover(findingDetails)) {
+    <div class="p-6 bg-white border-t border-gray-50 space-y-8">
+      <div class="space-y-3">
+        <label class="text-[10px] font-bold uppercase tracking-widest">
+          Hallazgo
+        </label>
+        <textarea
+          rows="6"
+          class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
+          placeholder="Criterio/requisito, evidencia objetiva y declaración del hallazgo..."
+          formControlName="description"
+        ></textarea>
+      </div>
+
+      <div class="space-y-4">
+        <label class="text-[10px] font-bold uppercase tracking-widest">
+          Análisis de causa raíz
+        </label>
+
+        <textarea
+          rows="3"
+          class="w-full text-[13px] text-tertiary leading-relaxed outline-none border-l-2 border-gray-200 focus:border-blue-500 pl-4 bg-gray-50/30 hover:bg-gray-50 focus:bg-transparent resize-none transition-all py-1"
+          placeholder="Notas del análisis (ej. 5 Porqués)..."
+          formControlName="rootCauseNotes"
+        ></textarea>
+
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full">
+            {{ rootCauseDocuments().length }} documentos
+          </span>
+        </div>
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+        >
+          @for (doc of rootCauseDocuments(); track doc.id) {
+            <app-finding-document-item
+              [findingId]="finding().id"
+              [document]="doc"
+              (onSaved)="onSaveDocument($event)"
+              (onRemoved)="onRemoveDocument($event)"
+            ></app-finding-document-item>
+          }
+          <app-finding-document-item
+            class="border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-300 transition-colors"
+            [findingId]="finding().id"
+            (onSaved)="onSaveDocument($event)"
+          ></app-finding-document-item>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-gray-100 -mx-6">
+        <app-action-section
+          [findingId]="finding().id"
+          [actions]="actions()"
+          [findingType]="finding().type"
+        ></app-action-section>
+      </div>
+    </div>
+  }
+</details>

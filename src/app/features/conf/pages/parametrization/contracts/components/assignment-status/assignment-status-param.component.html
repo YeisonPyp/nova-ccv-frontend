@@ -1,0 +1,122 @@
+@if (canReadAssignmentStatus) {
+  <app-parametrization-section
+    title="Estados de asignación de contrato"
+    createLabel="+ Nuevo estado"
+    [canCreate]="canCreateAssignmentStatus"
+    (onOpen)="onAssignmentStatusToggle($event)"
+    (onCreate)="openCreateAssignmentStatus()"
+  >
+    @if (!assignmentStatusLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="assignmentStatusItems()"
+        [columns]="assignmentStatusColumns"
+        emptyMessage="No hay estados de asignación."
+      >
+        <ng-template #customCell let-item let-col="column">
+          @if (col.key === "color") {
+            <div class="flex items-center gap-2">
+              <div
+                class="w-5 h-5 rounded border border-gray-300 shrink-0"
+                [style.background]="'#' + item.color"
+              ></div>
+              <span class="font-mono text-xs text-gray-600"
+                >#{{ item.color }}</span
+              >
+            </div>
+          } @else {
+            {{ item[col.key] }}
+          }
+        </ng-template>
+        <ng-template #actions let-item>
+          @if (canUpdateAssignmentStatus) {
+            <button
+              class="btn btn-sm btn-outline"
+              (click)="openEditAssignmentStatus(item)"
+            >
+              Editar
+            </button>
+          }
+          @if (canDeleteAssignmentStatus) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteAssignmentStatus(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
+}
+@if (assignmentStatusModalMode()) {
+  <div class="modal-overlay" (click)="closeAssignmentStatusModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          assignmentStatusModalMode() === "create"
+            ? "Nuevo estado de asignación"
+            : "Editar estado de asignación"
+        }}
+      </h2>
+      <form
+        [formGroup]="assignmentStatusForm"
+        (ngSubmit)="submitAssignmentStatus()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input formControlName="name" class="form-control w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Color *</label>
+          <app-color-picker formControlName="color" />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeAssignmentStatusModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="assignmentStatusForm.invalid"
+          >
+            {{ assignmentStatusModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+@if (showDeleteAssignmentStatusModal()) {
+  <div class="modal-overlay" (click)="closeDeleteAssignmentStatusModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar estado de asignación</h2>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar
+        <strong>{{ editingAssignmentStatus()?.name }}</strong
+        >?
+      </p>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteAssignmentStatusModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="confirmDeleteAssignmentStatus()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

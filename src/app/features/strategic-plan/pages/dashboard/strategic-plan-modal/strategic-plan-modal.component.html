@@ -1,0 +1,53 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5>Nuevo Plan Estratégico</h5>
+      <button type="button" class="btn btn-link" (click)="close()">✕</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="modal-body flex flex-col gap-4">
+        <div class="form-group">
+          <label
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Año de inicio <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            [appFormFieldError]="{}"
+            formControlName="startsYear"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label
+            class="text-[0.7rem] font-medium text-gray-500 uppercase tracking-wide"
+          >
+            Año de fin <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            formControlName="endsYear"
+            class="form-control"
+            [appFormFieldError]="null"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+          @if (submitting()) {
+            Creando...
+          } @else {
+            Crear Plan
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

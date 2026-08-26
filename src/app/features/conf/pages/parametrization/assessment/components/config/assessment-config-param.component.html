@@ -1,0 +1,83 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+  <div class="mb-4">
+    <h3 class="text-md font-bold text-gray-900 m-0">
+      Intervalos de evaluación
+    </h3>
+    <p class="text-xs text-gray-500 mt-1">
+      Define la ventana en la que los evaluadores pueden editar y los evaluados
+      comentar, y la periodicidad de creación de periodos.
+    </p>
+  </div>
+
+  @if (loading()) {
+    <p class="text-sm text-gray-400">Cargando…</p>
+  } @else {
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <!-- Evaluation window -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-gray-700">
+          Ventana de evaluación
+        </label>
+        <div class="flex gap-2">
+          <input
+            type="number"
+            min="1"
+            [ngModel]="evaluation().amount"
+            (ngModelChange)="setEvaluationAmount($event)"
+            class="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          />
+          <select
+            [ngModel]="evaluation().unit"
+            (ngModelChange)="setEvaluationUnit($event)"
+            class="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-primary"
+          >
+            @for (u of units; track u.value) {
+              <option [value]="u.value">{{ u.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Period creation interval -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-gray-700">
+          Creación de periodos
+        </label>
+        <div class="flex gap-2">
+          <input
+            type="number"
+            min="1"
+            [ngModel]="periodCreation().amount"
+            (ngModelChange)="setPeriodAmount($event)"
+            class="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          />
+          <select
+            [ngModel]="periodCreation().unit"
+            (ngModelChange)="setPeriodUnit($event)"
+            class="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-primary"
+          >
+            @for (u of units; track u.value) {
+              <option [value]="u.value">{{ u.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 flex items-center justify-end gap-3">
+      @if (saved()) {
+        <span class="text-xs font-medium text-green-600">
+          Configuración guardada
+        </span>
+      }
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="saving()"
+        (click)="save()"
+      >
+        Guardar
+      </button>
+    </div>
+  }
+</div>

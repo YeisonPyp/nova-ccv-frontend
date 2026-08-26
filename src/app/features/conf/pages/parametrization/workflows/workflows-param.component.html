@@ -1,0 +1,8 @@
+<div class="p-6 space-y-4">
+  <div>
+    <h1 class="text-2xl font-bold text-secondary">Parametrización — Flujos de trabajo</h1>
+    <p class="text-tertiary text-sm">Gestión de flujos de trabajo y sus pasos</p>
+  </div>
+  <app-workflow-list-param (onSelect)="onWorkflowSelected($event)" />
+  <app-workflow-steps-param [workflow]="selectedWorkflow()" />
+</div>

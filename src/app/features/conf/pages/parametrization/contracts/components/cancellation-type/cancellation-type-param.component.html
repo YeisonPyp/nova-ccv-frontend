@@ -1,0 +1,107 @@
+@if (canReadCancellationType) {
+  <app-parametrization-section
+    title="Tipos de cancelación de contrato"
+    createLabel="+ Nuevo tipo"
+    [canCreate]="canCreateCancellationType"
+    (onOpen)="onCancellationTypeToggle($event)"
+    (onCreate)="openCreateCancellationType()"
+  >
+    @if (!cancellationTypeLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="cancellationTypeItems()"
+        [columns]="cancellationTypeColumns"
+        emptyMessage="No hay tipos de cancelación."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateCancellationType) {
+            <button
+              class="btn btn-sm btn-outline"
+              (click)="openEditCancellationType(item)"
+            >
+              Editar
+            </button>
+          }
+          @if (canDeleteCancellationType) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteCancellationType(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
+}
+@if (cancellationTypeModalMode()) {
+  <div class="modal-overlay" (click)="closeCancellationTypeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          cancellationTypeModalMode() === "create"
+            ? "Nuevo tipo de cancelación"
+            : "Editar tipo de cancelación"
+        }}
+      </h2>
+      <form
+        [formGroup]="cancellationTypeForm"
+        (ngSubmit)="submitCancellationType()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input formControlName="name" class="form-control w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label
+          ><input formControlName="description" class="form-control w-full" />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeCancellationTypeModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="cancellationTypeForm.invalid"
+          >
+            {{ cancellationTypeModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+@if (showDeleteCancellationTypeModal()) {
+  <div class="modal-overlay" (click)="closeDeleteCancellationTypeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar tipo de cancelación</h2>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar
+        <strong>{{ editingCancellationType()?.name }}</strong
+        >?
+      </p>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="closeDeleteCancellationTypeModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="confirmDeleteCancellationType()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

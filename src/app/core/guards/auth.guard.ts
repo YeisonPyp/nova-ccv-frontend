@@ -14,13 +14,12 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Si no está autenticado, guardar URL de destino y redirigir al login
-  console.warn('⚠️ Acceso denegado. Redirigiendo al login...');
-  
+  console.warn('Acceso denegado. Redirigiendo al login...');
+
   router.navigate(['/auth/login'], {
     queryParams: {
-      returnUrl: state.url
-    }
+      returnUrl: state.url,
+    },
   });
 
   return false;

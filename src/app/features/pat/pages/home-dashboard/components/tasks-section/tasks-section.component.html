@@ -1,0 +1,16 @@
+<app-selectable-list
+  title="Tareas"
+  [items]="items()"
+  [loading]="loading()"
+  [multiple]="true"
+  emptyMessage="No hay tareas para los filtros seleccionados."
+  [paginated]="true"
+  [size]="size()"
+  [totalPages]="totalPages()"
+  [currentPage]="page()"
+  (onPageChange)="page.set($event)"
+  (onPageSizeChange)="size.set($event)"
+  [search]="search()"
+  (selectionChange)="selectedActivities.emit($event)"
+  (onSearch)="search.set($event)"
+/>

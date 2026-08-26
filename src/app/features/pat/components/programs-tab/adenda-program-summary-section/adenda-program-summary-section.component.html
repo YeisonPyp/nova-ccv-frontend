@@ -1,0 +1,31 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <h3
+      class="text-sm font-semibold text-secondary uppercase tracking-wider m-0"
+    >
+      Resumen de Programas por Adenda
+    </h3>
+  </div>
+
+  <app-dynamic-table
+    [data]="items()"
+    [columns]="columns"
+    [exportable]="false"
+    emptyMessage="No hay programas para los filtros seleccionados."
+  >
+    <ng-template #actions let-item>
+      <button
+        type="button"
+        class="text-xs font-medium text-primary hover:underline whitespace-nowrap disabled:opacity-50"
+        [disabled]="resolvingId() === item.programCode"
+        (click)="viewProgram(item)"
+      >
+        @if (resolvingId() === item.programCode) {
+          Abriendo...
+        } @else {
+          Ver detalle →
+        }
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</div>

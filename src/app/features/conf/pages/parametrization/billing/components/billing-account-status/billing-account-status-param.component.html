@@ -1,0 +1,84 @@
+@if (canReadBillingAccountStatus) {
+  <details
+    class="border rounded-lg"
+    (toggle)="onBillingAccountStatusToggle($event)"
+  >
+    <summary
+      class="px-4 py-3 cursor-pointer font-semibold text-secondary select-none"
+    >
+      Estados de cuenta de facturación
+    </summary>
+
+    <div class="p-4 space-y-3">
+      @if (!billingAccountStatusLoaded()) {
+        <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+      } @else {
+        @if (canCreateBillingAccountStatus) {
+          <div class="flex justify-end">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openCreateBillingAccountStatus()"
+            >
+              + Nuevo estado
+            </button>
+          </div>
+        }
+
+        <app-dynamic-table
+          [data]="billingAccountStatusItems()"
+          [columns]="billingAccountStatusColumns"
+          emptyMessage="No hay estados de cuenta."
+        >
+          <ng-template #actions let-item></ng-template>
+        </app-dynamic-table>
+
+        <app-pagination
+          [pages]="billingAccountStatusTotalPages()"
+          [currentPage]="billingAccountStatusPage()"
+          (pageChange)="loadBillingAccountStatus($event)"
+        />
+      }
+    </div>
+  </details>
+}
+
+@if (billingAccountStatusModalMode()) {
+  <div class="modal-overlay" (click)="closeBillingAccountStatusModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Nuevo estado de cuenta</h2>
+
+      <form
+        [formGroup]="billingAccountStatusForm"
+        (ngSubmit)="submitBillingAccountStatus()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label>
+          <input
+            formControlName="name"
+            class="form-control w-full"
+            placeholder="Nombre del estado"
+            maxlength="20"
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeBillingAccountStatusModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="billingAccountStatusForm.invalid"
+          >
+            Crear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

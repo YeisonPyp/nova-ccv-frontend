@@ -1,0 +1,97 @@
+<div class="p-6 space-y-6">
+  <div class="flex items-center gap-3">
+    <button
+      class="btn btn-link text-sm text-gray-500 ps-0"
+      type="button"
+      (click)="goBack()"
+    >
+      ← Volver a roles
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-8">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  } @else {
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-secondary m-0">
+        {{ isEditMode() ? (role()?.name ?? "Editar rol") : "Crear rol" }}
+      </h1>
+      @if (autoSaving()) {
+        <span class="text-xs text-tertiary">Guardando...</span>
+      }
+    </div>
+
+    <!-- Form card -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form [formGroup]="form" class="space-y-4">
+          <div>
+            <label class="form-label fw-semibold text-sm">
+              Nombre <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              placeholder="Nombre del rol"
+              [ngClass]="{ 'is-invalid': isFieldInvalid('name') }"
+              (input)="onFieldChange()"
+            />
+            @if (isFieldInvalid("name")) {
+              <div class="invalid-feedback">Mínimo 2 caracteres</div>
+            }
+          </div>
+
+          <div>
+            <label class="form-label fw-semibold text-sm">Descripción</label>
+            <textarea
+              class="form-control"
+              rows="2"
+              formControlName="description"
+              placeholder="Descripción del rol"
+              (input)="onFieldChange()"
+            ></textarea>
+          </div>
+
+          @if (!isEditMode()) {
+            <div class="d-flex justify-content-end pt-2">
+              <button
+                class="btn btn-primary btn-sm"
+                type="button"
+                [disabled]="creating() || form.invalid"
+                (click)="onCreate()"
+              >
+                {{ creating() ? "Creando..." : "Crear rol" }}
+              </button>
+            </div>
+          }
+        </form>
+      </div>
+    </div>
+
+    <!-- Permissions section — only in edit mode -->
+    @if (isEditMode() && role(); as r) {
+      <details>
+        <summary
+          class="cursor-pointer uppercase mb-4 hover:text-secondary transition-colors border-b-2 border-primary p-2"
+        >
+          Permisos
+        </summary>
+        <div class="card shadow-sm">
+          <div class="card-body space-y-4">
+            <app-permissions-manager
+              [assigned]="r?.permissions ?? []"
+              [excludeRoleId]="r?.id ?? null"
+              [saving]="saving()"
+              (assign)="assignPermission($event)"
+              (remove)="removePermission($event)"
+            />
+          </div>
+        </div>
+      </details>
+    }
+  }
+</div>

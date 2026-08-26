@@ -1,19 +1,19 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { StorageService } from './storage.service';
-import { 
-  LoginRequest, 
-  RegisterRequest, 
-  AuthResponse, 
-  UserProfile 
-} from '../models/auth.models';
-import { ApiResponse } from '../models/api-response.model';
+import { Injectable, inject, signal } from "@angular/core";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { Router } from "@angular/router";
+import { Observable, BehaviorSubject, tap, catchError, throwError } from "rxjs";
+import { environment } from "../../../environments/environment";
+import { StorageService } from "./storage.service";
+import {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  UserProfile,
+} from "../models/auth.models";
+import { ApiResponse } from "../models/api-response.model";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
   private http = inject(HttpClient);
@@ -43,34 +43,49 @@ export class AuthService {
    * Iniciar sesión
    */
   login(credentials: LoginRequest): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(
-      `${this.API_URL}/login`,
-      credentials
-    ).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          this.setSession(response.data);
-        }
-      }),
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<ApiResponse<AuthResponse>>(`${this.API_URL}/login`, credentials)
+      .pipe(
+        tap((response) => {
+          if (response.success && response.data) {
+            this.setSession(response.data);
+          }
+        }),
+        catchError(this.handleError),
+      );
+  }
+
+  forgotPassword(email: string): Observable<ApiResponse<void>> {
+    return this.http
+      .post<ApiResponse<void>>(`${this.API_URL}/forgot-password`, { email })
+      .pipe(catchError(this.handleError));
+  }
+
+  resetPassword(
+    token: string,
+    password: string,
+  ): Observable<ApiResponse<void>> {
+    return this.http
+      .post<
+        ApiResponse<void>
+      >(`${this.API_URL}/reset-password`, { token, password })
+      .pipe(catchError(this.handleError));
   }
 
   /**
    * Registrar nuevo usuario
    */
   register(data: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(
-      `${this.API_URL}/register`,
-      data
-    ).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          this.setSession(response.data);
-        }
-      }),
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<ApiResponse<AuthResponse>>(`${this.API_URL}/register`, data)
+      .pipe(
+        tap((response) => {
+          if (response.success && response.data) {
+            this.setSession(response.data);
+          }
+        }),
+        catchError(this.handleError),
+      );
   }
 
   /**
@@ -78,7 +93,7 @@ export class AuthService {
    */
   logout(): void {
     this.clearSession();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(["/auth/login"]);
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -90,13 +105,13 @@ export class AuthService {
    */
   getCurrentUser(): Observable<ApiResponse<UserProfile>> {
     return this.http.get<ApiResponse<UserProfile>>(`${this.USER_URL}/me`).pipe(
-      tap(response => {
+      tap((response) => {
         if (response.success && response.data) {
           this.currentUser.set(response.data);
           this.storage.setItem(environment.userKey, response.data);
         }
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
@@ -110,28 +125,28 @@ export class AuthService {
   private setSession(authResponse: AuthResponse): void {
     // Guardar token
     this.storage.setItem(environment.tokenKey, authResponse.token);
-    
+
     // Guardar datos básicos del usuario
     const userBasicData: Partial<UserProfile> = {
       username: authResponse.username,
       email: authResponse.email,
-      roles: authResponse.roles
+      roles: authResponse.roles,
     };
-    
+
     this.storage.setItem(environment.userKey, userBasicData);
-    
+
     // Actualizar estados
     this.isAuthenticated.set(true);
     this.authStateSubject.next(true);
-    
+
     // Cargar perfil completo del usuario
     this.getCurrentUser().subscribe({
       next: () => {
-        console.log('✅ Perfil de usuario cargado');
+        console.log("✅ Perfil de usuario cargado");
       },
       error: (err) => {
-        console.error('❌ Error cargando perfil:', err);
-      }
+        console.error("❌ Error cargando perfil:", err);
+      },
     });
   }
 
@@ -152,18 +167,18 @@ export class AuthService {
   private checkAuthState(): void {
     const hasToken = this.hasToken();
     this.isAuthenticated.set(hasToken);
-    
+
     if (hasToken) {
       const userData = this.storage.getItem<UserProfile>(environment.userKey);
       this.currentUser.set(userData);
       this.authStateSubject.next(true);
-      
+
       // Refrescar perfil desde el servidor
       this.getCurrentUser().subscribe({
         error: () => {
-          console.warn('⚠️ Token inválido o expirado, cerrando sesión');
+          console.warn("⚠️ Token inválido o expirado, cerrando sesión");
           this.clearSession();
-        }
+        },
       });
     }
   }
@@ -191,7 +206,7 @@ export class AuthService {
    */
   hasRole(role: string): boolean {
     const user = this.currentUser();
-    return user?.roles?.includes(role) ?? false;
+    return user?.roles?.includes(role) || false;
   }
 
   /**
@@ -199,7 +214,7 @@ export class AuthService {
    */
   hasAnyRole(roles: string[]): boolean {
     const user = this.currentUser();
-    return roles.some(role => user?.roles?.includes(role)) ?? false;
+    return roles.some((role) => user?.roles?.includes(role)) || false;
   }
 
   /**
@@ -207,7 +222,7 @@ export class AuthService {
    */
   hasPermission(permission: string): boolean {
     const user = this.currentUser();
-    return user?.permissions?.includes(permission) ?? false;
+    return user?.isAdmin || user?.permissions?.includes(permission) || false;
   }
 
   /**
@@ -215,7 +230,9 @@ export class AuthService {
    */
   hasAnyPermission(permissions: string[]): boolean {
     const user = this.currentUser();
-    return permissions.some(perm => user?.permissions?.includes(perm)) ?? false;
+    return (
+      permissions.some((perm) => user?.permissions?.includes(perm)) || false
+    );
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -223,7 +240,7 @@ export class AuthService {
   // ══════════════════════════════════════════════════════════════
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Ocurrió un error inesperado';
+    let errorMessage = "Ocurrió un error inesperado";
 
     if (error.error instanceof ErrorEvent) {
       // Error del lado del cliente
@@ -233,13 +250,14 @@ export class AuthService {
       if (error.error?.message) {
         errorMessage = error.error.message;
       } else if (error.status === 0) {
-        errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión.';
+        errorMessage =
+          "No se pudo conectar con el servidor. Verifica tu conexión.";
       } else {
         errorMessage = `Error ${error.status}: ${error.statusText}`;
       }
     }
 
-    console.error('❌ Error en AuthService:', errorMessage);
+    console.error("❌ Error en AuthService:", errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 }

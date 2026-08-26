@@ -1,0 +1,83 @@
+<div class="space-y-4">
+  <div class="flex justify-between items-center">
+    <h4 class="text-lg font-medium text-gray-900">Sesiones Programadas</h4>
+    <button class="btn btn-sm btn-primary" (click)="openForm()">
+      + Agregar Sesión
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <div class="border rounded-lg p-4 bg-gray-50 flex flex-wrap items-end gap-3">
+      <div class="flex flex-col">
+        <label class="text-xs font-medium text-gray-600 mb-1">Fecha</label>
+        <input
+          type="date"
+          [ngModel]="sessionDate()"
+          (ngModelChange)="sessionDate.set($event)"
+          class="form-control border-gray-300 rounded-md text-sm"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-xs font-medium text-gray-600 mb-1">Inicio</label>
+        <input
+          type="time"
+          [ngModel]="startTime()"
+          (ngModelChange)="startTime.set($event)"
+          class="form-control border-gray-300 rounded-md text-sm"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-xs font-medium text-gray-600 mb-1">Fin</label>
+        <input
+          type="time"
+          [ngModel]="endTime()"
+          (ngModelChange)="endTime.set($event)"
+          class="form-control border-gray-300 rounded-md text-sm"
+        />
+      </div>
+      <div class="flex gap-2">
+        <button
+          class="btn btn-sm btn-primary"
+          [disabled]="saving() || !sessionDate() || !startTime() || !endTime()"
+          (click)="addSession()"
+        >
+          Guardar
+        </button>
+        <button class="btn btn-sm btn-secondary" (click)="showForm.set(false)">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="text-sm text-gray-400 py-4">Cargando…</p>
+  } @else if (sessions().length) {
+    <ul class="divide-y divide-gray-200 border rounded-lg">
+      @for (session of sessions(); track session.id) {
+        <li class="p-4 hover:bg-gray-50 flex justify-between items-center">
+          <div>
+            <p class="text-sm font-medium text-gray-900">
+              {{ session.sessionDate | date: "mediumDate" }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ formatMinutes(session.startsMinutes) }} -
+              {{ formatMinutes(session.endsMinutes) }}
+            </p>
+          </div>
+          <button
+            class="text-red-600 hover:text-red-900 text-sm font-medium"
+            (click)="deleteSession(session.id)"
+          >
+            Eliminar
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="text-sm text-gray-500 italic py-4">
+      No hay sesiones programadas. La duración total es
+      {{ durationHours() }} horas.
+    </p>
+  }
+</div>

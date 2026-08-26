@@ -1,0 +1,75 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 500px"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ benefit() ? "Editar impacto" : "Nuevo impacto" }}
+        </h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body">
+        @if (error()) {
+          <div
+            class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          id="benefit-form"
+          (ngSubmit)="submit()"
+          class="flex flex-col gap-4"
+        >
+          <div class="form-group">
+            <label>Tipo de impacto <span class="required">*</span></label>
+            <select
+              formControlName="benefitTypeId"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('benefitTypeId')"
+            >
+              <option [value]="null">— Seleccionar —</option>
+              @for (bt of benefitTypes(); track bt.id) {
+                <option [value]="bt.id">{{ bt.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Meta</label>
+            <input
+              type="number"
+              formControlName="targetValue"
+              class="form-control"
+              step="0.01"
+            />
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="benefit-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            {{ benefit() ? "Guardar cambios" : "Crear impacto" }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

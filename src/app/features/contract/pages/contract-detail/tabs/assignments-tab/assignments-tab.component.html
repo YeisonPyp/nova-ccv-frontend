@@ -1,0 +1,28 @@
+@if (loading()) {
+  <div class="text-center py-4 text-tertiary text-sm">Cargando asignaciones...</div>
+} @else {
+  <app-dynamic-table
+    [data]="items()"
+    [columns]="columns"
+    emptyMessage="Sin asignaciones registradas."
+  >
+    <ng-template #actions let-item>
+      <button
+        class="btn btn-sm btn-outline"
+        (click)="viewAssignment(item)"
+      >
+        Ver detalle
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+
+  <div class="mt-4">
+    <app-paginator
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (onSelectPage)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  </div>
+}

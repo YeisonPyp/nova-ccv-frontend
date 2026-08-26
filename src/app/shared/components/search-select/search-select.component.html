@@ -1,0 +1,68 @@
+<div class="form-group">
+  @if (label) {
+    <label [for]="id">
+      {{ label }}
+      @if (required) { <span class="text-danger">*</span> }
+    </label>
+  }
+
+  <div 
+    class="input-container form-control" 
+    [class.is-invalid]="isInvalid"
+  >
+    @for (item of selectedItems; track item.id) {
+      <app-chip-item
+        [op]="item"
+        (onRemove)="removeItem($event)"
+      ></app-chip-item>
+    }
+
+    @if (maxElements <= 0 || selectedItems.length < maxElements) {
+      <input
+        #txtInput
+        type="text"
+        [id]="id"
+        class="inner-input"
+        [placeholder]="selectedItems.length > 0 ? '' : placeholder"
+        [value]="searchTerm()"
+        (input)="onInput($event)"
+        (keydown)="onKeydown($event)"
+        (focus)="isOpen.set(true)"
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        [attr.aria-expanded]="isOpen()"
+        [attr.aria-controls]="id + '-listbox'"
+        [attr.aria-activedescendant]="activeOptionId"
+      />
+    }
+
+  </div>
+
+  @if (isOpen() && items.length > 0) {
+    <ul class="dropdown-list" [id]="id + '-listbox'" role="listbox">
+      @for (item of items; track item.id; let i = $index) {
+        <li
+          #itemRef
+          [id]="id + '-option-' + i"
+          class="dropdown-item"
+          role="option"
+          [class.active]="i === activeIndex()"
+          [attr.aria-selected]="i === activeIndex()"
+          (mouseenter)="activeIndex.set(i)"
+          (click)="selectItem(item, $event)"
+        >
+          {{ item.title }}
+        </li>
+      }
+    </ul>
+  } @else if (isOpen() && searchTerm()) {
+    <ul class="dropdown-list" [id]="id + '-listbox'" role="listbox">
+       <li class="dropdown-item text-muted">{{ emptyMessage }}</li>
+    </ul>
+  }
+
+  @if (isInvalid && errorMessage) {
+    <div class="invalid-feedback d-block">{{ errorMessage }}</div>
+  }
+</div>

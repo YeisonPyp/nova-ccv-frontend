@@ -1,0 +1,133 @@
+<div class="project-detail w-full p-6">
+  <!-- Back -->
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    (click)="goBack()"
+  >
+    ← Volver a proyectos
+  </button>
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading() && project(); as p) {
+    <!-- ── HEADER ── -->
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span
+            class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded"
+            >{{ p.code }}</span
+          >
+          <span class="badge {{ getStatusClass(p.status) }}">{{
+            p.status
+          }}</span>
+          <span class="badge badge-outline text-xs">{{ p.priority }}</span>
+        </div>
+        <h1 class="text-2xl font-bold text-secondary m-0">{{ p.name }}</h1>
+        @if (p.description) {
+          <p class="text-sm text-gray-500 mt-1">{{ p.description }}</p>
+        }
+      </div>
+    </div>
+
+    <!-- ── PROPERTIES GRID ── -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Área
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ p.area?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Centro de Costo
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ p.costCenter?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Presupuesto Total
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{
+            p.totalBudget != null
+              ? (p.totalBudget | currency: "COP" : "symbol-narrow" : "1.0-0")
+              : "—"
+          }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Fecha de Inicio
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ p.startDate | date: "dd/MM/yyyy" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Fecha de Fin
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ p.endDate | date: "dd/MM/yyyy" }}
+        </p>
+      </div>
+
+      <div
+        class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm md:col-span-2 lg:col-span-3"
+      >
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Objetivo General
+        </p>
+        <p class="text-sm text-gray-700 leading-relaxed">
+          {{ p.generalObjective }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Project Tabs -->
+    <div class="flex gap-2 mb-4">
+      @for (tab of tabs; track tab.key) {
+        <button
+          class="px-5 py-3 text-sm font-medium cursor-pointer border-b-2 transition-colors duration-150 rounded-t-lg -mb-px"
+          [class]="
+            activeTab() === tab.key
+              ? 'text-primary border-primary bg-white'
+              : 'text-gray-500 border-transparent hover:text-primary hover:bg-gray-100'
+          "
+          (click)="activeTab.set(tab.key)"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Tab content -->
+    <div class="flex-1">
+      <ng-container
+        [ngComponentOutlet]="activeTabComponent()"
+        [ngComponentOutletInputs]="activeTabInputs()"
+      >
+      </ng-container>
+    </div>
+  }
+</div>

@@ -1,0 +1,35 @@
+<div class="flex flex-col gap-6">
+  <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+  @if (!isLoading()) {
+    @if (visibleAreaGroups().length === 0) {
+      <p class="text-sm text-gray-400 text-center py-8">
+        Sin actividades registradas.
+      </p>
+    }
+
+    @for (group of visibleAreaGroups(); track group.areaId) {
+      <div class="flex flex-col gap-4">
+        <h3 class="text-lg font-bold text-secondary border-b border-gray-200 pb-2">
+          {{ group.areaName }}
+        </h3>
+
+        @if (group.activities.length === 0) {
+          <p class="text-sm text-gray-400">Sin actividades registradas.</p>
+        }
+
+        @for (activity of group.activities; track activity.activityId) {
+          <app-activity-report-card
+            [activityId]="activity.activityId"
+            [activityName]="activity.activityName"
+            [year]="year()"
+            [budgetRows]="budgetRowsFor(activity.activityId)"
+            [indicatorRows]="indicatorRowsFor(activity.activityId)"
+            [productRows]="productRowsFor(activity.activityId)"
+            [benefitRows]="benefitRowsFor(activity.activityId)"
+          />
+        }
+      </div>
+    }
+  }
+</div>

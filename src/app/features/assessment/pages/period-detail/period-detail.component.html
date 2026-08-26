@@ -1,0 +1,11 @@
+<div class="flex flex-col gap-y-5">
+  @if (period(); as p) {
+    <app-period-card [period]="p" />
+    <app-period-charts [periodId]="periodId()" />
+    <app-assessment-statuses
+      [elements]="p.statusCounts || []"
+      (onClickStatus)="status.set($event)"
+    />
+    <app-assessment-table [periodId]="periodId()" [status]="status()" />
+  }
+</div>

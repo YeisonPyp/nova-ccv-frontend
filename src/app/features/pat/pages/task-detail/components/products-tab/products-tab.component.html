@@ -1,0 +1,51 @@
+<app-project-section-card
+  title="Productos"
+  addLabel="+ Nuevo producto"
+  (onAdd)="openCreate()"
+>
+  <app-dynamic-table
+    [data]="products()"
+    [columns]="columns"
+    emptyMessage="Sin productos registrados."
+  >
+    <ng-template #customCell let-item let-col="column">
+      @switch (col.key) {
+        @case ("product.name") {
+          <div class="font-medium text-sm text-gray-800">
+            {{ item.product?.name }}
+          </div>
+          @if (item.product?.description) {
+            <div class="text-xs text-gray-400 mt-0.5">
+              {{ item.product.description }}
+            </div>
+          }
+        }
+        @case ("targetQuantity") {
+          {{ item.targetQuantity }}
+        }
+        @case ("unitMeasure.name") {
+          {{ item.unitMeasure?.name ?? "—" }}
+        }
+      }
+    </ng-template>
+    <ng-template #actions let-item>
+      <button class="btn btn-sm btn-outline text-xs" (click)="openEdit(item)">
+        Editar
+      </button>
+      <button
+        class="btn btn-sm btn-outline text-xs text-red-500"
+        (click)="delete(item)"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+  </app-dynamic-table>
+</app-project-section-card>
+
+<app-pat-product-upsert-modal
+  [isOpen]="upsertModalOpen()"
+  [taskId]="taskId()"
+  [product]="editingProduct()"
+  (onClose)="closeUpsertModal()"
+  (onSaved)="onSaved($event)"
+/>

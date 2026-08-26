@@ -1,0 +1,220 @@
+<div class="w-full">
+  <div class="flex justify-between mb-3">
+    <h1 class="text-2xl font-bold">Planes de Mejoramiento</h1>
+    <button
+      *appHasPermission="['IMPROVEMENT_PLAN_CREATE']"
+      class="btn btn-primary"
+      (click)="openPlan()"
+    >
+      Nuevo Plan
+    </button>
+  </div>
+
+  <app-improvement-plan-metrics-cards></app-improvement-plan-metrics-cards>
+
+  <app-upcoming-actions-widget></app-upcoming-actions-widget>
+
+  <div class="flex flex-wrap items-center gap-2 mb-3">
+    @for (process of processes(); track process.id) {
+      <span
+        class="inline-flex items-center gap-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1"
+      >
+        {{ process.name }} ({{ process.code }})
+      </span>
+    }
+    <button
+      *appHasPermission="['IMPROVEMENT_PROCESS_CREATE']"
+      class="inline-flex items-center justify-center rounded-full bg-primary text-white w-6 h-6 text-sm leading-none"
+      title="Nuevo proceso"
+      (click)="createProcessModalOpen.set(true)"
+    >
+      +
+    </button>
+  </div>
+
+  <div
+    class="flex flex-wrap items-end gap-3 mb-4 bg-gray-50 border border-gray-200 rounded-lg p-3"
+  >
+    <div class="flex items-center gap-1">
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide"
+        >Proceso</label
+      >
+      <select
+        class="text-sm rounded border border-gray-200 px-2 py-1.5 bg-white"
+        [ngModel]="filterProcessId()"
+        (ngModelChange)="filterProcessId.set($event); onFiltersChange()"
+      >
+        <option [ngValue]="null">Todos</option>
+        @for (process of processes(); track process.id) {
+          <option [ngValue]="process.id">{{ process.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide"
+        >Entidad de Control</label
+      >
+      <select
+        class="text-sm rounded border border-gray-200 px-2 py-1.5 bg-white"
+        [ngModel]="filterControlEntityId()"
+        (ngModelChange)="filterControlEntityId.set($event); onFiltersChange()"
+      >
+        <option [ngValue]="null">Todas</option>
+        @for (entity of controlEntities(); track entity.id) {
+          <option [ngValue]="entity.id">{{ entity.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide"
+        >Estado y Vigencia</label
+      >
+      <select
+        class="text-sm rounded border border-gray-200 px-2 py-1.5 bg-white"
+        [ngModel]="filterStatus()"
+        (ngModelChange)="filterStatus.set($event); onFiltersChange()"
+      >
+        <option [ngValue]="null">Todos</option>
+        @for (opt of statusOptions; track opt[0]) {
+          <option [ngValue]="opt[0]">{{ opt[1] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide"
+        >Año</label
+      >
+      <input
+        id="improvement-plan-year"
+        type="number"
+        min="2000"
+        max="2100"
+        step="1"
+        class="text-sm rounded border border-gray-200 px-3 py-1.5 bg-white w-24 focus:outline-none focus:ring-1 focus:ring-primary"
+        [(ngModel)]="year"
+      />
+    </div>
+    <div class="flex flex-1 justify-end">
+      <button class="btn btn-primary" (click)="reportModalOpen.set(true)">
+        Generar informe
+      </button>
+    </div>
+  </div>
+
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading()) {
+    @if (plans().length === 0) {
+      <p class="text-sm text-gray-400 text-center py-8">
+        No se encontraron planes de mejora.
+      </p>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
+        @for (plan of plans(); track plan.id) {
+          <div
+            class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-3"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="text-xs font-mono text-gray-400"
+                  >#{{ plan.id }}</span
+                >
+                <h3 class="text-base font-semibold text-secondary m-0">
+                  {{ plan.name }}
+                </h3>
+              </div>
+              <div class="flex gap-1 shrink-0">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  (click)="openPlan(plan)"
+                  title="Editar"
+                >
+                  <app-edit-icon />
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                  Entidad de Control
+                </p>
+                <p class="text-gray-700 m-0">
+                  {{ plan.controlEntityName || "—" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                  Proceso
+                </p>
+                <p class="text-gray-700 m-0">
+                  {{ plan.process?.name || "—" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                  Completado en
+                </p>
+                <p class="text-gray-700 m-0">
+                  {{
+                    plan.completedAt
+                      ? (plan.completedAt | date: "dd/MM/yyyy")
+                      : "—"
+                  }}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-400 uppercase tracking-wide mb-0.5">
+                  Creado en
+                </p>
+                <p class="text-gray-700 m-0">
+                  {{ plan.createdAt | date: "dd/MM/yyyy" }}
+                </p>
+              </div>
+            </div>
+
+            <div class="h-48 flex items-center justify-center">
+              @if (hasActions(plan)) {
+                <canvas
+                  baseChart
+                  [data]="chartData(plan)"
+                  [options]="chartOptions"
+                  type="doughnut"
+                ></canvas>
+              } @else {
+                <span class="text-xs text-gray-400"
+                  >Sin acciones de mejora registradas</span
+                >
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <app-paginator
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [pageSize]="pageSize()"
+        (onSelectPage)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+      ></app-paginator>
+    }
+  }
+</div>
+
+<app-improvement-process-modal
+  [isOpen]="createProcessModalOpen()"
+  (close)="createProcessModalOpen.set(false)"
+  (saved)="onProcessCreated($event)"
+></app-improvement-process-modal>
+
+<app-generate-report-modal
+  [isOpen]="reportModalOpen()"
+  [processes]="processes()"
+  [controlEntities]="controlEntities()"
+  [year]="year()"
+  (close)="reportModalOpen.set(false)"
+></app-generate-report-modal>

@@ -1,0 +1,157 @@
+@if (canReadAgency) {
+  <app-parametrization-section
+    title="Agencias"
+    createLabel="+ Nueva agencia"
+    [canCreate]="canCreateAgency"
+    (onOpen)="onAgencyToggle($event)"
+    (onCreate)="openCreateAgency()"
+  >
+    @if (!agencyLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
+        <app-dynamic-table
+          [data]="agencyItems()"
+          [columns]="agencyColumns"
+          emptyMessage="No hay agencias."
+        >
+          <ng-template #actions let-item>
+            @if (canUpdateAgency) {
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openEditAgency(item)"
+              >
+                Editar
+              </button>
+            }
+            @if (canDeleteAgency) {
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="openDeleteAgency(item)"
+              >
+                Eliminar
+              </button>
+            }
+          </ng-template>
+        </app-dynamic-table>
+        <app-pagination
+          [pages]="agencyTotalPages()"
+          [currentPage]="agencyPage()"
+          (pageChange)="loadAgency($event)"
+        />
+      </div>
+    }
+  </app-parametrization-section>
+}
+
+<!-- Agency create/update -->
+@if (agencyModalMode()) {
+  <div class="modal-overlay" (click)="closeAgencyModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          agencyModalMode() === "create" ? "Nueva agencia" : "Editar agencia"
+        }}
+      </h2>
+      <form
+        [formGroup]="agencyForm"
+        (ngSubmit)="submitAgency()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label>
+          <input
+            formControlName="name"
+            class="form-control w-full"
+            maxlength="20"
+            placeholder="Nombre de la agencia"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción *</label>
+          <textarea
+            formControlName="description"
+            class="form-control w-full"
+            rows="2"
+            maxlength="100"
+            placeholder="Descripción"
+          ></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">NIT *</label>
+          <input
+            formControlName="nit"
+            class="form-control w-full"
+            maxlength="20"
+            placeholder="NIT"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1"
+            >Representante legal</label
+          >
+          <input
+            formControlName="legalRepresentative"
+            class="form-control w-full"
+            placeholder="Representante legal"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Tipo de empresa</label>
+          <input
+            formControlName="companyType"
+            class="form-control w-full"
+            placeholder="Tipo de empresa"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          <input
+            formControlName="vatResponsible"
+            type="checkbox"
+            id="vatResponsible"
+          />
+          <label for="vatResponsible" class="text-sm font-medium"
+            >Responsable de IVA</label
+          >
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeAgencyModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="agencyForm.invalid"
+          >
+            {{ agencyModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Agency delete -->
+@if (showDeleteAgencyModal()) {
+  <div class="modal-overlay" (click)="closeDeleteAgencyModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar agencia</h2>
+      <p class="text-sm text-tertiary">
+        ¿Está seguro de eliminar <strong>{{ editingAgency()?.name }}</strong
+        >? Esta acción no se puede deshacer.
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteAgencyModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteAgency()">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

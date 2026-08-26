@@ -1,0 +1,90 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 flex flex-col gap-2">
+  <div class="flex items-center justify-between">
+    <h5 class="text-sm font-semibold text-secondary m-0">{{ monthLabel() }}</h5>
+    <a
+      [routerLink]="registerLink()"
+      class="text-xs font-medium text-primary hover:underline"
+    >
+      Registrar
+    </a>
+  </div>
+
+  <div
+    class="grid gap-x-2 gap-y-0.5 text-xs items-baseline"
+    style="grid-template-columns: 1fr 4.5rem 4.5rem 3.5rem"
+  >
+    <!-- Column headers -->
+    <div></div>
+    <div class="text-right text-[0.65rem] font-semibold text-gray-400 uppercase">
+      Plan
+    </div>
+    <div class="text-right text-[0.65rem] font-semibold text-gray-400 uppercase border-l border-gray-200 pl-2">
+      Ejecución
+    </div>
+    <div class="text-right text-[0.65rem] font-semibold text-gray-400 uppercase">
+      Avance
+    </div>
+
+    <!-- PRESUPUESTO -->
+    <div class="col-span-4 mt-2 text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest">
+      Presupuesto
+    </div>
+    @if (data().budgets.length === 0) {
+      <div class="col-span-4 text-gray-400 pb-1">Sin rubros</div>
+    } @else {
+      @for (b of data().budgets; track b.budget.id) {
+        <div class="text-gray-600 truncate py-0.5">{{ b.budget.name }}</div>
+        <div class="text-right font-medium text-secondary py-0.5">{{ planOf(b) | number }}</div>
+        <div class="text-right font-medium text-secondary py-0.5 border-l border-gray-200 pl-2">{{ executionOf(b) | number }}</div>
+        <div class="text-right text-gray-300 py-0.5">—</div>
+      }
+      <div class="text-gray-700 font-semibold py-0.5 pt-1 border-t border-gray-100">Total</div>
+      <div class="text-right font-semibold text-secondary py-0.5 pt-1 border-t border-gray-100">{{ budgetPlanTotal() | number }}</div>
+      <div class="text-right font-semibold text-secondary py-0.5 pt-1 border-t border-gray-100 border-l border-gray-200 pl-2">{{ budgetExecutionTotal() | number }}</div>
+      <div class="py-0.5 pt-1 border-t border-gray-100"></div>
+    }
+
+    <!-- INDICADORES -->
+    <div class="col-span-4 mt-2 text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest">
+      Indicadores
+    </div>
+    @if (data().indicators.length === 0) {
+      <div class="col-span-4 text-gray-400 pb-1">Sin indicadores</div>
+    } @else {
+      @for (i of data().indicators; track i.indicator.id) {
+        <div class="text-gray-600 truncate py-0.5">{{ i.indicator.managementIndicator.name }}</div>
+        <div class="text-right font-medium text-secondary py-0.5">{{ planOf(i) | number }}</div>
+        <div class="text-right font-medium text-secondary py-0.5 border-l border-gray-200 pl-2">{{ executionOf(i) | number }}</div>
+        <div class="text-right font-medium text-secondary py-0.5">{{ indicatorAvance(i.indicator.id) | number: "1.0-1" }}%</div>
+      }
+    }
+
+    <!-- IMPACTO -->
+    <div class="col-span-4 mt-2 text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest">
+      Impacto
+    </div>
+    @if (data().benefits.length === 0) {
+      <div class="col-span-4 text-gray-400 pb-1">Sin beneficiarios</div>
+    } @else {
+      @for (b of data().benefits; track b.benefit.id) {
+        <div class="text-gray-600 truncate py-0.5">{{ b.benefit.benefitTypeName }}</div>
+        <div class="text-right font-medium text-secondary py-0.5">{{ planOf(b) | number }}</div>
+        <div class="text-right font-medium text-secondary py-0.5 border-l border-gray-200 pl-2">{{ executionOf(b) | number }}</div>
+        <div class="text-right font-medium text-secondary py-0.5">{{ benefitAvance(b.benefit.id) | number: "1.0-1" }}%</div>
+      }
+    }
+
+    @if (data().products.length > 0) {
+      <!-- PRODUCTOS -->
+      <div class="col-span-4 mt-2 text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest">
+        Productos
+      </div>
+      @for (p of data().products; track p.product.id) {
+        <div class="text-gray-600 truncate py-0.5">{{ p.product.name }}</div>
+        <div class="text-right font-medium text-secondary py-0.5">{{ planOf(p) | number }}</div>
+        <div class="text-right font-medium text-secondary py-0.5 border-l border-gray-200 pl-2">{{ executionOf(p) | number }}</div>
+        <div class="text-right text-gray-300 py-0.5">—</div>
+      }
+    }
+  </div>
+</div>

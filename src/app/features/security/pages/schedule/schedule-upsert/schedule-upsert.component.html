@@ -1,0 +1,59 @@
+<div class="space-y-6">
+  <!-- Schedule info -->
+  <div class="card shadow-sm">
+    <div class="card-body space-y-3">
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg font-semibold text-secondary m-0">
+          {{ schedule().name }}
+        </h2>
+        @if (autoSaving()) {
+          <span class="text-xs text-tertiary">Guardando...</span>
+        }
+      </div>
+
+      <form [formGroup]="form" class="space-y-3">
+        <div>
+          <label class="form-label fw-semibold text-sm">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="Nombre del horario"
+          />
+        </div>
+        <div>
+          <label class="form-label fw-semibold text-sm">Descripción</label>
+          <textarea
+            class="form-control"
+            rows="2"
+            formControlName="description"
+            placeholder="Descripción opcional"
+          ></textarea>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Day configuration -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div
+        class="px-4 py-3 border-b border-gray-100 text-sm font-semibold text-tertiary uppercase"
+      >
+        Días y horarios
+      </div>
+
+      <div class="divide-y divide-gray-100">
+        @for (day of weekDays; track day) {
+          <app-schedule-day-upsert
+            [weekDay]="day"
+            [scheduleDay]="scheduleDaysMap()[day]"
+            [scheduleId]="schedule().id"
+            (onSaved)="onScheduleDaySaved($event)"
+            (onRemove)="onScheduleDayRemoved($event)"
+          ></app-schedule-day-upsert>
+        }
+      </div>
+    </div>
+  </div>
+</div>

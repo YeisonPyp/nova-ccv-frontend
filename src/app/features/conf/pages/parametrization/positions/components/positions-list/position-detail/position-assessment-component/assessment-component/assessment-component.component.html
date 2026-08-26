@@ -1,0 +1,51 @@
+<div
+  class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+>
+  <!-- Component Header -->
+  <div
+    class="bg-gray-50 px-4 py-3 flex justify-between items-start border-b border-gray-200"
+  >
+    <div>
+      <h4 class="text-md font-bold text-gray-900">{{ comp().name }}</h4>
+      <p class="text-xs text-gray-500">{{ comp().description }}</p>
+      <div
+        class="mt-1 flex items-center gap-2 text-xs font-medium text-gray-600"
+      >
+        <span class="bg-white px-2 py-0.5 rounded border"
+          >Mín: {{ comp().minValue }}</span
+        >
+        <span class="bg-white px-2 py-0.5 rounded border"
+          >Máx: {{ comp().maxValue }}</span
+        >
+        @if (comp().dueDate) {
+          <span class="bg-white px-2 py-0.5 rounded border"
+            >Entrega: {{ comp().dueDate }}</span
+          >
+        }
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button
+        class="icon-btn text-tertiary hover:text-primary"
+        (click)="onEdit.emit(comp())"
+        title="Editar"
+      >
+        <app-edit-icon />
+      </button>
+      <button
+        class="icon-btn text-tertiary hover:text-primary"
+        (click)="onDelete.emit(comp())"
+        title="Eliminar"
+      >
+        <app-trash-icon />
+      </button>
+    </div>
+  </div>
+
+  <app-component-requirements
+    [componentId]="comp().id"
+    [requirements]="comp().requirements || []"
+    (onSaveRequirement)="onSaveRequirement($event)"
+    (onDeleteRequirement)="onDeleteRequirement($event)"
+  />
+</div>

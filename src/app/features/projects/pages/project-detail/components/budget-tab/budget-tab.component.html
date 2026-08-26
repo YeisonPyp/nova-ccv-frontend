@@ -1,0 +1,4 @@
+<div app-loading-spinner [isLoading]="isLoading()"></div>
+@if (!isLoading()) {
+  <app-budget-calculation [matrix]="matrix()" (onSave)="$onSave($event)" />
+}

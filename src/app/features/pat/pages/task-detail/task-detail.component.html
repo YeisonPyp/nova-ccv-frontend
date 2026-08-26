@@ -1,0 +1,158 @@
+<div class="w-full p-6">
+  <button
+    class="btn btn-link text-sm text-gray-500 mb-4 ps-0"
+    (click)="goBack()"
+  >
+    ← Volver a la actividad
+  </button>
+
+  <div app-loading-spinner [isLoading]="loading()"></div>
+
+  @if (!loading() && task(); as t) {
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span
+            class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded"
+          >
+            {{ t.activityName }}
+          </span>
+        </div>
+        <h1 class="text-2xl font-bold text-secondary m-0">{{ t.name }}</h1>
+        @if (t.description) {
+          <p class="text-sm text-gray-500 mt-1">{{ t.description }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Área
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.area.name || "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Cargo Responsable
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.position?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Centro de Costo
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.costCenter.name || "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Unidad de Medida
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.unitMeasure?.name ?? "—" }}
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <p
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+        >
+          Meta
+        </p>
+        <p class="text-sm font-medium text-gray-700">
+          {{ t.unitMeasureGoal ?? "—" }}
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
+          Presupuesto Planeado vs. Ejecutado
+        </h5>
+        <div class="max-w-xs mx-auto">
+          <app-execution-pie-chart
+            [planned]="plannedTotal()"
+            [executed]="executedTotal()"
+          />
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h5
+          class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-3"
+        >
+          Presupuesto por Mes
+        </h5>
+        <app-planned-executed-line-chart
+          [plannedValues]="plannedByMonth()"
+          [executedValues]="executedByMonth()"
+        />
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+    >
+      <div class="flex border-b border-gray-200 bg-gray-50 px-2 pt-2 gap-2">
+        @for (tab of tabs; track tab.key) {
+          <button
+            type="button"
+            class="px-5 py-2.5 text-sm font-medium cursor-pointer border-b-2 transition-colors duration-150 rounded-t-lg -mb-px"
+            [class]="
+              activeTab() === tab.key
+                ? 'text-primary border-primary bg-white'
+                : 'text-gray-500 border-transparent hover:text-primary hover:bg-gray-100'
+            "
+            (click)="activeTab.set(tab.key)"
+          >
+            {{ tab.label }}
+          </button>
+        }
+      </div>
+
+      <div class="p-6">
+        @switch (activeTab()) {
+          @case ("budget") {
+            <app-pat-task-budget-tab [taskId]="t.id" />
+          }
+          @case ("indicators") {
+            <app-pat-indicators-tab [taskId]="t.id" />
+          }
+          @case ("products") {
+            <app-pat-products-tab [taskId]="t.id" />
+          }
+          @case ("benefits") {
+            <app-pat-benefits-tab [taskId]="t.id" />
+          }
+          @default {
+            <app-monthly-overview-grid
+              [overview]="overview()"
+              [year]="t.activityYear!"
+              [taskId]="t.id"
+            />
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

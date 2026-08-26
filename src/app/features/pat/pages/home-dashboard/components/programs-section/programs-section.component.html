@@ -1,0 +1,9 @@
+<app-selectable-list
+  title="Programas"
+  [items]="selectableItems()"
+  [loading]="loading()"
+  emptyMessage="No hay programas para los filtros seleccionados."
+  [search]="search()"
+  (selectionChange)="onProgramChange($event)"
+  (onSearch)="search.set($event)"
+/>

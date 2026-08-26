@@ -1,0 +1,122 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 560px"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ task() ? "Editar tarea" : "Nueva tarea" }}
+        </h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body">
+        @if (error()) {
+          <div
+            class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          id="task-form"
+          (ngSubmit)="submit()"
+          class="flex flex-col gap-4"
+        >
+          <div class="form-group">
+            <label>Nombre <span class="required">*</span></label>
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('name')"
+            />
+          </div>
+
+          <app-context-search-select
+            [ctx]="areaCtx"
+            label="Área"
+            [required]="true"
+          />
+
+          <app-context-search-select
+            [ctx]="positionCtx"
+            label="Cargo responsable"
+            [required]="false"
+          />
+
+          <app-context-search-select
+            [ctx]="costCenterCtx"
+            label="Centro de costo"
+            [required]="true"
+          />
+
+          <app-context-search-select
+            [ctx]="pillarCtx"
+            label="Pilar"
+            [required]="false"
+          />
+
+          <app-context-search-select
+            [ctx]="adendaCtx"
+            label="Adenda"
+            [required]="false"
+          />
+
+          <app-context-search-select
+            [ctx]="policyCtx"
+            label="Política"
+            [required]="false"
+          />
+          <app-context-search-select
+            [ctx]="unitMeasureCtx"
+            label="Unidad de medida"
+            [required]="true"
+          />
+
+          <div class="form-group">
+            <label>Meta <span class="required">*</span></label>
+            <input
+              type="number"
+              step="0.01"
+              formControlName="unitMeasureGoal"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('unitMeasureGoal')"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              formControlName="description"
+              class="form-control"
+              rows="2"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="task-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            {{ task() ? "Guardar cambios" : "Crear tarea" }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

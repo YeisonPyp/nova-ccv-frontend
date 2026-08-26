@@ -1,0 +1,10 @@
+<div class="w-full">
+  <button
+    class="btn btn-link text-sm text-gray-500 ps-0"
+    type="button"
+    (click)="goBack()"
+  >
+    ← Volver a radicados
+  </button>
+  <app-filing-upsert [id]="filingId()" (onSaveFiling)="onSubmit($event)" />
+</div>

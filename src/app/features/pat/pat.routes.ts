@@ -1,49 +1,94 @@
+import { matchYearGuard } from '@/app/core/guards/match-year.guard';
+import { hasPermissionGuard } from '@/app/shared/guards/has-permission.guard';
 import { Routes } from '@angular/router';
 
 export const PAT_ROUTES: Routes = [
   {
+    path: 'budget',
+    loadComponent: () =>
+      import('./pages/presupuestal-categories/presupuestal-categories.component').then(
+        (m) => m.PresupuestalCategoriesComponent,
+      ),
+    title: 'Rubros presupuestales',
+    canActivate: [hasPermissionGuard(['PRESUPUESTAL_CATEGORY_READ'])],
+  },
+  {
+    path: 'budget/:id',
+    loadComponent: () =>
+      import('./pages/presupuestal-category-detail/presupuestal-category-detail.component').then(
+        (m) => m.PresupuestalCategoryDetailComponent,
+      ),
+    title: 'Rubro presupuestal',
+    canActivate: [hasPermissionGuard(['PRESUPUESTAL_CATEGORY_READ'])],
+  },
+  {
+    path: ':year',
+    canMatch: [matchYearGuard],
+    loadComponent: () =>
+      import('./layout/pat-layout.component').then((m) => m.PatLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent,
+          ),
+        title: 'PAT — Tablero de Control',
+        canActivate: [hasPermissionGuard(['PAT_PROGRAMS_READ'])],
+      },
+      {
+        path: 'activities/create',
+        loadComponent: () =>
+          import('./pages/create-activity/create-activity.component').then(
+            (m) => m.CreatePatActivityComponent,
+          ),
+        title: 'PAT — Nueva Actividad',
+        canActivate: [hasPermissionGuard(['PAT_ACTIVITY_CREATE'])],
+      },
+      {
+        path: 'activities/:id',
+        loadComponent: () =>
+          import('./pages/activity-detail/activity-detail.component').then(
+            (m) => m.PatActivityDetailComponent,
+          ),
+        title: 'PAT — Detalle de Actividad',
+        canActivate: [hasPermissionGuard(['PAT_ACTIVITY_READ'])],
+      },
+      {
+        path: 'programs/:id',
+        loadComponent: () =>
+          import('./pages/program-detail/program-detail.component').then(
+            (m) => m.ProgramDetailComponent,
+          ),
+        title: 'PAT — Detalle de Programa',
+        canActivate: [hasPermissionGuard(['PAT_STRATEGIC_PROGRAM_READ'])],
+      },
+      {
+        path: 'tasks/:id',
+        loadComponent: () =>
+          import('./pages/task-detail/task-detail.component').then(
+            (m) => m.PatTaskDetailComponent,
+          ),
+        title: 'PAT — Detalle de Tarea',
+        canActivate: [hasPermissionGuard(['PAT_ACTIVITY_READ'])],
+      },
+      {
+        path: 'tasks/:taskId/register/:month',
+        loadComponent: () =>
+          import('./pages/register-monthly-overview/register-monthly-overview.component').then(
+            (m) => m.RegisterMonthlyOverviewComponent,
+          ),
+        title: 'PAT — Registrar mes',
+        canActivate: [hasPermissionGuard(['PAT_ACTIVITY_UPDATE'])],
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    ],
+  },
+  {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
+    redirectTo: () => {
+      return new Date().getFullYear().toString();
+    },
+    pathMatch: 'full',
   },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./pages/dashboard/dashboard.component')
-      .then(m => m.DashboardComponent)
-  },
-  {
-    path: 'programs',
-    loadComponent: () => import('./pages/programs/programs.component')
-      .then(m => m.ProgramsComponent)
-  },
-  {
-    path: 'programs/new',
-    loadComponent: () => 
-      import('./pages/program-form/program-form.component')
-        .then(m => m.ProgramFormComponent)
-  },
-  {
-    path: 'programs/:id',
-    loadComponent: () => import('./pages/program-detail/program-detail.component')
-      .then(m => m.ProgramDetailComponent)
-  },
-  {
-    path: 'programs/:id/edit',
-    loadComponent: () => 
-      import('./pages/program-form/program-form.component')
-        .then(m => m.ProgramFormComponent)
-  },
-  {
-    path: 'programs/:programId/activities/new',
-    loadComponent: () => 
-      import('./pages/activity-form/activity-form.component')
-        .then(m => m.ActivityFormComponent)
-  },
-  {
-    path: 'programs/:programId/activities/:activityId/edit',
-    loadComponent: () => 
-      import('./pages/activity-form/activity-form.component')
-        .then(m => m.ActivityFormComponent)
-  }
-      
 ];

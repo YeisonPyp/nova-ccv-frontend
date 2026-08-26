@@ -1,0 +1,276 @@
+<app-project-section-card
+  title="Formulación (Marco Lógico)"
+  addLabel="Editar formulación"
+  (onAdd)="openEdit()"
+>
+  @if (formulation(); as f) {
+    <div class="p-4 flex flex-col gap-6">
+      <!-- ── INFORMACIÓN GENERAL ── -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Fecha de formulación
+          </p>
+          <p class="text-sm text-gray-700">
+            {{ f.formulationDate ? (f.formulationDate | date: "dd/MM/yyyy") : "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Estado
+          </p>
+          <p class="text-sm text-gray-700">
+            {{ statusLabel(f.formulationStatus) }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Tipo de iniciativa
+          </p>
+          <p class="text-sm text-gray-700">
+            {{ initiativeTypeLabel(f.initiativeType) }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Concepto técnico
+          </p>
+          <p class="text-sm text-gray-700">
+            {{ technicalConceptLabel(f.technicalConcept) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ── ALINEACIÓN ── -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Eje estratégico
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.strategicAxis || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Objetivos estratégicos
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.strategicObjectives || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Relación con el POA
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.poaRelation || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Relación con el PAT
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.patRelation || "—" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ── ANTECEDENTES Y PROBLEMA ── -->
+      <div class="flex flex-col gap-3">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Antecedentes
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.background || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Justificación
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.justification || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Descripción del problema
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.problemDescription || "—" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ── ALCANCE Y BENEFICIARIOS ── -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            El alcance incluye
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.scopeIncludes || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            El alcance no incluye
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.scopeExcludes || "—" }}
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Beneficiarios directos
+          </p>
+          <p class="text-sm text-gray-700">{{ f.directBeneficiaries ?? 0 }}</p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Beneficiarios indirectos
+          </p>
+          <p class="text-sm text-gray-700">
+            {{ f.indirectBeneficiaries ?? 0 }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Total estimado
+          </p>
+          <p class="text-sm font-medium text-gray-700">
+            {{ f.estimatedBeneficiaries ?? 0 }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ── EJECUCIÓN Y SEGUIMIENTO ── -->
+      <div class="flex flex-col gap-3">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Metodología de ejecución
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.executionMethodology || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Detalle presupuestal
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.budgetDetail || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Plan de seguimiento
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.monitoringPlan || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Sostenibilidad
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.sustainability || "—" }}
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Conclusiones
+          </p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">
+            {{ f.conclusions || "—" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ── RESPONSABLES ── -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Elaborado por
+          </p>
+          <p class="text-sm text-gray-700">{{ f.preparedBy || "—" }}</p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Revisado por
+          </p>
+          <p class="text-sm text-gray-700">{{ f.reviewedBy || "—" }}</p>
+        </div>
+        <div>
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest mb-1"
+          >
+            Aprobado por
+          </p>
+          <p class="text-sm text-gray-700">{{ f.approvedBy || "—" }}</p>
+        </div>
+      </div>
+    </div>
+  }
+</app-project-section-card>
+
+<app-formulation-edit-modal
+  [isOpen]="modalOpen()"
+  [projectId]="projectId()"
+  [formulation]="formulation()"
+  (onClose)="closeModal()"
+  (onSaved)="onSaved($event)"
+/>

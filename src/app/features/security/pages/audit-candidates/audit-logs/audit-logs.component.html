@@ -1,0 +1,16 @@
+<app-pagination-table [service]="service" [tableColumns]="columns()">
+  <ng-template #customCell let-item let-col="column">
+    @if (col.key === "oldRegistry" || col.key === "newRegistry") {
+      <div class="bg-gray-200 p-2">
+        <ngx-json-viewer
+          [json]="parseJson(item[col.key])"
+          [expanded]="true"
+        ></ngx-json-viewer>
+      </div>
+    } @else if (col.key === "createdAt") {
+      {{ item[col.key] | date: "dd/MM/yyyy HH:mm:ss" }}
+    } @else {
+      {{ item | nestedValue: col.key }}
+    }
+  </ng-template>
+</app-pagination-table>

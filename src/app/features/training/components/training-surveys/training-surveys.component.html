@@ -1,0 +1,16 @@
+<app-survey-scope-list
+  [surveys]="scopeItems()"
+  [canConfigure]="true"
+  (onAttach)="attach($event)"
+  (onDetach)="detach($event)"
+  (onConfigure)="openImpacts($event)"
+/>
+
+@if (impactSurvey(); as survey) {
+  <app-training-survey-impacts-modal
+    [trainingId]="trainingId()"
+    [survey]="survey"
+    (onClose)="closeImpacts()"
+    (onSaved)="onImpactsSaved()"
+  />
+}

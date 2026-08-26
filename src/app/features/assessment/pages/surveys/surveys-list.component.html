@@ -1,0 +1,48 @@
+<div class="w-full max-w-5xl mx-auto p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-xl font-bold text-secondary m-0">
+        Encuestas de evaluación
+      </h2>
+      <p class="text-sm text-gray-500 mt-1">
+        Gestiona las encuestas y preguntas usadas en las evaluaciones de
+        desempeño
+      </p>
+    </div>
+    <button
+      type="button"
+      *appHasPermission="['SURVEY_CREATE']"
+      class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
+      (click)="goToCreate()"
+    >
+      + Nueva encuesta
+    </button>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+    <app-pagination-table [service]="service" [tableColumns]="columns">
+      <ng-template #actions let-item>
+        <div class="flex justify-end gap-2">
+          <button
+            type="button"
+            *appHasPermission="['SURVEY_UPDATE']"
+            class="icon-btn text-gray-500 hover:text-primary"
+            title="Editar"
+            (click)="goToEdit(item)"
+          >
+            <app-edit-icon />
+          </button>
+          <button
+            type="button"
+            *appHasPermission="['SURVEY_DELETE']"
+            class="icon-btn text-gray-500 hover:text-red-600"
+            title="Eliminar"
+            (click)="openDelete(item)"
+          >
+            <app-trash-icon />
+          </button>
+        </div>
+      </ng-template>
+    </app-pagination-table>
+  </div>
+</div>

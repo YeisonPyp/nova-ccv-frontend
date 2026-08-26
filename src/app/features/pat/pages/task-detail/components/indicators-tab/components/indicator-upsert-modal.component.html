@@ -1,0 +1,78 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 560px"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ indicator() ? "Editar indicador" : "Nuevo indicador" }}
+        </h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body">
+        @if (error()) {
+          <div
+            class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          id="indicator-form"
+          (ngSubmit)="submit()"
+          class="flex flex-col gap-4"
+        >
+          <app-context-search-select
+            [ctx]="managementIndicatorCtx"
+            label="Indicador de gestión"
+            [required]="true"
+          />
+
+          <div class="form-row">
+            <div class="half-width form-group">
+              <label>Línea base</label>
+              <input
+                type="number"
+                formControlName="baseValue"
+                class="form-control"
+                step="0.01"
+              />
+            </div>
+            <div class="half-width form-group">
+              <label>Meta</label>
+              <input
+                type="number"
+                formControlName="goalValue"
+                class="form-control"
+                step="0.01"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="indicator-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            {{ indicator() ? "Guardar cambios" : "Crear indicador" }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

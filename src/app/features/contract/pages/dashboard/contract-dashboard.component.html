@@ -1,0 +1,53 @@
+<div class="w-full">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Contratos</h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary" (click)="openSeedDashboard()">
+        Ver contratos importados
+      </button>
+      <button class="btn btn-primary" (click)="createContract('employee')">
+        Nueva mano de obra
+      </button>
+      <button class="btn btn-primary" (click)="createContract('agency')">
+        Nueva persona jurídica
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <app-pagination-table
+    [service]="service"
+    [tableColumns]="columns"
+    emptyMessage="No hay contratos registrados."
+  >
+    <ng-template #actions let-item>
+      <button
+        class="btn btn-sm btn-outline-primary"
+        title="Ver contrato"
+        (click)="openContract(item)"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+      </button>
+    </ng-template>
+  </app-pagination-table>
+</div>

@@ -1,0 +1,104 @@
+@if (canReadEpsEntity) {
+  <app-parametrization-section
+    title="Entidades EPS"
+    createLabel="+ Nueva entidad EPS"
+    [canCreate]="canCreateEpsEntity"
+    (onOpen)="onEpsEntityToggle($event)"
+    (onCreate)="openCreateEpsEntity()"
+  >
+    @if (!epsEntityLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <app-dynamic-table
+        [data]="epsEntityItems()"
+        [columns]="epsEntityColumns"
+        emptyMessage="No hay entidades EPS."
+      >
+        <ng-template #actions let-item>
+          @if (canUpdateEpsEntity) {
+            <button
+              class="btn btn-sm btn-outline"
+              (click)="openEditEpsEntity(item)"
+            >
+              Editar
+            </button>
+          }
+          @if (canDeleteEpsEntity) {
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openDeleteEpsEntity(item)"
+            >
+              Eliminar
+            </button>
+          }
+        </ng-template>
+      </app-dynamic-table>
+    }
+  </app-parametrization-section>
+}
+@if (epsEntityModalMode()) {
+  <div class="modal-overlay" (click)="closeEpsEntityModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          epsEntityModalMode() === "create"
+            ? "Nueva entidad EPS"
+            : "Editar entidad EPS"
+        }}
+      </h2>
+      <form
+        [formGroup]="epsEntityForm"
+        (ngSubmit)="submitEpsEntity()"
+        class="space-y-3"
+      >
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label
+          ><input
+            formControlName="name"
+            class="form-control w-full"
+            maxlength="40"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Descripción</label
+          ><input formControlName="description" class="form-control w-full" />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeEpsEntityModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="epsEntityForm.invalid"
+          >
+            {{ epsEntityModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+@if (showDeleteEpsEntityModal()) {
+  <div class="modal-overlay" (click)="closeDeleteEpsEntityModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar entidad EPS</h2>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar <strong>{{ editingEpsEntity()?.name }}</strong
+        >?
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteEpsEntityModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteEpsEntity()">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

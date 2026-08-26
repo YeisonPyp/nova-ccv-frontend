@@ -1,0 +1,128 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div
+      class="modal-container"
+      style="max-width: 620px"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">Flujo de aprobación</h2>
+        <button type="button" class="close-btn" (click)="close()">×</button>
+      </div>
+
+      <div class="modal-body flex flex-col gap-6">
+        @if (error()) {
+          <div
+            class="px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+          >
+            {{ error() }}
+          </div>
+        }
+
+        <!-- ── HISTORIAL ── -->
+        <div class="flex flex-col gap-3">
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Historial
+          </p>
+
+          @if (loading()) {
+            <p class="text-sm text-gray-400">Cargando...</p>
+          } @else if (steps().length === 0) {
+            <p class="text-sm text-gray-400 text-center py-4">
+              Sin pasos registrados aún.
+            </p>
+          } @else {
+            <div class="flex flex-col gap-3 max-h-72 overflow-y-auto pr-1">
+              @for (step of steps(); track step.id) {
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <div class="flex items-center justify-between mb-1">
+                    <span
+                      class="badge text-xs"
+                      [class.badge-success]="step.decision === 'APPROVED'"
+                      [class.badge-warning]="step.decision === 'PENDING'"
+                    >
+                      {{
+                        step.decision === "APPROVED" ? "Aprobada" : "Pendiente"
+                      }}
+                    </span>
+                    <span class="text-xs text-gray-400">{{
+                      step.createdAt | date: "dd/MM/yyyy HH:mm"
+                    }}</span>
+                  </div>
+                  <p class="text-sm text-gray-700 m-0">
+                    {{ step.observation }}
+                  </p>
+                  @if (step.createdBy) {
+                    <p class="text-xs text-gray-400 mt-1 m-0">
+                      {{ step.createdBy.name }} {{ step.createdBy.lastName }}
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- ── NUEVO PASO (solo auditor) ── -->
+        <div
+          *appHasPermission="['PLAN_AUDITOR_ROLE']"
+          class="flex flex-col gap-4"
+        >
+          <p
+            class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-widest"
+          >
+            Nuevo paso
+          </p>
+
+          <form
+            [formGroup]="form"
+            id="approval-step-form"
+            (ngSubmit)="submit()"
+            class="flex flex-col gap-4"
+          >
+            <div class="form-group">
+              <label>Observación <span class="required">*</span></label>
+              <textarea
+                formControlName="observation"
+                class="form-control"
+                rows="3"
+                [class.is-invalid]="isFieldInvalid('observation')"
+                placeholder="Justificación de la decisión..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Decisión <span class="required">*</span></label>
+              <select formControlName="decision" class="form-control">
+                @for (opt of decisionOptions; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Cerrar
+        </button>
+        <button
+          *appHasPermission="['PLAN_AUDITOR_ROLE']"
+          type="submit"
+          form="approval-step-form"
+          class="btn btn-primary"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Guardando...
+          } @else {
+            Registrar paso
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

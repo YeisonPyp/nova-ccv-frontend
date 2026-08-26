@@ -1,0 +1,55 @@
+<div class="flex items-center justify-between mb-4">
+  <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider m-0">
+    Preguntas
+  </h3>
+  <button
+    type="button"
+    class="text-xs text-primary font-medium hover:underline"
+    (click)="openModal(null)"
+  >
+    + Agregar pregunta
+  </button>
+</div>
+
+<div class="flex flex-col gap-3">
+  @for (q of sortedQuestions(); track q.id) {
+    <div class="border border-gray-100 rounded-lg pl-4 pr-3 py-3 flex justify-between items-start gap-2">
+      <div>
+        <span class="text-xs font-mono text-gray-400">#{{ q.displayOrder }}</span>
+        <p class="text-sm font-medium text-secondary m-0">{{ q.description }}</p>
+        <p class="text-xs text-gray-500 mt-1">
+          Rango: {{ q.minValue }} — {{ q.maxValue }}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          class="icon-btn text-gray-500 hover:text-primary"
+          title="Editar"
+          (click)="openModal(q)"
+        >
+          <app-edit-icon />
+        </button>
+        <button
+          type="button"
+          class="icon-btn text-gray-500 hover:text-red-600"
+          title="Eliminar"
+          (click)="deleteQuestion(q)"
+        >
+          <app-trash-icon />
+        </button>
+      </div>
+    </div>
+  } @empty {
+    <p class="text-xs text-gray-400 text-center py-4">Sin preguntas.</p>
+  }
+</div>
+
+<app-survey-question-modal
+  [surveyId]="surveyId()"
+  [selectedQuestion]="selectedQuestion()"
+  [isOpen]="isModalOpen()"
+  [nextDisplayOrder]="nextDisplayOrder()"
+  (onSubmit)="saveQuestion($event)"
+  (onClose)="closeModal()"
+></app-survey-question-modal>

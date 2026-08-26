@@ -1,0 +1,12 @@
+<div>
+  <h3 class="text-lg font-semibold text-secondary mb-3">Documentos</h3>
+  @if (documents().length === 0) {
+    <p class="text-tertiary text-sm">No hay documentos adjuntos.</p>
+  } @else {
+    <div class="flex flex-wrap gap-3">
+      @for (doc of documents(); track doc.id) {
+        <app-file-item [file]="toFileResource(doc)" [label]="doc.objectName" />
+      }
+    </div>
+  }
+</div>

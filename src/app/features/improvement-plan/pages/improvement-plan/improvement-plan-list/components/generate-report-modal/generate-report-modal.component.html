@@ -1,0 +1,96 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Generar Informe de Planes de Mejoramiento</h2>
+        <button class="close-btn" (click)="onClose()">&times;</button>
+      </div>
+
+      <div class="modal-container">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-group">
+            <label>Proceso</label>
+            <select
+              class="form-control"
+              [ngModel]="filterProcessId()"
+              (ngModelChange)="filterProcessId.set($event)"
+            >
+              <option [ngValue]="null">Todos</option>
+              @for (process of processes; track process.id) {
+                <option [ngValue]="process.id">{{ process.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Entidad de Control</label>
+            <select
+              class="form-control"
+              [ngModel]="filterControlEntityId()"
+              (ngModelChange)="filterControlEntityId.set($event)"
+            >
+              <option [ngValue]="null">Todas</option>
+              @for (entity of controlEntities; track entity.id) {
+                <option [ngValue]="entity.id">{{ entity.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Estado y Vigencia</label>
+            <select
+              class="form-control"
+              [ngModel]="filterStatus()"
+              (ngModelChange)="filterStatus.set($event)"
+            >
+              <option [ngValue]="null">Todos</option>
+              @for (opt of statusOptions; track opt[0]) {
+                <option [ngValue]="opt[0]">{{ opt[1] }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Año</label>
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Todos"
+              [ngModel]="filterYear()"
+              (ngModelChange)="filterYear.set($event)"
+            />
+          </div>
+        </div>
+
+        @if (error()) {
+          <p class="text-sm text-red-600 mt-3">{{ error() }}</p>
+        }
+
+        @if (generatedReport()) {
+          <div class="mt-4">
+            <app-file-item
+              [file]="generatedReport()"
+              [label]="generatedReport()!.name"
+              [canUpdate]="false"
+              [canDelete]="false"
+            />
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Cerrar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="generating()"
+          (click)="onGenerate()"
+        >
+          {{ generating() ? "Generando..." : "Generar informe" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

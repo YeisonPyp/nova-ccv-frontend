@@ -1,0 +1,100 @@
+@if (canReadFp) {
+  <app-parametrization-section
+    title="Procesos de radicación"
+    createLabel="+ Nuevo proceso"
+    [canCreate]="canCreateFp"
+    (onOpen)="onFpToggle($event)"
+    (onCreate)="openCreateFp()"
+  >
+    @if (!fpLoaded()) {
+      <div class="text-center py-6 text-tertiary text-sm">Cargando...</div>
+    } @else {
+      <div class="space-y-3">
+        <app-dynamic-table
+          [data]="fpItems()"
+          [columns]="fpColumns"
+          emptyMessage="No hay procesos de radicación."
+        >
+          <ng-template #actions let-fp>
+            @if (canUpdateFp) {
+              <button class="btn btn-sm btn-outline" (click)="openEditFp(fp)">
+                Editar
+              </button>
+            }
+            @if (canDeleteFp) {
+              <button class="btn btn-sm btn-danger" (click)="openDeleteFp(fp)">
+                Eliminar
+              </button>
+            }
+          </ng-template>
+        </app-dynamic-table>
+        <app-pagination
+          [pages]="fpTotalPages()"
+          [currentPage]="fpPage()"
+          (pageChange)="loadFp($event)"
+        />
+      </div>
+    }
+  </app-parametrization-section>
+}
+
+@if (fpModalMode()) {
+  <div class="modal-overlay" (click)="closeFpModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">
+        {{
+          fpModalMode() === "create"
+            ? "Nuevo proceso de radicación"
+            : "Editar proceso de radicación"
+        }}
+      </h2>
+      <form [formGroup]="fpForm" (ngSubmit)="submitFp()" class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Nombre *</label>
+          <input
+            formControlName="name"
+            class="form-control w-full"
+            placeholder="Nombre del proceso"
+            maxlength="20"
+          />
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeFpModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="fpForm.invalid"
+          >
+            {{ fpModalMode() === "create" ? "Crear" : "Guardar" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (showDeleteFpModal()) {
+  <div class="modal-overlay" (click)="closeDeleteFpModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Eliminar proceso de radicación</h2>
+      <p class="text-sm text-tertiary">
+        ¿Seguro de eliminar <strong>{{ editingFp()?.name }}</strong
+        >?
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDeleteFpModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" (click)="confirmDeleteFp()">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,49 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ entity() != null ? "Editar" : "Nueva" }} Entidad de Control</h2>
+        <button class="close-btn" (click)="onClose()">&times;</button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="modal-container">
+          <div class="form-group">
+            <label for="name">Nombre</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name"
+              [class.is-invalid]="
+                form.get('name')?.invalid && form.get('name')?.touched
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                form.get('name')?.hasError('required') &&
+                form.get('name')?.touched
+              "
+            >
+              El nombre es requerido
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid"
+          >
+            {{ entity() != null ? "Guardar" : "Crear" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

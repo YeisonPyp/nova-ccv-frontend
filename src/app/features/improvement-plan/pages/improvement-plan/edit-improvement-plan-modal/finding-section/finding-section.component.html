@@ -1,0 +1,29 @@
+<section class="p-4">
+  <div class="group">
+    <span
+      class="text-sm font-bold text-tertiary uppercase tracking-wider cursor-pointer mb-4 hover:text-secondary transition-colors"
+    >
+      Hallazgos
+    </span>
+
+    <div app-loading-spinner [isLoading]="isLoading()"></div>
+
+    @if (!isLoading()) {
+      <div class="space-y-3 mt-2">
+        @for (finding of findings(); track finding.id) {
+          <app-finding-item
+            [finding]="finding"
+            (onDelete)="onDeleteFinding($event)"
+          ></app-finding-item>
+        }
+      </div>
+
+      @if (canCreate()) {
+        <app-new-finding
+          [planId]="planId()"
+          (onCreated)="onCreated($event)"
+        ></app-new-finding>
+      }
+    }
+  </div>
+</section>

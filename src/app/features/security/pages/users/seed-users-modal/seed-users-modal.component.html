@@ -1,0 +1,77 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-container" style="max-width: 480px" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Sembrar usuarios desde Excel</h2>
+      <button type="button" class="close-btn" (click)="close()">×</button>
+    </div>
+
+    <div class="modal-body">
+      @if (error()) {
+        <div
+          class="mb-4 px-3 py-2 rounded bg-red-50 text-red-600 text-sm border border-red-200"
+        >
+          {{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" class="flex flex-col gap-4">
+        <div class="form-group">
+          <label class="form-label">Rol *</label>
+          <select
+            class="form-control"
+            app-selector
+            [options]="roles() || []"
+            formControlName="roleId"
+          ></select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Franja horaria *</label>
+          <select
+            class="form-control"
+            app-selector
+            [options]="schedules() || []"
+            formControlName="scheduleId"
+          ></select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Archivo de Excel *</label>
+          <app-file-item
+            [file]="null"
+            label="Cargar archivo Excel"
+            accept=".xlsx,.xls"
+            (fileSelected)="onFileSelected($event)"
+            (deleteRequested)="onFileRemoved()"
+          />
+          @if (file()) {
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-600">
+              <span class="truncate">{{ file()!.name }}</span>
+              <button
+                type="button"
+                class="text-red-500 hover:underline shrink-0 ml-2"
+                (click)="onFileRemoved()"
+              >
+                Quitar
+              </button>
+            </div>
+          }
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="saving() || form.invalid || !file()"
+        (click)="submit()"
+      >
+        {{ saving() ? "Sembrando..." : "Sembrar usuarios" }}
+      </button>
+    </div>
+  </div>
+</div>

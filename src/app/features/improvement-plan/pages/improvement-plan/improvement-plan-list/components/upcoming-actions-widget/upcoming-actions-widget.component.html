@@ -1,0 +1,72 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 mb-6">
+  <h2 class="text-sm font-bold text-tertiary uppercase tracking-wider mb-4">
+    Acciones de mejora próximas a vencer
+  </h2>
+
+  @if (loading()) {
+    <p class="text-xs text-gray-400">Cargando...</p>
+  } @else if (actions().length === 0) {
+    <p class="text-xs text-gray-400">
+      No hay acciones de mejora pendientes próximas a vencer.
+    </p>
+  } @else {
+    <div class="flex flex-col gap-2">
+      @for (action of actions(); track action.id) {
+        <div class="border border-gray-200 rounded-lg">
+          <div
+            class="flex items-center justify-between gap-3 p-3 cursor-pointer hover:bg-gray-50"
+            (click)="toggle(action.id)"
+          >
+            <div class="flex items-center gap-2 min-w-0 grow">
+              <span
+                class="px-2 py-0.5 text-[10px] font-bold rounded-md uppercase tracking-tight border shrink-0"
+                [class]="actionTypeBadgeClass(action.actionType)"
+              >
+                {{ getActionTypeLabel(action.actionType) }}
+              </span>
+              <span class="text-sm text-secondary truncate">
+                {{ action.actionDescription }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
+              <span
+                class="text-[11px] font-semibold"
+                [class.text-red-600]="isOverdue(action.closeDate)"
+                [class.text-tertiary]="!isOverdue(action.closeDate)"
+              >
+                {{ action.closeDate | date: 'dd/MM/yyyy' }}
+              </span>
+              <span
+                class="px-2 py-1 text-[10px] font-bold rounded-md uppercase tracking-tight bg-amber-50 text-amber-700 border border-amber-200"
+              >
+                {{ getStatusLabel(action.status) }}
+              </span>
+              <a
+                class="text-[11px] font-bold text-primary hover:underline"
+                [routerLink]="['/improvement-plan', action.planId]"
+                [queryParams]="{ findingId: action.findingId, actionId: action.id }"
+                (click)="$event.stopPropagation()"
+              >
+                Ir a la acción
+              </a>
+            </div>
+          </div>
+
+          @if (expandedId() === action.id) {
+            <div class="p-3 border-t border-gray-100 bg-gray-50/50 space-y-2">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-alternate">
+                {{ action.planName }} · {{ action.findingName }}
+              </p>
+              @for (f of action.followUp; track f.id) {
+                <app-action-followup [followup]="f"></app-action-followup>
+              } @empty {
+                <p class="text-xs text-gray-400">Sin seguimientos.</p>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
