@@ -1,15 +1,16 @@
-import { APIPage } from "@/app/core/models/api-page.model";
-import { ApiResponse } from "@/app/core/models/api-response.model";
-import { Observable } from "rxjs/internal/Observable";
+import { APIPage } from '@/app/core/models/api-page.model';
+import { ApiResponse } from '@/app/core/models/api-response.model';
+import { Observable } from 'rxjs/internal/Observable';
 import {
   FilterServiceSpec,
   PageableQueryWithRsql,
-} from "../components/pagination-table/pagination-table.component";
-import { inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "@/environments/environment.development";
-import { PageableQueryParams } from "../pageable-query";
-import { Subject, tap } from "rxjs";
+} from '../components/pagination-table/pagination-table.component';
+import { inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { PageableQueryParams } from '../pageable-query';
+import { Subject, tap } from 'rxjs';
+import { environment } from '@/environments/environment';
 
 export abstract class FilterServiceSpecImpl<
   T,
@@ -23,7 +24,7 @@ export abstract class FilterServiceSpecImpl<
   constructor(endpoint: string) {
     this.onSave = new Subject<T>();
     this.onDelete = new Subject<number | string>();
-    if (endpoint.startsWith("/")) endpoint = endpoint.substring(1);
+    if (endpoint.startsWith('/')) endpoint = endpoint.substring(1);
     this.baseUrl = `${environment.apiUrl}/${endpoint}`;
   }
 

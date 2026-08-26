@@ -19,7 +19,7 @@ import { FilterServiceSpecImpl } from '@/app/shared/services/filter-service-spec
 import { PageableQueryWithRsql } from '@/app/shared/components/pagination-table/pagination-table.component';
 import builder from '@rsql/builder';
 import { PatActivityBudgetMatrix } from '../../models/pat/pat-models';
-import { environment } from '@/environments/environment.development';
+import { environment } from '@/environments/environment';
 
 export const RISK_SCALE_OPTIONS = [
   { value: 'low', label: 'Baja' },
